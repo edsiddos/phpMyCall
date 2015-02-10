@@ -1,0 +1,60 @@
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#relacao_usuario").modal('show');
+
+		$('#editar_usuario').on('click', function(){
+			var id = $("input[type='radio']:checked").val();
+			
+			if(id.length > 0){
+				$.ajax({
+					url: '<?= HTTP . '/Usuarios/get_dados_usuarios'; ?>',
+					data: 'id=' + id,
+					dataType: 'json',
+					type: 'POST',
+					success: function(json){
+						$('#inputID').val(json.id);
+						$('#inputNome').val(json.nome);
+						$('#inputUsuario').val(json.usuario);
+						$('#inputEMail').val(json.email);
+						$('#selectPerfil').val(json.perfil);
+						$('#relacao_usuario').modal('hide');
+					}
+				});
+			}
+		});
+
+		$('#cancelar_edicao').on('click', function(){
+			history.back();
+		});
+	});
+</script>
+
+<div id="relacao_usuario" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Selecione um usuário</h4>
+			</div>
+			<div class="modal-body">
+			<?php
+			foreach ( $usuarios as $values ) {
+				?>
+				<div class="radio">
+					<label> <input type="radio" name="id_usuario"
+						value="<?= $values['id']?>" /> <?= $values['nome'] . ' - ' . $values['perfil']; ?>
+					</label>
+				</div>
+				<?php
+			}
+			?>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" id="cancelar_edicao">Cancelar</button>
+				<button type="button" class="btn btn-primary" id="editar_usuario">Editar</button>
+			</div>
+		</div>
+	</div>
+</div>
