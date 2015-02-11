@@ -78,50 +78,58 @@ class Usuarios extends \system\Controller {
 		$permissao = 'Usuarios/cadastrar_usuario';
 		
 		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
+			$dados = $this->get_dados_post_usuario ();
+			
 			if ($this->model->inserir_usuario ( $dados )) {
 				$_SESSION ['msg_sucesso'] = "Usuário inserido com sucesso.";
 			} else {
 				$_SESSION ['msg_erro'] = "Erro ao inserir novo usuário. Verifique dados e tente novamente.";
 			}
+			
+			$this->redir ( 'Usuarios/cadastrar_usuario' );
 		} else {
 			$this->redir ( 'Main/index' );
 		}
 	}
+	
+	/**
+	 * Processa dados para atualização ou inserção de um usuário.
+	 *
+	 * @return Array Retorna um array com os dados do usuário.
+	 */
 	private function get_dados_post_usuario() {
 		$nome = $_POST ['inputNome'];
 		$usuario = $_POST ['inputUsuario'];
-		$senha = $_POST ['inputSenha'];
-		$changeme = isset ( $_POST ['inputChangeme'] [0] ) ? TRUE : FALSE;
+		$senha = (isset ( $_POST ['inputSenha'] ) ? $_POST ['inputSenha'] : NULL);
+		$changeme = (isset ( $_POST ['inputChangeme'] [0] ) ? TRUE : FALSE);
 		$email = $_POST ['inputEMail'];
 		$perfil = $_POST ['selectPerfil'];
 		
 		/* Verifica se todos os dados necessários foram informados */
-		if (empty ( $nome ) || empty ( $usuario ) || empty ( $senha ) || empty ( $email ) || empty ( $perfil )) {
-			
-			$_SESSION ['msg_erro'] = "Dados informados inválidos. Verifique dados inseridos e tente novamente.";
+		$datetime = NULL;
+		
+		// caso o usuário tenha selecionado "Senha temporária"
+		// seta data de troca para "HOJE"
+		if ($changeme) {
+			$datetime = new \DateTime ();
 		} else {
-			$datetime = NULL;
-			
-			// caso o usuário tenha selecionado "Senha temporária"
-			// seta data de troca para "HOJE"
-			if ($changeme) {
-				$datetime = new \DateTime ();
-			} else {
-				$datetime = new \DateTime ();
-				$datetime->add ( new \DateInterval ( 'P30D' ) );
-			}
-			
-			$dados = array (
-					'usuario' => $usuario,
-					'senha' => sha1 ( md5 ( $senha ) ),
-					'nome' => $nome,
-					'email' => $email,
-					'perfil' => $perfil,
-					'dt_troca' => $datetime->format ( 'Y-m-d' ) 
-			);
+			$datetime = new \DateTime ();
+			$datetime->add ( new \DateInterval ( 'P30D' ) );
 		}
 		
-		$this->redir ( 'Usuarios/cadastrar_usuario' );
+		$dados = array (
+				'usuario' => $usuario,
+				'nome' => $nome,
+				'email' => $email,
+				'perfil' => $perfil,
+				'dt_troca' => $datetime->format ( 'Y-m-d' ) 
+		);
+		
+		if (! empty ( $senha )) {
+			$dados ['senha'] = sha1 ( md5 ( $senha ) );
+		}
+		
+		return $dados;
 	}
 	
 	/**
@@ -185,6 +193,21 @@ class Usuarios extends \system\Controller {
 	}
 	
 	/**
+	 * Busca os nomes de usuários
+	 */
+	public function get_usuario_nome() {
+		$permissao_1 = 'Usuarios/alterar_usuario';
+		$permissao_2 = 'Usuarios/excluir_usuario';
+		$perfil = $_SESSION ['perfil'];
+		
+		if (Menu::possue_permissao ( $perfil, $permissao_1 ) || Menu::possue_permissao ( $perfil, $permissao_2 )) {
+			$nome = $_POST ['term'];
+			
+			echo json_encode ( $this->model->get_usuario_nome ( $nome, $perfil ) );
+		}
+	}
+	
+	/**
 	 * Busca dados do usuario selecionado para alteração
 	 */
 	public function get_dados_usuarios() {
@@ -197,6 +220,48 @@ class Usuarios extends \system\Controller {
 			echo json_encode ( $this->model->get_dados_usuarios ( $id ) );
 		}
 	}
+	
+	/**
+	 * Realiza a atualização do usuário
+	 */
 	public function atualiza_usuario() {
+		$permissao = 'Usuarios/alterar_usuario';
+		
+		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
+			$dados = $this->get_dados_post_usuario ();
+			
+			$id = $_POST ['inputID'];
+			
+			if ($this->model->atualiza_usuario ( $dados, $id )) {
+				$_SESSION ['msg_sucesso'] = "Usuário alterado com sucesso.";
+			} else {
+				$_SESSION ['msg_erro'] = "Erro ao alterar usuário. Verifique dados e tente novamente.";
+			}
+			
+			$this->redir ( 'Usuarios/cadastrar_usuario' );
+		} else {
+			$this->redir ( 'Main/index' );
+		}
+	}
+	public function excluir_usuario() {
+		$permissao = 'Usuarios/excluir_usuario';
+		
+		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
+			$title = array (
+					"title" => "Excluir usuário" 
+			);
+			
+			$vars = array (
+					'perfil' => $this->model->get_perfil ( $_SESSION ['perfil'] ),
+					'usuarios' => $this->model->get_id_usuarios ( $_SESSION ['perfil'] ),
+					'title_botao' => "Alterar Usuário" 
+			);
+			
+			$this->load_view ( "default/header", $title );
+			$this->load_view ( "usuarios/delete", $vars );
+			$this->load_view ( "default/footer" );
+		} else {
+			$this->redir ( 'Main/index' );
+		}
 	}
 }

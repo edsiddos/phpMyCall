@@ -90,14 +90,41 @@ class Usuarios extends \system\Model {
 	 *        	Nome do perfil do usuário
 	 */
 	public function get_id_usuarios($nome) {
-		$sql = "SELECT usuario.id, usuario.nome, perfil.perfil AS perfil FROM usuario
+		$sql = "SELECT usuario.id, usuario.nome, usuario.usuario AS usuario, perfil.perfil AS perfil
+				FROM usuario
 				INNER JOIN perfil ON usuario.perfil = perfil.id
 				WHERE usuario.perfil < (SELECT id FROM perfil WHERE perfil = :nome)
 				ORDER BY usuario.nome";
 		
 		return $this->select ( $sql, array (
 				'nome' => $nome 
+		), true );
+	}
+	
+	/**
+	 * Busca usuários a partir de um nome informado.
+	 *
+	 * @param string $nome
+	 *        	Nome do usuário.
+	 * @param string $perfil
+	 *        	Perfil do usuário (nível de acesso).
+	 * @return Array Retorna relação de nomes semelhantes.
+	 */
+	public function get_usuario_nome($nome, $perfil) {
+		$sql = "SELECT nome FROM usuario WHERE nome LIKE :nome
+				AND perfil < (SELECT id FROM perfil WHERE perfil = :perfil)";
+		
+		$result = $this->select ( $sql, array (
+				'nome' => utf8_encode("%{$nome}%"),
+				'perfil' => utf8_encode($perfil)
 		) );
+		
+		foreach ( $result as $key => $values ) {
+			$return [$key]['label'] = utf8_encode($values ['nome'] + '1111');
+			$return [$key]['value'] = utf8_encode($values ['nome']);
+		}
+		
+		return $return;
 	}
 	
 	/**
@@ -113,5 +140,18 @@ class Usuarios extends \system\Model {
 		return $this->select ( $sql, array (
 				'id' => $id 
 		), false );
+	}
+	
+	/**
+	 * Atualiza dados dos usuários (Alterar).
+	 *
+	 * @param Array $dados
+	 *        	Array com os dados a ser alterado.
+	 * @param int $id
+	 *        	Id do usuário.
+	 * @return boolean True alteração com sucesso.
+	 */
+	public function atualiza_usuario($dados, $id) {
+		return $this->update ( 'usuario', $dados, "id = {$id}" );
 	}
 }

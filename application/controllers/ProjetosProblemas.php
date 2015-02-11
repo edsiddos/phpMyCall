@@ -66,8 +66,6 @@ class ProjetosProblemas extends \system\Controller {
 	 * Busca os tipos de projetos
 	 */
 	public function getProjetos() {
-		$model = new \application\models\ProjetosProblemas ();
-		
 		$nome = $_POST ['term'];
 		
 		echo json_encode ( $this->model->getProjetos ( $nome ) );

@@ -101,7 +101,7 @@ class Model {
 		echo "INSERT INTO $table (`$camposNomes`) VALUES ($camposValores)";
 		
 		// Prepara a Query
-		$this->statement = $this->conn->prepare ( "INSERT INTO $table (`$camposNomes`) VALUES ($camposValores)" );
+		$sth = $this->conn->prepare ( "INSERT INTO $table (`$camposNomes`) VALUES ($camposValores)" );
 		
 		// Define os dados
 		foreach ( $data as $key => $value ) {
@@ -109,10 +109,62 @@ class Model {
 			$tipo = (is_int ( $value )) ? PDO::PARAM_INT : PDO::PARAM_STR;
 			
 			// Define o dado
-			$this->statement->bindValue ( ":$key", $value, $tipo );
+			$sth->bindValue ( ":$key", $value, $tipo );
 		}
 		
 		// Executa
-		return $this->statement->execute ();
+		return $sth->execute ();
+	}
+	
+	/**
+	 * Atualiza uma tabela no banco de dados.
+	 *
+	 * @param String $table
+	 *        	Nome da tabela.
+	 * @param Array $data
+	 *        	Campos e seus respectivos valores.
+	 * @param String $where
+	 *        	Condição de atualização.
+	 * @return Integer
+	 */
+	public function update($table, $data, $where) {
+		// Define os dados que serão atualizados
+		$novosDados = NULL;
+		
+		foreach ( $data as $key => $value ) {
+			$novosDados .= "`$key`=:$key,";
+		}
+		
+		$novosDados = rtrim ( $novosDados, ',' );
+		
+		// Prepara a Query
+		$sth = $this->conn->prepare ( "UPDATE $table SET $novosDados WHERE $where" );
+		
+		// Define os dados
+		foreach ( $data as $key => $value ) {
+			// Se o tipo do dado for inteiro, usa PDO::PARAM_INT, caso contrário, PDO::PARAM_STR
+			$tipo = (is_int ( $value )) ? PDO::PARAM_INT : PDO::PARAM_STR;
+			
+			// Define o dado
+			$sth->bindValue ( ":$key", $value, $tipo );
+		}
+		
+		// Sucesso ou falha?
+		return $sth->execute ();
+	}
+	
+	/**
+	 * Deleta um dado da tabela.
+	 *
+	 * @param String $table
+	 *        	Nome da tabela.
+	 * @param String $where
+	 *        	Condição de atualização.
+	 * @return Integer
+	 */
+	public function delete($table, $where) {
+		// Deleta
+		$sth = $this->conn->prepare ( "DELETE FROM $table WHERE $where" );
+		return $sth->execute ();
 	}
 }
