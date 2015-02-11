@@ -19,7 +19,7 @@
 namespace application\controllers;
 
 /**
- * Controlador da p·gina principal
+ * Controlador da p√°gina principal
  *
  * @author Ednei Leite da Silva
  */

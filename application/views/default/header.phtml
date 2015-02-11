@@ -1,14 +1,16 @@
 
 <?php
+setlocale(LC_ALL, 'pt_BR.utf8');
+header('Content-Type: text/html; charset=UTF-8');
 
 use \application\controllers\Login, \libs\Cache, \libs\Menu;
 
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
+
+<html>
     <head>
-        <meta charset="ISO-8859-1">
+        <meta charset="UTF-8">
         <title><?= $title ?></title>
         <link rel="stylesheet" href="<?= HTTP_CSS . '/bootstrap.min.css' ?>" />
         <link rel="stylesheet" href="<?= HTTP_CSS . '/bootstrap-theme.min.css' ?>" />

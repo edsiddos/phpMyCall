@@ -20,7 +20,7 @@
 namespace libs;
 
 /**
- * Implenta mÈtodos n„o categorizados
+ * Implenta m√©todos n√£o categorizados
  *
  * @author Ednei Leite da Silva
  */
@@ -29,7 +29,7 @@ final class Utils {
     /**
      * Verica a existencia de um valor dentro de um array.
      * @param mixed $values Valor a ser procurado.
-     * @param Array $array Array onde ser· buscado o valor desejado
+     * @param Array $array Array onde ser√° buscado o valor desejado
      * @return boolean Retorna TRUE se valor for encontrado.
      */
     public static function exist_value_array($values, $array){

@@ -18,15 +18,15 @@
 namespace application\models;
 
 /**
- * Manipula usu·rios
+ * Manipula usu√°rios
  *
  * @author Ednei Leite da Silva
  */
 class Usuarios extends \system\Model {
 	
 	/**
-	 * Obtem os perfils que o usu·rio novo podera ter a partir
-	 * do usu·rio que esta criando (um gerente n„o poder· criar outro gerente)
+	 * Obtem os perfils que o usu√°rio novo podera ter a partir
+	 * do usu√°rio que esta criando (um gerente n√£o poder√° criar outro gerente)
 	 *
 	 * @param string $nome
 	 *        	Nome do perfil.
@@ -42,10 +42,10 @@ class Usuarios extends \system\Model {
 	}
 	
 	/**
-	 * Grava novo usu·rio.
+	 * Grava novo usu√°rio.
 	 *
 	 * @param Array $dados
-	 *        	Array com os dados necess·rios para criaÁ„o de novo usu·rio.
+	 *        	Array com os dados necess√°rios para cria√ß√£o de novo usu√°rio.
 	 * @return boolean TRUE se inserido.
 	 */
 	public function inserir_usuario($dados) {
@@ -53,10 +53,10 @@ class Usuarios extends \system\Model {
 	}
 	
 	/**
-	 * Verifica se usu·rio existe
+	 * Verifica se usu√°rio existe
 	 *
 	 * @param string $user
-	 *        	Usu·rio
+	 *        	Usu√°rio
 	 * @return Array
 	 */
 	public function get_usuario($user, $id) {
@@ -84,72 +84,54 @@ class Usuarios extends \system\Model {
 	}
 	
 	/**
-	 * Dados necess·rios para alterar perfil de usu·rios
+	 * Busca usu√°rios a partir de um nome informado.
 	 *
 	 * @param string $nome
-	 *        	Nome do perfil do usu·rio
-	 */
-	public function get_id_usuarios($nome) {
-		$sql = "SELECT usuario.id, usuario.nome, usuario.usuario AS usuario, perfil.perfil AS perfil
-				FROM usuario
-				INNER JOIN perfil ON usuario.perfil = perfil.id
-				WHERE usuario.perfil < (SELECT id FROM perfil WHERE perfil = :nome)
-				ORDER BY usuario.nome";
-		
-		return $this->select ( $sql, array (
-				'nome' => $nome 
-		), true );
-	}
-	
-	/**
-	 * Busca usu·rios a partir de um nome informado.
-	 *
-	 * @param string $nome
-	 *        	Nome do usu·rio.
+	 *        	Nome do usu√°rio.
 	 * @param string $perfil
-	 *        	Perfil do usu·rio (nÌvel de acesso).
-	 * @return Array Retorna relaÁ„o de nomes semelhantes.
+	 *        	Perfil do usu√°rio (n√≠vel de acesso).
+	 * @return Array Retorna rela√ß√£o de nomes semelhantes.
 	 */
-	public function get_usuario_nome($nome, $perfil) {
-		$sql = "SELECT nome FROM usuario WHERE nome LIKE :nome
+	public function get_usuario_nome($usuario, $perfil) {
+		$sql = "SELECT nome, usuario FROM usuario WHERE usuario LIKE :usuario
 				AND perfil < (SELECT id FROM perfil WHERE perfil = :perfil)";
 		
 		$result = $this->select ( $sql, array (
-				'nome' => utf8_encode("%{$nome}%"),
-				'perfil' => utf8_encode($perfil)
+				'usuario' => "%{$usuario}%",
+				'perfil' => $perfil 
 		) );
 		
 		foreach ( $result as $key => $values ) {
-			$return [$key]['label'] = utf8_encode($values ['nome'] + '1111');
-			$return [$key]['value'] = utf8_encode($values ['nome']);
+			$return [$key] ['label'] = $values ['usuario'] . ' (' . $values ['nome'] . ')';
+			$return [$key] ['value'] = $values ['usuario'];
 		}
 		
 		return $return;
 	}
 	
 	/**
-	 * Busca dados do usu·rio a partir do ID
+	 * Busca dados do usu√°rio a partir do ID
 	 *
 	 * @param int $id
-	 *        	ID do usu·rio
-	 * @return Array Retorna array com os dados do usu·rio
+	 *        	ID do usu√°rio
+	 * @return Array Retorna array com os dados do usu√°rio
 	 */
-	public function get_dados_usuarios($id) {
-		$sql = "SELECT id, usuario, nome, email, perfil FROM usuario WHERE id = :id";
+	public function get_dados_usuarios($usuario) {
+		$sql = "SELECT id, usuario, nome, email, perfil FROM usuario WHERE usuario = :usuario";
 		
 		return $this->select ( $sql, array (
-				'id' => $id 
+				'usuario' => $usuario 
 		), false );
 	}
 	
 	/**
-	 * Atualiza dados dos usu·rios (Alterar).
+	 * Atualiza dados dos usu√°rios (Alterar).
 	 *
 	 * @param Array $dados
 	 *        	Array com os dados a ser alterado.
 	 * @param int $id
-	 *        	Id do usu·rio.
-	 * @return boolean True alteraÁ„o com sucesso.
+	 *        	Id do usu√°rio.
+	 * @return boolean True altera√ß√£o com sucesso.
 	 */
 	public function atualiza_usuario($dados, $id) {
 		return $this->update ( 'usuario', $dados, "id = {$id}" );

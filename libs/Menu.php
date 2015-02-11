@@ -21,7 +21,7 @@ namespace libs;
 use \system\Model;
 
 /**
- * Consulta permissıes dos usu·rios
+ * Consulta permiss√µes dos usu√°rios
  *
  * @author Ednei Leite da Silva
  */
@@ -47,12 +47,12 @@ class Menu {
 	}
 	
 	/**
-	 * Menus por perfil de usu·rios.
+	 * Menus por perfil de usu√°rios.
 	 * exemplo:
 	 * <pre>
-	 * Usu·rio array(
+	 * Usu√°rio array(
 	 * Chat => chat/index,
-	 * SolicitaÁ„o => array(
+	 * Solicita√ß√£o => array(
 	 * Finalizadas => Solicitacao/finalizada,
 	 * Em atendimento => Solicitacao/atendimento,
 	 * Abertas => Solicitacao/aberta

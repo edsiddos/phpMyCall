@@ -24,7 +24,7 @@ require_once 'system/config.php';
  *        	Classe a ser carregado
  */
 function __autoload($class) {
-	$file = str_replace ( '\\', '/', $class . '.php' );
+	$file = str_replace ( '\\', DIRECTORY_SEPARATOR, $class . '.php' );
 	
 	/*
 	 * Verifica se arquivo existe

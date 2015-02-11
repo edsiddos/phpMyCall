@@ -21,7 +21,7 @@ namespace application\controllers;
 use \application\models\Login as ModelLogin;
 
 /**
- * Classe que realiza login e verifica se o usuário esta
+ * Classe que realiza login e verifica se o usuÃ¡rio esta
  * autenticado no sistema.
  *
  * @author Ednei Leite da Silva
@@ -29,9 +29,9 @@ use \application\models\Login as ModelLogin;
 class Login extends \system\Controller {
 	
 	/**
-	 * Verifica se usuários esta logado, caso esteja rediciona para página
-	 * inicial da aplicação.
-	 * Caso contrário exibe tela de login.
+	 * Verifica se usuÃ¡rios esta logado, caso esteja rediciona para pÃ¡gina
+	 * inicial da aplicaÃ§Ã£o.
+	 * Caso contrÃ¡rio exibe tela de login.
 	 *
 	 * @param Array $parametros
 	 *        	Dados passados via url amigavel
@@ -49,9 +49,9 @@ class Login extends \system\Controller {
 	}
 	
 	/**
-	 * Verifica se usuário esta logado.
+	 * Verifica se usuÃ¡rio esta logado.
 	 *
-	 * @return boolean Retorna <b>TRUE</b> se usuário devidamente logado, <b>FALSE</b> caso contrário.
+	 * @return boolean Retorna <b>TRUE</b> se usuÃ¡rio devidamente logado, <b>FALSE</b> caso contrÃ¡rio.
 	 */
 	public static function verifica_login() {
 		session_start ();
@@ -70,7 +70,7 @@ class Login extends \system\Controller {
 	
 	/**
 	 * Recebe login e senha via <b>POST</b> efetua login, caso dados estejam corretos
-	 * cria sessão e redireciona a página inicial
+	 * cria sessÃ£o e redireciona a pÃ¡gina inicial
 	 */
 	public function efetuar_login() {
 		$usuario = (is_string ( $_POST ['usuario'] ) ? $_POST ['usuario'] : '');
@@ -96,7 +96,7 @@ class Login extends \system\Controller {
 	}
 	
 	/**
-	 * Remove variáveis de sessão do usuário, e redireciona
+	 * Remove variÃ¡veis de sessÃ£o do usuÃ¡rio, e redireciona
 	 * para tela de login.
 	 */
 	public function efetuar_logout() {

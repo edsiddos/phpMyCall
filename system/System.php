@@ -22,7 +22,7 @@ use \system\Controller;
 use \application\controllers\Error;
 
 /**
- * Classe responsável por carregar os controladores
+ * Classe responsÃ¡vel por carregar os controladores
  *
  * @author Ednei Leite da Silva
  */
@@ -33,7 +33,7 @@ class System {
 	private $action;
 	
 	/**
-	 * Método construtor
+	 * MÃ©todo construtor
 	 *
 	 * @param string $url
 	 *        	Dados informados no formato url amigavel.
@@ -66,7 +66,7 @@ class System {
 	}
 	
 	/**
-	 * Executa controlador com action e passa os parâmetros
+	 * Executa controlador com action e passa os parÃ¢metros
 	 */
 	public function run() {
 		if (class_exists ( $this->controller )) {

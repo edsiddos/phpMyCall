@@ -21,21 +21,21 @@ use \application\models\Usuarios as ModelUsuarios;
 use \libs\Menu;
 
 /**
- * Mantem usuários
+ * Mantem usuÃ¡rios
  *
  * @author Ednei Leite da Silva
  */
 class Usuarios extends \system\Controller {
 	
 	/**
-	 * Objeto para obtenção de dados dos usuários.
+	 * Objeto para obtenÃ§Ã£o de dados dos usuÃ¡rios.
 	 *
 	 * @var ModelUsuarios
 	 */
 	private $model;
 	
 	/**
-	 * Verifica se usuários esta logado antes de executar operação
+	 * Verifica se usuÃ¡rios esta logado antes de executar operaÃ§Ã£o
 	 */
 	public function __construct() {
 		parent::__construct ();
@@ -47,20 +47,20 @@ class Usuarios extends \system\Controller {
 	}
 	
 	/**
-	 * Gera tela com formulário para inserção de novo usuário
+	 * Gera tela com formulÃ¡rio para inserÃ§Ã£o de novo usuÃ¡rio
 	 */
 	public function cadastrar_usuario() {
 		$permissao = 'Usuarios/cadastrar_usuario';
 		
 		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
 			$title = array (
-					"title" => "Cadastro de usuário" 
+					"title" => "Cadastro de usuÃ¡rio" 
 			);
 			
 			$vars = array (
 					'perfil' => $this->model->get_perfil ( $_SESSION ['perfil'] ),
 					'link' => HTTP . '/Usuarios/novo_usuario',
-					'title_botao' => "Cadastrar Usuário" 
+					'title_botao' => "Cadastrar UsuÃ¡rio" 
 			);
 			
 			$this->load_view ( "default/header", $title );
@@ -72,7 +72,7 @@ class Usuarios extends \system\Controller {
 	}
 	
 	/**
-	 * Realiza a inserção de um novo usuário no sistema
+	 * Realiza a inserÃ§Ã£o de um novo usuÃ¡rio no sistema
 	 */
 	public function novo_usuario() {
 		$permissao = 'Usuarios/cadastrar_usuario';
@@ -81,9 +81,9 @@ class Usuarios extends \system\Controller {
 			$dados = $this->get_dados_post_usuario ();
 			
 			if ($this->model->inserir_usuario ( $dados )) {
-				$_SESSION ['msg_sucesso'] = "Usuário inserido com sucesso.";
+				$_SESSION ['msg_sucesso'] = "UsuÃ¡rio inserido com sucesso.";
 			} else {
-				$_SESSION ['msg_erro'] = "Erro ao inserir novo usuário. Verifique dados e tente novamente.";
+				$_SESSION ['msg_erro'] = "Erro ao inserir novo usuÃ¡rio. Verifique dados e tente novamente.";
 			}
 			
 			$this->redir ( 'Usuarios/cadastrar_usuario' );
@@ -93,9 +93,9 @@ class Usuarios extends \system\Controller {
 	}
 	
 	/**
-	 * Processa dados para atualização ou inserção de um usuário.
+	 * Processa dados para atualizaÃ§Ã£o ou inserÃ§Ã£o de um usuÃ¡rio.
 	 *
-	 * @return Array Retorna um array com os dados do usuário.
+	 * @return Array Retorna um array com os dados do usuÃ¡rio.
 	 */
 	private function get_dados_post_usuario() {
 		$nome = $_POST ['inputNome'];
@@ -105,10 +105,10 @@ class Usuarios extends \system\Controller {
 		$email = $_POST ['inputEMail'];
 		$perfil = $_POST ['selectPerfil'];
 		
-		/* Verifica se todos os dados necessários foram informados */
+		/* Verifica se todos os dados necessÃ¡rios foram informados */
 		$datetime = NULL;
 		
-		// caso o usuário tenha selecionado "Senha temporária"
+		// caso o usuÃ¡rio tenha selecionado "Senha temporÃ¡ria"
 		// seta data de troca para "HOJE"
 		if ($changeme) {
 			$datetime = new \DateTime ();
@@ -133,7 +133,7 @@ class Usuarios extends \system\Controller {
 	}
 	
 	/**
-	 * Verifica se o usuário existe
+	 * Verifica se o usuÃ¡rio existe
 	 */
 	public function valida_usuario() {
 		$permissao_1 = 'Usuarios/cadastrar_usuario';
@@ -149,7 +149,7 @@ class Usuarios extends \system\Controller {
 	}
 	
 	/**
-	 * Verifica se existe email para algum usuário
+	 * Verifica se existe email para algum usuÃ¡rio
 	 */
 	public function valida_email() {
 		$permissao_1 = 'Usuarios/cadastrar_usuario';
@@ -165,26 +165,24 @@ class Usuarios extends \system\Controller {
 	}
 	
 	/**
-	 * Busca usuário para realizar alteração
+	 * Busca usuÃ¡rio para realizar alteraÃ§Ã£o
 	 */
 	public function alterar_usuario() {
 		$permissao = 'Usuarios/alterar_usuario';
 		
 		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
 			$title = array (
-					"title" => "Alterar usuário" 
+					"title" => "Alterar usuÃ¡rio" 
 			);
-			
-			$usuarios ['usuarios'] = $this->model->get_id_usuarios ( $_SESSION ['perfil'] );
 			
 			$vars = array (
 					'perfil' => $this->model->get_perfil ( $_SESSION ['perfil'] ),
 					'link' => HTTP . '/Usuarios/atualiza_usuario',
-					'title_botao' => "Alterar Usuário" 
+					'title_botao' => "Alterar UsuÃ¡rio" 
 			);
 			
 			$this->load_view ( "default/header", $title );
-			$this->load_view ( "usuarios/relacao_usuarios", $usuarios );
+			$this->load_view ( "usuarios/relacao_usuarios");
 			$this->load_view ( "usuarios/usuario", $vars );
 			$this->load_view ( "default/footer" );
 		} else {
@@ -193,7 +191,7 @@ class Usuarios extends \system\Controller {
 	}
 	
 	/**
-	 * Busca os nomes de usuários
+	 * Busca os nomes de usuÃ¡rios
 	 */
 	public function get_usuario_nome() {
 		$permissao_1 = 'Usuarios/alterar_usuario';
@@ -201,28 +199,28 @@ class Usuarios extends \system\Controller {
 		$perfil = $_SESSION ['perfil'];
 		
 		if (Menu::possue_permissao ( $perfil, $permissao_1 ) || Menu::possue_permissao ( $perfil, $permissao_2 )) {
-			$nome = $_POST ['term'];
+			$usuario = $_POST ['term'];
 			
-			echo json_encode ( $this->model->get_usuario_nome ( $nome, $perfil ) );
+			echo json_encode ( $this->model->get_usuario_nome ( $usuario, $perfil ) );
 		}
 	}
 	
 	/**
-	 * Busca dados do usuario selecionado para alteração
+	 * Busca dados do usuario selecionado para alteraÃ§Ã£o
 	 */
 	public function get_dados_usuarios() {
 		$permissao = 'Usuarios/alterar_usuario';
 		$perfil = $_SESSION ['perfil'];
 		
 		if (Menu::possue_permissao ( $perfil, $permissao )) {
-			$id = $_POST ['id'];
+			$usuario = $_POST ['usuario'];
 			
-			echo json_encode ( $this->model->get_dados_usuarios ( $id ) );
+			echo json_encode ( $this->model->get_dados_usuarios ( $usuario ) );
 		}
 	}
 	
 	/**
-	 * Realiza a atualização do usuário
+	 * Realiza a atualizaÃ§Ã£o do usuÃ¡rio
 	 */
 	public function atualiza_usuario() {
 		$permissao = 'Usuarios/alterar_usuario';
@@ -233,12 +231,12 @@ class Usuarios extends \system\Controller {
 			$id = $_POST ['inputID'];
 			
 			if ($this->model->atualiza_usuario ( $dados, $id )) {
-				$_SESSION ['msg_sucesso'] = "Usuário alterado com sucesso.";
+				$_SESSION ['msg_sucesso'] = "UsuÃ¡rio alterado com sucesso.";
 			} else {
-				$_SESSION ['msg_erro'] = "Erro ao alterar usuário. Verifique dados e tente novamente.";
+				$_SESSION ['msg_erro'] = "Erro ao alterar usuÃ¡rio. Verifique dados e tente novamente.";
 			}
 			
-			$this->redir ( 'Usuarios/cadastrar_usuario' );
+			$this->redir ( 'Usuarios/alterar_usuario' );
 		} else {
 			$this->redir ( 'Main/index' );
 		}
@@ -248,17 +246,18 @@ class Usuarios extends \system\Controller {
 		
 		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
 			$title = array (
-					"title" => "Excluir usuário" 
+					"title" => "Excluir usuÃ¡rio" 
 			);
 			
 			$vars = array (
 					'perfil' => $this->model->get_perfil ( $_SESSION ['perfil'] ),
-					'usuarios' => $this->model->get_id_usuarios ( $_SESSION ['perfil'] ),
-					'title_botao' => "Alterar Usuário" 
+					'link' => HTTP . '/Usuarios/remove_usuario',
+					'title_botao' => "Excluir UsuÃ¡rio" 
 			);
 			
 			$this->load_view ( "default/header", $title );
-			$this->load_view ( "usuarios/delete", $vars );
+			$this->load_view ( "usuarios/delete" );
+			$this->load_view ( "usuarios/usuario", $vars );
 			$this->load_view ( "default/footer" );
 		} else {
 			$this->redir ( 'Main/index' );

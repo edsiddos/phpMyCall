@@ -26,17 +26,17 @@ if (DEBUG === true) {
 }
 
 // ################################################
-// Define os par‚metros de acesso ao banco de dados
-// EndereÁo do banco de dados
+// Define os par√¢metros de acesso ao banco de dados
+// Endere√ßo do banco de dados
 define ( 'DB_HOST', 'localhost' );
 
 // Nome do banco de dados
 define ( 'DB_NOME', 'myphphelpdesk' );
 
-// Usu·rio do banco de dados
+// Usu√°rio do banco de dados
 define ( 'DB_USER', 'dev' );
 
-// Senha do usu·rio do banco de dados
+// Senha do usu√°rio do banco de dados
 define ( 'DB_PASS', 'dev' );
 
 // ################################################
@@ -62,7 +62,7 @@ define ( 'SYSTEM', PATH . '/system' );
 define ( 'CLASSES', PATH . '/class' );
 
 // ################################################
-// EndereÁo do site
+// Endere√ßo do site
 define ( 'HTTP', 'http://localhost/myphphelpdesk' );
 
 // Pasta dos arquivos css

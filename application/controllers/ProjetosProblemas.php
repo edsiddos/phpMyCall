@@ -29,7 +29,7 @@ use \libs\Menu;
 class ProjetosProblemas extends \system\Controller {
 	
 	/**
-	 * Objeto de conex„o com banco de dados
+	 * Objeto de conex√£o com banco de dados
 	 * que manipula dados de projetos e problemas
 	 *
 	 * @var ProjetosProblemas

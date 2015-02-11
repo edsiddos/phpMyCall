@@ -1,1 +1,41 @@
-<?php
+
+<script type="text/javascript">
+	$(document).ready(function(){
+
+		$("input[name='inputUsuario']").autocomplete({
+			source: function (request, response) {
+				$.ajax({
+					url: '<?= HTTP . '/Usuarios/get_usuario_nome' ?>',
+                    data: request,
+                    dataType: 'json',
+                    type: 'POST',
+                    success: function (data) {
+                        response(data);
+                    }
+				});
+			},
+			focus: function(event, json){
+				$.ajax({
+					url: '<?= HTTP . '/Usuarios/get_dados_usuarios'; ?>',
+					data: 'usuario=' + json.item.value,
+					dataType: 'json',
+					type: 'POST',
+					success: function(json){
+						$('#inputID').val(json.id);
+						$('#inputNome').val(json.nome);
+						$('#inputUsuario').val(json.usuario);
+						$('#inputEMail').val(json.email);
+						$('#selectPerfil').val(json.perfil);
+					}
+				});
+			}
+		});
+
+		$('#inputNome').attr('readonly', true);
+		$('#inputEMail').attr('readonly', true);
+		$('#selectPerfil').attr('disabled', true);
+		$('#inputSenha').attr('readonly', true);
+		$('#inputSenha').attr('required', false);
+		
+	});
+</script>

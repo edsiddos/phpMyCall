@@ -19,7 +19,7 @@
 namespace system;
 
 /**
- * Classe base para os controladores da aplicaÁ„o
+ * Classe base para os controladores da aplica√ß√£o
  *
  * @author Ednei Leite da Silva
  */
@@ -29,7 +29,7 @@ class Controller {
 	}
 	
 	/**
-	 * Carrega as views das aplicaÁıes
+	 * Carrega as views das aplica√ß√µes
 	 *
 	 * @param string $path
 	 *        	Caminho a partir da pasta view.
@@ -43,12 +43,12 @@ class Controller {
 			}
 			require_once VIEWS . '/' . $path . '.phtml';
 		} else {
-			$this->error ( "P·gina n„o encontrada" );
+			$this->error ( "P√°gina n√£o encontrada" );
 		}
 	}
 	
 	/**
-	 * Exibe erro ao acessar a p·gina
+	 * Exibe erro ao acessar a p√°gina
 	 *
 	 * @param string $mensagem
 	 *        	Mensagem de erro
@@ -58,7 +58,7 @@ class Controller {
 	}
 	
 	/**
-	 * Redireciona p·gina
+	 * Redireciona p√°gina
 	 *
 	 * @param string $url
 	 *        	Caminho relativo (link interno)

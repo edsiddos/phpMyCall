@@ -19,7 +19,7 @@
 namespace application\models;
 
 /**
- * Manipula inserção, atualização e consultas de projetos e tipos de problemas.
+ * Manipula inserÃ§Ã£o, atualizaÃ§Ã£o e consultas de projetos e tipos de problemas.
  *
  * @author Ednei Leite da Silva
  */

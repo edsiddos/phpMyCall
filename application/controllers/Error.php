@@ -32,11 +32,11 @@ class Error extends \system\Controller {
 	}
 	
 	/**
-	 * Método que mostra a página de erro 404
+	 * MÃ©todo que mostra a pÃ¡gina de erro 404
 	 */
 	public function erro_404() {
 		$vars = array (
-				'title' => 'Página não encontrada.' 
+				'title' => 'PÃ¡gina nÃ£o encontrada.' 
 		);
 		
 		$this->load_view ( 'default/header', $vars );

@@ -29,22 +29,27 @@ class Model {
 	
 	/**
 	 *
-	 * @var PDO Objeto de conexão com banco de dados.
+	 * @var PDO Objeto de conexÃ£o com banco de dados.
 	 */
 	private $conn;
 	
 	/**
 	 *
-	 * @var PDOStatement Prepara uma instrução SQL para ser executada.
+	 * @var PDOStatement Prepara uma instruÃ§Ã£o SQL para ser executada.
 	 */
 	private $statement;
 	
 	/**
-	 * Método construtor que inicializa conexão com banco de dados
+	 * MÃ©todo construtor que inicializa conexÃ£o com banco de dados
 	 */
 	public function __construct() {
 		try {
-			$this->conn = new PDO ( "mysql:host=" . DB_HOST . ";dbname=" . DB_NOME . ";", DB_USER, DB_PASS );
+			
+			$opcoes = array(
+					PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8'
+			);
+			
+			$this->conn = new PDO ( "mysql:host=" . DB_HOST . ";dbname=" . DB_NOME . ";charset=utf8", DB_USER, DB_PASS, $opcoes );
 			/* Verifica se devemos debugar */
 			if (DEBUG === true) {
 				/* Configura o PDO ERROR MODE */
@@ -61,7 +66,7 @@ class Model {
 	 * @param string $sql
 	 *        	Query a ser executada.
 	 * @param array $array
-	 *        	Array com os dados necessários para a consulta.
+	 *        	Array com os dados necessÃ¡rios para a consulta.
 	 * @param boolean $fecthall
 	 *        	Retorna toda as linha (TRUE) ou apenas uma linha (FALSE).
 	 * @param PDO $fecthmode
@@ -91,7 +96,7 @@ class Model {
 	 *        	Nome da tabela.
 	 * @param Array $data
 	 *        	Campos e seus respectivos valores.
-	 * @return boolean Retorna TRUE caso sucesso ou FALSE caso contrário.
+	 * @return boolean Retorna TRUE caso sucesso ou FALSE caso contrÃ¡rio.
 	 */
 	public function insert($table, $data) {
 		// Campos e valores
@@ -105,7 +110,7 @@ class Model {
 		
 		// Define os dados
 		foreach ( $data as $key => $value ) {
-			// Se o tipo do dado for inteiro, usa PDO::PARAM_INT, caso contrário, PDO::PARAM_STR
+			// Se o tipo do dado for inteiro, usa PDO::PARAM_INT, caso contrÃ¡rio, PDO::PARAM_STR
 			$tipo = (is_int ( $value )) ? PDO::PARAM_INT : PDO::PARAM_STR;
 			
 			// Define o dado
@@ -124,11 +129,11 @@ class Model {
 	 * @param Array $data
 	 *        	Campos e seus respectivos valores.
 	 * @param String $where
-	 *        	Condição de atualização.
+	 *        	CondiÃ§Ã£o de atualizaÃ§Ã£o.
 	 * @return Integer
 	 */
 	public function update($table, $data, $where) {
-		// Define os dados que serão atualizados
+		// Define os dados que serÃ£o atualizados
 		$novosDados = NULL;
 		
 		foreach ( $data as $key => $value ) {
@@ -142,7 +147,7 @@ class Model {
 		
 		// Define os dados
 		foreach ( $data as $key => $value ) {
-			// Se o tipo do dado for inteiro, usa PDO::PARAM_INT, caso contrário, PDO::PARAM_STR
+			// Se o tipo do dado for inteiro, usa PDO::PARAM_INT, caso contrÃ¡rio, PDO::PARAM_STR
 			$tipo = (is_int ( $value )) ? PDO::PARAM_INT : PDO::PARAM_STR;
 			
 			// Define o dado
@@ -159,7 +164,7 @@ class Model {
 	 * @param String $table
 	 *        	Nome da tabela.
 	 * @param String $where
-	 *        	Condição de atualização.
+	 *        	CondiÃ§Ã£o de atualizaÃ§Ã£o.
 	 * @return Integer
 	 */
 	public function delete($table, $where) {

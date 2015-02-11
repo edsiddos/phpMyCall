@@ -19,15 +19,15 @@
 namespace application\models;
 
 /**
- * Manipula dados referentes a login dos usu·rios
+ * Manipula dados referentes a login dos usu√°rios
  *
  * @author Ednei Leite da Silva
  */
 class Login extends \system\Model {
 	
 	/**
-	 * Pesquisa dados do usu·rio
-	 * 
+	 * Pesquisa dados do usu√°rio
+	 *
 	 * @param string $usuario        	
 	 * @param string $senha        	
 	 * @return Array Retorna array com <b>nome</b>, <b>usuario</b>, <b>email</b>, <b>perfil</b>.

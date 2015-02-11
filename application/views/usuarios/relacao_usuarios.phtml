@@ -2,7 +2,7 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 
-		$("input[name='inputNome']").autocomplete({
+		$("input[name='inputUsuario']").autocomplete({
 			source: function (request, response) {
 				$.ajax({
 					url: '<?= HTTP . '/Usuarios/get_usuario_nome' ?>',
@@ -14,21 +14,10 @@
                     }
 				});
 			},
-			select: function(event, ui){
-				alert(ui.item.label + ' ' + ui.item.value);
-			}
-		});
-
-		$('#inputSenha').attr('required', false);
-		
-		$('#editar_usuario').on('click', function(){
-			var nome = $("input[name='nome']").val();
-			var usuario = $("input[name='usuario']").val();
-			
-			if(id.length > 0){
+			focus: function(event, json){
 				$.ajax({
 					url: '<?= HTTP . '/Usuarios/get_dados_usuarios'; ?>',
-					data: 'id=' + id,
+					data: 'usuario=' + json.item.value,
 					dataType: 'json',
 					type: 'POST',
 					success: function(json){
@@ -37,11 +26,22 @@
 						$('#inputUsuario').val(json.usuario);
 						$('#inputEMail').val(json.email);
 						$('#selectPerfil').val(json.perfil);
-						$('#inputSenha').attr('required', false);
 					}
 				});
+			},
+			select: function(){
+				$('#inputNome').attr('readonly', false);
+				$('#inputEMail').attr('readonly', false);
+				$('#selectPerfil').attr('readonly', false);
+				$('#inputSenha').attr('readonly', false);
 			}
 		});
+
+		$('#inputNome').attr('readonly', true);
+		$('#inputEMail').attr('readonly', true);
+		$('#selectPerfil').attr('readonly', true);
+		$('#inputSenha').attr('readonly', true);
+		$('#inputSenha').attr('required', false);
 		
 	});
 </script>
