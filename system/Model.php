@@ -169,7 +169,7 @@ class Model {
 	 */
 	public function delete($table, $where) {
 		// Deleta
-		$sth = $this->conn->prepare ( "DELETE FROM $table WHERE $where" );
-		return $sth->execute ();
+		$sth = $this->conn->prepare("DELETE FROM $table WHERE $where");
+		return $sth->execute();
 	}
 }
