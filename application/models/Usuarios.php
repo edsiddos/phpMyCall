@@ -136,4 +136,22 @@ class Usuarios extends \system\Model {
 	public function atualiza_usuario($dados, $id) {
 		return $this->update ( 'usuario', $dados, "id = {$id}" );
 	}
+	
+	/**
+	 * Realiza a exclusão de usuários.
+	 * 
+	 * @param int $id
+	 *        	Id do usuário.
+	 * @param string $usuario        	
+	 * @param string $email        	
+	 * @param string $perfil
+	 *        	Perfil do usuário solicitante de exclusão.
+	 * @return boolean True se excluido com sucesso, False se falha.
+	 */
+	public function exclui_usuario($id, $usuario, $email, $perfil) {
+		$where = "id = {$id} AND usuario = '{$usuario}' AND email = '{$email}' AND perfil < ";
+		$where .= "(SELECT id FROM perfil WHERE perfil = '{$perfil}')";
+		
+		return $this->delete ( 'usuario', $where );
+	}
 }

@@ -14,7 +14,7 @@
                     }
 				});
 			},
-			focus: function(event, json){
+			select: function(event, json){
 				$.ajax({
 					url: '<?= HTTP . '/Usuarios/get_dados_usuarios'; ?>',
 					data: 'usuario=' + json.item.value,
@@ -28,8 +28,6 @@
 						$('#selectPerfil').val(json.perfil);
 					}
 				});
-			},
-			select: function(){
 				$('#inputNome').attr('readonly', false);
 				$('#inputEMail').attr('readonly', false);
 				$('#selectPerfil').attr('readonly', false);

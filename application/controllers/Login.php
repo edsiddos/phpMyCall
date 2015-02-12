@@ -19,6 +19,7 @@
 namespace application\controllers;
 
 use \application\models\Login as ModelLogin;
+use \libs\Log;
 
 /**
  * Classe que realiza login e verifica se o usuário esta
@@ -82,10 +83,15 @@ class Login extends \system\Controller {
 			
 			if (count ( $result ) > 0) {
 				session_start ();
+				$_SESSION ['id'] = $result ['id'];
 				$_SESSION ['username'] = $result ['usuario'];
 				$_SESSION ['nome'] = $result ['nome'];
 				$_SESSION ['email'] = $result ['email'];
 				$_SESSION ['perfil'] = $result ['perfil'];
+				
+				$result ['status'] = 'Login/efetuar_login';
+				Log::gravar ( $result, $result ['id'] );
+				
 				$this->redir ( "Main/index" );
 			} else {
 				$this->redir ( "Login/index" );
@@ -102,6 +108,11 @@ class Login extends \system\Controller {
 	public function efetuar_logout() {
 		session_start ();
 		
+		$result = $_SESSION;
+		$result['status'] = 'Login/efetuar_logout';
+		Log::gravar ( $result, $result ['id'] );
+		
+		unset ( $_SESSION ['id'] );
 		unset ( $_SESSION ['username'] );
 		unset ( $_SESSION ['name'] );
 		unset ( $_SESSION ['email'] );

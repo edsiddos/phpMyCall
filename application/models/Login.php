@@ -33,7 +33,7 @@ class Login extends \system\Model {
 	 * @return Array Retorna array com <b>nome</b>, <b>usuario</b>, <b>email</b>, <b>perfil</b>.
 	 */
 	public function get_dados_login($usuario, $senha) {
-		$sql = "SELECT usuario.nome, usuario.usuario, usuario.email, perfil.perfil FROM usuario
+		$sql = "SELECT usuario.id, usuario.nome, usuario.usuario, usuario.email, perfil.perfil FROM usuario
                 INNER JOIN perfil ON usuario.perfil = perfil.id
                 WHERE usuario.senha = sha1(md5(:senha)) AND usuario.usuario = :usuario";
 		

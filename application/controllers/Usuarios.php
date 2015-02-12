@@ -19,6 +19,7 @@ namespace application\controllers;
 
 use \application\models\Usuarios as ModelUsuarios;
 use \libs\Menu;
+use \libs\Log;
 
 /**
  * Mantem usuários
@@ -82,9 +83,13 @@ class Usuarios extends \system\Controller {
 			
 			if ($this->model->inserir_usuario ( $dados )) {
 				$_SESSION ['msg_sucesso'] = "Usuário inserido com sucesso.";
+				$dados ['status'] = $permissao . ' - ok';
 			} else {
 				$_SESSION ['msg_erro'] = "Erro ao inserir novo usuário. Verifique dados e tente novamente.";
+				$dados ['status'] = $permissao . ' - falha';
 			}
+			
+			Log::gravar ( $dados, $_SESSION ['id'] );
 			
 			$this->redir ( 'Usuarios/cadastrar_usuario' );
 		} else {
@@ -182,7 +187,7 @@ class Usuarios extends \system\Controller {
 			);
 			
 			$this->load_view ( "default/header", $title );
-			$this->load_view ( "usuarios/relacao_usuarios");
+			$this->load_view ( "usuarios/relacao_usuarios" );
 			$this->load_view ( "usuarios/usuario", $vars );
 			$this->load_view ( "default/footer" );
 		} else {
@@ -209,10 +214,11 @@ class Usuarios extends \system\Controller {
 	 * Busca dados do usuario selecionado para alteração
 	 */
 	public function get_dados_usuarios() {
-		$permissao = 'Usuarios/alterar_usuario';
+		$permissao_1 = 'Usuarios/alterar_usuario';
+		$permissao_2 = 'Usuarios/excluir_usuario';
 		$perfil = $_SESSION ['perfil'];
 		
-		if (Menu::possue_permissao ( $perfil, $permissao )) {
+		if (Menu::possue_permissao ( $perfil, $permissao_1 ) || Menu::possue_permissao ( $perfil, $permissao_2 )) {
 			$usuario = $_POST ['usuario'];
 			
 			echo json_encode ( $this->model->get_dados_usuarios ( $usuario ) );
@@ -232,15 +238,23 @@ class Usuarios extends \system\Controller {
 			
 			if ($this->model->atualiza_usuario ( $dados, $id )) {
 				$_SESSION ['msg_sucesso'] = "Usuário alterado com sucesso.";
+				$dados ['status'] = $permissao . ' - ok';
 			} else {
 				$_SESSION ['msg_erro'] = "Erro ao alterar usuário. Verifique dados e tente novamente.";
+				$dados ['status'] = $permissao . ' - falha';
 			}
+			
+			Log::gravar ( $dados, $_SESSION ['id'] );
 			
 			$this->redir ( 'Usuarios/alterar_usuario' );
 		} else {
 			$this->redir ( 'Main/index' );
 		}
 	}
+	
+	/**
+	 * Exibe tela de exclusão de usuários
+	 */
 	public function excluir_usuario() {
 		$permissao = 'Usuarios/excluir_usuario';
 		
@@ -259,6 +273,41 @@ class Usuarios extends \system\Controller {
 			$this->load_view ( "usuarios/delete" );
 			$this->load_view ( "usuarios/usuario", $vars );
 			$this->load_view ( "default/footer" );
+		} else {
+			$this->redir ( 'Main/index' );
+		}
+	}
+	
+	/**
+	 * Remove usuário selecionado
+	 */
+	public function remove_usuario() {
+		$permissao = 'Usuarios/excluir_usuario';
+		$perfil = $_SESSION ['perfil'];
+		
+		if (Menu::possue_permissao ( $perfil, $permissao )) {
+			$id = $_POST ['inputID'];
+			$usuario = $_POST ['inputUsuario'];
+			$email = $_POST ['inputEMail'];
+			
+			$dados = array (
+					'id' => $id,
+					'usuario' => $usuario,
+					'email' => $email,
+					'perfil' => $perfil 
+			);
+			
+			if ($this->model->exclui_usuario ( $id, $usuario, $email, $perfil )) {
+				$_SESSION ['msg_sucesso'] = "Usuário excluido com sucesso.";
+				$dados ['status'] = $permissao . ' - ok';
+			} else {
+				$_SESSION ['msg_erro'] = "Erro ao excluir usuário. Verifique dados e tente novamente.";
+				$dados ['status'] = $permissao . ' - falha';
+			}
+			
+			Log::gravar ( $dados, $_SESSION ['id'] );
+			
+			$this->redir ( 'Usuarios/excluir_usuario' );
 		} else {
 			$this->redir ( 'Main/index' );
 		}
