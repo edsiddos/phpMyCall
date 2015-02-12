@@ -12,6 +12,11 @@
                         response(data);
                     }
                 });
+            },
+            select: function (event, json){
+                $.ajax({
+					url: '<?= HTTP . '/ProjetosProblemas/get' ?>'
+                });
             }
         });
 
@@ -33,12 +38,13 @@
 </script>
 
 <div class="container">
-	<form class="form-horizontal">
+	<form class="form-horizontal" method="post" action="<?= $link; ?>">
+		<input type="hidden" name="inputID" id="inputID" value="0" />
 		<div class="form-group">
 			<label for="inputProjeto" class="control-label col-xs-2">Projeto</label>
 			<div class="col-xs-10">
 				<input type="text" class="form-control" id="inputProjeto"
-					name="inputProjeto" placeholder="Projeto">
+					name="inputProjeto" placeholder="Projeto" required>
 			</div>
 		</div>
 
@@ -47,7 +53,7 @@
 				Problema</label>
 			<div class="col-xs-10">
 				<input type="text" class="form-control" id="inputProblema"
-					name="inputProblema" placeholder="Tipo de problema">
+					name="inputProblema" placeholder="Tipo de problema" required>
 			</div>
 		</div>
 
@@ -56,7 +62,7 @@
 				resposta</label>
 			<div class="col-xs-10">
 				<input type="text" class="form-control" id="inputResposta"
-					name="inputResposta" placeholder="Tempo de resposta">
+					name="inputResposta" placeholder="Tempo de resposta" required>
 			</div>
 		</div>
 
@@ -65,22 +71,23 @@
 				solução</label>
 			<div class="col-xs-10">
 				<input type="text" class="form-control" id="inputSolucao"
-					placeholder="Tempo para solução">
+					placeholder="Tempo para solução" required>
 			</div>
 		</div>
 
 
 		<div class="form-group">
-			<label for="textDescricao" class="control-label col-xs-2">Descrição</label>
+			<label for="textDescricao" class="control-label col-xs-2">Descrição
+				do problemas</label>
 			<div class="col-xs-10">
 				<textarea class="form-control" id="textDescricao"
-					placeholder="Descrição do projeto"></textarea>
+					placeholder="Descrição do tipo de projeto"></textarea>
 			</div>
 		</div>
 
 		<div class="form-group">
 			<div class="col-xs-offset-2 col-xs-10">
-				<button type="submit" class="btn btn-primary">Login</button>
+				<button type="submit" class="btn btn-default"><?= $botao ?></button>
 			</div>
 		</div>
 	</form>

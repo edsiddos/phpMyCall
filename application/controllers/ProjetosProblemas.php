@@ -51,13 +51,21 @@ class ProjetosProblemas extends \system\Controller {
 	 * Tela de cadastro de projetos e problemas
 	 */
 	public function cadastrar_projeto_problema() {
-		$permissao = str_replace ( (__NAMESPACE__ . '\\'), '', (__CLASS__ . "/" . __FUNCTION__) );
+		$permissao = "ProjetosProblemas/cadastrar_projeto_problema";
 		
 		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
-			$this->load_view ( 'default/header', array (
+			
+			$title = array (
 					'title' => 'Cadastrar projetos' 
-			) );
-			$this->load_view ( 'projetos_problemas/cadastrar' );
+			);
+			
+			$pagina = array (
+					'link' => 'novo_projeto_problema',
+					'botao' => 'Cadastrar Projeto' 
+			);
+			
+			$this->load_view ( 'default/header', $title );
+			$this->load_view ( 'projetos_problemas/cadastrar', $pagina );
 			$this->load_view ( 'default/footer' );
 		}
 	}
@@ -65,18 +73,26 @@ class ProjetosProblemas extends \system\Controller {
 	/**
 	 * Busca os tipos de projetos
 	 */
-	public function getProjetos() {
-		$nome = $_POST ['term'];
+	public function get_projetos() {
+		$permissao = "ProjetosProblemas/cadastrarProjetoProblema";
 		
-		echo json_encode ( $this->model->getProjetos ( $nome ) );
+		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
+			$nome = $_POST ['term'];
+			
+			echo json_encode ( $this->model->getProjetos ( $nome ) );
+		}
 	}
 	
 	/**
 	 * Busca os tipos de problemas existentes
 	 */
 	public function getProblemas() {
-		$nome = $_POST ['term'];
+		$permissao = "ProjetosProblemas/cadastrarProjetoProblema";
 		
-		echo json_encode ( $this->model->getProblemas ( $nome ) );
+		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
+			$nome = $_POST ['term'];
+			
+			echo json_encode ( $this->model->getProblemas ( $nome ) );
+		}
 	}
 }

@@ -2,7 +2,8 @@
 CREATE TABLE projeto(
 	id INTEGER AUTO_INCREMENT,
 	nome VARCHAR(50) NOT NULL UNIQUE,
-	CONSTRAINT pk_area_problema PRIMARY KEY(id)
+	descricao VARCHAR(500) DEFAULT NULL,
+	CONSTRAINT pk_problema PRIMARY KEY(id)
 );
 
 CREATE TABLE tipo_problema(
@@ -17,7 +18,7 @@ CREATE TABLE projeto_tipo_problema(
 	problema INTEGER NOT NULL,
 	resposta TIME DEFAULT NULL, -- tempo para resposta
 	solucao TIME DEFAULT NULL, -- tempo para solução
-	descricao VARCHAR(255) DEFAULT NULL, -- informação geral do tipo de problema
+	descricao VARCHAR(1000) DEFAULT NULL, -- informação geral do tipo de problema
 	CONSTRAINT pk_projeto_tipo_problema PRIMARY KEY (id),
 	CONSTRAINT fk_projeto_projeto_tipo_problema FOREIGN KEY (projeto) REFERENCES projeto(id),
 	CONSTRAINT fk_problema_projeto_tipo_problema FOREIGN KEY (problema) REFERENCES tipo_problema(id)
