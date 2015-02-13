@@ -161,52 +161,42 @@
 		});
 	};
 	$.fn.bootstrapTransfer.defaults = {
-		'template' : '<table width="100%" cellspacing="0" cellpadding="0">\
+		'template' : '<table cellspacing="0" cellpadding="0" width="100%">\
 			<tr>\
-			<td width="40%">\
+			<td width="40%" class="td-bottom">\
 				<div class="selector-available">\
 					<h2>Disponível</h2>\
 					<div class="selector-filter">\
-						<table width="100%" border="0">\
-							<tr>\
-								<td style="width: 14px;">\
-									<span class="glyphicon glyphicon-search"></span>\
-								</td>\
-								<td>\
-									<div style="padding-left: 10px;">\
-										<input type="text" class="filter-input">\
-									</div>\
-								</td>\
-							</tr>\
-						</table>\
+						<input type="text" placeholder="Buscar" class="filter-input">\
+						<span class="glyphicon glyphicon-search search-multi"></span>\
 					</div>\
-					<select multiple="multiple" class="filtered remaining">\
+					<select class="filtered remaining form-control" multiple="multiple" style="height: 15em;">\
 					</select>\
 				</div>\
 			</td>\
-			<td>\
+			<td class="td-bottom">\
 				<div class="selector-chooser">\
-					<button type="button" class="btn btn-default selector-add" data-toggle="dropdown">\
+					<button data-toggle="dropdown" class="btn btn-default selector-add" type="button">\
 						<span class="glyphicon glyphicon-step-forward icon-space"></span> Adicionar\
 					</button>\
-					<button type="button" class="btn btn-default selector-remove" data-toggle="dropdown">\
+					<button data-toggle="dropdown" class="btn btn-default selector-remove" type="button">\
 						<span class="glyphicon glyphicon-step-backward icon-space"></span> Remover\
 					</button>\
-					<button type="button" class="btn btn-default selector-chooseall" data-toggle="dropdown">\
+					<button data-toggle="dropdown" class="btn btn-default selector-chooseall" type="button">\
 						<span class="glyphicon glyphicon-forward  icon-space"></span> Adicionar Todos\
 					</button>\
-					<button type="button" class="btn btn-default selector-clearall" data-toggle="dropdown">\
+					<button data-toggle="dropdown" class="btn btn-default selector-clearall" type="button">\
 						<span class="glyphicon glyphicon-backward  icon-space"></span> Remover Todos\
 					</button>\
 				</div>\
 			</td>\
-			<td width="40%">\
+			<td width="40%" class="td-bottom">\
 				<div class="selector-chosen">\
 					<h2>Escolhido</h2>\
 					<div class="selector-filter right">\
 						<span class="illustration"></span>\
 					</div>\
-					<select multiple="multiple" class="filtered target">\
+					<select class="filtered target form-control" multiple="multiple" id="multi-select-input" style="height: 15em;">\
 					</select>\
 				</div>\
 			</td>\
