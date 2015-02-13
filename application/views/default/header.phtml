@@ -17,6 +17,7 @@ use \application\controllers\Login, \libs\Cache, \libs\Menu;
         <link rel="stylesheet" href="<?= HTTP_CSS . '/jquery-ui.min.css' ?>" />
         <link rel="stylesheet" href="<?= HTTP_CSS . '/jquery-ui.structure.min.css' ?>" />
         <link rel="stylesheet" href="<?= HTTP_CSS . '/jquery-ui.theme.min.css' ?>" />
+        <link rel="stylesheet" href="<?= HTTP_CSS . '/bootstrap-transfer.css' ?>" />
         <link rel="stylesheet" href="<?= HTTP_CSS . '/custom.css' ?>" />
         <script src="<?= HTTP_JS . '/jquery-1.11.2.min.js' ?>"></script>
         <script src="<?= HTTP_JS . '/jquery-ui.min.js' ?>"></script>
@@ -59,14 +60,13 @@ use \application\controllers\Login, \libs\Cache, \libs\Menu;
                     <a class="navbar-brand" href="#">myPhpHelpDesk</a>
                 </div>
                 <div id="navbar" class="collapse navbar-collapse">
-                    <?php if (Login::verifica_login()) { ?>
+                    <?php if (Login::verificaLogin()) { ?>
                         <ul class="nav navbar-nav">
 
                             <?php
-                            apc_delete('menu');
-                            if (!($result = Cache::get_cache("menu"))) {
-                                $result = Menu::gera_menu_por_perfil();
-                                Cache::set_cache('menu', $result);
+                            if (!($result = Cache::getCache("menu"))) {
+                                $result = Menu::geraMenuPorPerfil();
+                                Cache::setCache('menu', $result);
                             }
 
                             foreach ($result[$_SESSION['perfil']] as $nome_menu => $menu) {
@@ -121,7 +121,7 @@ use \application\controllers\Login, \libs\Cache, \libs\Menu;
                             ?>
 
                             <li>
-                                <a href="<?= HTTP . "/Login/efetuar_logout" ?>">Logout</a>
+                                <a href="<?= HTTP . "/Login/efetuarLogout" ?>">Logout</a>
                             </li>
                         </ul>
                     </div><!--/.nav-collapse -->

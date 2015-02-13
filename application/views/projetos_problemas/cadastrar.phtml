@@ -1,94 +1,32 @@
 
+
+<script type="text/javascript"
+	src="<?= HTTP_JS . '/bootstrap-transfer.js' ?>"></script>
+
 <script type="text/javascript">
-    $(document).ready(function () {
-        $("input[name='inputProjeto']").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: '<?= HTTP . '/ProjetosProblemas/getProjetos' ?>',
-                    data: request,
-                    dataType: 'json',
-                    type: 'POST',
-                    success: function (data) {
-                        response(data);
-                    }
-                });
-            },
-            select: function (event, json){
-                $.ajax({
-					url: '<?= HTTP . '/ProjetosProblemas/get' ?>'
-                });
-            }
-        });
 
-        $("input[name='inputProblema']").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: '<?= HTTP . '/ProjetosProblemas/getProblemas' ?>',
-                    data: request,
-                    dataType: 'json',
-                    type: 'POST',
-                    success: function (data) {
-                        response(data);
-                    }
-                });
-            }
-        });
+	$(document).ready(function(){
+		$("form").on('submit', function(event){
 
-    });
+			var id = $("input[name='inputID']").val();
+
+			if(id == 0){
+				event.preventDefault();
+				
+				$.ajax({
+					url: '<?= HTTP . '/ProjetosProblemas/relacaoUsuarios'; ?>',
+					type: 'POST',
+					success: function(data){
+						$('#participantes').html(data);
+						$('#participantes').modal({
+			                backdrop: 'static',
+			                keyboard: false
+			            });
+					}
+				});
+			}
+		});
+	});
+
 </script>
 
-<div class="container">
-	<form class="form-horizontal" method="post" action="<?= $link; ?>">
-		<input type="hidden" name="inputID" id="inputID" value="0" />
-		<div class="form-group">
-			<label for="inputProjeto" class="control-label col-xs-2">Projeto</label>
-			<div class="col-xs-10">
-				<input type="text" class="form-control" id="inputProjeto"
-					name="inputProjeto" placeholder="Projeto" required>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<label for="inputProblema" class="control-label col-xs-2">Tipo de
-				Problema</label>
-			<div class="col-xs-10">
-				<input type="text" class="form-control" id="inputProblema"
-					name="inputProblema" placeholder="Tipo de problema" required>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<label for="inputResposta" class="control-label col-xs-2">Tempo de
-				resposta</label>
-			<div class="col-xs-10">
-				<input type="text" class="form-control" id="inputResposta"
-					name="inputResposta" placeholder="Tempo de resposta" required>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<label for="inputSolucao" class="control-label col-xs-2">Tempo para
-				solução</label>
-			<div class="col-xs-10">
-				<input type="text" class="form-control" id="inputSolucao"
-					placeholder="Tempo para solução" required>
-			</div>
-		</div>
-
-
-		<div class="form-group">
-			<label for="textDescricao" class="control-label col-xs-2">Descrição
-				do problemas</label>
-			<div class="col-xs-10">
-				<textarea class="form-control" id="textDescricao"
-					placeholder="Descrição do tipo de projeto"></textarea>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<div class="col-xs-offset-2 col-xs-10">
-				<button type="submit" class="btn btn-default"><?= $botao ?></button>
-			</div>
-		</div>
-	</form>
-</div>

@@ -40,7 +40,7 @@ class ProjetosProblemas extends \system\Controller {
 	 * Construtor
 	 */
 	public function __construct() {
-		if (! Login::verifica_login ()) {
+		if (! Login::verificaLogin ()) {
 			$this->redir ( "Login/index" );
 		}
 		
@@ -50,33 +50,35 @@ class ProjetosProblemas extends \system\Controller {
 	/**
 	 * Tela de cadastro de projetos e problemas
 	 */
-	public function cadastrar_projeto_problema() {
-		$permissao = "ProjetosProblemas/cadastrar_projeto_problema";
+	public function cadastrar() {
+		$permissao = "ProjetosProblemas/cadastrar";
 		
-		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
-			
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
 			$title = array (
 					'title' => 'Cadastrar projetos' 
 			);
 			
 			$pagina = array (
-					'link' => 'novo_projeto_problema',
+					'link' => 'novoProjetoProblema',
 					'botao' => 'Cadastrar Projeto' 
 			);
 			
-			$this->load_view ( 'default/header', $title );
-			$this->load_view ( 'projetos_problemas/cadastrar', $pagina );
-			$this->load_view ( 'default/footer' );
+			$this->loadView ( 'default/header', $title );
+			$this->loadView ( 'projetos_problemas/cadastrar' );
+			$this->loadView ( 'projetos_problemas/index', $pagina );
+			$this->loadView ( 'default/footer' );
+		} else {
+			$this->redir ( 'Main/index' );
 		}
 	}
 	
 	/**
 	 * Busca os tipos de projetos
 	 */
-	public function get_projetos() {
-		$permissao = "ProjetosProblemas/cadastrarProjetoProblema";
+	public function getProjetos() {
+		$permissao = "ProjetosProblemas/cadastrar";
 		
-		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
 			$nome = $_POST ['term'];
 			
 			echo json_encode ( $this->model->getProjetos ( $nome ) );
@@ -87,12 +89,38 @@ class ProjetosProblemas extends \system\Controller {
 	 * Busca os tipos de problemas existentes
 	 */
 	public function getProblemas() {
-		$permissao = "ProjetosProblemas/cadastrarProjetoProblema";
+		$permissao = "ProjetosProblemas/cadastrar";
 		
-		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
 			$nome = $_POST ['term'];
 			
 			echo json_encode ( $this->model->getProblemas ( $nome ) );
+		}
+	}
+	
+	/**
+	 * Busca ID de um projeto
+	 */
+	public function getIdProjeto() {
+		$permissao = "ProjetosProblemas/cadastrar";
+		$perfil = $_SESSION ['perfil'];
+		
+		if (Menu::possuePermissao ( $perfil, $permissao )) {
+			$nome = $_POST ['nome'];
+			
+			echo json_encode ( $this->model->getIdProjeto ( $nome ) );
+		}
+	}
+	public function relacaoUsuarios() {
+		$permissao = "ProjetosProblemas/cadastrar";
+		$perfil = $_SESSION ['perfil'];
+		
+		if (Menu::possuePermissao ( $perfil, $permissao )) {
+			$nome = $_POST ['nome'];
+			
+			$vars ['usuarios'] = $this->model->relacaoUsuarios ( $perfil );
+			
+			$this->loadView ( 'projetos_problemas/usuarios', $vars );
 		}
 	}
 }

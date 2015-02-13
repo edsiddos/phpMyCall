@@ -1,0 +1,106 @@
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("input[name='inputProjeto']").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '<?= HTTP . '/ProjetosProblemas/getProjetos' ?>',
+                    data: request,
+                    dataType: 'json',
+                    type: 'POST',
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            }
+        });
+
+        $("input[name='inputProblema']").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '<?= HTTP . '/ProjetosProblemas/getProblemas' ?>',
+                    data: request,
+                    dataType: 'json',
+                    type: 'POST',
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            }
+        });
+
+        $("input[name='inputProjeto']").on('focusout', function(){
+            $.ajax({
+				url: '<?= HTTP . '/ProjetosProblemas/getIdProjeto' ?>',
+				data: 'nome=' + $(this).val(),
+				dataType: 'json',
+				type: 'post',
+				success: function (data){
+					$("input[name='inputID']").val(data.id ? data.id : 0);
+				}
+			});
+        });
+
+    });
+</script>
+
+<div class="container">
+	<form class="form-horizontal" method="post" action="<?= $link; ?>">
+
+		<input type="hidden" name="inputID" id="inputID" value="0" />
+
+		<div class="form-group">
+			<label for="inputProjeto" class="control-label col-xs-2">Projeto</label>
+			<div class="col-xs-10">
+				<input type="text" class="form-control" id="inputProjeto"
+					name="inputProjeto" placeholder="Projeto" required>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="inputProblema" class="control-label col-xs-2">Tipo de
+				Problema</label>
+			<div class="col-xs-10">
+				<input type="text" class="form-control" id="inputProblema"
+					name="inputProblema" placeholder="Tipo de problema" required>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="inputResposta" class="control-label col-xs-2">Tempo de
+				resposta</label>
+			<div class="col-xs-10">
+				<input type="text" class="form-control" id="inputResposta"
+					name="inputResposta" placeholder="Tempo de resposta" required>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="inputSolucao" class="control-label col-xs-2">Tempo para
+				solução</label>
+			<div class="col-xs-10">
+				<input type="text" class="form-control" id="inputSolucao"
+					name="inputSolucao" placeholder="Tempo para solução" required>
+			</div>
+		</div>
+
+
+		<div class="form-group">
+			<label for="textDescricao" class="control-label col-xs-2">Descrição
+				do problemas</label>
+			<div class="col-xs-10">
+				<textarea class="form-control" id="textDescricao"
+					name="textDescricao" placeholder="Descrição do tipo de projeto"></textarea>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-xs-offset-2 col-xs-10">
+				<button type="submit" class="btn btn-default"><?= $botao ?></button>
+			</div>
+		</div>
+
+		<div id="participantes" class="modal fade"></div>
+
+	</form>
+</div>

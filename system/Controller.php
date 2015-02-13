@@ -36,7 +36,7 @@ class Controller {
 	 * @param Array $vars
 	 *        	Array com as variaveis.
 	 */
-	protected function load_view($path, $vars = NULL) {
+	protected function loadView($path, $vars = NULL) {
 		if (file_exists ( VIEWS . '/' . $path . '.phtml' )) {
 			if (count ( $vars ) > 0 && is_array ( $vars )) {
 				extract ( $vars, EXTR_PREFIX_SAME, 'data' );

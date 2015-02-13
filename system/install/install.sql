@@ -17,8 +17,8 @@ CREATE TABLE projeto_tipo_problema(
 	projeto INTEGER NOT NULL,
 	problema INTEGER NOT NULL,
 	resposta TIME DEFAULT NULL, -- tempo para resposta
-	solucao TIME DEFAULT NULL, -- tempo para soluÁ„o
-	descricao VARCHAR(1000) DEFAULT NULL, -- informaÁ„o geral do tipo de problema
+	solucao TIME DEFAULT NULL, -- tempo para solu√ß√£o
+	descricao VARCHAR(1000) DEFAULT NULL, -- informa√ß√£o geral do tipo de problema
 	CONSTRAINT pk_projeto_tipo_problema PRIMARY KEY (id),
 	CONSTRAINT fk_projeto_projeto_tipo_problema FOREIGN KEY (projeto) REFERENCES projeto(id),
 	CONSTRAINT fk_problema_projeto_tipo_problema FOREIGN KEY (problema) REFERENCES tipo_problema(id)
@@ -26,37 +26,37 @@ CREATE TABLE projeto_tipo_problema(
 
 CREATE TABLE opcoes_menu(
 	id INTEGER AUTO_INCREMENT,
-	nome VARCHAR(100) NOT NULL, -- Nome a ser mostrado ao usu·rio
+	nome VARCHAR(100) NOT NULL, -- Nome a ser mostrado ao usu√°rio
 	link VARCHAR(255),
-	interno BOOLEAN NOT NULL DEFAULT TRUE, -- o link ser· interno ou externo
-	funcionalidade BOOLEAN NOT NULL DEFAULT TRUE, -- se È uma funcinalidade ou menu
+	interno BOOLEAN NOT NULL DEFAULT TRUE, -- o link ser√° interno ou externo
+	funcionalidade BOOLEAN NOT NULL DEFAULT TRUE, -- se √© uma funcinalidade ou menu
 	menu_pai INTEGER DEFAULT NULL, -- id do menu pai
 	CONSTRAINT pk_opcoes_menu PRIMARY KEY (id),
 	CONSTRAINT fk_menu_pai_opcoes_menu FOREIGN KEY (menu_pai) REFERENCES opcoes_menu(id)
 );
 
 INSERT INTO opcoes_menu VALUES (1, 'Chat', 'Chat/index', TRUE, TRUE, NULL);
-INSERT INTO opcoes_menu VALUES (2, 'SolicitaÁ„o', '', TRUE, FALSE, NULL);
+INSERT INTO opcoes_menu VALUES (2, 'Solicita√ß√£o', '', TRUE, FALSE, NULL);
 INSERT INTO opcoes_menu VALUES (3, 'Finalizadas', 'Solicitacao/finalizadas', TRUE, TRUE, 2);
 INSERT INTO opcoes_menu VALUES (4, 'Em andamento', 'Solicitacao/andamento', TRUE, TRUE, 2);
 INSERT INTO opcoes_menu VALUES (5, 'Em aberto', 'Solicitacao/aberta', TRUE, TRUE, 2);
-INSERT INTO opcoes_menu VALUES (6, 'Abrir SolicitaÁ„o', 'Solicitacao/abrir', TRUE, TRUE, 2);
-INSERT INTO opcoes_menu VALUES (7, 'AdministraÁ„o', '', TRUE, FALSE, NULL);
-INSERT INTO opcoes_menu VALUES (8, 'Expediente', 'Horarios/alterar_expediente', TRUE, TRUE, 7);
-INSERT INTO opcoes_menu VALUES (9, 'Feriados', 'Horarios/manter_feriados', TRUE, TRUE, 7);
-INSERT INTO opcoes_menu VALUES (10, 'Usu·rios', '', TRUE, FALSE, 7);
-INSERT INTO opcoes_menu VALUES (11, 'Cadastrar', 'Usuarios/cadastrar_usuario', TRUE, TRUE, 10);
-INSERT INTO opcoes_menu VALUES (12, 'Alterar', 'Usuarios/alterar_usuario', TRUE, TRUE, 10);
-INSERT INTO opcoes_menu VALUES (13, 'Excluir', 'Usuarios/excluir_usuario', TRUE, TRUE, 10);
+INSERT INTO opcoes_menu VALUES (6, 'Abrir Solicita√ß√£o', 'Solicitacao/abrir', TRUE, TRUE, 2);
+INSERT INTO opcoes_menu VALUES (7, 'Administra√ß√£o', '', TRUE, FALSE, NULL);
+INSERT INTO opcoes_menu VALUES (8, 'Expediente', 'Horarios/alterarExpediente', TRUE, TRUE, 7);
+INSERT INTO opcoes_menu VALUES (9, 'Feriados', 'Horarios/manterFeriados', TRUE, TRUE, 7);
+INSERT INTO opcoes_menu VALUES (10, 'Usu√°rios', '', TRUE, FALSE, 7);
+INSERT INTO opcoes_menu VALUES (11, 'Cadastrar', 'Usuarios/cadastrar', TRUE, TRUE, 10);
+INSERT INTO opcoes_menu VALUES (12, 'Alterar', 'Usuarios/alterar', TRUE, TRUE, 10);
+INSERT INTO opcoes_menu VALUES (13, 'Excluir', 'Usuarios/excluir', TRUE, TRUE, 10);
 INSERT INTO opcoes_menu VALUES (14, 'Tipos de Feedback', '', TRUE, FALSE, 7);
-INSERT INTO opcoes_menu VALUES (15, 'Cadastrar', 'Feedback/cadastrar_tipo_feedback', TRUE, TRUE, 14);
-INSERT INTO opcoes_menu VALUES (16, 'Alterar', 'Feedback/alterar_tipo_feedback', TRUE, TRUE, 14);
-INSERT INTO opcoes_menu VALUES (17, 'Excluir', 'Feedback/excluir_tipo_feedback', TRUE, TRUE, 14);
+INSERT INTO opcoes_menu VALUES (15, 'Cadastrar', 'Feedback/cadastrar', TRUE, TRUE, 14);
+INSERT INTO opcoes_menu VALUES (16, 'Alterar', 'Feedback/alterar', TRUE, TRUE, 14);
+INSERT INTO opcoes_menu VALUES (17, 'Excluir', 'Feedback/excluir', TRUE, TRUE, 14);
 INSERT INTO opcoes_menu VALUES (18, 'Projetos e Problemas', '', TRUE, FALSE, 7);
-INSERT INTO opcoes_menu VALUES (19, 'Cadastrar', 'ProjetosProblemas/cadastrar_projeto_problema', TRUE, TRUE, 18);
-INSERT INTO opcoes_menu VALUES (20, 'Alterar', 'ProjetosProblemas/alterar_projeto_problema', TRUE, TRUE, 18);
-INSERT INTO opcoes_menu VALUES (21, 'Excluir', 'ProjetosProblemas/excluir_projeto_problema', TRUE, TRUE, 18);
-INSERT INTO opcoes_menu VALUES (22, 'RelatÛrios', '', TRUE, FALSE, NULL);
+INSERT INTO opcoes_menu VALUES (19, 'Cadastrar', 'ProjetosProblemas/cadastrar', TRUE, TRUE, 18);
+INSERT INTO opcoes_menu VALUES (20, 'Alterar', 'ProjetosProblemas/alterar', TRUE, TRUE, 18);
+INSERT INTO opcoes_menu VALUES (21, 'Excluir', 'ProjetosProblemas/excluir', TRUE, TRUE, 18);
+INSERT INTO opcoes_menu VALUES (22, 'Relat√≥rios', '', TRUE, FALSE, NULL);
 INSERT INTO opcoes_menu VALUES (23, 'SLA', 'SLA/index', TRUE, TRUE, 22);
 
 
@@ -68,7 +68,7 @@ CREATE TABLE perfil(
 
 INSERT INTO perfil VALUES (1, 'Cliente');
 INSERT INTO perfil VALUES (2, 'Atendente');
-INSERT INTO perfil VALUES (3, 'TÈcnico');
+INSERT INTO perfil VALUES (3, 'T√©cnico');
 INSERT INTO perfil VALUES (4, 'Gerente');
 INSERT INTO perfil VALUES (5, 'Administrador de Sistema');
 
@@ -81,14 +81,14 @@ CREATE TABLE permissao_perfil(
 	CONSTRAINT fk_perfil_permissao_perfil FOREIGN KEY (perfil) REFERENCES perfil (id)
 );
 
--- Inicio permiss„o - chat
+-- Inicio permiss√£o - chat
 INSERT INTO permissao_perfil VALUES (1, 1, 1);
 INSERT INTO permissao_perfil VALUES (2, 1, 2);
 INSERT INTO permissao_perfil VALUES (3, 1, 3);
 INSERT INTO permissao_perfil VALUES (4, 1, 4);
 INSERT INTO permissao_perfil VALUES (5, 1, 5);
--- Final permiss„o - chat
--- Inicio visualizaÁ„o de solicitaÁıes
+-- Final permiss√£o - chat
+-- Inicio visualiza√ß√£o de solicita√ß√µes
 INSERT INTO permissao_perfil VALUES (6, 3, 1); -- finalizadas
 INSERT INTO permissao_perfil VALUES (7, 3, 2);
 INSERT INTO permissao_perfil VALUES (8, 3, 3);
@@ -104,23 +104,23 @@ INSERT INTO permissao_perfil VALUES (17, 5, 2);
 INSERT INTO permissao_perfil VALUES (18, 5, 3);
 INSERT INTO permissao_perfil VALUES (19, 5, 4);
 INSERT INTO permissao_perfil VALUES (20, 5, 5);
--- Final visualizaÁ„o de solicitaÁ„o
--- Inicio abertura de solicitaÁ„o
+-- Final visualiza√ß√£o de solicita√ß√£o
+-- Inicio abertura de solicita√ß√£o
 INSERT INTO permissao_perfil VALUES (21, 6, 2);
 INSERT INTO permissao_perfil VALUES (22, 6, 3);
 INSERT INTO permissao_perfil VALUES (23, 6, 4);
 INSERT INTO permissao_perfil VALUES (24, 6, 5);
--- Final abertura de solicitaÁ„o
+-- Final abertura de solicita√ß√£o
 INSERT INTO permissao_perfil VALUES (25, 8, 5); -- expediente
 INSERT INTO permissao_perfil VALUES (26, 9, 5); -- feriados
--- Inicio manter usu·rio
+-- Inicio manter usu√°rio
 INSERT INTO permissao_perfil VALUES (27, 11, 4); -- cadastrar
 INSERT INTO permissao_perfil VALUES (28, 11, 5);
 INSERT INTO permissao_perfil VALUES (29, 12, 4); -- alterar
 INSERT INTO permissao_perfil VALUES (30, 12, 5);
 INSERT INTO permissao_perfil VALUES (31, 13, 4); -- excluir
 INSERT INTO permissao_perfil VALUES (32, 13, 5);
--- Final manter usu·rio
+-- Final manter usu√°rio
 -- Inicio manter tipos de feedback
 INSERT INTO permissao_perfil VALUES (33, 15, 4); -- cadastrar
 INSERT INTO permissao_perfil VALUES (34, 15, 5);
@@ -137,13 +137,13 @@ INSERT INTO permissao_perfil VALUES (42, 20, 5);
 INSERT INTO permissao_perfil VALUES (43, 21, 4); -- excluir
 INSERT INTO permissao_perfil VALUES (44, 21, 5);
 -- Final manter projetos e problemas
--- Inicio relatÛrios
+-- Inicio relat√≥rios
 INSERT INTO permissao_perfil VALUES (45, 23, 4); -- SLA
 INSERT INTO permissao_perfil VALUES (46, 23, 5);
--- Final relatÛrios
+-- Final relat√≥rios
 
 --
--- Tabela de usu·rios
+-- Tabela de usu√°rios
 --
 
 CREATE TABLE usuario(
@@ -184,14 +184,14 @@ CREATE TABLE solicitacao(
 
 CREATE TABLE reabrir_solicitacao(
 	id INTEGER AUTO_INCREMENT,
-	solicitacao INTEGER NOT NULL UNIQUE, -- uma solicitaÁ„o sÛ pode ser reaberta uma vez
+	solicitacao INTEGER NOT NULL UNIQUE, -- uma solicita√ß√£o s√≥ pode ser reaberta uma vez
 	motivo TEXT NOT NULL, -- justificativa para reabertura do chamado
-	resposta TEXT DEFAULT NULL, -- resposta do gerente · reabertura
+	resposta TEXT DEFAULT NULL, -- resposta do gerente √° reabertura
 	abertura TIMESTAMP NOT NULL,
 	autorizacao TIMESTAMP NOT NULL,
 	encerrado TIMESTAMP NOT NULL,
-	autorizado BOOLEAN DEFAULT FALSE, -- aguardando liberaÁ„o se false
-	aberto BOOLEAN DEFAULT TRUE, -- ainda n„o foi resolvida
+	autorizado BOOLEAN DEFAULT FALSE, -- aguardando libera√ß√£o se false
+	aberto BOOLEAN DEFAULT TRUE, -- ainda n√£o foi resolvida
 	CONSTRAINT pk_reabrir_solicitacao PRIMARY KEY (id),
 	CONSTRAINT fk_solicitacao_reabrir_solicitacao FOREIGN KEY (solicitacao) REFERENCES solicitacao (id)
 );
@@ -247,11 +247,11 @@ CREATE TABLE expediente(
 
 INSERT INTO expediente (dia_semana) VALUES('DOMINGO');
 INSERT INTO expediente (dia_semana) VALUES('SEGUNDA-FEIRA');
-INSERT INTO expediente (dia_semana) VALUES('TER«A-FEIRA');
+INSERT INTO expediente (dia_semana) VALUES('TER√áA-FEIRA');
 INSERT INTO expediente (dia_semana) VALUES('QUARTA-FEIRA');
 INSERT INTO expediente (dia_semana) VALUES('QUINTA-FEIRA');
 INSERT INTO expediente (dia_semana) VALUES('SEXTA-FEIRA');
-INSERT INTO expediente (dia_semana) VALUES('S¡BADO');
+INSERT INTO expediente (dia_semana) VALUES('S√ÅBADO');
 
 CREATE TABLE projeto_responsaveis(
 	id INTEGER AUTO_INCREMENT,

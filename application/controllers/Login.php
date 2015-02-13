@@ -38,12 +38,12 @@ class Login extends \system\Controller {
 	 *        	Dados passados via url amigavel
 	 */
 	public function index($parametros = array()) {
-		if (! Login::verifica_login ()) {
-			$this->load_view ( '/default/header', array (
+		if (! Login::verificaLogin ()) {
+			$this->loadView ( '/default/header', array (
 					'title' => 'Efetuar Login' 
 			) );
-			$this->load_view ( '/login/index' );
-			$this->load_view ( '/default/footer' );
+			$this->loadView ( '/login/index' );
+			$this->loadView ( '/default/footer' );
 		} else {
 			$this->redir ( "Main/index" );
 		}
@@ -54,7 +54,7 @@ class Login extends \system\Controller {
 	 *
 	 * @return boolean Retorna <b>TRUE</b> se usuário devidamente logado, <b>FALSE</b> caso contrário.
 	 */
-	public static function verifica_login() {
+	public static function verificaLogin() {
 		session_start ();
 		
 		$username = $_SESSION ['username'];
@@ -73,13 +73,13 @@ class Login extends \system\Controller {
 	 * Recebe login e senha via <b>POST</b> efetua login, caso dados estejam corretos
 	 * cria sessão e redireciona a página inicial
 	 */
-	public function efetuar_login() {
+	public function efetuarLogin() {
 		$usuario = (is_string ( $_POST ['usuario'] ) ? $_POST ['usuario'] : '');
 		$senha = (is_string ( $_POST ['senha'] ) ? $_POST ['senha'] : '');
 		
 		if ((! empty ( $usuario )) && (! empty ( $senha ))) {
 			$db = new ModelLogin ();
-			$result = $db->get_dados_login ( $usuario, $senha );
+			$result = $db->getDadosLogin ( $usuario, $senha );
 			
 			if (count ( $result ) > 0) {
 				session_start ();
@@ -89,7 +89,7 @@ class Login extends \system\Controller {
 				$_SESSION ['email'] = $result ['email'];
 				$_SESSION ['perfil'] = $result ['perfil'];
 				
-				$result ['status'] = 'Login/efetuar_login';
+				$result ['status'] = 'Login/efetuarLogin';
 				Log::gravar ( $result, $result ['id'] );
 				
 				$this->redir ( "Main/index" );
@@ -105,11 +105,11 @@ class Login extends \system\Controller {
 	 * Remove variáveis de sessão do usuário, e redireciona
 	 * para tela de login.
 	 */
-	public function efetuar_logout() {
+	public function efetuarLogout() {
 		session_start ();
 		
 		$result = $_SESSION;
-		$result['status'] = 'Login/efetuar_logout';
+		$result['status'] = 'Login/efetuarLogout';
 		Log::gravar ( $result, $result ['id'] );
 		
 		unset ( $_SESSION ['id'] );

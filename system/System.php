@@ -47,21 +47,21 @@ class System {
 		
 		$this->explode = explode ( '/', $this->url );
 		
-		$this->set_controller ();
-		$this->set_action ();
+		$this->setController ();
+		$this->setAction ();
 	}
 	
 	/**
 	 * Retira o controlador da url amigavel
 	 */
-	private function set_controller() {
+	private function setController() {
 		$this->controller = '\\application\\controllers\\' . array_shift ( $this->explode );
 	}
 	
 	/**
 	 * Retira a action da url amigavel
 	 */
-	private function set_action() {
+	private function setAction() {
 		$this->action = array_shift ( $this->explode );
 	}
 	

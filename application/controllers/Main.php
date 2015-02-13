@@ -26,15 +26,15 @@ namespace application\controllers;
 class Main extends \system\Controller {
 	public function __construct() {
 		parent::__construct ();
-		if (! Login::verifica_login ()) {
+		if (! Login::verificaLogin ()) {
 			$this->redir ( 'Login/index' );
 		}
 	}
 	public function index($parametros = array()) {
-		$this->load_view ( 'default/header', array (
+		$this->loadView ( 'default/header', array (
 				'title' => 'myPhpHelpDesk' 
 		) );
-		$this->load_view ( 'main/index' );
-		$this->load_view ( 'default/footer' );
+		$this->loadView ( 'main/index' );
+		$this->loadView ( 'default/footer' );
 	}
 }

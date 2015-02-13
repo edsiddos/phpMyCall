@@ -25,11 +25,11 @@ namespace libs;
  */
 class Cache {
 
-    public static function get_cache($chave) {
+    public static function getCache($chave) {
         return apc_fetch($chave);
     }
 
-    public static function set_cache($chave, $valor) {
+    public static function setCache($chave, $valor) {
         return apc_add($chave, $valor);
     }
 

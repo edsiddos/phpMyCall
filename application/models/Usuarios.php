@@ -32,7 +32,7 @@ class Usuarios extends \system\Model {
 	 *        	Nome do perfil.
 	 * @return Array Array com os perfils disponiveis.
 	 */
-	public function get_perfil($nome) {
+	public function getPerfil($nome) {
 		$sql = "SELECT * FROM perfil
 		WHERE id < (SELECT id FROM perfil WHERE perfil = :nome)";
 		
@@ -48,7 +48,7 @@ class Usuarios extends \system\Model {
 	 *        	Array com os dados necessários para criação de novo usuário.
 	 * @return boolean TRUE se inserido.
 	 */
-	public function inserir_usuario($dados) {
+	public function inserirUsuario($dados) {
 		return $this->insert ( 'usuario', $dados );
 	}
 	
@@ -59,7 +59,7 @@ class Usuarios extends \system\Model {
 	 *        	Usuário
 	 * @return Array
 	 */
-	public function get_usuario($user, $id) {
+	public function getUsuario($user, $id) {
 		$sql = "SELECT EXISTS(SELECT * FROM usuario WHERE usuario = :user AND id <> :id) AS exist";
 		
 		return $this->select ( $sql, array (
@@ -74,7 +74,7 @@ class Usuarios extends \system\Model {
 	 * @param stirng $email        	
 	 * @return Array
 	 */
-	public function get_email($email, $id) {
+	public function getEmail($email, $id) {
 		$sql = "SELECT EXISTS(SELECT * FROM usuario WHERE email = :email AND id <> :id) AS exist";
 		
 		return $this->select ( $sql, array (
@@ -92,7 +92,7 @@ class Usuarios extends \system\Model {
 	 *        	Perfil do usuário (nível de acesso).
 	 * @return Array Retorna relação de nomes semelhantes.
 	 */
-	public function get_usuario_nome($usuario, $perfil) {
+	public function getUsuarioNome($usuario, $perfil) {
 		$sql = "SELECT nome, usuario FROM usuario WHERE usuario LIKE :usuario
 				AND perfil < (SELECT id FROM perfil WHERE perfil = :perfil)";
 		
@@ -116,7 +116,7 @@ class Usuarios extends \system\Model {
 	 *        	ID do usuário
 	 * @return Array Retorna array com os dados do usuário
 	 */
-	public function get_dados_usuarios($usuario) {
+	public function getDadosUsuarios($usuario) {
 		$sql = "SELECT id, usuario, nome, email, perfil FROM usuario WHERE usuario = :usuario";
 		
 		return $this->select ( $sql, array (
@@ -133,13 +133,13 @@ class Usuarios extends \system\Model {
 	 *        	Id do usuário.
 	 * @return boolean True alteração com sucesso.
 	 */
-	public function atualiza_usuario($dados, $id) {
+	public function atualizaUsuario($dados, $id) {
 		return $this->update ( 'usuario', $dados, "id = {$id}" );
 	}
 	
 	/**
 	 * Realiza a exclusão de usuários.
-	 * 
+	 *
 	 * @param int $id
 	 *        	Id do usuário.
 	 * @param string $usuario        	
@@ -148,7 +148,7 @@ class Usuarios extends \system\Model {
 	 *        	Perfil do usuário solicitante de exclusão.
 	 * @return boolean True se excluido com sucesso, False se falha.
 	 */
-	public function exclui_usuario($id, $usuario, $email, $perfil) {
+	public function excluirUsuario($id, $usuario, $email, $perfil) {
 		$where = "id = {$id} AND usuario = '{$usuario}' AND email = '{$email}' AND perfil < ";
 		$where .= "(SELECT id FROM perfil WHERE perfil = '{$perfil}')";
 		

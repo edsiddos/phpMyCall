@@ -32,7 +32,7 @@ class Menu {
 	 *
 	 * @return Array Retorna os menus e links por perfil
 	 */
-	private static function consulta_menu_perfil() {
+	private static function consultaMenuPerfil() {
 		$sql = "SELECT menu.nome AS menu, submenu.nome AS submenu, opcoes_menu.nome AS opcao, opcoes_menu.link, perfil.perfil
                 FROM opcoes_menu
                 INNER JOIN permissao_perfil ON opcoes_menu.id = permissao_perfil.menu
@@ -49,20 +49,18 @@ class Menu {
 	/**
 	 * Menus por perfil de usuários.
 	 * exemplo:
-	 * <pre>
-	 * Usuário array(
+	 * Usuário = array(
 	 * Chat => chat/index,
 	 * Solicitação => array(
 	 * Finalizadas => Solicitacao/finalizada,
 	 * Em atendimento => Solicitacao/atendimento,
 	 * Abertas => Solicitacao/aberta
 	 * ))
-	 * </pre>
 	 *
 	 * @return Array Menus em uma array separados por perfil.
 	 */
-	public static function gera_menu_por_perfil() {
-		$dados = Menu::consulta_menu_perfil ();
+	public static function geraMenuPorPerfil() {
+		$dados = Menu::consultaMenuPerfil ();
 		
 		$menu = array ();
 		
@@ -78,7 +76,17 @@ class Menu {
 		
 		return $menu;
 	}
-	public static function possue_permissao($perfil, $link) {
+	
+	/**
+	 * Verifica se determinado perfil possui autorização para acessar funcionalidade
+	 * 
+	 * @param string $perfil
+	 *        	Perfil do usuário
+	 * @param string $link
+	 *        	Link cadastrado no banco de dados
+	 * @return boolean
+	 */
+	public static function possuePermissao($perfil, $link) {
 		$sql = "SELECT EXISTS(
                 SELECT * FROM opcoes_menu
                 INNER JOIN permissao_perfil ON opcoes_menu.id = permissao_perfil.menu

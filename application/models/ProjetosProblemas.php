@@ -24,6 +24,14 @@ namespace application\models;
  * @author Ednei Leite da Silva
  */
 class ProjetosProblemas extends \system\Model {
+	
+	/**
+	 * Busca os nome dos projetos existentes
+	 *
+	 * @param string $nome
+	 *        	Nome do projeto.
+	 * @return Array Com os nome dos projetos.
+	 */
 	public function getProjetos($nome) {
 		$sql = "SELECT projeto.nome FROM projeto WHERE projeto.nome LIKE :nome";
 		
@@ -51,5 +59,21 @@ class ProjetosProblemas extends \system\Model {
 		}
 		
 		return $return;
+	}
+	public function getIdProjeto($nome) {
+		$sql = "SELECT id FROM projeto WHERE nome = :nome";
+		
+		return $this->select ( $sql, array (
+				'nome' => $nome 
+		), false );
+	}
+	public function relacaoUsuarios($perfil) {
+		$sql = "SELECT usuario.id, usuario.nome, perfil.perfil FROM usuario
+				INNER JOIN perfil ON usuario.perfil = perfil.id
+				WHERE usuario.perfil <= (SELECT id FROM perfil WHERE perfil = :perfil)";
+		
+		return $this->select ( $sql, array (
+				'perfil' => $perfil 
+		) );
 	}
 }

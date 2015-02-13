@@ -40,7 +40,7 @@ class Usuarios extends \system\Controller {
 	 */
 	public function __construct() {
 		parent::__construct ();
-		if (! Login::verifica_login ()) {
+		if (! Login::verificaLogin ()) {
 			$this->redir ( 'Login/index' );
 		} else {
 			$this->model = new ModelUsuarios ();
@@ -50,23 +50,23 @@ class Usuarios extends \system\Controller {
 	/**
 	 * Gera tela com formulário para inserção de novo usuário
 	 */
-	public function cadastrar_usuario() {
-		$permissao = 'Usuarios/cadastrar_usuario';
+	public function cadastrar() {
+		$permissao = 'Usuarios/cadastrar';
 		
-		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
 			$title = array (
 					"title" => "Cadastro de usuário" 
 			);
 			
 			$vars = array (
-					'perfil' => $this->model->get_perfil ( $_SESSION ['perfil'] ),
-					'link' => HTTP . '/Usuarios/novo_usuario',
+					'perfil' => $this->model->getPerfil ( $_SESSION ['perfil'] ),
+					'link' => HTTP . '/Usuarios/novoUsuario',
 					'title_botao' => "Cadastrar Usuário" 
 			);
 			
-			$this->load_view ( "default/header", $title );
-			$this->load_view ( "usuarios/usuario", $vars );
-			$this->load_view ( "default/footer" );
+			$this->loadView ( "default/header", $title );
+			$this->loadView ( "usuarios/usuario", $vars );
+			$this->loadView ( "default/footer" );
 		} else {
 			$this->redir ( 'Main/index' );
 		}
@@ -75,13 +75,13 @@ class Usuarios extends \system\Controller {
 	/**
 	 * Realiza a inserção de um novo usuário no sistema
 	 */
-	public function novo_usuario() {
-		$permissao = 'Usuarios/cadastrar_usuario';
+	public function novoUsuario() {
+		$permissao = 'Usuarios/cadastrar';
 		
-		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
-			$dados = $this->get_dados_post_usuario ();
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+			$dados = $this->getDadosPostUsuario ();
 			
-			if ($this->model->inserir_usuario ( $dados )) {
+			if ($this->model->inserirUsuario ( $dados )) {
 				$_SESSION ['msg_sucesso'] = "Usuário inserido com sucesso.";
 				$dados ['status'] = $permissao . ' - ok';
 			} else {
@@ -91,7 +91,7 @@ class Usuarios extends \system\Controller {
 			
 			Log::gravar ( $dados, $_SESSION ['id'] );
 			
-			$this->redir ( 'Usuarios/cadastrar_usuario' );
+			$this->redir ( 'Usuarios/cadastrar' );
 		} else {
 			$this->redir ( 'Main/index' );
 		}
@@ -102,7 +102,7 @@ class Usuarios extends \system\Controller {
 	 *
 	 * @return Array Retorna um array com os dados do usuário.
 	 */
-	private function get_dados_post_usuario() {
+	private function getDadosPostUsuario() {
 		$nome = $_POST ['inputNome'];
 		$usuario = $_POST ['inputUsuario'];
 		$senha = (isset ( $_POST ['inputSenha'] ) ? $_POST ['inputSenha'] : NULL);
@@ -140,56 +140,56 @@ class Usuarios extends \system\Controller {
 	/**
 	 * Verifica se o usuário existe
 	 */
-	public function valida_usuario() {
-		$permissao_1 = 'Usuarios/cadastrar_usuario';
-		$permissao_2 = 'Usuarios/alterar_usuario';
+	public function validaUsuario() {
+		$permissao_1 = 'Usuarios/cadastrar';
+		$permissao_2 = 'Usuarios/alterar';
 		$perfil = $_SESSION ['perfil'];
 		
-		if (Menu::possue_permissao ( $perfil, $permissao_1 ) || Menu::possue_permissao ( $perfil, $permissao_2 )) {
+		if (Menu::possuePermissao ( $perfil, $permissao_1 ) || Menu::possuePermissao ( $perfil, $permissao_2 )) {
 			$user = $_POST ['user'];
 			$id = $_POST ['id'];
 			
-			echo json_encode ( $this->model->get_usuario ( $user, $id ) );
+			echo json_encode ( $this->model->getUsuario ( $user, $id ) );
 		}
 	}
 	
 	/**
 	 * Verifica se existe email para algum usuário
 	 */
-	public function valida_email() {
-		$permissao_1 = 'Usuarios/cadastrar_usuario';
-		$permissao_2 = 'Usuarios/alterar_usuario';
+	public function validaEmail() {
+		$permissao_1 = 'Usuarios/cadastrar';
+		$permissao_2 = 'Usuarios/alterar';
 		$perfil = $_SESSION ['perfil'];
 		
-		if (Menu::possue_permissao ( $perfil, $permissao_1 ) || Menu::possue_permissao ( $perfil, $permissao_2 )) {
+		if (Menu::possuePermissao ( $perfil, $permissao_1 ) || Menu::possuePermissao ( $perfil, $permissao_2 )) {
 			$email = $_POST ['email'];
 			$id = $_POST ['id'];
 			
-			echo json_encode ( $this->model->get_email ( $email, $id ) );
+			echo json_encode ( $this->model->getEmail ( $email, $id ) );
 		}
 	}
 	
 	/**
 	 * Busca usuário para realizar alteração
 	 */
-	public function alterar_usuario() {
-		$permissao = 'Usuarios/alterar_usuario';
+	public function alterar() {
+		$permissao = 'Usuarios/alterar';
 		
-		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
 			$title = array (
 					"title" => "Alterar usuário" 
 			);
 			
 			$vars = array (
-					'perfil' => $this->model->get_perfil ( $_SESSION ['perfil'] ),
-					'link' => HTTP . '/Usuarios/atualiza_usuario',
+					'perfil' => $this->model->getPerfil ( $_SESSION ['perfil'] ),
+					'link' => HTTP . '/Usuarios/atualizaUsuario',
 					'title_botao' => "Alterar Usuário" 
 			);
 			
-			$this->load_view ( "default/header", $title );
-			$this->load_view ( "usuarios/relacao_usuarios" );
-			$this->load_view ( "usuarios/usuario", $vars );
-			$this->load_view ( "default/footer" );
+			$this->loadView ( "default/header", $title );
+			$this->loadView ( "usuarios/relacao_usuarios" );
+			$this->loadView ( "usuarios/usuario", $vars );
+			$this->loadView ( "default/footer" );
 		} else {
 			$this->redir ( 'Main/index' );
 		}
@@ -198,45 +198,45 @@ class Usuarios extends \system\Controller {
 	/**
 	 * Busca os nomes de usuários
 	 */
-	public function get_usuario_nome() {
-		$permissao_1 = 'Usuarios/alterar_usuario';
-		$permissao_2 = 'Usuarios/excluir_usuario';
+	public function getUsuarioNome() {
+		$permissao_1 = 'Usuarios/alterar';
+		$permissao_2 = 'Usuarios/excluir';
 		$perfil = $_SESSION ['perfil'];
 		
-		if (Menu::possue_permissao ( $perfil, $permissao_1 ) || Menu::possue_permissao ( $perfil, $permissao_2 )) {
+		if (Menu::possuePermissao ( $perfil, $permissao_1 ) || Menu::possuePermissao ( $perfil, $permissao_2 )) {
 			$usuario = $_POST ['term'];
 			
-			echo json_encode ( $this->model->get_usuario_nome ( $usuario, $perfil ) );
+			echo json_encode ( $this->model->getUsuarioNome ( $usuario, $perfil ) );
 		}
 	}
 	
 	/**
 	 * Busca dados do usuario selecionado para alteração
 	 */
-	public function get_dados_usuarios() {
-		$permissao_1 = 'Usuarios/alterar_usuario';
-		$permissao_2 = 'Usuarios/excluir_usuario';
+	public function getDadosUsuarios() {
+		$permissao_1 = 'Usuarios/alterar';
+		$permissao_2 = 'Usuarios/excluir';
 		$perfil = $_SESSION ['perfil'];
 		
-		if (Menu::possue_permissao ( $perfil, $permissao_1 ) || Menu::possue_permissao ( $perfil, $permissao_2 )) {
+		if (Menu::possuePermissao ( $perfil, $permissao_1 ) || Menu::possuePermissao ( $perfil, $permissao_2 )) {
 			$usuario = $_POST ['usuario'];
 			
-			echo json_encode ( $this->model->get_dados_usuarios ( $usuario ) );
+			echo json_encode ( $this->model->getDadosUsuarios ( $usuario ) );
 		}
 	}
 	
 	/**
 	 * Realiza a atualização do usuário
 	 */
-	public function atualiza_usuario() {
-		$permissao = 'Usuarios/alterar_usuario';
+	public function atualizaUsuario() {
+		$permissao = 'Usuarios/alterar';
 		
-		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
-			$dados = $this->get_dados_post_usuario ();
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+			$dados = $this->getDadosPostUsuario ();
 			
 			$id = $_POST ['inputID'];
 			
-			if ($this->model->atualiza_usuario ( $dados, $id )) {
+			if ($this->model->atualizaUsuario ( $dados, $id )) {
 				$_SESSION ['msg_sucesso'] = "Usuário alterado com sucesso.";
 				$dados ['status'] = $permissao . ' - ok';
 			} else {
@@ -246,7 +246,7 @@ class Usuarios extends \system\Controller {
 			
 			Log::gravar ( $dados, $_SESSION ['id'] );
 			
-			$this->redir ( 'Usuarios/alterar_usuario' );
+			$this->redir ( 'Usuarios/alterar' );
 		} else {
 			$this->redir ( 'Main/index' );
 		}
@@ -255,24 +255,24 @@ class Usuarios extends \system\Controller {
 	/**
 	 * Exibe tela de exclusão de usuários
 	 */
-	public function excluir_usuario() {
-		$permissao = 'Usuarios/excluir_usuario';
+	public function excluir() {
+		$permissao = 'Usuarios/excluir';
 		
-		if (Menu::possue_permissao ( $_SESSION ['perfil'], $permissao )) {
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
 			$title = array (
 					"title" => "Excluir usuário" 
 			);
 			
 			$vars = array (
-					'perfil' => $this->model->get_perfil ( $_SESSION ['perfil'] ),
-					'link' => HTTP . '/Usuarios/remove_usuario',
+					'perfil' => $this->model->getPerfil ( $_SESSION ['perfil'] ),
+					'link' => HTTP . '/Usuarios/removeUsuario',
 					'title_botao' => "Excluir Usuário" 
 			);
 			
-			$this->load_view ( "default/header", $title );
-			$this->load_view ( "usuarios/delete" );
-			$this->load_view ( "usuarios/usuario", $vars );
-			$this->load_view ( "default/footer" );
+			$this->loadView ( "default/header", $title );
+			$this->loadView ( "usuarios/delete" );
+			$this->loadView ( "usuarios/usuario", $vars );
+			$this->loadView ( "default/footer" );
 		} else {
 			$this->redir ( 'Main/index' );
 		}
@@ -281,11 +281,11 @@ class Usuarios extends \system\Controller {
 	/**
 	 * Remove usuário selecionado
 	 */
-	public function remove_usuario() {
-		$permissao = 'Usuarios/excluir_usuario';
+	public function removeUsuario() {
+		$permissao = 'Usuarios/excluir';
 		$perfil = $_SESSION ['perfil'];
 		
-		if (Menu::possue_permissao ( $perfil, $permissao )) {
+		if (Menu::possuePermissao ( $perfil, $permissao )) {
 			$id = $_POST ['inputID'];
 			$usuario = $_POST ['inputUsuario'];
 			$email = $_POST ['inputEMail'];
@@ -297,7 +297,7 @@ class Usuarios extends \system\Controller {
 					'perfil' => $perfil 
 			);
 			
-			if ($this->model->exclui_usuario ( $id, $usuario, $email, $perfil )) {
+			if ($this->model->excluirUsuario ( $id, $usuario, $email, $perfil )) {
 				$_SESSION ['msg_sucesso'] = "Usuário excluido com sucesso.";
 				$dados ['status'] = $permissao . ' - ok';
 			} else {
@@ -307,7 +307,7 @@ class Usuarios extends \system\Controller {
 			
 			Log::gravar ( $dados, $_SESSION ['id'] );
 			
-			$this->redir ( 'Usuarios/excluir_usuario' );
+			$this->redir ( 'Usuarios/excluir' );
 		} else {
 			$this->redir ( 'Main/index' );
 		}

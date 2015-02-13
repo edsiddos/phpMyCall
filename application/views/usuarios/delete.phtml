@@ -5,7 +5,7 @@
 		$("input[name='inputUsuario']").autocomplete({
 			source: function (request, response) {
 				$.ajax({
-					url: '<?= HTTP . '/Usuarios/get_usuario_nome' ?>',
+					url: '<?= HTTP . '/Usuarios/getUsuarioNome' ?>',
                     data: request,
                     dataType: 'json',
                     type: 'POST',
@@ -16,7 +16,7 @@
 			},
 			focus: function(event, json){
 				$.ajax({
-					url: '<?= HTTP . '/Usuarios/get_dados_usuarios'; ?>',
+					url: '<?= HTTP . '/Usuarios/getDadosUsuarios'; ?>',
 					data: 'usuario=' + json.item.value,
 					dataType: 'json',
 					type: 'POST',

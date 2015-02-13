@@ -6,7 +6,7 @@ $(document).ready(function(){
 	$('#inputUsuario').on('focusout', function(){
 		if($(this).val() != ''){
 		$.ajax({
-			url: '<?= HTTP . '/Usuarios/valida_usuario' ?>',
+			url: '<?= HTTP . '/Usuarios/validaUsuario' ?>',
 			data: 'user=' + $(this).val() + '&id=' + $('#inputID').val(),
             type: 'POST',
 			success: function(values){
@@ -30,7 +30,7 @@ $(document).ready(function(){
 	$('#inputEMail').on('focusout', function(){
 		if($(this).val() != ''){
 			$.ajax({
-				url: '<?= HTTP . '/Usuarios/valida_email' ?>',
+				url: '<?= HTTP . '/Usuarios/validaEmail' ?>',
 				data: 'email=' + $(this).val() + '&id=' + $('#inputID').val(),
 	            type: 'POST',
 				success: function(values){
@@ -96,10 +96,10 @@ $(document).ready(function(){
 					name="inputSenha" placeholder="Senha">
 			</div>
 			<div class="checkbox col-xs-2">
-			<label for="inputChangeme">
-				<input type="checkbox" name="inputChangeme[]" id="inputChangeme"
-					value="changeme" /> Senha temporária
-					</label>
+				<label for="inputChangeme"> <input type="checkbox"
+					name="inputChangeme[]" id="inputChangeme" value="changeme" /> Senha
+					temporária
+				</label>
 			</div>
 		</div>
 

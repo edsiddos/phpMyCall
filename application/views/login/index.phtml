@@ -1,27 +1,35 @@
 
 <div class="container">
-    <div class="box-login">
-        <div class="account-wall">
+	<div class="box-login">
+		<div class="account-wall">
 
-            <img class="profile-img" src="<?= HTTP_IMG . '/logo.png' ?>" alt="myPhpHelpDesk">
+			<img class="profile-img" src="<?= HTTP_IMG . '/logo.png' ?>"
+				alt="myPhpHelpDesk">
 
-            <form class="form-signin" role="form" method="post" action="<?= HTTP . '/Login/efetuar_login' ?>">
+			<form class="form-signin" role="form" method="post"
+				action="<?= HTTP . '/Login/efetuarLogin' ?>">
 
-                <div class="input-group">
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-                    <input type="text" class="form-control" name="usuario" placeholder="Usuário" required autofocus>        
-                </div><br>
+				<div class="input-group">
+					<span class="input-group-addon"><span
+						class="glyphicon glyphicon-user"></span></span> <input type="text"
+						class="form-control" name="usuario" placeholder="Usuário" required
+						autofocus>
+				</div>
+				<br>
 
-                <div class="input-group">
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>       
-                    <input type="password" class="form-control" name="senha" placeholder="Senha" required>        
-                </div><br>
+				<div class="input-group">
+					<span class="input-group-addon"><span
+						class="glyphicon glyphicon-asterisk"></span></span> <input
+						type="password" class="form-control" name="senha"
+						placeholder="Senha" required>
+				</div>
+				<br>
 
-                <button type="submit" class="btn btn-lg btn-primary btn-block">
-                    <span class="glyphicon glyphicon-log-in"></span> Entrar
-                </button>
-            </form>
+				<button type="submit" class="btn btn-lg btn-primary btn-block">
+					<span class="glyphicon glyphicon-log-in"></span> Entrar
+				</button>
+			</form>
 
-        </div>
-    </div>
+		</div>
+	</div>
 </div>

@@ -26,7 +26,7 @@ namespace application\controllers;
 class Error extends \system\Controller {
 	public function __construct() {
 		parent::__construct ();
-		if (! Login::verifica_login ()) {
+		if (! Login::verificaLogin ()) {
 			$this->redir ( "Login/index" );
 		}
 	}
@@ -39,8 +39,8 @@ class Error extends \system\Controller {
 				'title' => 'Página não encontrada.' 
 		);
 		
-		$this->load_view ( 'default/header', $vars );
-		$this->load_view ( 'errors/erro_404' );
-		$this->load_view ( 'default/footer' );
+		$this->loadView ( 'default/header', $vars );
+		$this->loadView ( 'errors/erro_404' );
+		$this->loadView ( 'default/footer' );
 	}
 }
