@@ -1,20 +1,19 @@
 
 
-<script type="text/javascript"
-	src="<?= HTTP_JS . '/bootstrap-transfer.js' ?>"></script>
+<script type="text/javascript" src="<?= HTTP_JS . '/bootstrap-transfer.js' ?>"></script>
 
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		$("form").on('submit', function(event){
+		
+		$("button[name='enviar-form']").click(function(event){
 
 			var id = $("input[name='inputID']").val();
 
 			if(id == 0){
-				event.preventDefault();
-				
 				$.ajax({
 					url: '<?= HTTP . '/ProjetosProblemas/relacaoUsuarios'; ?>',
+					data: 'id=' + id,
 					type: 'POST',
 					success: function(data){
 						$('#participantes').html(data);
@@ -24,8 +23,11 @@
 			            });
 					}
 				});
+			} else {
+				$("form[name='projeto-problemas']").submit();
 			}
 		});
+
 	});
 
 </script>

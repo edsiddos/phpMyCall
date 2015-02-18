@@ -103,8 +103,6 @@ class Model {
 		$camposNomes = implode ( '`, `', array_keys ( $data ) );
 		$camposValores = ':' . implode ( ', :', array_keys ( $data ) );
 		
-		echo "INSERT INTO $table (`$camposNomes`) VALUES ($camposValores)";
-		
 		// Prepara a Query
 		$sth = $this->conn->prepare ( "INSERT INTO $table (`$camposNomes`) VALUES ($camposValores)" );
 		

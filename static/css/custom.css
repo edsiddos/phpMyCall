@@ -117,6 +117,15 @@ body>.container {
 	
 }
 
+.form-horizontal .form-group {
+	margin-left: 0px !important;
+	margin-right: 0px !important;
+}
+
+.bootstrap-transfer-container select {
+	border-radius: 5px !important;
+}
+
 /****************************************************/
 /**************  estilo página inicial **************/
 /****************************************************/
