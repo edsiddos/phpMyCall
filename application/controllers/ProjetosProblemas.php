@@ -338,4 +338,66 @@ class ProjetosProblemas extends \system\Controller {
 			$this->main ( 'Main/index' );
 		}
 	}
+	
+	/**
+	 * Tela de exclusão de projeto
+	 */
+	public function excluir() {
+		$permissao = "ProjetosProblemas/excluir";
+		
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+			$title = array (
+					'title' => 'Excluir projetos' 
+			);
+			
+			$pagina = array (
+					'link' => HTTP . '/ProjetosProblemas/excluirProjetoProblema',
+					'botao' => 'Excluir' 
+			);
+			
+			$listaProjetos ['listaProjeto'] = $this->model->listaProjetoProblemas ();
+			
+			$this->loadView ( 'default/header', $title );
+			$this->loadView ( 'projetos_problemas/excluir', $listaProjetos );
+			$this->loadView ( 'projetos_problemas/index', $pagina );
+			$this->loadView ( 'default/footer' );
+		} else {
+			$this->redir ( 'Main/index' );
+		}
+	}
+	
+	/**
+	 * Realiza a exclusão do projeto tipo de problema selecionado
+	 */
+	public function excluirProjetoProblema() {
+		$permissao = "ProjetosProblemas/excluir";
+		
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+			$id_projeto = $_POST ['inputID'];
+			$id_projeto_problema = $_POST ['inputProjetoProblema'];
+			
+			$projeto = $_POST ['inputProjeto'];
+			$problema = $_POST ['inputProblema'];
+			
+			if ($this->model->excluirProjetoProblemas ( $id_projeto, $id_projeto_problema )) {
+				$_SESSION ['msg_sucesso'] = 'Sucesso ao excluir projeto tipo de problema';
+			} else {
+				$_SESSION ['msg_erro'] = 'Erro ao excluir projeto tipo de problema';
+			}
+			
+			$dados = array (
+					'id_projeto' => $id_projeto,
+					'id_projeto_problema' => $id_projeto_problema,
+					'projeto' => $projeto,
+					'problema' => $problema,
+					'msg' => empty ( $_SESSION ['msg_erro'] ) ? $_SESSION ['msg_sucesso'] : $_SESSION ['msg_erro'] 
+			);
+			
+			Log::gravar ( $dados, $_SESSION ['id'] );
+			
+			$this->redir ( 'ProjetosProblemas/excluir' );
+		} else {
+			$this->redir ( 'Main/index' );
+		}
+	}
 }

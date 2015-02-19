@@ -37,6 +37,40 @@
 		$('#inputSenha').attr('readonly', true);
 		$('#inputSenha').attr('required', false);
 		$('#inputChangeme').attr('disabled', true);
+
+		$('form').on('submit', function (event){
+			event.preventDefault();
+
+			$('#confirmar-exclusao').modal({
+				backdrop: 'static',
+	            keyboard: false
+			});
+		});
+
+		$('#confirma-exclusao').on('click', function(){
+			$('form').submit();
+		});
 		
 	});
 </script>
+
+<div id="confirmar-exclusao" class="modal fade">
+	<div class="modal-dialog" style="width: 80%;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Atenção</h4>
+			</div>
+
+			<div class="modal-body">
+				<p class="text-center">Deseja excluir este usuário?</p>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-danger" id="confirma-exclusao">Excluir</button>
+			</div>
+		</div>
+	</div>
+</div>

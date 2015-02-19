@@ -9,7 +9,17 @@
             keyboard: false
 		});
 
+		$('input').attr('readonly', true);
+		$('textarea').attr('readonly', true);
+
 		$("button[name='enviar-form']").click(function(event){
+			$('#confirmar-excluir-projeto').modal({
+				backdrop: 'static',
+	            keyboard: false
+			});
+		});
+
+		$('#confirma-exclusao').click(function(){
 			$("form[name='projeto-problemas']").submit();
 		});
 
@@ -83,6 +93,30 @@
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div id="confirmar-excluir-projeto" class="modal fade">
+	<div class="modal-dialog" style="width: 80%;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Atenção</h4>
+			</div>
+
+			<div class="modal-body">
+				<p class="text-center">Deseja realmente excluir este tipo de
+					problema para este projeto?</p>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-danger" id="confirma-exclusao">Excluir</button>
 			</div>
 		</div>
 	</div>

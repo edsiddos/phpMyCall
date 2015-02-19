@@ -369,4 +369,35 @@ class ProjetosProblemas extends \system\Model {
 		
 		$this->update ( 'projeto_tipo_problema', $array, "id = {$id}" );
 	}
+	
+	/**
+	 * Exclui um projeto tipo de problema
+	 *
+	 * @param int $id_projeto
+	 *        	Código do projeto
+	 * @param int $id_projeto_problema
+	 *        	Código do tipo projeto problema
+	 * @return bool True se operação realizada com sucesso.
+	 */
+	public function excluirProjetoProblemas($id_projeto, $id_projeto_problema) {
+		$sql = "SELECT COUNT(id) AS cont FROM projeto_tipo_problema WHERE projeto = :projeto";
+		$result = $this->select ( $sql, array (
+				'projeto' => $id_projeto 
+		), false );
+		
+		$return = true;
+		
+		$return &= (! empty ( $this->delete ( 'projeto_tipo_problema', "id = {$id_projeto_problema}" ) ));
+		
+		/*
+		 * Caso seja o ultimo tipo de problema
+		 * exclui o projeto
+		 */
+		if ($result ['cont'] == 1) {
+			$this->delete ( 'projeto_responsaveis', "projeto = {$id_projeto}" );
+			$return &= (! empty ( $this->delete ( 'projeto', "id = {$id_projeto}" ) ));
+		}
+		
+		return $return;
+	}
 }
