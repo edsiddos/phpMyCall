@@ -1,4 +1,6 @@
 
+<script type="text/javascript"
+	src="<?= HTTP_JS . '/jquery.select-filter.min.js' ?>"></script>
 
 <style type="text/css">
 #select1 {
@@ -79,7 +81,9 @@
 						do projeto (Opcional): </label>
 					<div class="col-xs-10">
 						<textarea class="form-control" id="textProjeto" name="textProjeto"
-							placeholder="Descrição do projeto"><?= $descricao_projeto ?></textarea>
+							placeholder="Descrição do projeto" maxlength="500">
+								<?= $descricao_projeto?>
+							</textarea>
 					</div>
 				</div>
 			</div>
