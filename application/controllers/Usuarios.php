@@ -65,7 +65,8 @@ class Usuarios extends \system\Controller {
 			);
 			
 			$this->loadView ( "default/header", $title );
-			$this->loadView ( "usuarios/usuario", $vars );
+			$this->loadView ( "usuarios/cadastrar" );
+			$this->loadView ( "usuarios/index", $vars );
 			$this->loadView ( "default/footer" );
 		} else {
 			$this->redir ( 'Main/index' );
@@ -81,9 +82,11 @@ class Usuarios extends \system\Controller {
 		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
 			$dados = $this->getDadosPostUsuario ();
 			
-			if ($this->model->inserirUsuario ( $dados )) {
+			if ($this->model->inserirUsuario ( $dados ['usuario'] )) {
+				$return = $this->model->ligaUsuarioProjeto ( $dados ['usuario'] ['usuario'], $dados ['projeto'] );
 				$_SESSION ['msg_sucesso'] = "Usuário inserido com sucesso.";
 				$dados ['status'] = $permissao . ' - ok';
+				$dados = array_merge ( $dados, $return );
 			} else {
 				$_SESSION ['msg_erro'] = "Erro ao inserir novo usuário. Verifique dados e tente novamente.";
 				$dados ['status'] = $permissao . ' - falha';
@@ -109,6 +112,7 @@ class Usuarios extends \system\Controller {
 		$changeme = (isset ( $_POST ['inputChangeme'] [0] ) ? TRUE : FALSE);
 		$email = $_POST ['inputEMail'];
 		$perfil = $_POST ['selectPerfil'];
+		$projeto = $_POST ['projeto'];
 		
 		/* Verifica se todos os dados necessários foram informados */
 		$datetime = NULL;
@@ -122,13 +126,15 @@ class Usuarios extends \system\Controller {
 			$datetime->add ( new \DateInterval ( 'P30D' ) );
 		}
 		
-		$dados = array (
+		$dados ['usuario'] = array (
 				'usuario' => $usuario,
 				'nome' => $nome,
 				'email' => $email,
 				'perfil' => $perfil,
 				'dt_troca' => $datetime->format ( 'Y-m-d' ) 
 		);
+		
+		$dados ['projeto'] = $projeto;
 		
 		if (! empty ( $senha )) {
 			$dados ['senha'] = sha1 ( md5 ( $senha ) );
@@ -187,8 +193,8 @@ class Usuarios extends \system\Controller {
 			);
 			
 			$this->loadView ( "default/header", $title );
-			$this->loadView ( "usuarios/relacao_usuarios" );
-			$this->loadView ( "usuarios/usuario", $vars );
+			$this->loadView ( "usuarios/alterar" );
+			$this->loadView ( "usuarios/index", $vars );
 			$this->loadView ( "default/footer" );
 		} else {
 			$this->redir ( 'Main/index' );
@@ -236,9 +242,11 @@ class Usuarios extends \system\Controller {
 			
 			$id = $_POST ['inputID'];
 			
-			if ($this->model->atualizaUsuario ( $dados, $id )) {
+			if ($this->model->atualizaUsuario ( $dados ['usuario'], $id )) {
+				$return = $this->model->ligaUsuarioProjeto ( $dados ['usuario'] ['usuario'], $dados ['projeto'] );
 				$_SESSION ['msg_sucesso'] = "Usuário alterado com sucesso.";
 				$dados ['status'] = $permissao . ' - ok';
+				$dados = array_merge ( $dados, $return );
 			} else {
 				$_SESSION ['msg_erro'] = "Erro ao alterar usuário. Verifique dados e tente novamente.";
 				$dados ['status'] = $permissao . ' - falha';
@@ -271,7 +279,7 @@ class Usuarios extends \system\Controller {
 			
 			$this->loadView ( "default/header", $title );
 			$this->loadView ( "usuarios/delete" );
-			$this->loadView ( "usuarios/usuario", $vars );
+			$this->loadView ( "usuarios/index", $vars );
 			$this->loadView ( "default/footer" );
 		} else {
 			$this->redir ( 'Main/index' );
@@ -310,6 +318,23 @@ class Usuarios extends \system\Controller {
 			$this->redir ( 'Usuarios/excluir' );
 		} else {
 			$this->redir ( 'Main/index' );
+		}
+	}
+	
+	/**
+	 * Busca os projetos que o usuário está cadastro
+	 * e os projetos disponiveis.
+	 */
+	public function getProjetos() {
+		$permissao_1 = "Usuarios/alterar";
+		$permissao_2 = "Usuarios/cadastrar";
+		$perfil = $_SESSION ['perfil'];
+		
+		if ((Menu::possuePermissao ( $perfil, $permissao_1 )) || (Menu::possuePermissao ( $perfil, $permissao_2 ))) {
+			$id = $_POST ['id'];
+			$vars ['projetos'] = $this->model->relacaoProjetos ( $id );
+			
+			$this->loadView ( 'usuarios/projeto_problemas', $vars );
 		}
 	}
 }

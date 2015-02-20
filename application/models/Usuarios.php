@@ -154,4 +154,95 @@ class Usuarios extends \system\Model {
 		
 		return $this->delete ( 'usuario', $where );
 	}
+	
+	/**
+	 * Busca todos os projetos existentes
+	 * e verifica se o usuário é participante
+	 *
+	 * @return Array
+	 */
+	public function relacaoProjetos($id_usuario) {
+		$sql = "SELECT id, nome FROM projeto";
+		$projetos = $this->select ( $sql );
+		
+		$sql = "SELECT projeto.id
+				FROM projeto
+				INNER JOIN projeto_responsaveis ON projeto.id = projeto_responsaveis.projeto
+				WHERE usuario = :usuario";
+		$projeto_responsaveis = $this->select ( $sql, array (
+				'usuario' => $id_usuario 
+		) );
+		
+		foreach ( $projeto_responsaveis as $values ) {
+			$responsaveis [] = $values ['id'];
+		}
+		
+		if (count ( $responsaveis ) > 0) {
+			foreach ( $projetos as $key => $values ) {
+				if (array_search ( $values ['id'], $responsaveis ) !== false) {
+					$projetos [$key] ['participante'] = 1;
+				}
+			}
+		}
+		
+		return $projetos;
+	}
+	
+	/**
+	 * Relaciona usuário com projetos.
+	 *
+	 * @param string $usuario        	
+	 * @param array $projetos
+	 *        	Array com os códigos do projetos
+	 * @return Array Retorna dois arrays relação de projetos inseridos e excluidos
+	 */
+	public function ligaUsuarioProjeto($usuario, $projetos) {
+		$sql = "SELECT id FROM usuario WHERE usuario = :usuario";
+		
+		$id = $this->select ( $sql, array (
+				'usuario' => $usuario 
+		), false );
+		
+		/*
+		 * Get projetos
+		 */
+		$sql = "SELECT projeto.id
+				FROM projeto
+				INNER JOIN projeto_responsaveis ON projeto.id = projeto_responsaveis.projeto
+				INNER JOIN usuario ON projeto_responsaveis.usuario = usuario.id
+				WHERE usuario.usuario = :usuario";
+		
+		$projeto_participante = $this->select ( $sql, array (
+				'usuario' => $usuario 
+		) );
+		
+		$delete = array ();
+		$insert = $projetos;
+		
+		foreach ( $projeto_participante as $values ) {
+			if (! in_array ( $values ['id'], $insert )) {
+				$this->delete ( 'projeto_responsaveis', "projeto = {$values['id']} AND usuario = {$id['id']}" );
+				$delete [] = $values ['id'];
+			}
+			
+			$key = array_search ( $values ['id'], $insert );
+			if ($key !== false) {
+				unset ( $insert [$key] );
+			}
+		}
+		
+		foreach ( $insert as $values ) {
+			$this->insert ( 'projeto_responsaveis', array (
+					'usuario' => $id ['id'],
+					'projeto' => $values 
+			) );
+		}
+		
+		$return = array (
+				'delete' => implode ( ',', $delete ),
+				'insert' => implode ( ',', $insert ) 
+		);
+		
+		return $return;
+	}
 }

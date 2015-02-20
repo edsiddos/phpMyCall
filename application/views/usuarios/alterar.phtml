@@ -40,6 +40,17 @@
 		$('#selectPerfil').attr('readonly', true);
 		$('#inputSenha').attr('readonly', true);
 		$('#inputSenha').attr('required', false);
+
+		$("button[name='submit-dados']").on('click', function (){
+			$.ajax({
+				url: '<?= HTTP . '/Usuarios/getProjetos'?>',
+				type: 'POST',
+				data: 'id=' + $('#inputID').val(),
+				success: function(dados){
+					$("#modal-projetos").html(dados);
+				}
+			});
+		});
 		
 	});
 </script>

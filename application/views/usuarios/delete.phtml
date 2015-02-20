@@ -38,8 +38,7 @@
 		$('#inputSenha').attr('required', false);
 		$('#inputChangeme').attr('disabled', true);
 
-		$('form').on('submit', function (event){
-			event.preventDefault();
+		$("button[name='submit-dados']").on('click', function (){
 
 			$('#confirmar-exclusao').modal({
 				backdrop: 'static',
