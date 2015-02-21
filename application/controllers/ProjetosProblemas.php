@@ -191,23 +191,25 @@ class ProjetosProblemas extends \system\Controller {
 				}
 				
 				$dados = array (
-						'operacao' => empty ( $id ) ? 'Criação projeto e problema' : 'Adição de tipo de problema',
-						'id_projeto' => $id,
-						'nome_projeto' => $projeto,
-						'descricao_projeto' => $descricao_projeto,
-						'id_tipo_problema' => $id_problema,
-						'nome_tipo_problema' => $problema,
-						'tempo_resposta' => $resposta,
-						'tempo_solucao' => $solucao,
-						'projeto_tipo_problema' => $descricao,
-						'novos_usuarios' => $participantes,
-						'permissao' => $permissao 
+						'dados' => array (
+								'operacao' => empty ( $id ) ? 'Criação projeto e problema' : 'Adição de tipo de problema',
+								'id_projeto' => $id,
+								'nome_projeto' => $projeto,
+								'descricao_projeto' => $descricao_projeto,
+								'id_tipo_problema' => $id_problema,
+								'nome_tipo_problema' => $problema,
+								'tempo_resposta' => $resposta,
+								'tempo_solucao' => $solucao,
+								'projeto_tipo_problema' => $descricao,
+								'novos_usuarios' => $participantes 
+						) 
 				);
 			} else {
 				$_SESSION ['msg_erro'] = "Já existe projeto com este tipo de problema.";
 			}
 			
 			$dados ['msg'] = empty ( $_SESSION ['msg_erro'] ) ? $_SESSION ['msg_sucesso'] : $_SESSION ['msg_erro'];
+			$dados ['aplicacao'] = $permissao;
 			
 			Log::gravar ( $dados, $_SESSION ['id'] );
 			
@@ -314,20 +316,22 @@ class ProjetosProblemas extends \system\Controller {
 				}
 				
 				$dados = array (
-						'altera_nome_projeto' => $id_projeto == 0 ? 'sim' : 'não',
-						'id_projeto' => $id_projeto_old,
-						'nome_projeto' => $projeto,
-						'descricao_projeto' => $descricao_projeto,
-						'id_tipo_problema' => $id_problema,
-						'nome_tipo_problema' => $problema,
-						'id_projeto_tipo_problema' => $id_projeto_problema,
-						'tempo_resposta' => $resposta,
-						'tempo_solucao' => $solucao,
-						'projeto_tipo_problema' => $descricao_problema_projeto,
-						'novos_usuarios' => $insert,
-						'excluir_usuarios' => $delete,
+						'dados' => array (
+								'altera_nome_projeto' => $id_projeto == 0 ? 'sim' : 'não',
+								'id_projeto' => $id_projeto_old,
+								'nome_projeto' => $projeto,
+								'descricao_projeto' => $descricao_projeto,
+								'id_tipo_problema' => $id_problema,
+								'nome_tipo_problema' => $problema,
+								'id_projeto_tipo_problema' => $id_projeto_problema,
+								'tempo_resposta' => $resposta,
+								'tempo_solucao' => $solucao,
+								'projeto_tipo_problema' => $descricao_problema_projeto,
+								'novos_usuarios' => $insert,
+								'excluir_usuarios' => $delete 
+						),
 						'msg' => empty ( $_SESSION ['msg_erro'] ) ? $_SESSION ['msg_sucesso'] : $_SESSION ['msg_erro'],
-						'permissao' => $permissao 
+						'aplicacao' => $permissao 
 				);
 				
 				Log::gravar ( $dados, $_SESSION ['id'] );
@@ -386,10 +390,13 @@ class ProjetosProblemas extends \system\Controller {
 			}
 			
 			$dados = array (
-					'id_projeto' => $id_projeto,
-					'id_projeto_problema' => $id_projeto_problema,
-					'projeto' => $projeto,
-					'problema' => $problema,
+					'dados' => array (
+							'id_projeto' => $id_projeto,
+							'id_projeto_problema' => $id_projeto_problema,
+							'projeto' => $projeto,
+							'problema' => $problema 
+					),
+					'aplicacao' => $permissao,
 					'msg' => empty ( $_SESSION ['msg_erro'] ) ? $_SESSION ['msg_sucesso'] : $_SESSION ['msg_erro'] 
 			);
 			

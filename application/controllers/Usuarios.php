@@ -85,12 +85,13 @@ class Usuarios extends \system\Controller {
 			if ($this->model->inserirUsuario ( $dados ['usuario'] )) {
 				$return = $this->model->ligaUsuarioProjeto ( $dados ['usuario'] ['usuario'], $dados ['projeto'] );
 				$_SESSION ['msg_sucesso'] = "Usuário inserido com sucesso.";
-				$dados ['status'] = $permissao . ' - ok';
-				$dados = array_merge ( $dados, $return );
+				$dados ['dados'] = $return;
 			} else {
 				$_SESSION ['msg_erro'] = "Erro ao inserir novo usuário. Verifique dados e tente novamente.";
-				$dados ['status'] = $permissao . ' - falha';
 			}
+			
+			$dados ['aplicacao'] = $permissao;
+			$dados ['msg'] = (empty ( $_SESSION ['msg_sucesso'] ) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']);
 			
 			Log::gravar ( $dados, $_SESSION ['id'] );
 			
@@ -299,19 +300,22 @@ class Usuarios extends \system\Controller {
 			$email = $_POST ['inputEMail'];
 			
 			$dados = array (
-					'id' => $id,
-					'usuario' => $usuario,
-					'email' => $email,
-					'perfil' => $perfil 
+					'dados' => array (
+							'id' => $id,
+							'usuario' => $usuario,
+							'email' => $email,
+							'perfil' => $perfil 
+					) 
 			);
 			
 			if ($this->model->excluirUsuario ( $id, $usuario, $email, $perfil )) {
 				$_SESSION ['msg_sucesso'] = "Usuário excluido com sucesso.";
-				$dados ['status'] = $permissao . ' - ok';
 			} else {
 				$_SESSION ['msg_erro'] = "Erro ao excluir usuário. Verifique dados e tente novamente.";
-				$dados ['status'] = $permissao . ' - falha';
 			}
+			
+			$dados ['msg'] = (empty ( $_SESSION ['msg_sucesso'] ) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']);
+			$dados ['aplicacao'] = $permissao;
 			
 			Log::gravar ( $dados, $_SESSION ['id'] );
 			
