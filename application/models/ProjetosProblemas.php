@@ -387,7 +387,7 @@ class ProjetosProblemas extends \system\Model {
 		
 		$return = true;
 		
-		$return &= (! empty ( $this->delete ( 'projeto_tipo_problema', "id = {$id_projeto_problema}" ) ));
+		$return &= $this->delete ( 'projeto_tipo_problema', "id = {$id_projeto_problema}" );
 		
 		/*
 		 * Caso seja o ultimo tipo de problema
@@ -395,7 +395,7 @@ class ProjetosProblemas extends \system\Model {
 		 */
 		if ($result ['cont'] == 1) {
 			$this->delete ( 'projeto_responsaveis', "projeto = {$id_projeto}" );
-			$return &= (! empty ( $this->delete ( 'projeto', "id = {$id_projeto}" ) ));
+			$return &= $this->delete ( 'projeto', "id = {$id_projeto}" );
 		}
 		
 		return $return;
