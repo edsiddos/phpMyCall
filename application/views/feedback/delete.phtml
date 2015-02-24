@@ -1,0 +1,42 @@
+
+<script type="text/javascript">
+	$(document).ready(function(){
+
+		$("input[name='inputNome']").autocomplete({
+			source: function (request, response) {
+				$.ajax({
+					url: '<?= HTTP . '/Feedback/nomesFeedback' ?>',
+                    data: request,
+                    dataType: 'json',
+                    type: 'POST',
+                    success: function (data) {
+                        response(data);
+                    }
+				});
+			},
+			select: function(event, json){
+				$.ajax({
+					url: '<?= HTTP . '/Feedback/getDadosTipoFeedback'; ?>',
+					data: 'nome=' + json.item.value,
+					dataType: 'json',
+					type: 'POST',
+					success: function(json){
+						$('#inputID').val(json.id);
+						$('#inputNome').val(json.nome);
+						$('#inputAbreviatura').val(json.abreviatura);
+						$('#inputDescontar').attr("checked", json.descontar == 1);
+						$('#textDescricao').val(json.descricao);
+					}
+				});
+
+				$("button[type='submit']").attr('disabled', false);
+			}
+		});
+
+		$('#inputAbreviatura').attr('readonly', true);
+		$('#inputDescontar').attr('readonly', true);
+		$('#textDescricao').attr('readonly', true);
+		$("button[type='submit']").attr('disabled', true);
+		
+	});
+</script>

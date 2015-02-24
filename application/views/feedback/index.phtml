@@ -1,0 +1,70 @@
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+	
+});
+
+</script>
+
+<div class="container">
+
+	<?php
+	if ((! empty ( $_SESSION ['msg_erro'] )) || (! empty ( $_SESSION ['msg_sucesso'] ))) {
+		?>
+    <div
+		class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger';?> alert-error text-center">
+		<a href="#" class="close" data-dismiss="alert">&times;</a>
+        <?= empty($_SESSION['msg_erro']) ? $_SESSION['msg_sucesso'] : $_SESSION['msg_erro'];?>
+    </div>
+		<?php
+		unset ( $_SESSION ['msg_erro'] );
+		unset ( $_SESSION ['msg_sucesso'] );
+	}
+	?>
+
+	<form class="form-horizontal" method="post" action="<?= $link ?>">
+		<input type="hidden" name="inputID" id="inputID" value="0" />
+
+		<div class="form-group">
+			<label for="inputNome" class="control-label col-xs-2">Nome</label>
+			<div class="col-xs-10">
+				<input type="text" class="form-control" id="inputNome" required
+					name="inputNome" placeholder="Nome" maxlenght="50">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="inputAbreviatura" class="control-label col-xs-2">Abreviatura</label>
+			<div class="col-xs-10" id="divAbreviatura">
+				<input type="text" class="form-control" id="inputAbreviatura"
+					required name="inputAbreviatura" placeholder="Abreviatura"
+					maxlenght="10">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-xs-2"></div>
+			<div class="col-xs-10 checkbox">
+				<label for="inputDescontar">
+				<input type="checkbox" name="inputDescontar[]" id="inputDescontar" value="descontar" />
+				Descontar do tempo total de solução?
+				</label>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="textDescricao" class="control-label col-xs-2">Descrição</label>
+			<div class="col-xs-10">
+				<textarea class="form-control" id="textDescricao" maxlength="1000"
+					name="textDescricao" placeholder="Descrição do tipo de problema"></textarea>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-xs-offset-2 col-xs-10">
+				<button type="submit" class="btn btn-default"><?= $title_botao; ?></button>
+			</div>
+		</div>
+	</form>
+</div>
