@@ -18,7 +18,6 @@
 namespace application\models;
 
 use system\Model;
-use application\controllers\Feedback;
 
 /**
  * Manipulação de dados referente aos feedbacks
@@ -29,10 +28,15 @@ class Feedback extends Model {
 	
 	/**
 	 * Cadastra tipo de feedback
-	 * @param string $nome Nome do feedback
-	 * @param string $abrev Abreviatura
-	 * @param boolean $descontar Descontar tempo
-	 * @param string $descricao Descrição do tipo de feedback
+	 *
+	 * @param string $nome
+	 *        	Nome do feedback
+	 * @param string $abrev
+	 *        	Abreviatura
+	 * @param boolean $descontar
+	 *        	Descontar tempo
+	 * @param string $descricao
+	 *        	Descrição do tipo de feedback
 	 * @return boolean
 	 */
 	public function cadastrar($nome, $abrev, $descontar, $descricao) {
@@ -48,7 +52,9 @@ class Feedback extends Model {
 	
 	/**
 	 * Busca os tipos de feedback a partir do nome
-	 * @param string $nome Nome de tipo de feedback
+	 *
+	 * @param string $nome
+	 *        	Nome de tipo de feedback
 	 * @return Array Retorna array com os tipos de feedback
 	 */
 	public function getNomeFeedback($nome) {
@@ -61,7 +67,9 @@ class Feedback extends Model {
 	
 	/**
 	 * Busca de dados do tipo de feedback
-	 * @param string $nome Nome do tipo de feedback
+	 *
+	 * @param string $nome
+	 *        	Nome do tipo de feedback
 	 * @return array Retorna Array com dados do tipo de Feedback
 	 */
 	public function getDadosTipoFeedback($nome) {
@@ -73,11 +81,17 @@ class Feedback extends Model {
 	
 	/**
 	 * Atualiza o tipo de feedback
-	 * @param int $id Código do tipo de feedback
-	 * @param string $nome Nome do tipo de feedback
-	 * @param string $abrev Abreviatura do tipo de feedback
-	 * @param boolean $descontar Descontar do tempo de solução
-	 * @param string $descricao Descrição do tipo de feedback
+	 *
+	 * @param int $id
+	 *        	Código do tipo de feedback
+	 * @param string $nome
+	 *        	Nome do tipo de feedback
+	 * @param string $abrev
+	 *        	Abreviatura do tipo de feedback
+	 * @param boolean $descontar
+	 *        	Descontar do tempo de solução
+	 * @param string $descricao
+	 *        	Descrição do tipo de feedback
 	 * @return boolean Retorna true se sucesso, false caso contrario
 	 */
 	public function alterar($id, $nome, $abrev, $descontar, $descricao) {
@@ -93,10 +107,12 @@ class Feedback extends Model {
 	
 	/**
 	 * Remove tipo de feedback
-	 * @param int $id Código do tipo de feedback
+	 *
+	 * @param int $id
+	 *        	Código do tipo de feedback
 	 * @return boolean Retorna true se sucesso, false caso contrario.
 	 */
-	public function excluir ($id){
-		return $this->delete('tipo_feedback', "id = {$id}");
+	public function excluir($id) {
+		return $this->delete ( 'tipo_feedback', "id = {$id}" );
 	}
 }
