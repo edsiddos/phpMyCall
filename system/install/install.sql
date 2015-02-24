@@ -207,10 +207,10 @@ CREATE TABLE arquivos(
 
 CREATE TABLE tipo_feedback(
 	id INTEGER AUTO_INCREMENT,
-	nome VARCHAR(50) NOT NULL,
-	abreviatura VARCHAR(10) NOT NULL,
+	nome VARCHAR(50) UNIQUE NOT NULL,
+	abreviatura VARCHAR(10) UNIQUE NOT NULL,
 	descontar BOOLEAN DEFAULT TRUE,
-	responsavel CHAR(1) NOT NULL,
+	descricao VARCHAR(250),
 	CONSTRAINT pk_tipo_feedback PRIMARY KEY (id)
 );
 

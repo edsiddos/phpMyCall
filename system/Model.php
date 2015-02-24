@@ -128,7 +128,7 @@ class Model {
 	 *        	Campos e seus respectivos valores.
 	 * @param String $where
 	 *        	Condição de atualização.
-	 * @return Integer
+	 * @return boolean
 	 */
 	public function update($table, $data, $where) {
 		// Define os dados que serão atualizados
@@ -163,7 +163,7 @@ class Model {
 	 *        	Nome da tabela.
 	 * @param String $where
 	 *        	Condição de atualização.
-	 * @return Integer
+	 * @return booelan
 	 */
 	public function delete($table, $where) {
 		// Deleta
