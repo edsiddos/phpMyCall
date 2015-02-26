@@ -1,10 +1,14 @@
+
+
 <script type="text/javascript">
 	$(document).ready(function(){
 
+		var array = [<?= implode(',', $feriados) ?>];
+		
 		$("#calendario").datepicker({
             numberOfMonths: 12,
             buttonImageOnly: true,
-            dateFormat: 'dd/mm/yy',
+            dateFormat: 'yy-mm-dd',
             dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
             dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'],
             dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
@@ -14,7 +18,23 @@
             prevText: 'Anterior',
             numberOfMonths: [ 3, 4 ],
             onSelect: function(date, inst){
-                $().dialogFeriados({date: date});
+				if($("#mostrar-feriados").attr('disabled')){
+					$("#opcao-feriados-dialog").modal({
+						backdrop: 'static',
+						keyboard: false
+					});
+				} else {
+					$("#feriados-dialog").modal({
+						backdrop: 'static',
+						keyboard: false
+					});
+				}
+
+				$("input[name='data-feriado']").val(date);
+            },
+            beforeShowDay: function (date) {
+                var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+                return [array.indexOf(string) <?= $calendario ? '==' : '!='; ?> -1]
             }
 		});
 		

@@ -18,11 +18,166 @@
 namespace application\models;
 
 use system\Model;
+
 /**
  * Manipula horarios de trabalho e dias de trabalhados
  *
  * @author Ednei Leite da Silva
  */
-class Horarios extends Model{
+class Horarios extends Model {
 	
+	/**
+	 * Busca todos os feriados cadastrado no sistema
+	 *
+	 * @return array
+	 */
+	public function getFeriados() {
+		$sql = "SELECT dia FROM feriado";
+		
+		$result = $this->select ( $sql );
+		
+		foreach ( $result as $values ) {
+			$return [] = '"' . $values ['dia'] . '"';
+		}
+		
+		return $return;
+	}
+	
+	/**
+	 * Adiciona um ou mais feriados
+	 *
+	 * @param string $data
+	 *        	Data do feriado
+	 * @param string $nome
+	 *        	Nome do feriado
+	 * @param boolean $replicar
+	 *        	Replicar o feriado nos próximos 15 anos se valor igual a TRUE
+	 * @return Array Retorna dados para gravação de log
+	 */
+	public function addFeriados($data, $nome, $replicar) {
+		$return = array ();
+		
+		/*
+		 * Se valor de replicar igual a true replica a data nos 15 anos seguintes
+		 */
+		if ($replicar) {
+			for($inicio = 0; $inicio < 15; $inicio ++) {
+				$obj_data = new \DateTime ( $data );
+				$obj_data = $obj_data->add ( new \DateInterval ( 'P' . $inicio . 'Y' ) );
+				
+				unset ( $array );
+				
+				$array = array (
+						'dia' => $obj_data->format ( 'Y-m-d' ),
+						'nome' => $nome 
+				);
+				
+				$return [$inicio] ['dados'] = $array;
+				$return [$inicio] ['result'] = $this->insert ( 'feriado', $array );
+			}
+		} else {
+			/*
+			 * Se replicar igual a false grava feriado
+			 * apenas para a data selecionada
+			 */
+			$obj_data = new \DateTime ( $data );
+			
+			$array = array (
+					'dia' => $obj_data->format ( 'Y-m-d' ),
+					'nome' => $nome 
+			);
+			
+			$return [0] ['dados'] = $array;
+			$return [0] ['result'] = $this->insert ( 'feriado', $array );
+		}
+		
+		return $return;
+	}
+	
+	/**
+	 * Retorna o nome do feriado
+	 *
+	 * @param string $dia
+	 *        	Data do feriado
+	 * @return array Retorna array com o nome do feriado
+	 */
+	public function getFeriadoByDia($dia) {
+		$sql = "SELECT nome FROM feriado WHERE dia = :dia";
+		
+		return $this->select ( $sql, array (
+				'dia' => $dia 
+		), FALSE );
+	}
+	
+	/**
+	 * Atualiza nome do feriado
+	 *
+	 * @param string $data
+	 *        	Data do feriado
+	 * @param string $nome
+	 *        	Nome do feriado
+	 * @return boolean
+	 */
+	public function updateFeriados($data, $nome) {
+		return $this->update ( 'feriado', array (
+				'nome' => $nome 
+		), "dia = '{$data}'" );
+	}
+	
+	/**
+	 * Exclui um feriado
+	 *
+	 * @param string $data
+	 *        	Dia do feriado.
+	 * @return boolean True sucesso, False falha.
+	 */
+	public function deleteFeriados($data) {
+		return $this->delete ( 'feriado', "dia = '{$data}'" );
+	}
+	
+	/**
+	 * Busca os dias e horarios de expediente.
+	 * 
+	 * @return Array Retorna array com os dia da semana e horários de entrada e saída do 1º e 2º periodo.
+	 */
+	public function getExpediente() {
+		$sql = "SELECT id,
+				dia_semana,
+				DATE_FORMAT(entrada_manha, '%H:%i') AS entrada_manha,
+				DATE_FORMAT(saida_manha, '%H:%i') AS saida_manha,
+				DATE_FORMAT(entrada_tarde, '%H:%i') AS entrada_tarde,
+				DATE_FORMAT(saida_tarde, '%H:%i') AS saida_tarde
+				FROM expediente ORDER BY id;";
+		
+		$result = $this->select ( $sql );
+		
+		foreach ( $result as $values ) {
+			$return ['dia_semana'] [$values ['id']] = $values ['dia_semana'];
+			$return ['entrada_manha'] [$values ['id']] = $values ['entrada_manha'];
+			$return ['saida_manha'] [$values ['id']] = $values ['saida_manha'];
+			$return ['entrada_tarde'] [$values ['id']] = $values ['entrada_tarde'];
+			$return ['saida_tarde'] [$values ['id']] = $values ['saida_tarde'];
+		}
+		
+		return $return;
+	}
+	
+	/**
+	 * Altera horário de entrada ou saida de determinado dia.
+	 * 
+	 * @param unknown $id
+	 *        	ID do dia da semana
+	 * @param unknown $value
+	 *        	Novo horário
+	 * @param unknown $coluna
+	 *        	Qual periodo será alterado
+	 * @return boolean True sucesso, False falha.
+	 */
+	public function setExpediente($id, $value, $coluna) {
+		$dados = array (
+				$coluna => $value 
+		);
+		
+		return $this->update ( 'expediente', $dados, "id = {$id}" );
+	}
 }

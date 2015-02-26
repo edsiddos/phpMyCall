@@ -48,6 +48,10 @@ class Horarios extends Controller {
 			$this->model = new ModelHorarios ();
 		}
 	}
+	
+	/**
+	 * Mostra tela com calendário
+	 */
 	public function manterFeriados() {
 		$permissao = 'Horarios/manterFeriados';
 		
@@ -63,7 +67,170 @@ class Horarios extends Controller {
 			$this->redir ( 'Main/index' );
 		}
 	}
+	
+	/**
+	 * Mostra apenas os dias que não são feriados
+	 */
 	public function mostrarCalendario() {
-		$this->loadView ( "horarios/calendario" );
+		$permissao = 'Horarios/manterFeriados';
+		
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+			
+			$vars ['feriados'] = $this->model->getFeriados ();
+			$vars ['calendario'] = true;
+			$this->loadView ( "horarios/calendario", $vars );
+		}
+	}
+	
+	/**
+	 * Mostra apenas os dias que são feriados
+	 */
+	public function mostrarFeriados() {
+		$permissao = 'Horarios/manterFeriados';
+		
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+			
+			$vars ['feriados'] = $this->model->getFeriados ();
+			$vars ['calendario'] = false;
+			$this->loadView ( "horarios/calendario", $vars );
+		}
+	}
+	
+	/**
+	 * Cadastra um ou mais feriados
+	 */
+	public function cadastraFeriados() {
+		$permissao = 'Horarios/manterFeriados';
+		
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+			$data = empty ( $_POST ['data'] ) ? NULL : $_POST ['data'];
+			$nome = empty ( $_POST ['nome'] ) ? NULL : $_POST ['nome'];
+			$replicar = empty ( $_POST ['replicar'] ) ? FALSE : TRUE;
+			
+			$result = $this->model->addFeriados ( $data, $nome, $replicar );
+			
+			$dados_log ['dados'] = $result;
+			$dados_log ['aplicacao'] = $permissao;
+			$dados_log ['operacao'] = 'Inserir feriado';
+			
+			Log::gravar ( $dados_log, $_SESSION ['id'] );
+		}
+	}
+	
+	/**
+	 * Retorna dados do feriado a partir do dia selecionado
+	 */
+	public function getFeriadoByDia() {
+		$permissao = 'Horarios/manterFeriados';
+		
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+			$dia = empty ( $_POST ['dia'] ) ? NULL : $_POST ['dia'];
+			
+			echo json_encode ( $this->model->getFeriadoByDia ( $dia ) );
+		}
+	}
+	
+	/**
+	 * Altera o nome do feriado
+	 */
+	public function alteraFeriados() {
+		$permissao = 'Horarios/manterFeriados';
+		
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+			$data = empty ( $_POST ['data'] ) ? NULL : $_POST ['data'];
+			$nome = empty ( $_POST ['nome'] ) ? NULL : $_POST ['nome'];
+			
+			$result = $this->model->updateFeriados ( $data, $nome );
+			
+			$dados_log ['dados'] = array (
+					'dados' => array (
+							'data' => $data,
+							'nome' => $nome 
+					),
+					'result' => $result,
+					'aplicacao' => $permissao,
+					'operacao' => 'alterar feriado' 
+			);
+			
+			Log::gravar ( $dados_log, $_SESSION ['id'] );
+		}
+	}
+	
+	/**
+	 * Exclui feriado selecionado
+	 */
+	public function deleteFeriado() {
+		$permissao = 'Horarios/manterFeriados';
+		
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+			$data = empty ( $_POST ['data'] ) ? NULL : $_POST ['data'];
+			
+			$result = $this->model->deleteFeriados ( $data );
+			
+			$dados_log ['dados'] = array (
+					'dados' => array (
+							'data' => $data 
+					),
+					'result' => $result,
+					'aplicacao' => $permissao,
+					'operacao' => 'excluir feriado' 
+			);
+			
+			Log::gravar ( $dados_log, $_SESSION ['id'] );
+		}
+	}
+	
+	/**
+	 * Mostra tela com os horários de expediente
+	 */
+	public function alterarExpediente() {
+		$permissao = 'Horarios/manterFeriados';
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+			$title = array (
+					"title" => "Expediente" 
+			);
+			
+			$vars ['expediente'] = $this->model->getExpediente ();
+			
+			$this->loadView ( "default/header", $title );
+			$this->loadView ( "horarios/expediente", $vars );
+			$this->loadView ( "default/footer" );
+		} else {
+			$this->redir ( 'Main/index' );
+		}
+	}
+	
+	/**
+	 * Altera horário de entrada ou saida de determinado dia.
+	 */
+	public function setExpediente() {
+		$permissao = 'Horarios/manterFeriados';
+		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+			$id = empty ( $_POST ['id'] ) ? NULL : $_POST ['id'];
+			$value = empty ( $_POST ['value'] ) ? NULL : $_POST ['value'];
+			$coluna = empty ( $_POST ['coluna'] ) ? NULL : $_POST ['coluna'];
+			
+			if ($this->model->setExpediente ( $id, $value, $coluna )) {
+				$result = array (
+						"status" => "OK" 
+				);
+			} else {
+				$result = array (
+						"status" => "NOT" 
+				);
+			}
+			
+			echo json_encode ( $result );
+			
+			$dados ['msg'] = $result ['status'];
+			$dados ['dados'] = array (
+					'id' => $id,
+					'horario' => $value,
+					'coluna' => $coluna 
+			);
+			$dados ['aplicacao'] = $permissao;
+			
+			Log::gravar ( $dados, $_SESSION ['id'] );
+		}
 	}
 }

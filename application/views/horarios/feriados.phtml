@@ -1,33 +1,18 @@
 
 <script type="text/javascript">
-	$(document).ready(function(){
-
-		$(function(){
-			$.fn.dialogFeriados = function (values){
-        		$("#feriados-dialog").modal({
-        			backdrop: 'static',
-                    keyboard: false
-        		});
-
-				$("input[name='data-feriado']").val(values.date);
-
-        		return false;
-			};
-		});
-
-		$("#mostrar-feriados").on('click', function(){
-			$("form[name='form-cadastro']").attr("action", '<?= HTTP . '/Horarios/alterarFeriados'; ?>');
-			$("#calendario").datepicker("destroy");
-			$(this).attr("disabled", true);
-			$("#mostrar-calendario"). attr("disabled", false);
-		});
-
-		$("#mostrar-calendario").on('click', function(){
-			$("form[name='form-cadastro']").attr("action", '<?= HTTP . '/Horarios/cadastrarFeriados'; ?>');
-			$("#calendario").datepicker("destroy");
-			$(this).attr("disabled", true);
-			$("#mostrar-feriados"). attr("disabled", false);
-
+	$(function(){
+		$.fn.mostrarFeriado = function(){
+			$.ajax({
+				url: '<?= HTTP . '/Horarios/mostrarFeriados'; ?>',
+				type: 'POST',
+				success: function(html){
+					$("#calendario").empty();
+					$("#calendario").html(html);
+				}
+			});
+		}
+	
+		$.fn.mostrarCalendario = function(){
 			$.ajax({
 				url: '<?= HTTP . '/Horarios/mostrarCalendario'; ?>',
 				type: 'POST',
@@ -36,7 +21,82 @@
 					$("#calendario").html(html);
 				}
 			});
-			
+		}
+	});
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+
+		$('#alterar').on('click', function(){
+			$("#opcao-feriados-dialog").modal('hide');
+
+			$.ajax({
+				url: '<?= HTTP . '/Horarios/getFeriadoByDia' ?>',
+				type: 'POST',
+				data: 'dia=' + $('#data-feriado').val(),
+				dataType: 'json',
+				success: function (json){
+					$('#inputNome').val(json.nome);
+					$('#inputDataFixa').attr('disabled', true);
+					$("#feriados-dialog").modal({
+						backdrop: 'static',
+						keyboard: false
+					});
+				}
+			});
+		});
+
+		$('#excluir').on('click', function(){
+			$("#opcao-feriados-dialog").modal('hide');
+
+			$.ajax({
+				url: '<?= HTTP . '/Horarios/deleteFeriado' ?>',
+				type: 'POST',
+				data: 'data=' + $('#data-feriado').val(),
+				success: function(){
+					if($("#mostrar-feriados").attr('disabled')){
+						$("#mostrar-feriados").click();
+					} else {
+						$("#mostrar-calendario").click();
+					}
+				}
+			});
+		});
+		
+		$('#confirmar').on('click', function(){
+			var url = '<?= HTTP ?>' + ($("#mostrar-feriados").attr('disabled') ? '/Horarios/alteraFeriados' : '/Horarios/cadastraFeriados');
+			$.ajax({
+				url: url,
+				type: 'POST',
+				data: 'data=' + $('#data-feriado').val() + '&nome=' + $('#inputNome').val() +
+				'&replicar=' + $('#inputDataFixa:checked').length,
+				success: function(html){
+					if($("#mostrar-feriados").attr('disabled')){
+						$('#inputDataFixa').attr('disabled', false);
+						$("#mostrar-feriados").click();
+					} else {
+						$("#mostrar-calendario").click();
+					}
+					$("#feriados-dialog").modal('hide');
+					$('#inputNome').val('');
+					$('#inputDataFixa:checked').attr('checked', false);
+				}
+			});
+		});
+
+		$("#mostrar-feriados").on('click', function(){
+			$("#calendario").datepicker("destroy");
+			$(this).attr("disabled", true);
+			$("#mostrar-calendario"). attr("disabled", false);
+			$().mostrarFeriado();
+		});
+
+		$("#mostrar-calendario").on('click', function(){
+			$("#calendario").datepicker("destroy");
+			$(this).attr("disabled", true);
+			$("#mostrar-feriados"). attr("disabled", false);
+			$().mostrarCalendario();
 		});
 
 		$("#mostrar-calendario").click();
@@ -70,9 +130,7 @@ div #calendario>div {
 		<div id="calendario"></div>
 	</div>
 
-	<form method="POST" name="form-cadastro"
-		action="<?= HTTP . '/Horarios/cadastrarFeriados'; ?>"
-		id="feriados-dialog" class="modal fade">
+	<div id="feriados-dialog" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -85,21 +143,22 @@ div #calendario>div {
 
 					<div class="form-horizontal">
 
-						<input type="hidden" name="data-feriado" />
+						<input type="hidden" name="data-feriado" id="data-feriado" />
 
 						<div class="form-group">
-							<label for="inputDescricao" class="control-label col-xs-2">Descrição</label>
-							<div class="col-xs-10">
-								<input type="text" class="form-control" id="inputDescricao"
-									required name="inputDescricao" placeholder="Descrição">
+							<label for="inputNome" class="control-label col-xs-4">Nome do
+								feriado</label>
+							<div class="col-xs-8">
+								<input type="text" class="form-control" id="inputNome" required
+									name="inputNome" placeholder="Nome do feriado" maxlength="50">
 							</div>
 						</div>
 
 						<div class="form-group">
 							<div class="checkbox col-xs-12">
 								<label for="inputDataFixa"> <input type="checkbox"
-									name="inputDataFixa" id="inputDataFixa" value="fixa" /> Data
-									fixa (este feriado será replicado nos anos seguintes)
+									name="inputDataFixa" id="inputDataFixa" /> Data fixa (este
+									feriado será replicado nos anos seguintes)
 								</label>
 							</div>
 						</div>
@@ -110,10 +169,40 @@ div #calendario>div {
 
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-					<button type="submit" class="btn btn-success" id="confirma">Adicionar</button>
+					<button type="button" class="btn btn-success" id="confirmar">Adicionar</button>
 				</div>
 			</div>
 		</div>
-	</form>
+	</div>
 
+	<div id="opcao-feriados-dialog" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title text-center">Feriados</h4>
+				</div>
+
+				<div class="modal-body">
+					<p>
+						Qual operação deseja realizar?
+					</p>				
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						Cancelar
+					</button>
+					<button type="button" class="btn btn-default" id="alterar">
+						<span class="glyphicon glyphicon-pencil text-primary"></span> - Alterar
+					</button>
+					<button type="button" class="btn btn-default" id="excluir">
+						<span class="glyphicon glyphicon-remove text-danger"></span> - Excluir
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
 </div>
