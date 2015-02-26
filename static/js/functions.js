@@ -41,5 +41,13 @@ $(function() {
 		patt = new RegExp("^([0-9]{1,2}|[1-7][0-9]{2}|8([0-2][0-9]|3[0-8])):([0-5][0-9])$");
 		return patt.test($value);
 	}
+	
+	/**
+	 * Verifica se o valor da hora entre 0:00 e 23:59
+	 */
+	$.fn.validaHora = function($value) {
+		patt = new RegExp("^([01]{0,1}[0-9]|2[0-3]):([0-5][0-9])$");
+		return patt.test($value);
+	}
 
 });
