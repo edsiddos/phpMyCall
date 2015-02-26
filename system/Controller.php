@@ -26,6 +26,8 @@ namespace system;
 class Controller {
 	private $session = array ();
 	public function __construct() {
+		setlocale ( LC_ALL, 'pt_BR.utf8' );
+		header ( 'Content-Type: text/html; charset=UTF-8' );
 	}
 	
 	/**
