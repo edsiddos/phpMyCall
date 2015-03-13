@@ -53,15 +53,21 @@ class ProjetosProblemas extends \system\Controller {
 	 */
 	public function cadastrar() {
 		$permissao = "ProjetosProblemas/cadastrar";
+		$perfil = $_SESSION ['perfil'];
 		
-		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+		if (Menu::possuePermissao ( $perfil, $permissao )) {
 			$title = array (
 					'title' => 'Cadastrar projetos' 
 			);
 			
+			$existe_usuario = $this->model->existeUsuarios ( $perfil );
+			
 			$pagina = array (
 					'link' => HTTP . '/ProjetosProblemas/novoProjetoProblema',
-					'botao' => 'Cadastrar Projeto' 
+					'botao' => array (
+							'value' => ($existe_usuario ? 'Próximo' : 'Cadastrar Projeto'),
+							'type' => ($existe_usuario ? 'button' : 'submit') 
+					) 
 			);
 			
 			$this->loadView ( 'default/header', $title );
@@ -168,7 +174,7 @@ class ProjetosProblemas extends \system\Controller {
 					
 					if (empty ( $id )) {
 						$_SESSION ['msg_erro'] = "Erro ao criar projeto";
-					} else {
+					} else if (! empty ( $participantes )) {
 						$this->model->adicionaPartcipantesProjeto ( $participantes, $id );
 					}
 				}
@@ -212,6 +218,7 @@ class ProjetosProblemas extends \system\Controller {
 			$dados ['aplicacao'] = $permissao;
 			
 			Log::gravar ( $dados, $_SESSION ['id'] );
+			die ();
 			
 			$this->redir ( 'ProjetosProblemas/cadastrar' );
 		} else {
@@ -224,15 +231,21 @@ class ProjetosProblemas extends \system\Controller {
 	 */
 	public function alterar() {
 		$permissao = "ProjetosProblemas/alterar";
+		$perfil = $_SESSION ['perfil'];
 		
-		if (Menu::possuePermissao ( $_SESSION ['perfil'], $permissao )) {
+		if (Menu::possuePermissao ( $perfil, $permissao )) {
 			$title = array (
 					'title' => 'Alterar projetos' 
 			);
 			
+			$existe_usuario = $this->model->existeUsuarios ( $perfil );
+			
 			$pagina = array (
 					'link' => HTTP . '/ProjetosProblemas/atualizarProjetoProblema',
-					'botao' => 'Alterar Projeto' 
+					'botao' => array (
+							'value' => ($existe_usuario ? 'Próximo' : 'Alterar Projeto'),
+							'type' => ($existe_usuario ? 'button' : 'submit') 
+					) 
 			);
 			
 			$listaProjetos ['listaProjeto'] = $this->model->listaProjetoProblemas ();
@@ -356,7 +369,10 @@ class ProjetosProblemas extends \system\Controller {
 			
 			$pagina = array (
 					'link' => HTTP . '/ProjetosProblemas/excluirProjetoProblema',
-					'botao' => 'Excluir' 
+					'botao' => array (
+							'value' => 'Excluir',
+							'type' => 'button' 
+					) 
 			);
 			
 			$listaProjetos ['listaProjeto'] = $this->model->listaProjetoProblemas ();

@@ -24,6 +24,17 @@ namespace application\models;
  * @author Ednei Leite da Silva
  */
 class ProjetosProblemas extends \system\Model {
+	public function existeUsuarios($perfil) {
+		$sql = "SELECT COUNT(usuario.id) AS count
+				FROM usuario
+				WHERE usuario.perfil <= (SELECT id FROM perfil WHERE BINARY perfil = :perfil)";
+		
+		$return = $this->select ( $sql, array (
+				'perfil' => $perfil 
+		), false );
+		
+		return ($return ['count'] > 0);
+	}
 	
 	/**
 	 * Busca os nome dos projetos existentes
@@ -268,8 +279,8 @@ class ProjetosProblemas extends \system\Model {
 		$sql = "SELECT projeto.id,
 					projeto.nome AS projeto,
 					tipo_problema.nome AS problema,
-					DATE_FORMAT(projeto_tipo_problema.resposta, '%H:%i') AS resposta,
-					DATE_FORMAT(projeto_tipo_problema.solucao, '%H:%i') AS solucao,
+					projeto_tipo_problema.resposta AS resposta,
+					projeto_tipo_problema.solucao AS solucao,
 					projeto_tipo_problema.descricao AS descricao
 				FROM projeto_tipo_problema
 				INNER JOIN projeto ON projeto_tipo_problema.projeto = projeto.id
