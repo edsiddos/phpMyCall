@@ -35,10 +35,10 @@ class Login extends \system\Model {
 	public function getDadosLogin($usuario, $senha) {
 		$sql = "SELECT usuario.id, usuario.nome, usuario.usuario, usuario.email, perfil.perfil FROM usuario
                 INNER JOIN perfil ON usuario.perfil = perfil.id
-                WHERE usuario.senha = sha1(md5(:senha)) AND usuario.usuario = :usuario";
+                WHERE usuario.senha = :senha AND usuario.usuario = :usuario";
 		
 		$array = array (
-				'senha' => $senha,
+				'senha' => sha1 ( md5 ( $senha ) ),
 				'usuario' => $usuario 
 		);
 		
