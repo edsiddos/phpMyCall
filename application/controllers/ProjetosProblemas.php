@@ -218,7 +218,6 @@ class ProjetosProblemas extends \system\Controller {
 			$dados ['aplicacao'] = $permissao;
 			
 			Log::gravar ( $dados, $_SESSION ['id'] );
-			die ();
 			
 			$this->redir ( 'ProjetosProblemas/cadastrar' );
 		} else {

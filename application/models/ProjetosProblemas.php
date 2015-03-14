@@ -24,6 +24,14 @@ namespace application\models;
  * @author Ednei Leite da Silva
  */
 class ProjetosProblemas extends \system\Model {
+	
+	/**
+	 * Verifica se existem usuários cadastros
+	 * 
+	 * @param string $perfil
+	 *        	Perfil de quem irá criar o projeto
+	 * @return boolean True se existe usuários
+	 */
 	public function existeUsuarios($perfil) {
 		$sql = "SELECT COUNT(usuario.id) AS count
 				FROM usuario
