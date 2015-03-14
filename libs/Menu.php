@@ -39,7 +39,7 @@ class Menu {
                 INNER JOIN perfil ON permissao_perfil.perfil = perfil.id
                 LEFT JOIN opcoes_menu AS submenu ON opcoes_menu.menu_pai = submenu.id
                 LEFT JOIN opcoes_menu AS menu ON submenu.menu_pai = menu.id
-                ORDER BY perfil.perfil, opcoes_menu.menu_pai, opcoes_menu.id";
+                ORDER BY perfil.perfil, opcoes_menu.id";
 		
 		$model = new Model ();
 		

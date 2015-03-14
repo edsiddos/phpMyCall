@@ -45,16 +45,14 @@ class Model {
 	public function __construct() {
 		try {
 			
-			$opcoes = array(
-					PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8'
-			);
-			
-			$this->conn = new PDO ( "mysql:host=" . DB_HOST . ";dbname=" . DB_NOME . ";charset=utf8", DB_USER, DB_PASS, $opcoes );
+			$this->conn = new PDO ( "pgsql:host=" . DB_HOST . ";dbname=" . DB_NOME . ";", DB_USER, DB_PASS );
 			/* Verifica se devemos debugar */
 			if (DEBUG === true) {
 				/* Configura o PDO ERROR MODE */
 				$this->conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 			}
+			
+			$this->conn->exec ( "SET NAMES 'UTF8'" );
 		} catch ( PDOException $ex ) {
 			echo "Erro ao conectar banco de dados: {$ex->getMessage()}";
 		}
@@ -100,11 +98,11 @@ class Model {
 	 */
 	public function insert($table, $data) {
 		// Campos e valores
-		$camposNomes = implode ( '`, `', array_keys ( $data ) );
+		$camposNomes = implode ( ', ', array_keys ( $data ) );
 		$camposValores = ':' . implode ( ', :', array_keys ( $data ) );
 		
 		// Prepara a Query
-		$sth = $this->conn->prepare ( "INSERT INTO $table (`$camposNomes`) VALUES ($camposValores)" );
+		$sth = $this->conn->prepare ( "INSERT INTO {$table} ({$camposNomes}) VALUES ({$camposValores})" );
 		
 		// Define os dados
 		foreach ( $data as $key => $value ) {
@@ -135,13 +133,13 @@ class Model {
 		$novosDados = NULL;
 		
 		foreach ( $data as $key => $value ) {
-			$novosDados .= "`$key`=:$key,";
+			$novosDados .= "{$key}=:{$key},";
 		}
 		
 		$novosDados = rtrim ( $novosDados, ',' );
 		
 		// Prepara a Query
-		$sth = $this->conn->prepare ( "UPDATE $table SET $novosDados WHERE $where" );
+		$sth = $this->conn->prepare ( "UPDATE {$table} SET {$novosDados} WHERE {$where}" );
 		
 		// Define os dados
 		foreach ( $data as $key => $value ) {
@@ -149,7 +147,7 @@ class Model {
 			$tipo = (is_int ( $value )) ? PDO::PARAM_INT : PDO::PARAM_STR;
 			
 			// Define o dado
-			$sth->bindValue ( ":$key", $value, $tipo );
+			$sth->bindValue ( ":{$key}", $value, $tipo );
 		}
 		
 		// Sucesso ou falha?
@@ -167,7 +165,7 @@ class Model {
 	 */
 	public function delete($table, $where) {
 		// Deleta
-		$sth = $this->conn->prepare("DELETE FROM $table WHERE $where");
-		return $sth->execute();
+		$sth = $this->conn->prepare ( "DELETE FROM {$table} WHERE {$where}" );
+		return $sth->execute ();
 	}
 }

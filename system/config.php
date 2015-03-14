@@ -32,7 +32,7 @@ if (DEBUG === true) {
 define ( 'DB_HOST', 'localhost' );
 
 // Nome do banco de dados
-define ( 'DB_NOME', 'myphphelpdesk' );
+define ( 'DB_NOME', 'phpmycall' );
 
 // Usuário do banco de dados
 define ( 'DB_USER', 'dev' );
@@ -42,7 +42,7 @@ define ( 'DB_PASS', 'dev' );
 
 // ################################################
 // caminho relativo para a pasta do projeto
-define ( 'PATH', '/var/www/html/myphphelpdesk' );
+define ( 'PATH', '/var/www/phpmycall' );
 
 // Caminha da pasta application
 define ( 'APPLICATION', PATH . '/application' );
@@ -64,7 +64,7 @@ define ( 'CLASSES', PATH . '/class' );
 
 // ################################################
 // Endereço do site
-define ( 'HTTP', 'http://localhost/myphphelpdesk' );
+define ( 'HTTP', 'http://localhost/phpmycall' );
 
 // Pasta dos arquivos css
 define ( 'HTTP_CSS', HTTP . '/static/css' );

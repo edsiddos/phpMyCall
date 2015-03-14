@@ -1,21 +1,22 @@
-CREATE DATABASE dados DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
-
+﻿CREATE DATABASE dados ENCODING 'UTF8';
 
 CREATE TABLE projeto(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	nome VARCHAR(100) NOT NULL UNIQUE,
 	descricao VARCHAR(500) DEFAULT NULL,
 	CONSTRAINT pk_problema PRIMARY KEY(id)
 );
+ALTER TABLE projeto OWNER TO dev;
 
 CREATE TABLE tipo_problema(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	nome VARCHAR(100) NOT NULL UNIQUE,
 	CONSTRAINT pk_tipo_problema PRIMARY KEY(id)
 );
+ALTER TABLE tipo_problema OWNER TO dev;
 
 CREATE TABLE projeto_tipo_problema(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	projeto INTEGER NOT NULL,
 	problema INTEGER NOT NULL,
 	resposta VARCHAR(6) DEFAULT NULL, -- tempo para resposta
@@ -25,9 +26,10 @@ CREATE TABLE projeto_tipo_problema(
 	CONSTRAINT fk_projeto_projeto_tipo_problema FOREIGN KEY (projeto) REFERENCES projeto(id),
 	CONSTRAINT fk_problema_projeto_tipo_problema FOREIGN KEY (problema) REFERENCES tipo_problema(id)
 );
+ALTER TABLE projeto_tipo_problema OWNER TO dev;
 
 CREATE TABLE opcoes_menu(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	nome VARCHAR(100) NOT NULL, -- Nome a ser mostrado ao usuário
 	link VARCHAR(255),
 	interno BOOLEAN NOT NULL DEFAULT TRUE, -- o link será interno ou externo
@@ -36,6 +38,7 @@ CREATE TABLE opcoes_menu(
 	CONSTRAINT pk_opcoes_menu PRIMARY KEY (id),
 	CONSTRAINT fk_menu_pai_opcoes_menu FOREIGN KEY (menu_pai) REFERENCES opcoes_menu(id)
 );
+ALTER TABLE opcoes_menu OWNER TO dev;
 
 INSERT INTO opcoes_menu VALUES (1, 'Chat', 'Chat/index', TRUE, TRUE, NULL);
 INSERT INTO opcoes_menu VALUES (2, 'Solicitação', '', TRUE, FALSE, NULL);
@@ -63,10 +66,11 @@ INSERT INTO opcoes_menu VALUES (23, 'SLA', 'SLA/index', TRUE, TRUE, 22);
 
 
 CREATE TABLE perfil(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	perfil VARCHAR(25) NOT NULL UNIQUE,
 	CONSTRAINT pk_perfil PRIMARY KEY (id)
 );
+ALTER TABLE perfil OWNER TO dev;
 
 INSERT INTO perfil VALUES (1, 'Cliente');
 INSERT INTO perfil VALUES (2, 'Atendente');
@@ -75,13 +79,14 @@ INSERT INTO perfil VALUES (4, 'Gerente');
 INSERT INTO perfil VALUES (5, 'Administrador de Sistema');
 
 CREATE TABLE permissao_perfil(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	menu INTEGER NOT NULL,
 	perfil INTEGER NOT NULL,
 	CONSTRAINT pk_permissao_perfil PRIMARY KEY (id),
 	CONSTRAINT fk_menu_permissao_perfil FOREIGN KEY (menu) REFERENCES opcoes_menu (id),
 	CONSTRAINT fk_perfil_permissao_perfil FOREIGN KEY (perfil) REFERENCES perfil (id)
 );
+ALTER TABLE permissao_perfil OWNER TO dev;
 
 -- Inicio permissão - chat
 INSERT INTO permissao_perfil VALUES (1, 1, 1);
@@ -149,21 +154,23 @@ INSERT INTO permissao_perfil VALUES (46, 23, 5);
 --
 
 CREATE TABLE usuario(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	usuario VARCHAR(15) NOT NULL UNIQUE,
 	senha VARCHAR(50) NOT NULL,
 	nome VARCHAR(80) NOT NULL,
 	email VARCHAR(150) NOT NULL UNIQUE,
 	perfil INTEGER NOT NULL,
-	dt_troca DATETIME NOT NULL,
+	dt_troca TIMESTAMP NOT NULL,
 	CONSTRAINT pk_usuario PRIMARY KEY (id),
 	CONSTRAINT fk_perfil_perfil_usuario FOREIGN KEY (perfil) REFERENCES perfil (id)
 );
+ALTER TABLE usuario OWNER TO dev;
 
-INSERT INTO usuario VALUES (1, 'admin', sha1(md5('admin')), 'Administrador', 'admin@admin.com', 5, '0000-00-00 00:00');
+-- usuario: admin, senha: admin
+INSERT INTO usuario VALUES (1, 'admin', '"90b9aa7e25f80cf4f64e990b78a9fc5ebd6cecad"', 'Administrador', 'admin@admin.com', 5, '2025-12-01 00:00');
 
 CREATE TABLE solicitacao(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	projeto_problema INTEGER NOT NULL,
 	descricao TEXT NOT NULL,
 	solicitante INTEGER NOT NULL,
@@ -183,9 +190,10 @@ CREATE TABLE solicitacao(
 	CONSTRAINT fk_tecnico_solicitacao FOREIGN KEY (tecnico) REFERENCES usuario(id),
 	CONSTRAINT fk_solicitacao_origem_solicitacao FOREIGN KEY (solicitacao_origem) REFERENCES solicitacao (id)
 );
+ALTER TABLE solicitacao OWNER TO dev;
 
 CREATE TABLE reabrir_solicitacao(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	solicitacao INTEGER NOT NULL UNIQUE, -- uma solicitação só pode ser reaberta uma vez
 	motivo TEXT NOT NULL, -- justificativa para reabertura do chamado
 	resposta TEXT DEFAULT NULL, -- resposta do gerente á reabertura
@@ -197,27 +205,30 @@ CREATE TABLE reabrir_solicitacao(
 	CONSTRAINT pk_reabrir_solicitacao PRIMARY KEY (id),
 	CONSTRAINT fk_solicitacao_reabrir_solicitacao FOREIGN KEY (solicitacao) REFERENCES solicitacao (id)
 );
+ALTER TABLE reabrir_solicitacao OWNER TO dev;
 
 CREATE TABLE arquivos(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	nome VARCHAR(100) NOT NULL,
 	solicitacao INTEGER NOT NULL,
-	conteudo MEDIUMBLOB NOT NULL,
+	conteudo BYTEA NOT NULL,
 	CONSTRAINT pk_arquivos PRIMARY KEY (id),
 	CONSTRAINT fk_solicitacao_arquivos FOREIGN KEY (solicitacao) REFERENCES solicitacao (id)
 );
+ALTER TABLE arquivos OWNER TO dev;
 
 CREATE TABLE tipo_feedback(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	nome VARCHAR(50) UNIQUE NOT NULL,
 	abreviatura VARCHAR(10) UNIQUE NOT NULL,
 	descontar BOOLEAN DEFAULT TRUE,
 	descricao VARCHAR(250),
 	CONSTRAINT pk_tipo_feedback PRIMARY KEY (id)
 );
+ALTER TABLE tipo_feedback OWNER TO dev;
 
 CREATE TABLE feedback(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	tipo_feedback INTEGER NOT NULL,
 	pergunta TEXT NOT NULL,
 	resposta TEXT NOT NULL,
@@ -230,16 +241,18 @@ CREATE TABLE feedback(
 	CONSTRAINT fk_solicitacao_feedback FOREIGN KEY (solicitacao) REFERENCES solicitacao (id),
 	CONSTRAINT fk_responsavel_feedback FOREIGN KEY (responsavel) REFERENCES usuario (id)
 );
+ALTER TABLE feedback OWNER TO dev;
 
 CREATE TABLE feriado(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	dia DATE NOT NULL UNIQUE,
 	nome VARCHAR(50) NOT NULL,
 	CONSTRAINT pk_feriado PRIMARY KEY (id)
 );
+ALTER TABLE feriado OWNER TO dev;
 
 CREATE TABLE expediente(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	dia_semana VARCHAR(15) NOT NULL UNIQUE,
 	entrada_manha TIME DEFAULT '7:00:00',
 	saida_manha TIME DEFAULT '11:00:00',
@@ -247,6 +260,7 @@ CREATE TABLE expediente(
 	saida_tarde TIME DEFAULT '17:00:00',
 	CONSTRAINT pk_expediente PRIMARY KEY (id)
 );
+ALTER TABLE expediente OWNER TO dev;
 
 INSERT INTO expediente (dia_semana) VALUES('DOMINGO');
 INSERT INTO expediente (dia_semana) VALUES('SEGUNDA-FEIRA');
@@ -257,16 +271,17 @@ INSERT INTO expediente (dia_semana) VALUES('SEXTA-FEIRA');
 INSERT INTO expediente (dia_semana) VALUES('SÁBADO');
 
 CREATE TABLE projeto_responsaveis(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	usuario INTEGER NOT NULL,
 	projeto INTEGER NOT NULL,
 	CONSTRAINT pk_projeto_responsaveis PRIMARY KEY(id),
 	CONSTRAINT fk_usuario_projeto_responsaveis FOREIGN KEY (usuario) REFERENCES usuario(id),
 	CONSTRAINT fk_projeto_projeto_responsaveis FOREIGN KEY (projeto) REFERENCES projeto(id)
 );
+ALTER TABLE projeto_responsaveis OWNER TO dev;
 
 CREATE TABLE log(
-	id INTEGER AUTO_INCREMENT,
+	id SERIAL,
 	ip VARCHAR(15) NOT NULL,
 	data_hora TIMESTAMP NOT NULL,
 	dados TEXT NOT NULL,
@@ -274,3 +289,4 @@ CREATE TABLE log(
 	CONSTRAINT pk_log PRIMARY KEY(id),
 	CONSTRAINT fk_usuario_log FOREIGN KEY (usuario) REFERENCES usuario(id)
 );
+ALTER TABLE log OWNER TO dev;
