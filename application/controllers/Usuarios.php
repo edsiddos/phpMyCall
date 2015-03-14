@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (C) 2015 - Ednei Leite da Silva
  *
@@ -58,10 +59,15 @@ class Usuarios extends \system\Controller {
 					"title" => "Cadastro de usuário" 
 			);
 			
+			$existe_projeto = $this->model->existeProjeto ();
+			
 			$vars = array (
 					'perfil' => $this->model->getPerfil ( $_SESSION ['perfil'] ),
 					'link' => HTTP . '/Usuarios/novoUsuario',
-					'title_botao' => "Cadastrar Usuário" 
+					'botao' => array (
+							'value' => ($existe_projeto ? "Próximo" : "Cadastrar Usuário"),
+							'type' => ($existe_projeto ? "button" : "submit") 
+					) 
 			);
 			
 			$this->loadView ( "default/header", $title );
@@ -138,7 +144,7 @@ class Usuarios extends \system\Controller {
 		$dados ['projeto'] = $projeto;
 		
 		if (! empty ( $senha )) {
-			$dados ['senha'] = sha1 ( md5 ( $senha ) );
+			$dados ['usuario'] ['senha'] = sha1 ( md5 ( $senha ) );
 		}
 		
 		return $dados;
@@ -187,10 +193,15 @@ class Usuarios extends \system\Controller {
 					"title" => "Alterar usuário" 
 			);
 			
+			$existe_projeto = $this->model->existeProjeto ();
+			
 			$vars = array (
 					'perfil' => $this->model->getPerfil ( $_SESSION ['perfil'] ),
 					'link' => HTTP . '/Usuarios/atualizaUsuario',
-					'title_botao' => "Alterar Usuário" 
+					'botao' => array (
+							"value" => ($existe_projeto ? "Próximo" : "Alterar Usuário"),
+							"type" => ($existe_projeto ? "button" : "submit") 
+					) 
 			);
 			
 			$this->loadView ( "default/header", $title );
@@ -275,7 +286,10 @@ class Usuarios extends \system\Controller {
 			$vars = array (
 					'perfil' => $this->model->getPerfil ( $_SESSION ['perfil'] ),
 					'link' => HTTP . '/Usuarios/removeUsuario',
-					'title_botao' => "Excluir Usuário" 
+					'botao' => array (
+							"value" => "Excluir Usuário",
+							"type" => "button" 
+					) 
 			);
 			
 			$this->loadView ( "default/header", $title );

@@ -133,7 +133,7 @@ $(document).ready(function(){
 
 		<div class="form-group">
 			<div class="col-xs-offset-2 col-xs-10">
-				<button type="button" name="submit-dados" class="btn btn-default"><?= $title_botao; ?></button>
+				<button type="<?= $botao['type']; ?>" name="submit-dados" class="btn btn-default"><?= $botao['value']; ?></button>
 			</div>
 		</div>
 	</form>

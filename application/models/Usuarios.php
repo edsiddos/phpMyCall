@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (C) 2015 - Ednei Leite da Silva
  *
@@ -153,6 +154,18 @@ class Usuarios extends \system\Model {
 		$where .= "(SELECT id FROM perfil WHERE perfil = '{$perfil}')";
 		
 		return $this->delete ( 'usuario', $where );
+	}
+	
+	/**
+	 * Verifica se existe projeto
+	 *
+	 * @return boolean True caso exista.
+	 */
+	public function existeProjeto() {
+		$sql = "SELECT id, nome FROM projeto";
+		$projetos = $this->select ( $sql, array (), false );
+		
+		return (! empty ( $projetos ));
 	}
 	
 	/**
