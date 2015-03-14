@@ -143,10 +143,10 @@ class Horarios extends Model {
 	public function getExpediente() {
 		$sql = "SELECT id,
 				dia_semana,
-				DATE_FORMAT(entrada_manha, '%H:%i') AS entrada_manha,
-				DATE_FORMAT(saida_manha, '%H:%i') AS saida_manha,
-				DATE_FORMAT(entrada_tarde, '%H:%i') AS entrada_tarde,
-				DATE_FORMAT(saida_tarde, '%H:%i') AS saida_tarde
+				TO_CHAR(entrada_manha, 'HH24:MM') AS entrada_manha,
+				TO_CHAR(saida_manha, 'HH24:MM') AS saida_manha,
+				TO_CHAR(entrada_tarde, 'HH24:MM') AS entrada_tarde,
+				TO_CHAR(saida_tarde, 'HH24:MM') AS saida_tarde
 				FROM expediente ORDER BY id;";
 		
 		$result = $this->select ( $sql );

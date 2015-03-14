@@ -28,6 +28,11 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 
+		$('#cancelar').on('click', function(){
+			$('#inputNome').val('');
+			$('#inputDataFixa:checked').attr('checked', false);
+		});
+
 		$('#alterar').on('click', function(){
 			$("#opcao-feriados-dialog").modal('hide');
 
@@ -73,7 +78,6 @@
 				'&replicar=' + $('#inputDataFixa:checked').length,
 				success: function(html){
 					if($("#mostrar-feriados").attr('disabled')){
-						$('#inputDataFixa').attr('disabled', false);
 						$("#mostrar-feriados").click();
 					} else {
 						$("#mostrar-calendario").click();
@@ -89,6 +93,7 @@
 			$("#calendario").datepicker("destroy");
 			$(this).attr("disabled", true);
 			$("#mostrar-calendario"). attr("disabled", false);
+			$('#inputDataFixa').attr('disabled', true);
 			$().mostrarFeriado();
 		});
 
@@ -96,6 +101,7 @@
 			$("#calendario").datepicker("destroy");
 			$(this).attr("disabled", true);
 			$("#mostrar-feriados"). attr("disabled", false);
+			$('#inputDataFixa').attr('disabled', false);
 			$().mostrarCalendario();
 		});
 
@@ -168,7 +174,8 @@ div #calendario>div {
 				</div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+					<button type="button" class="btn btn-default" id="cancelar"
+						data-dismiss="modal">Cancelar</button>
 					<button type="button" class="btn btn-success" id="confirmar">Adicionar</button>
 				</div>
 			</div>
@@ -185,24 +192,23 @@ div #calendario>div {
 				</div>
 
 				<div class="modal-body">
-					<p>
-						Qual operação deseja realizar?
-					</p>				
+					<p>Qual operação deseja realizar?</p>
 				</div>
 
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">
-						Cancelar
-					</button>
+						Cancelar</button>
 					<button type="button" class="btn btn-default" id="alterar">
-						<span class="glyphicon glyphicon-pencil text-primary"></span> - Alterar
+						<span class="glyphicon glyphicon-pencil text-primary"></span> -
+						Alterar
 					</button>
 					<button type="button" class="btn btn-default" id="excluir">
-						<span class="glyphicon glyphicon-remove text-danger"></span> - Excluir
+						<span class="glyphicon glyphicon-remove text-danger"></span> -
+						Excluir
 					</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	
+
 </div>
