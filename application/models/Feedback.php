@@ -47,7 +47,7 @@ class Feedback extends Model {
 				'descricao' => $descricao 
 		);
 		
-		return $this->insert ( 'tipo_feedback', $dados );
+		return $this->insert ( 'phpmycall.tipo_feedback', $dados );
 	}
 	
 	/**
@@ -58,7 +58,7 @@ class Feedback extends Model {
 	 * @return Array Retorna array com os tipos de feedback
 	 */
 	public function getNomeFeedback($nome) {
-		$sql = "SELECT nome AS value FROM tipo_feedback WHERE nome LIKE :nome";
+		$sql = "SELECT nome AS value FROM phpmycall.tipo_feedback WHERE nome LIKE :nome";
 		
 		return $this->select ( $sql, array (
 				'nome' => '%' . $nome . '%' 
@@ -73,7 +73,7 @@ class Feedback extends Model {
 	 * @return array Retorna Array com dados do tipo de Feedback
 	 */
 	public function getDadosTipoFeedback($nome) {
-		$sql = "SELECT * FROM tipo_feedback WHERE nome = :nome";
+		$sql = "SELECT * FROM phpmycall.tipo_feedback WHERE nome = :nome";
 		return $this->select ( $sql, array (
 				'nome' => $nome 
 		), false );
@@ -102,7 +102,7 @@ class Feedback extends Model {
 				'descricao' => $descricao 
 		);
 		
-		return $this->update ( 'tipo_feedback', $dados, "id = {$id}" );
+		return $this->update ( 'phpmycall.tipo_feedback', $dados, "id = {$id}" );
 	}
 	
 	/**
@@ -113,6 +113,6 @@ class Feedback extends Model {
 	 * @return boolean Retorna true se sucesso, false caso contrario.
 	 */
 	public function excluir($id) {
-		return $this->delete ( 'tipo_feedback', "id = {$id}" );
+		return $this->delete ( 'phpmycall.tipo_feedback', "id = {$id}" );
 	}
 }

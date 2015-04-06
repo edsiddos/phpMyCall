@@ -34,7 +34,7 @@ class ProjetosProblemas extends \system\Model {
 	 */
 	public function existeUsuarios($perfil) {
 		$sql = "SELECT COUNT(usuario.id) AS count
-				FROM usuario
+				FROM phpmycall.usuario
 				WHERE usuario.perfil <= (SELECT id FROM perfil WHERE BINARY perfil = :perfil)";
 		
 		$return = $this->select ( $sql, array (
@@ -52,7 +52,7 @@ class ProjetosProblemas extends \system\Model {
 	 * @return Array Com os nome dos projetos.
 	 */
 	public function getProjetos($nome) {
-		$sql = "SELECT nome FROM projeto WHERE nome LIKE :nome";
+		$sql = "SELECT nome FROM phpmycall.projeto WHERE nome LIKE :nome";
 		
 		$result = $this->select ( $sql, array (
 				'nome' => "%{$nome}%" 
@@ -75,7 +75,7 @@ class ProjetosProblemas extends \system\Model {
 	 * @return Array Retorna array com os nome dos projetos
 	 */
 	public function getProblemas($nome) {
-		$sql = "SELECT nome FROM tipo_problema WHERE nome LIKE :nome";
+		$sql = "SELECT nome FROM phpmycall.tipo_problema WHERE nome LIKE :nome";
 		
 		$result = $this->select ( $sql, array (
 				'nome' => "%{$nome}%" 
@@ -98,7 +98,7 @@ class ProjetosProblemas extends \system\Model {
 	 * @return array Resultado da pesquisa
 	 */
 	public function getIdProjeto($nome) {
-		$sql = "SELECT id FROM projeto WHERE nome = :nome";
+		$sql = "SELECT id FROM phpmycall.projeto WHERE nome = :nome";
 		
 		return $this->select ( $sql, array (
 				'nome' => $nome 
@@ -112,8 +112,8 @@ class ProjetosProblemas extends \system\Model {
 	 *        	Nome do perfil
 	 */
 	public function relacaoUsuarios($perfil) {
-		$sql = "SELECT usuario.id, usuario.nome, perfil.perfil FROM usuario
-				INNER JOIN perfil ON usuario.perfil = perfil.id
+		$sql = "SELECT usuario.id, usuario.nome, perfil.perfil FROM phpmycall.usuario
+				INNER JOIN phpmycall.perfil ON usuario.perfil = perfil.id
 				WHERE usuario.perfil <= (SELECT id FROM perfil WHERE BINARY perfil = :perfil)";
 		
 		return $this->select ( $sql, array (
@@ -131,9 +131,9 @@ class ProjetosProblemas extends \system\Model {
 	 * @return boolean True se existir, False caso contrario.
 	 */
 	public function existeProjetoProblema($projeto, $problema) {
-		$sql = "SELECT projeto_tipo_problema.id FROM projeto_tipo_problema
-				INNER JOIN projeto ON projeto_tipo_problema.projeto = projeto.id
-				INNER JOIN tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id
+		$sql = "SELECT projeto_tipo_problema.id FROM phpmycall.projeto_tipo_problema
+				INNER JOIN phpmycall.projeto ON projeto_tipo_problema.projeto = projeto.id
+				INNER JOIN phpmycall.tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id
 				WHERE projeto.nome = :projeto
 					AND tipo_problema.nome = :problema";
 		
@@ -160,8 +160,8 @@ class ProjetosProblemas extends \system\Model {
 				'descricao' => $descricao 
 		);
 		
-		if ($this->insert ( 'projeto', $array )) {
-			$sql = "SELECT id FROM projeto WHERE nome = :nome AND descricao = :descricao";
+		if ($this->insert ( 'phpmycall.projeto', $array )) {
+			$sql = "SELECT id FROM phpmycall.projeto WHERE nome = :nome AND descricao = :descricao";
 			
 			$return = $this->select ( $sql, $array, false );
 			return $return ['id'];
@@ -178,7 +178,7 @@ class ProjetosProblemas extends \system\Model {
 	 * @return integer ID do problema
 	 */
 	public function getIdProblema($nome) {
-		$sql = "SELECT id FROM tipo_problema WHERE nome = :nome";
+		$sql = "SELECT id FROM phpmycall.tipo_problema WHERE nome = :nome";
 		
 		$array = array (
 				'nome' => $nome 
@@ -202,7 +202,7 @@ class ProjetosProblemas extends \system\Model {
 		);
 		
 		if ($this->insert ( 'tipo_problema', $array )) {
-			$sql = "SELECT id FROM tipo_problema WHERE nome = :nome";
+			$sql = "SELECT id FROM phpmycall.tipo_problema WHERE nome = :nome";
 			
 			$id = $this->select ( $sql, $array, false );
 			return $id ['id'];
@@ -223,7 +223,7 @@ class ProjetosProblemas extends \system\Model {
 		$usuarios = explode ( ',', $participantes );
 		
 		foreach ( $usuarios as $values ) {
-			$this->insert ( 'projeto_responsaveis', array (
+			$this->insert ( 'phpmycall.projeto_responsaveis', array (
 					'usuario' => $values,
 					'projeto' => $projeto 
 			) );
@@ -253,7 +253,7 @@ class ProjetosProblemas extends \system\Model {
 				'descricao' => $descricao 
 		);
 		
-		$this->insert ( 'projeto_tipo_problema', $array );
+		$this->insert ( 'phpmycall.projeto_tipo_problema', $array );
 	}
 	
 	/**
@@ -263,9 +263,9 @@ class ProjetosProblemas extends \system\Model {
 	 */
 	public function listaProjetoProblemas() {
 		$sql = "SELECT projeto_tipo_problema.id, projeto.nome AS projeto, tipo_problema.nome AS problema
-				FROM projeto_tipo_problema
-				INNER JOIN projeto ON projeto_tipo_problema.projeto = projeto.id
-				INNER JOIN tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id";
+				FROM phpmycall.projeto_tipo_problema
+				INNER JOIN phpmycall.projeto ON projeto_tipo_problema.projeto = projeto.id
+				INNER JOIN phpmycall.tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id";
 		
 		$result = $this->select ( $sql );
 		
@@ -290,9 +290,9 @@ class ProjetosProblemas extends \system\Model {
 					projeto_tipo_problema.resposta AS resposta,
 					projeto_tipo_problema.solucao AS solucao,
 					projeto_tipo_problema.descricao AS descricao
-				FROM projeto_tipo_problema
-				INNER JOIN projeto ON projeto_tipo_problema.projeto = projeto.id
-				INNER JOIN tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id
+				FROM phpmycall.projeto_tipo_problema
+				INNER JOIN phpmycall.projeto ON projeto_tipo_problema.projeto = projeto.id
+				INNER JOIN phpmycall.tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id
 				WHERE projeto_tipo_problema.id = :id";
 		
 		return $this->select ( $sql, array (
@@ -308,7 +308,7 @@ class ProjetosProblemas extends \system\Model {
 	 * @return Array
 	 */
 	public function getRelacaoParticipantes($id) {
-		$sql = "SELECT usuario FROM projeto_responsaveis WHERE projeto = :id";
+		$sql = "SELECT usuario FROM phpmycall.projeto_responsaveis WHERE projeto = :id";
 		
 		$result = $this->select ( $sql, array (
 				'id' => $id 
@@ -329,7 +329,7 @@ class ProjetosProblemas extends \system\Model {
 	 * @return Array
 	 */
 	public function getDescricaoProjeto($id) {
-		$sql = "SELECT descricao AS descricao_projeto FROM projeto WHERE id = :id";
+		$sql = "SELECT descricao AS descricao_projeto FROM phpmycall.projeto WHERE id = :id";
 		
 		return $this->select ( $sql, array (
 				'id' => $id 
@@ -346,7 +346,7 @@ class ProjetosProblemas extends \system\Model {
 	 * @return boolean True caso sucesso.
 	 */
 	public function alteraProjeto($dados, $id) {
-		return $this->update ( 'projeto', $dados, "id = {$id}" );
+		return $this->update ( 'phpmycall.projeto', $dados, "id = {$id}" );
 	}
 	
 	/**
@@ -358,7 +358,7 @@ class ProjetosProblemas extends \system\Model {
 	 *        	Código do projeto
 	 */
 	public function deleteParticipantesProjeto($usuario, $projeto) {
-		$this->delete ( 'projeto_responsaveis', "usuario = {$usuario} AND projeto = {$projeto}" );
+		$this->delete ( 'phpmycall.projeto_responsaveis', "usuario = {$usuario} AND projeto = {$projeto}" );
 	}
 	
 	/**
@@ -386,7 +386,7 @@ class ProjetosProblemas extends \system\Model {
 				'descricao' => $descricao 
 		);
 		
-		$this->update ( 'projeto_tipo_problema', $array, "id = {$id}" );
+		$this->update ( 'phpmycall.projeto_tipo_problema', $array, "id = {$id}" );
 	}
 	
 	/**
@@ -399,22 +399,22 @@ class ProjetosProblemas extends \system\Model {
 	 * @return bool True se operação realizada com sucesso.
 	 */
 	public function excluirProjetoProblemas($id_projeto, $id_projeto_problema) {
-		$sql = "SELECT COUNT(id) AS cont FROM projeto_tipo_problema WHERE projeto = :projeto";
+		$sql = "SELECT COUNT(id) AS cont FROM phpmycall.projeto_tipo_problema WHERE projeto = :projeto";
 		$result = $this->select ( $sql, array (
 				'projeto' => $id_projeto 
 		), false );
 		
 		$return = true;
 		
-		$return &= $this->delete ( 'projeto_tipo_problema', "id = {$id_projeto_problema}" );
+		$return &= $this->delete ( 'phpmycall.projeto_tipo_problema', "id = {$id_projeto_problema}" );
 		
 		/*
 		 * Caso seja o ultimo tipo de problema
 		 * exclui o projeto
 		 */
 		if ($result ['cont'] == 1) {
-			$this->delete ( 'projeto_responsaveis', "projeto = {$id_projeto}" );
-			$return &= $this->delete ( 'projeto', "id = {$id_projeto}" );
+			$this->delete ( 'phpmycall.projeto_responsaveis', "projeto = {$id_projeto}" );
+			$return &= $this->delete ( 'phpmycall.projeto', "id = {$id_projeto}" );
 		}
 		
 		return $return;

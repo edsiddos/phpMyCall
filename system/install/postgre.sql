@@ -1,21 +1,19 @@
-﻿CREATE DATABASE dados ENCODING 'UTF8';
+﻿CREATE SCHEMA phpmycall;
 
-CREATE TABLE projeto(
+CREATE TABLE phpmycall.projeto(
 	id SERIAL,
 	nome VARCHAR(100) NOT NULL UNIQUE,
 	descricao VARCHAR(500) DEFAULT NULL,
 	CONSTRAINT pk_problema PRIMARY KEY(id)
 );
-ALTER TABLE projeto OWNER TO dev;
 
-CREATE TABLE tipo_problema(
+CREATE TABLE phpmycall.tipo_problema(
 	id SERIAL,
 	nome VARCHAR(100) NOT NULL UNIQUE,
 	CONSTRAINT pk_tipo_problema PRIMARY KEY(id)
 );
-ALTER TABLE tipo_problema OWNER TO dev;
 
-CREATE TABLE projeto_tipo_problema(
+CREATE TABLE phpmycall.projeto_tipo_problema(
 	id SERIAL,
 	projeto INTEGER NOT NULL,
 	problema INTEGER NOT NULL,
@@ -23,12 +21,11 @@ CREATE TABLE projeto_tipo_problema(
 	solucao VARCHAR(6) DEFAULT NULL, -- tempo para solução
 	descricao VARCHAR(1000) DEFAULT NULL, -- informação geral do tipo de problema
 	CONSTRAINT pk_projeto_tipo_problema PRIMARY KEY (id),
-	CONSTRAINT fk_projeto_projeto_tipo_problema FOREIGN KEY (projeto) REFERENCES projeto(id),
-	CONSTRAINT fk_problema_projeto_tipo_problema FOREIGN KEY (problema) REFERENCES tipo_problema(id)
+	CONSTRAINT fk_projeto_projeto_tipo_problema FOREIGN KEY (projeto) REFERENCES phpmycall.projeto(id),
+	CONSTRAINT fk_problema_projeto_tipo_problema FOREIGN KEY (problema) REFERENCES phpmycall.tipo_problema(id)
 );
-ALTER TABLE projeto_tipo_problema OWNER TO dev;
 
-CREATE TABLE opcoes_menu(
+CREATE TABLE phpmycall.opcoes_menu(
 	id SERIAL,
 	nome VARCHAR(100) NOT NULL, -- Nome a ser mostrado ao usuário
 	link VARCHAR(255),
@@ -36,124 +33,121 @@ CREATE TABLE opcoes_menu(
 	funcionalidade BOOLEAN NOT NULL DEFAULT TRUE, -- se é uma funcinalidade ou menu
 	menu_pai INTEGER DEFAULT NULL, -- id do menu pai
 	CONSTRAINT pk_opcoes_menu PRIMARY KEY (id),
-	CONSTRAINT fk_menu_pai_opcoes_menu FOREIGN KEY (menu_pai) REFERENCES opcoes_menu(id)
+	CONSTRAINT fk_menu_pai_opcoes_menu FOREIGN KEY (menu_pai) REFERENCES phpmycall.opcoes_menu(id)
 );
-ALTER TABLE opcoes_menu OWNER TO dev;
 
-INSERT INTO opcoes_menu VALUES (1, 'Chat', 'Chat/index', TRUE, TRUE, NULL);
-INSERT INTO opcoes_menu VALUES (2, 'Solicitação', '', TRUE, FALSE, NULL);
-INSERT INTO opcoes_menu VALUES (3, 'Finalizadas', 'Solicitacao/finalizadas', TRUE, TRUE, 2);
-INSERT INTO opcoes_menu VALUES (4, 'Em andamento', 'Solicitacao/andamento', TRUE, TRUE, 2);
-INSERT INTO opcoes_menu VALUES (5, 'Em aberto', 'Solicitacao/aberta', TRUE, TRUE, 2);
-INSERT INTO opcoes_menu VALUES (6, 'Abrir Solicitação', 'Solicitacao/abrir', TRUE, TRUE, 2);
-INSERT INTO opcoes_menu VALUES (7, 'Administração', '', TRUE, FALSE, NULL);
-INSERT INTO opcoes_menu VALUES (8, 'Expediente', 'Horarios/alterarExpediente', TRUE, TRUE, 7);
-INSERT INTO opcoes_menu VALUES (9, 'Feriados', 'Horarios/manterFeriados', TRUE, TRUE, 7);
-INSERT INTO opcoes_menu VALUES (10, 'Usuários', '', TRUE, FALSE, 7);
-INSERT INTO opcoes_menu VALUES (11, 'Cadastrar', 'Usuarios/cadastrar', TRUE, TRUE, 10);
-INSERT INTO opcoes_menu VALUES (12, 'Alterar', 'Usuarios/alterar', TRUE, TRUE, 10);
-INSERT INTO opcoes_menu VALUES (13, 'Excluir', 'Usuarios/excluir', TRUE, TRUE, 10);
-INSERT INTO opcoes_menu VALUES (14, 'Tipos de Feedback', '', TRUE, FALSE, 7);
-INSERT INTO opcoes_menu VALUES (15, 'Cadastrar', 'Feedback/cadastrar', TRUE, TRUE, 14);
-INSERT INTO opcoes_menu VALUES (16, 'Alterar', 'Feedback/alterar', TRUE, TRUE, 14);
-INSERT INTO opcoes_menu VALUES (17, 'Excluir', 'Feedback/excluir', TRUE, TRUE, 14);
-INSERT INTO opcoes_menu VALUES (18, 'Projetos e Problemas', '', TRUE, FALSE, 7);
-INSERT INTO opcoes_menu VALUES (19, 'Cadastrar', 'ProjetosProblemas/cadastrar', TRUE, TRUE, 18);
-INSERT INTO opcoes_menu VALUES (20, 'Alterar', 'ProjetosProblemas/alterar', TRUE, TRUE, 18);
-INSERT INTO opcoes_menu VALUES (21, 'Excluir', 'ProjetosProblemas/excluir', TRUE, TRUE, 18);
-INSERT INTO opcoes_menu VALUES (22, 'Relatórios', '', TRUE, FALSE, NULL);
-INSERT INTO opcoes_menu VALUES (23, 'SLA', 'SLA/index', TRUE, TRUE, 22);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Chat', 'Chat/index', TRUE, TRUE, NULL);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Solicitação', '', TRUE, FALSE, NULL);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Finalizadas', 'Solicitacao/finalizadas', TRUE, TRUE, 2);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Em andamento', 'Solicitacao/andamento', TRUE, TRUE, 2);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Em aberto', 'Solicitacao/aberta', TRUE, TRUE, 2);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Abrir Solicitação', 'Solicitacao/abrir', TRUE, TRUE, 2);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Administração', '', TRUE, FALSE, NULL);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Expediente', 'Horarios/alterarExpediente', TRUE, TRUE, 7);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Feriados', 'Horarios/manterFeriados', TRUE, TRUE, 7);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Usuários', '', TRUE, FALSE, 7);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Cadastrar', 'Usuarios/cadastrar', TRUE, TRUE, 10);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Alterar', 'Usuarios/alterar', TRUE, TRUE, 10);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Excluir', 'Usuarios/excluir', TRUE, TRUE, 10);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Tipos de Feedback', '', TRUE, FALSE, 7);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Cadastrar', 'Feedback/cadastrar', TRUE, TRUE, 14);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Alterar', 'Feedback/alterar', TRUE, TRUE, 14);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Excluir', 'Feedback/excluir', TRUE, TRUE, 14);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Projetos e Problemas', '', TRUE, FALSE, 7);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Cadastrar', 'ProjetosProblemas/cadastrar', TRUE, TRUE, 18);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Alterar', 'ProjetosProblemas/alterar', TRUE, TRUE, 18);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Excluir', 'ProjetosProblemas/excluir', TRUE, TRUE, 18);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Relatórios', '', TRUE, FALSE, NULL);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('SLA', 'SLA/index', TRUE, TRUE, 22);
 
 
-CREATE TABLE perfil(
+CREATE TABLE phpmycall.perfil(
 	id SERIAL,
 	perfil VARCHAR(25) NOT NULL UNIQUE,
 	CONSTRAINT pk_perfil PRIMARY KEY (id)
 );
-ALTER TABLE perfil OWNER TO dev;
 
-INSERT INTO perfil VALUES (1, 'Cliente');
-INSERT INTO perfil VALUES (2, 'Atendente');
-INSERT INTO perfil VALUES (3, 'Técnico');
-INSERT INTO perfil VALUES (4, 'Gerente');
-INSERT INTO perfil VALUES (5, 'Administrador de Sistema');
+INSERT INTO phpmycall.perfil (perfil) VALUES ('Cliente');
+INSERT INTO phpmycall.perfil (perfil) VALUES ('Atendente');
+INSERT INTO phpmycall.perfil (perfil) VALUES ('Técnico');
+INSERT INTO phpmycall.perfil (perfil) VALUES ('Gerente');
+INSERT INTO phpmycall.perfil (perfil) VALUES ('Administrador de Sistema');
 
-CREATE TABLE permissao_perfil(
+CREATE TABLE phpmycall.permissao_perfil(
 	id SERIAL,
 	menu INTEGER NOT NULL,
 	perfil INTEGER NOT NULL,
 	CONSTRAINT pk_permissao_perfil PRIMARY KEY (id),
-	CONSTRAINT fk_menu_permissao_perfil FOREIGN KEY (menu) REFERENCES opcoes_menu (id),
-	CONSTRAINT fk_perfil_permissao_perfil FOREIGN KEY (perfil) REFERENCES perfil (id)
+	CONSTRAINT fk_menu_permissao_perfil FOREIGN KEY (menu) REFERENCES phpmycall.opcoes_menu (id),
+	CONSTRAINT fk_perfil_permissao_perfil FOREIGN KEY (perfil) REFERENCES phpmycall.perfil (id)
 );
-ALTER TABLE permissao_perfil OWNER TO dev;
 
 -- Inicio permissão - chat
-INSERT INTO permissao_perfil VALUES (1, 1, 1);
-INSERT INTO permissao_perfil VALUES (2, 1, 2);
-INSERT INTO permissao_perfil VALUES (3, 1, 3);
-INSERT INTO permissao_perfil VALUES (4, 1, 4);
-INSERT INTO permissao_perfil VALUES (5, 1, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (1, 1);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (1, 2);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (1, 3);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (1, 4);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (1, 5);
 -- Final permissão - chat
 -- Inicio visualização de solicitações
-INSERT INTO permissao_perfil VALUES (6, 3, 1); -- finalizadas
-INSERT INTO permissao_perfil VALUES (7, 3, 2);
-INSERT INTO permissao_perfil VALUES (8, 3, 3);
-INSERT INTO permissao_perfil VALUES (9, 3, 4);
-INSERT INTO permissao_perfil VALUES (10, 3, 5);
-INSERT INTO permissao_perfil VALUES (11, 4, 1); -- em atendimento
-INSERT INTO permissao_perfil VALUES (12, 4, 2);
-INSERT INTO permissao_perfil VALUES (13, 4, 3);
-INSERT INTO permissao_perfil VALUES (14, 4, 4);
-INSERT INTO permissao_perfil VALUES (15, 4, 5);
-INSERT INTO permissao_perfil VALUES (16, 5, 1); -- em aberto
-INSERT INTO permissao_perfil VALUES (17, 5, 2);
-INSERT INTO permissao_perfil VALUES (18, 5, 3);
-INSERT INTO permissao_perfil VALUES (19, 5, 4);
-INSERT INTO permissao_perfil VALUES (20, 5, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (3, 1); -- finalizadas
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (3, 2);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (3, 3);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (3, 4);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (3, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (4, 1); -- em atendimento
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (4, 2);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (4, 3);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (4, 4);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (4, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (5, 1); -- em aberto
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (5, 2);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (5, 3);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (5, 4);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (5, 5);
 -- Final visualização de solicitação
 -- Inicio abertura de solicitação
-INSERT INTO permissao_perfil VALUES (21, 6, 2);
-INSERT INTO permissao_perfil VALUES (22, 6, 3);
-INSERT INTO permissao_perfil VALUES (23, 6, 4);
-INSERT INTO permissao_perfil VALUES (24, 6, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (6, 2);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (6, 3);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (6, 4);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (6, 5);
 -- Final abertura de solicitação
-INSERT INTO permissao_perfil VALUES (25, 8, 5); -- expediente
-INSERT INTO permissao_perfil VALUES (26, 9, 5); -- feriados
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (8, 5); -- expediente
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (9, 5); -- feriados
 -- Inicio manter usuário
-INSERT INTO permissao_perfil VALUES (27, 11, 4); -- cadastrar
-INSERT INTO permissao_perfil VALUES (28, 11, 5);
-INSERT INTO permissao_perfil VALUES (29, 12, 4); -- alterar
-INSERT INTO permissao_perfil VALUES (30, 12, 5);
-INSERT INTO permissao_perfil VALUES (31, 13, 4); -- excluir
-INSERT INTO permissao_perfil VALUES (32, 13, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (11, 4); -- cadastrar
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (11, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (12, 4); -- alterar
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (12, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (13, 4); -- excluir
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (13, 5);
 -- Final manter usuário
 -- Inicio manter tipos de feedback
-INSERT INTO permissao_perfil VALUES (33, 15, 4); -- cadastrar
-INSERT INTO permissao_perfil VALUES (34, 15, 5);
-INSERT INTO permissao_perfil VALUES (35, 16, 4); -- alterar
-INSERT INTO permissao_perfil VALUES (36, 16, 5);
-INSERT INTO permissao_perfil VALUES (37, 17, 4); -- excluir
-INSERT INTO permissao_perfil VALUES (38, 17, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (15, 4); -- cadastrar
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (15, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (16, 4); -- alterar
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (16, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (17, 4); -- excluir
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (17, 5);
 -- Final manter tipos de feedback
 -- Inicio manter projetos e problemas
-INSERT INTO permissao_perfil VALUES (39, 19, 4); -- cadastrar
-INSERT INTO permissao_perfil VALUES (40, 19, 5);
-INSERT INTO permissao_perfil VALUES (41, 20, 4); -- alterar
-INSERT INTO permissao_perfil VALUES (42, 20, 5);
-INSERT INTO permissao_perfil VALUES (43, 21, 4); -- excluir
-INSERT INTO permissao_perfil VALUES (44, 21, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (19, 4); -- cadastrar
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (19, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (20, 4); -- alterar
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (20, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (21, 4); -- excluir
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (21, 5);
 -- Final manter projetos e problemas
 -- Inicio relatórios
-INSERT INTO permissao_perfil VALUES (45, 23, 4); -- SLA
-INSERT INTO permissao_perfil VALUES (46, 23, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (23, 4); -- SLA
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (23, 5);
 -- Final relatórios
 
 --
 -- Tabela de usuários
 --
 
-CREATE TABLE usuario(
+CREATE TABLE phpmycall.usuario(
 	id SERIAL,
 	usuario VARCHAR(15) NOT NULL UNIQUE,
 	senha VARCHAR(50) NOT NULL,
@@ -162,14 +156,13 @@ CREATE TABLE usuario(
 	perfil INTEGER NOT NULL,
 	dt_troca TIMESTAMP NOT NULL,
 	CONSTRAINT pk_usuario PRIMARY KEY (id),
-	CONSTRAINT fk_perfil_perfil_usuario FOREIGN KEY (perfil) REFERENCES perfil (id)
+	CONSTRAINT fk_perfil_perfil_usuario FOREIGN KEY (perfil) REFERENCES phpmycall.perfil (id)
 );
-ALTER TABLE usuario OWNER TO dev;
 
 -- usuario: admin, senha: admin
-INSERT INTO usuario VALUES (1, 'admin', '"90b9aa7e25f80cf4f64e990b78a9fc5ebd6cecad"', 'Administrador', 'admin@admin.com', 5, '2025-12-01 00:00');
+INSERT INTO phpmycall.usuario (usuario, senha, nome, email, perfil, dt_troca) VALUES ('admin', '90b9aa7e25f80cf4f64e990b78a9fc5ebd6cecad', 'Administrador', 'admin@admin.com', 5, '2025-12-01 00:00');
 
-CREATE TABLE solicitacao(
+CREATE TABLE phpmycall.solicitacao(
 	id SERIAL,
 	projeto_problema INTEGER NOT NULL,
 	descricao TEXT NOT NULL,
@@ -184,15 +177,14 @@ CREATE TABLE solicitacao(
 	avaliacao INTEGER NOT NULL,
 	justificativa_avaliacao VARCHAR(255),
 	CONSTRAINT pk_solicitacao PRIMARY KEY (id),
-	CONSTRAINT fk_projeto_problema_solicitacao FOREIGN KEY (projeto_problema) REFERENCES projeto_tipo_problema (id),
-	CONSTRAINT fk_solicitante_solicitacao FOREIGN KEY (solicitante) REFERENCES usuario(id),
-	CONSTRAINT fk_atendente_solicitacao FOREIGN KEY (atendente) REFERENCES usuario(id),
-	CONSTRAINT fk_tecnico_solicitacao FOREIGN KEY (tecnico) REFERENCES usuario(id),
-	CONSTRAINT fk_solicitacao_origem_solicitacao FOREIGN KEY (solicitacao_origem) REFERENCES solicitacao (id)
+	CONSTRAINT fk_projeto_problema_solicitacao FOREIGN KEY (projeto_problema) REFERENCES phpmycall.projeto_tipo_problema (id),
+	CONSTRAINT fk_solicitante_solicitacao FOREIGN KEY (solicitante) REFERENCES phpmycall.usuario(id),
+	CONSTRAINT fk_atendente_solicitacao FOREIGN KEY (atendente) REFERENCES phpmycall.usuario(id),
+	CONSTRAINT fk_tecnico_solicitacao FOREIGN KEY (tecnico) REFERENCES phpmycall.usuario(id),
+	CONSTRAINT fk_solicitacao_origem_solicitacao FOREIGN KEY (solicitacao_origem) REFERENCES phpmycall.solicitacao (id)
 );
-ALTER TABLE solicitacao OWNER TO dev;
 
-CREATE TABLE reabrir_solicitacao(
+CREATE TABLE phpmycall.reabrir_solicitacao(
 	id SERIAL,
 	solicitacao INTEGER NOT NULL UNIQUE, -- uma solicitação só pode ser reaberta uma vez
 	motivo TEXT NOT NULL, -- justificativa para reabertura do chamado
@@ -203,21 +195,19 @@ CREATE TABLE reabrir_solicitacao(
 	autorizado BOOLEAN DEFAULT FALSE, -- aguardando liberação se false
 	aberto BOOLEAN DEFAULT TRUE, -- ainda não foi resolvida
 	CONSTRAINT pk_reabrir_solicitacao PRIMARY KEY (id),
-	CONSTRAINT fk_solicitacao_reabrir_solicitacao FOREIGN KEY (solicitacao) REFERENCES solicitacao (id)
+	CONSTRAINT fk_solicitacao_reabrir_solicitacao FOREIGN KEY (solicitacao) REFERENCES phpmycall.solicitacao (id)
 );
-ALTER TABLE reabrir_solicitacao OWNER TO dev;
 
-CREATE TABLE arquivos(
+CREATE TABLE phpmycall.arquivos(
 	id SERIAL,
 	nome VARCHAR(100) NOT NULL,
 	solicitacao INTEGER NOT NULL,
 	conteudo BYTEA NOT NULL,
 	CONSTRAINT pk_arquivos PRIMARY KEY (id),
-	CONSTRAINT fk_solicitacao_arquivos FOREIGN KEY (solicitacao) REFERENCES solicitacao (id)
+	CONSTRAINT fk_solicitacao_arquivos FOREIGN KEY (solicitacao) REFERENCES phpmycall.solicitacao (id)
 );
-ALTER TABLE arquivos OWNER TO dev;
 
-CREATE TABLE tipo_feedback(
+CREATE TABLE phpmycall.tipo_feedback(
 	id SERIAL,
 	nome VARCHAR(50) UNIQUE NOT NULL,
 	abreviatura VARCHAR(10) UNIQUE NOT NULL,
@@ -225,9 +215,8 @@ CREATE TABLE tipo_feedback(
 	descricao VARCHAR(250),
 	CONSTRAINT pk_tipo_feedback PRIMARY KEY (id)
 );
-ALTER TABLE tipo_feedback OWNER TO dev;
 
-CREATE TABLE feedback(
+CREATE TABLE phpmycall.feedback(
 	id SERIAL,
 	tipo_feedback INTEGER NOT NULL,
 	pergunta TEXT NOT NULL,
@@ -237,21 +226,19 @@ CREATE TABLE feedback(
 	solicitacao INTEGER NOT NULL,
 	responsavel INTEGER DEFAULT NULL,
 	CONSTRAINT pk_feedback PRIMARY KEY (id),
-	CONSTRAINT fk_tipo_feedback_feedback FOREIGN KEY (tipo_feedback) REFERENCES tipo_feedback (id),
-	CONSTRAINT fk_solicitacao_feedback FOREIGN KEY (solicitacao) REFERENCES solicitacao (id),
-	CONSTRAINT fk_responsavel_feedback FOREIGN KEY (responsavel) REFERENCES usuario (id)
+	CONSTRAINT fk_tipo_feedback_feedback FOREIGN KEY (tipo_feedback) REFERENCES phpmycall.tipo_feedback (id),
+	CONSTRAINT fk_solicitacao_feedback FOREIGN KEY (solicitacao) REFERENCES phpmycall.solicitacao (id),
+	CONSTRAINT fk_responsavel_feedback FOREIGN KEY (responsavel) REFERENCES phpmycall.usuario (id)
 );
-ALTER TABLE feedback OWNER TO dev;
 
-CREATE TABLE feriado(
+CREATE TABLE phpmycall.feriado(
 	id SERIAL,
 	dia DATE NOT NULL UNIQUE,
 	nome VARCHAR(50) NOT NULL,
 	CONSTRAINT pk_feriado PRIMARY KEY (id)
 );
-ALTER TABLE feriado OWNER TO dev;
 
-CREATE TABLE expediente(
+CREATE TABLE phpmycall.expediente(
 	id SERIAL,
 	dia_semana VARCHAR(15) NOT NULL UNIQUE,
 	entrada_manha TIME DEFAULT '7:00:00',
@@ -260,33 +247,49 @@ CREATE TABLE expediente(
 	saida_tarde TIME DEFAULT '17:00:00',
 	CONSTRAINT pk_expediente PRIMARY KEY (id)
 );
-ALTER TABLE expediente OWNER TO dev;
 
-INSERT INTO expediente (dia_semana) VALUES('DOMINGO');
-INSERT INTO expediente (dia_semana) VALUES('SEGUNDA-FEIRA');
-INSERT INTO expediente (dia_semana) VALUES('TERÇA-FEIRA');
-INSERT INTO expediente (dia_semana) VALUES('QUARTA-FEIRA');
-INSERT INTO expediente (dia_semana) VALUES('QUINTA-FEIRA');
-INSERT INTO expediente (dia_semana) VALUES('SEXTA-FEIRA');
-INSERT INTO expediente (dia_semana) VALUES('SÁBADO');
+INSERT INTO phpmycall.expediente (dia_semana) VALUES('DOMINGO');
+INSERT INTO phpmycall.expediente (dia_semana) VALUES('SEGUNDA-FEIRA');
+INSERT INTO phpmycall.expediente (dia_semana) VALUES('TERÇA-FEIRA');
+INSERT INTO phpmycall.expediente (dia_semana) VALUES('QUARTA-FEIRA');
+INSERT INTO phpmycall.expediente (dia_semana) VALUES('QUINTA-FEIRA');
+INSERT INTO phpmycall.expediente (dia_semana) VALUES('SEXTA-FEIRA');
+INSERT INTO phpmycall.expediente (dia_semana) VALUES('SÁBADO');
 
-CREATE TABLE projeto_responsaveis(
+CREATE TABLE phpmycall.projeto_responsaveis(
 	id SERIAL,
 	usuario INTEGER NOT NULL,
 	projeto INTEGER NOT NULL,
 	CONSTRAINT pk_projeto_responsaveis PRIMARY KEY(id),
-	CONSTRAINT fk_usuario_projeto_responsaveis FOREIGN KEY (usuario) REFERENCES usuario(id),
-	CONSTRAINT fk_projeto_projeto_responsaveis FOREIGN KEY (projeto) REFERENCES projeto(id)
+	CONSTRAINT fk_usuario_projeto_responsaveis FOREIGN KEY (usuario) REFERENCES phpmycall.usuario(id),
+	CONSTRAINT fk_projeto_projeto_responsaveis FOREIGN KEY (projeto) REFERENCES phpmycall.projeto(id)
 );
-ALTER TABLE projeto_responsaveis OWNER TO dev;
 
-CREATE TABLE log(
+CREATE TABLE phpmycall.log(
 	id SERIAL,
 	ip VARCHAR(15) NOT NULL,
 	data_hora TIMESTAMP NOT NULL,
 	dados TEXT NOT NULL,
 	usuario INTEGER NOT NULL,
 	CONSTRAINT pk_log PRIMARY KEY(id),
-	CONSTRAINT fk_usuario_log FOREIGN KEY (usuario) REFERENCES usuario(id)
+	CONSTRAINT fk_usuario_log FOREIGN KEY (usuario) REFERENCES phpmycall.usuario(id)
 );
-ALTER TABLE log OWNER TO dev;
+
+
+ALTER SCHEMA phpmycall OWNER TO dev;
+ALTER TABLE phpmycall.projeto OWNER TO dev;
+ALTER TABLE phpmycall.tipo_problema OWNER TO dev;
+ALTER TABLE phpmycall.projeto_tipo_problema OWNER TO dev;
+ALTER TABLE phpmycall.opcoes_menu OWNER TO dev;
+ALTER TABLE phpmycall.perfil OWNER TO dev;
+ALTER TABLE phpmycall.permissao_perfil OWNER TO dev;
+ALTER TABLE phpmycall.usuario OWNER TO dev;
+ALTER TABLE phpmycall.solicitacao OWNER TO dev;
+ALTER TABLE phpmycall.reabrir_solicitacao OWNER TO dev;
+ALTER TABLE phpmycall.arquivos OWNER TO dev;
+ALTER TABLE phpmycall.tipo_feedback OWNER TO dev;
+ALTER TABLE phpmycall.feedback OWNER TO dev;
+ALTER TABLE phpmycall.feriado OWNER TO dev;
+ALTER TABLE phpmycall.expediente OWNER TO dev;
+ALTER TABLE phpmycall.projeto_responsaveis OWNER TO dev;
+ALTER TABLE phpmycall.log OWNER TO dev;

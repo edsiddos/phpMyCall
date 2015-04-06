@@ -34,11 +34,11 @@ class Menu {
 	 */
 	private static function consultaMenuPerfil() {
 		$sql = "SELECT menu.nome AS menu, submenu.nome AS submenu, opcoes_menu.nome AS opcao, opcoes_menu.link, perfil.perfil
-                FROM opcoes_menu
-                INNER JOIN permissao_perfil ON opcoes_menu.id = permissao_perfil.menu
-                INNER JOIN perfil ON permissao_perfil.perfil = perfil.id
-                LEFT JOIN opcoes_menu AS submenu ON opcoes_menu.menu_pai = submenu.id
-                LEFT JOIN opcoes_menu AS menu ON submenu.menu_pai = menu.id
+                FROM phpmycall.opcoes_menu
+                INNER JOIN phpmycall.permissao_perfil ON opcoes_menu.id = permissao_perfil.menu
+                INNER JOIN phpmycall.perfil ON permissao_perfil.perfil = perfil.id
+                LEFT JOIN phpmycall.opcoes_menu AS submenu ON opcoes_menu.menu_pai = submenu.id
+                LEFT JOIN phpmycall.opcoes_menu AS menu ON submenu.menu_pai = menu.id
                 ORDER BY perfil.perfil, opcoes_menu.id";
 		
 		$model = new Model ();
@@ -88,9 +88,9 @@ class Menu {
 	 */
 	public static function possuePermissao($perfil, $link) {
 		$sql = "SELECT EXISTS(
-                SELECT * FROM opcoes_menu
-                INNER JOIN permissao_perfil ON opcoes_menu.id = permissao_perfil.menu
-                INNER JOIN perfil ON permissao_perfil.perfil = perfil.id
+                SELECT * FROM phpmycall.opcoes_menu
+                INNER JOIN phpmycall.permissao_perfil ON opcoes_menu.id = permissao_perfil.menu
+                INNER JOIN phpmycall.perfil ON permissao_perfil.perfil = perfil.id
                 WHERE perfil.perfil = :perfil
                 AND opcoes_menu.link = :link) AS permissao";
 		

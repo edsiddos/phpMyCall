@@ -50,6 +50,6 @@ class Log {
 				'usuario' => $id_usuario 
 		);
 		
-		$model->insert ( 'log', $insert );
+		$model->insert ( 'phpmycall.log', $insert );
 	}
 }

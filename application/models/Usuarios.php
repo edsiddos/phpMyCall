@@ -34,8 +34,8 @@ class Usuarios extends \system\Model {
 	 * @return Array Array com os perfils disponiveis.
 	 */
 	public function getPerfil($nome) {
-		$sql = "SELECT * FROM perfil
-		WHERE id < (SELECT id FROM perfil WHERE perfil = :nome)";
+		$sql = "SELECT * FROM phpmycall.perfil
+		WHERE id < (SELECT id FROM phpmycall.perfil WHERE perfil = :nome)";
 		
 		return $this->select ( $sql, array (
 				'nome' => $nome 
@@ -50,7 +50,7 @@ class Usuarios extends \system\Model {
 	 * @return boolean TRUE se inserido.
 	 */
 	public function inserirUsuario($dados) {
-		return $this->insert ( 'usuario', $dados );
+		return $this->insert ( 'phpmycall.usuario', $dados );
 	}
 	
 	/**
@@ -61,7 +61,7 @@ class Usuarios extends \system\Model {
 	 * @return Array
 	 */
 	public function getUsuario($user, $id) {
-		$sql = "SELECT EXISTS(SELECT * FROM usuario WHERE usuario = :user AND id <> :id) AS exist";
+		$sql = "SELECT EXISTS(SELECT * FROM phpmycall.usuario WHERE usuario = :user AND id <> :id) AS exist";
 		
 		return $this->select ( $sql, array (
 				'user' => $user,
@@ -76,7 +76,7 @@ class Usuarios extends \system\Model {
 	 * @return Array
 	 */
 	public function getEmail($email, $id) {
-		$sql = "SELECT EXISTS(SELECT * FROM usuario WHERE email = :email AND id <> :id) AS exist";
+		$sql = "SELECT EXISTS(SELECT * FROM phpmycall.usuario WHERE email = :email AND id <> :id) AS exist";
 		
 		return $this->select ( $sql, array (
 				'email' => $email,
@@ -94,8 +94,8 @@ class Usuarios extends \system\Model {
 	 * @return Array Retorna relação de nomes semelhantes.
 	 */
 	public function getUsuarioNome($usuario, $perfil) {
-		$sql = "SELECT nome, usuario FROM usuario WHERE usuario LIKE :usuario
-				AND perfil < (SELECT id FROM perfil WHERE perfil = :perfil)";
+		$sql = "SELECT nome, usuario FROM phpmycall.usuario WHERE usuario LIKE :usuario
+				AND perfil < (SELECT id FROM phpmycall.perfil WHERE perfil = :perfil)";
 		
 		$result = $this->select ( $sql, array (
 				'usuario' => "%{$usuario}%",
@@ -118,7 +118,7 @@ class Usuarios extends \system\Model {
 	 * @return Array Retorna array com os dados do usuário
 	 */
 	public function getDadosUsuarios($usuario) {
-		$sql = "SELECT id, usuario, nome, email, perfil FROM usuario WHERE usuario = :usuario";
+		$sql = "SELECT id, usuario, nome, email, perfil FROM phpmycall.usuario WHERE usuario = :usuario";
 		
 		return $this->select ( $sql, array (
 				'usuario' => $usuario 
@@ -135,7 +135,7 @@ class Usuarios extends \system\Model {
 	 * @return boolean True alteração com sucesso.
 	 */
 	public function atualizaUsuario($dados, $id) {
-		return $this->update ( 'usuario', $dados, "id = {$id}" );
+		return $this->update ( 'phpmycall.usuario', $dados, "id = {$id}" );
 	}
 	
 	/**
@@ -151,9 +151,9 @@ class Usuarios extends \system\Model {
 	 */
 	public function excluirUsuario($id, $usuario, $email, $perfil) {
 		$where = "id = {$id} AND usuario = '{$usuario}' AND email = '{$email}' AND perfil < ";
-		$where .= "(SELECT id FROM perfil WHERE perfil = '{$perfil}')";
+		$where .= "(SELECT id FROM phpmycall.perfil WHERE perfil = '{$perfil}')";
 		
-		return $this->delete ( 'usuario', $where );
+		return $this->delete ( 'phpmycall.usuario', $where );
 	}
 	
 	/**
@@ -162,7 +162,7 @@ class Usuarios extends \system\Model {
 	 * @return boolean True caso exista.
 	 */
 	public function existeProjeto() {
-		$sql = "SELECT id, nome FROM projeto";
+		$sql = "SELECT id, nome FROM phpmycall.projeto";
 		$projetos = $this->select ( $sql, array (), false );
 		
 		return (! empty ( $projetos ));
@@ -175,12 +175,12 @@ class Usuarios extends \system\Model {
 	 * @return Array
 	 */
 	public function relacaoProjetos($id_usuario) {
-		$sql = "SELECT id, nome FROM projeto";
+		$sql = "SELECT id, nome FROM phpmycall.projeto";
 		$projetos = $this->select ( $sql );
 		
 		$sql = "SELECT projeto.id
-				FROM projeto
-				INNER JOIN projeto_responsaveis ON projeto.id = projeto_responsaveis.projeto
+				FROM phpmycall.projeto
+				INNER JOIN phpmycall.projeto_responsaveis ON projeto.id = projeto_responsaveis.projeto
 				WHERE usuario = :usuario";
 		$projeto_responsaveis = $this->select ( $sql, array (
 				'usuario' => $id_usuario 
@@ -210,7 +210,7 @@ class Usuarios extends \system\Model {
 	 * @return Array Retorna dois arrays relação de projetos inseridos e excluidos
 	 */
 	public function ligaUsuarioProjeto($usuario, $projetos) {
-		$sql = "SELECT id FROM usuario WHERE usuario = :usuario";
+		$sql = "SELECT id FROM phpmycall.usuario WHERE usuario = :usuario";
 		
 		$id = $this->select ( $sql, array (
 				'usuario' => $usuario 
@@ -220,9 +220,9 @@ class Usuarios extends \system\Model {
 		 * Get projetos
 		 */
 		$sql = "SELECT projeto.id
-				FROM projeto
-				INNER JOIN projeto_responsaveis ON projeto.id = projeto_responsaveis.projeto
-				INNER JOIN usuario ON projeto_responsaveis.usuario = usuario.id
+				FROM phpmycall.projeto
+				INNER JOIN phpmycall.projeto_responsaveis ON projeto.id = projeto_responsaveis.projeto
+				INNER JOIN phpmycall.usuario ON projeto_responsaveis.usuario = usuario.id
 				WHERE usuario.usuario = :usuario";
 		
 		$projeto_participante = $this->select ( $sql, array (
@@ -234,7 +234,7 @@ class Usuarios extends \system\Model {
 		
 		foreach ( $projeto_participante as $values ) {
 			if (! in_array ( $values ['id'], $insert )) {
-				$this->delete ( 'projeto_responsaveis', "projeto = {$values['id']} AND usuario = {$id['id']}" );
+				$this->delete ( 'phpmycall.projeto_responsaveis', "projeto = {$values['id']} AND usuario = {$id['id']}" );
 				$delete [] = $values ['id'];
 			}
 			
@@ -245,7 +245,7 @@ class Usuarios extends \system\Model {
 		}
 		
 		foreach ( $insert as $values ) {
-			$this->insert ( 'projeto_responsaveis', array (
+			$this->insert ( 'phpmycall.projeto_responsaveis', array (
 					'usuario' => $id ['id'],
 					'projeto' => $values 
 			) );

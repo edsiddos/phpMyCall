@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (C) 2015 - Ednei Leite da Silva
  *
@@ -32,7 +33,7 @@ class Horarios extends Model {
 	 * @return array
 	 */
 	public function getFeriados() {
-		$sql = "SELECT dia FROM feriado";
+		$sql = "SELECT dia FROM phpmycall.feriado";
 		
 		$result = $this->select ( $sql );
 		
@@ -73,7 +74,7 @@ class Horarios extends Model {
 				);
 				
 				$return [$inicio] ['dados'] = $array;
-				$return [$inicio] ['result'] = $this->insert ( 'feriado', $array );
+				$return [$inicio] ['result'] = $this->insert ( 'phpmycall.feriado', $array );
 			}
 		} else {
 			/*
@@ -88,7 +89,7 @@ class Horarios extends Model {
 			);
 			
 			$return [0] ['dados'] = $array;
-			$return [0] ['result'] = $this->insert ( 'feriado', $array );
+			$return [0] ['result'] = $this->insert ( 'phpmycall.feriado', $array );
 		}
 		
 		return $return;
@@ -102,7 +103,7 @@ class Horarios extends Model {
 	 * @return array Retorna array com o nome do feriado
 	 */
 	public function getFeriadoByDia($dia) {
-		$sql = "SELECT nome FROM feriado WHERE dia = :dia";
+		$sql = "SELECT nome FROM phpmycall.feriado WHERE dia = :dia";
 		
 		return $this->select ( $sql, array (
 				'dia' => $dia 
@@ -119,7 +120,7 @@ class Horarios extends Model {
 	 * @return boolean
 	 */
 	public function updateFeriados($data, $nome) {
-		return $this->update ( 'feriado', array (
+		return $this->update ( 'phpmycall.feriado', array (
 				'nome' => $nome 
 		), "dia = '{$data}'" );
 	}
@@ -132,12 +133,12 @@ class Horarios extends Model {
 	 * @return boolean True sucesso, False falha.
 	 */
 	public function deleteFeriados($data) {
-		return $this->delete ( 'feriado', "dia = '{$data}'" );
+		return $this->delete ( 'phpmycall.feriado', "dia = '{$data}'" );
 	}
 	
 	/**
 	 * Busca os dias e horarios de expediente.
-	 * 
+	 *
 	 * @return Array Retorna array com os dia da semana e horários de entrada e saída do 1º e 2º periodo.
 	 */
 	public function getExpediente() {
@@ -147,7 +148,7 @@ class Horarios extends Model {
 				TO_CHAR(saida_manha, 'HH24:MM') AS saida_manha,
 				TO_CHAR(entrada_tarde, 'HH24:MM') AS entrada_tarde,
 				TO_CHAR(saida_tarde, 'HH24:MM') AS saida_tarde
-				FROM expediente ORDER BY id;";
+				FROM phpmycall.expediente ORDER BY id;";
 		
 		$result = $this->select ( $sql );
 		
@@ -164,7 +165,7 @@ class Horarios extends Model {
 	
 	/**
 	 * Altera horário de entrada ou saida de determinado dia.
-	 * 
+	 *
 	 * @param unknown $id
 	 *        	ID do dia da semana
 	 * @param unknown $value
@@ -178,6 +179,6 @@ class Horarios extends Model {
 				$coluna => $value 
 		);
 		
-		return $this->update ( 'expediente', $dados, "id = {$id}" );
+		return $this->update ( 'phpmycall.expediente', $dados, "id = {$id}" );
 	}
 }

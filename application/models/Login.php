@@ -33,8 +33,9 @@ class Login extends \system\Model {
 	 * @return Array Retorna array com <b>nome</b>, <b>usuario</b>, <b>email</b>, <b>perfil</b>.
 	 */
 	public function getDadosLogin($usuario, $senha) {
-		$sql = "SELECT usuario.id, usuario.nome, usuario.usuario, usuario.email, perfil.perfil FROM usuario
-                INNER JOIN perfil ON usuario.perfil = perfil.id
+		$sql = "SELECT usuario.id, usuario.nome, usuario.usuario, usuario.email, perfil.perfil
+				FROM phpmycall.usuario
+                INNER JOIN phpmycall.perfil ON usuario.perfil = perfil.id
                 WHERE usuario.senha = :senha AND usuario.usuario = :usuario";
 		
 		$array = array (
