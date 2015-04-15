@@ -1,140 +1,166 @@
 
 <script type="text/javascript">
 
-$(document).ready(function(){
+    $(document).ready(function () {
 
-	$('#inputUsuario').on('focusout', function(){
-		if($(this).val() != ''){
-		$.ajax({
-			url: '<?= HTTP . '/Usuarios/validaUsuario' ?>',
-			data: 'user=' + $(this).val() + '&id=' + $('#inputID').val(),
-            type: 'POST',
-			success: function(values){
-				var exists = $.parseJSON(values);
+        $('#inputUsuario').on('focusout', function () {
+            if ($(this).val() != '') {
+                $.ajax({
+                    url: '<?= HTTP . '/Usuarios/validaUsuario' ?>',
+                    data: 'user=' + $(this).val() + '&id=' + $('#inputID').val(),
+                    type: 'POST',
+                    success: function (values) {
+                        var exists = $.parseJSON(values);
 
-				if(exists.exist == 1){
-					$("#divUsuario").removeClass('has-success');
-					$("#divUsuario").addClass('has-error');
-				} else {
-					$("#divUsuario").removeClass('has-error');
-					$("#divUsuario").addClass('has-success');
-				}
-			}
-		});
-		} else {
-			$("#divUsuario").removeClass('has-success');
-			$("#divUsuario").addClass('has-error');
-		}
-	});
+                        if (exists.exist == 1) {
+                            $("#divUsuario").removeClass('has-success');
+                            $("#divUsuario").addClass('has-error');
+                        } else {
+                            $("#divUsuario").removeClass('has-error');
+                            $("#divUsuario").addClass('has-success');
+                        }
+                    }
+                });
+            } else {
+                $("#divUsuario").removeClass('has-success');
+                $("#divUsuario").addClass('has-error');
+            }
+        });
 
-	$('#inputEMail').on('focusout', function(){
-		if($(this).val() != ''){
-			$.ajax({
-				url: '<?= HTTP . '/Usuarios/validaEmail' ?>',
-				data: 'email=' + $(this).val() + '&id=' + $('#inputID').val(),
-	            type: 'POST',
-				success: function(values){
-					var exists = $.parseJSON(values);
-	
-					if(exists.exist == 1){
-						$("#divEMail").removeClass('has-success');
-						$("#divEMail").addClass('has-error');
-					} else {
-						$("#divEMail").removeClass('has-error');
-						$("#divEMail").addClass('has-success');
-					}
-				}
-			});
-		} else {
-			$("#divEMail").removeClass('has-success');
-			$("#divEMail").addClass('has-error');
-		}
-	});
-	
-});
+        $('#inputEMail').on('focusout', function () {
+            if ($(this).val() != '') {
+                $.ajax({
+                    url: '<?= HTTP . '/Usuarios/validaEmail' ?>',
+                    data: 'email=' + $(this).val() + '&id=' + $('#inputID').val(),
+                    type: 'POST',
+                    success: function (values) {
+                        var exists = $.parseJSON(values);
+
+                        if (exists.exist == 1) {
+                            $("#divEMail").removeClass('has-success');
+                            $("#divEMail").addClass('has-error');
+                        } else {
+                            $("#divEMail").removeClass('has-error');
+                            $("#divEMail").addClass('has-success');
+                        }
+                    }
+                });
+            } else {
+                $("#divEMail").removeClass('has-success');
+                $("#divEMail").addClass('has-error');
+            }
+        });
+
+        $('#empresa').hide();
+
+        $('#selectPerfil').on('change', function () {
+            if ($(this).val() == 1) {
+                $('#empresa').show();
+            } else {
+                $('#empresa').hide();
+            }
+        });
+
+    });
 
 </script>
 
 <div class="container">
 
-	<?php
-	if ((! empty ( $_SESSION ['msg_erro'] )) || (! empty ( $_SESSION ['msg_sucesso'] ))) {
-		?>
-    <div
-		class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger';?> alert-error text-center">
-		<a href="#" class="close" data-dismiss="alert">&times;</a>
-        <?= empty($_SESSION['msg_erro']) ? $_SESSION['msg_sucesso'] : $_SESSION['msg_erro'];?>
-    </div>
-		<?php
-		unset ( $_SESSION ['msg_erro'] );
-		unset ( $_SESSION ['msg_sucesso'] );
-	}
-	?>
+    <?php
+    if ((!empty($_SESSION ['msg_erro'])) || (!empty($_SESSION ['msg_sucesso']))) {
+        ?>
+        <div
+            class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger'; ?> alert-error text-center">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            <?= empty($_SESSION['msg_erro']) ? $_SESSION['msg_sucesso'] : $_SESSION['msg_erro']; ?>
+        </div>
+        <?php
+        unset($_SESSION ['msg_erro']);
+        unset($_SESSION ['msg_sucesso']);
+    }
+    ?>
 
-	<form class="form-horizontal" method="post" action="<?= $link ?>">
-		<input type="hidden" name="inputID" id="inputID" value="0" />
-		<div class="form-group">
-			<label for="inputNome" class="control-label col-xs-2">Nome</label>
-			<div class="col-xs-6">
-				<input type="text" class="form-control" id="inputNome" required
-					name="inputNome" placeholder="Nome">
-			</div>
-		</div>
+    <form class="form-horizontal" method="post" action="<?= $link ?>">
+        <input type="hidden" name="inputID" id="inputID" value="0" />
+        <div class="form-group">
+            <label for="inputNome" class="control-label col-xs-2">Nome</label>
+            <div class="col-xs-6">
+                <input type="text" class="form-control" id="inputNome" required name="inputNome" placeholder="Nome">
+            </div>
+        </div>
 
-		<div class="form-group">
-			<label for="inputUsuario" class="control-label col-xs-2">Usuário</label>
-			<div class="col-xs-6" id="divUsuario">
-				<input type="text" class="form-control" id="inputUsuario" required
-					name="inputUsuario" placeholder="Usuário">
-			</div>
-		</div>
+        <div class="form-group">
+            <label for="inputUsuario" class="control-label col-xs-2">Usuário</label>
+            <div class="col-xs-6" id="divUsuario">
+                <input type="text" class="form-control" id="inputUsuario" required name="inputUsuario" placeholder="Usuário">
+            </div>
+        </div>
 
-		<div class="form-group">
-			<label for="inputSenha" class="control-label col-xs-2">Senha</label>
-			<div class="col-xs-4">
-				<input type="password" class="form-control" id="inputSenha" required
-					name="inputSenha" placeholder="Senha">
-			</div>
-			<div class="checkbox col-xs-2">
-				<label for="inputChangeme"> <input type="checkbox"
-					name="inputChangeme[]" id="inputChangeme" value="changeme" /> Senha
-					temporária
-				</label>
-			</div>
-		</div>
+        <div class="form-group">
+            <label for="inputSenha" class="control-label col-xs-2">Senha</label>
+            <div class="col-xs-4">
+                <input type="password" class="form-control" id="inputSenha" required name="inputSenha" placeholder="Senha">
+            </div>
+            <div class="checkbox col-xs-2">
+                <label for="inputChangeme">
+                    <input type="checkbox"name="inputChangeme[]" id="inputChangeme" value="changeme" /> Senha temporária
+                </label>
+            </div>
+        </div>
 
-		<div class="form-group">
-			<label for="inputEMail" class="control-label col-xs-2">E-Mail</label>
-			<div class="col-xs-6" id="divEMail">
-				<input type="text" class="form-control" id="inputEMail"
-					name="inputEMail" required placeholder="E-Mail">
-			</div>
-		</div>
+        <div class="form-group">
+            <label for="inputEMail" class="control-label col-xs-2">E-Mail</label>
+            <div class="col-xs-6" id="divEMail">
+                <input type="text" class="form-control" id="inputEMail" name="inputEMail" required placeholder="E-Mail">
+            </div>
+        </div>
 
+        <div class="form-group">
+            <label for="inputTelefone" class="control-label col-xs-2">Telefone</label>
+            <div class="col-xs-6" id="divTelefone">
+                <input type="text" class="form-control" id="inputTelefone" name="inputTelefone" required placeholder="Telefone">
+            </div>
+        </div>
 
-		<div class="form-group">
-			<label for="selectPerfil" class="control-label col-xs-2">Perfil</label>
-			<div class="col-xs-6">
-				<select class="form-control" name="selectPerfil" id="selectPerfil"
-					required>
-					<option disabled selected>Selecione um perfil</option>
-					<?php
-					foreach ( $perfil as $values ) {
-						?>
-						<option value="<?= $values['id']; ?>"><?= $values['perfil']; ?></option>
-						<?php
-					}
-					?>
-				</select>
-			</div>
-		</div>
-		
-		<div id="modal-projetos"></div>
+        <div class="form-group">
+            <label for="selectPerfil" class="control-label col-xs-2">Perfil</label>
+            <div class="col-xs-6">
+                <select class="form-control" name="selectPerfil" id="selectPerfil" required>
+                    <option disabled selected>Selecione um perfil</option>
+                    <?php
+                    foreach ($perfil as $values) {
+                        ?>
+                        <option value="<?= $values['id']; ?>"><?= $values['perfil']; ?></option>
+                        <?php
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
 
-		<div class="form-group">
-			<div class="col-xs-offset-2 col-xs-10">
-				<button type="<?= $botao['type']; ?>" name="submit-dados" class="btn btn-default"><?= $botao['value']; ?></button>
-			</div>
-		</div>
-	</form>
+        <div id="empresa" class="form-group">
+            <label for="selectEmpresa" class="control-label col-xs-2">Empresa</label>
+            <div class="col-xs-6">
+                <select class="form-control" name="selectEmpresa" id="selectEmpresa" required>
+                    <option disabled selected>Selecione uma empresa</option>
+                    <?php
+                    foreach ($empresas as $values) {
+                        ?>
+                        <option value="<?= $values['id']; ?>"><?= $values['empresa']; ?></option>
+                        <?php
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+
+        <div id="modal-projetos"></div>
+
+        <div class="form-group">
+            <div class="col-xs-offset-2 col-xs-10">
+                <button type="<?= $botao['type']; ?>" name="submit-dados" class="btn btn-default"><?= $botao['value']; ?></button>
+            </div>
+        </div>
+    </form>
 </div>

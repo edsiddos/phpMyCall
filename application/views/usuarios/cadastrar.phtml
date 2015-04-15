@@ -1,16 +1,16 @@
 <script type="text/javascript">
-	$(document).ready(function(){
+    $(document).ready(function () {
 
-		$("button[name='submit-dados']").on('click', function (){
-			$.ajax({
-				url: '<?= HTTP . '/Usuarios/getProjetos'?>',
-				type: 'POST',
-				data: 'id=' + $('#inputID').val(),
-				success: function(dados){
-					$("#modal-projetos").html(dados);
-				}
-			});
-		});
+        $("button[name='submit-dados']").on('click', function () {
+            $.ajax({
+                url: '<?= HTTP . '/Usuarios/getProjetos' ?>',
+                type: 'POST',
+                data: 'id=' + $('#inputID').val(),
+                success: function (dados) {
+                    $("#modal-projetos").html(dados);
+                }
+            });
+        });
 
-	});
+    });
 </script>
