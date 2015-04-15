@@ -1,0 +1,41 @@
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("input[name='inputEmpresa']").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "<?= HTTP . '/Empresas/getEmpresas' ?>",
+                    data: request,
+                    dataType: 'json',
+                    type: 'POST',
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            select: function (event, json) {
+                $.ajax({
+                    url: "<?= HTTP . '/Empresas/getDadosEmpresas' ?>",
+                    data: "empresa=" + json.item.value,
+                    dataType: 'json',
+                    type: 'POST',
+                    success: function (data) {
+                        $('#inputID').val(data.id);
+                        $('#inputEmpresa').val(data.empresa);
+                        $('#inputEndereco').val(data.endereco);
+                        $('#inputTelefoneFixo').val(data.telefone_fixo);
+                        $('#inputTelefoneCelular').val(data.telefone_celular);
+
+                        $('#inputEndereco').attr('readonly', false);
+                        $('#inputTelefoneFixo').attr('readonly', false);
+                        $('#inputTelefoneCelular').attr('readonly', false);
+                    }
+                });
+            }
+        });
+
+        $('#inputEndereco').attr('readonly', true);
+        $('#inputTelefoneFixo').attr('readonly', true);
+        $('#inputTelefoneCelular').attr('readonly', true);
+    });
+</script>

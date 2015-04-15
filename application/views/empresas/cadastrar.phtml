@@ -1,0 +1,26 @@
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("input[name='inputEmpresa']").on('focusout', function () {
+            $.ajax({
+                url: "<?= HTTP . '/Empresas/existeEmpresa' ?>",
+                data: "empresa=" + $(this).val(),
+                dataType: 'json',
+                type: 'POST',
+                success: function (dados) {
+                    if (dados.status == 1) {
+                        $("#divEmpresa").removeClass('has-success');
+                        $("#divEmpresa").addClass('has-error');
+                        $("button").attr('disabled', true);
+                    } else {
+                        $("#divEmpresa").removeClass('has-error');
+                        $("#divEmpresa").addClass('has-success');
+                        $("button").attr('disabled', false);
+                    }
+                }
+            })
+        });
+
+    });
+</script>
