@@ -1,30 +1,26 @@
 
 <?php
-use \application\controllers\Login, libs\Cache, libs\Menu;
 
+use \application\controllers\Login,
+    libs\Cache,
+    libs\Menu;
 ?>
 
 
 <html>
-<head>
-<meta charset="UTF-8">
-<title><?= $title ?></title>
-<link rel="stylesheet" href="<?= HTTP_CSS . '/bootstrap.min.css' ?>" />
-<link rel="stylesheet"
-	href="<?= HTTP_CSS . '/bootstrap-theme.min.css' ?>" />
-<link rel="stylesheet" href="<?= HTTP_CSS . '/jquery-ui.min.css' ?>" />
-<link rel="stylesheet"
-	href="<?= HTTP_CSS . '/jquery-ui.structure.min.css' ?>" />
-<link rel="stylesheet"
-	href="<?= HTTP_CSS . '/jquery-ui.theme.min.css' ?>" />
-<link rel="stylesheet" href="<?= HTTP_CSS . '/custom.css' ?>" />
-<script type="text/javascript"
-	src="<?= HTTP_JS . '/jquery-1.11.2.min.js' ?>"></script>
-<script type="text/javascript"
-	src="<?= HTTP_JS . '/jquery-ui.min.js' ?>"></script>
-<script type="text/javascript"
-	src="<?= HTTP_JS . '/bootstrap.min.js' ?>"></script>
-<script type="text/javascript">
+    <head>
+        <meta charset="UTF-8">
+        <title><?= $title ?></title>
+        <link rel="stylesheet" href="<?= HTTP_CSS . '/bootstrap.min.css' ?>" />
+        <link rel="stylesheet" href="<?= HTTP_CSS . '/bootstrap-theme.min.css' ?>" />
+        <link rel="stylesheet" href="<?= HTTP_CSS . '/jquery-ui.min.css' ?>" />
+        <link rel="stylesheet" href="<?= HTTP_CSS . '/jquery-ui.structure.min.css' ?>" />
+        <link rel="stylesheet" href="<?= HTTP_CSS . '/jquery-ui.theme.min.css' ?>" />
+        <link rel="stylesheet" href="<?= HTTP_CSS . '/custom.css' ?>" />
+        <script type="text/javascript" src="<?= HTTP_JS . '/jquery-1.11.2.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= HTTP_JS . '/jquery-ui.min.js' ?>"></script>
+        <script type="text/javascript" src="<?= HTTP_JS . '/bootstrap.min.js' ?>"></script>
+        <script type="text/javascript">
             (function ($) {
                 $(document).ready(function () {
                     $('ul.dropdown-menu [data-toggle=dropdown]').on('click', function (event) {
@@ -36,83 +32,84 @@ use \application\controllers\Login, libs\Cache, libs\Menu;
                 });
             })(jQuery);
         </script>
-</head>
-<body>
-	<!-- Fixed navbar -->
-	<nav class="navbar navbar-default navbar-fixed-top">
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed"
-					data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-					aria-controls="navbar">
-					<span class="sr-only"> myPhpHelpDesk </span> <span class="icon-bar"></span>
-					<span class="icon-bar"></span> <span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#">myPhpHelpDesk</a>
-			</div>
-			<div id="navbar" class="collapse navbar-collapse">
+    </head>
+    <body>
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only"> myPhpHelpDesk </span> <span class="icon-bar"></span>
+                        <span class="icon-bar"></span> <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">PhpMyCall</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
                     <?php if (Login::verificaLogin()) { ?>
                         <ul class="nav navbar-nav">
 
                             <?php
-																					if (! ($result = Cache::getCache ( "menu" ))) {
-																						$result = Menu::geraMenuPorPerfil ();
-																						Cache::setCache ( 'menu', $result );
-																					}
-																					
-																					foreach ( $result [$_SESSION ['perfil']] as $nome_menu => $menu ) {
-																						if (is_array ( $menu )) {
-																							?>
-                                    <li class="dropdown"><a href="#"
-						class="dropdown-toggle" data-toggle="dropdown">
-                                            <?= $nome_menu ?> <b
-							class="caret"></b>
-					</a>
-						<ul class="dropdown-menu">
-                                            <?php
-																							foreach ( $menu as $nome_submenu => $submenu ) {
-																								if (is_array ( $submenu )) {
-																									?>
-                                                    <li
-								class="dropdown dropdown-submenu"><a href="#"
-								class="dropdown-toggle" data-toggle="dropdown">
-                                                            <?= $nome_submenu?>
-                                                        </a>
-								<ul class="dropdown-menu">
-                                                            <?php
-																									foreach ( $submenu as $nome_opcao => $opcao ) {
-																										?>
-                                                                <li><a
-										href="<?= HTTP . '/' . $opcao ?>"><?= $nome_opcao ?></a></li>
-                                                                <?php
-																									}
-																									?>
-                                                        </ul></li>
-                                                    <?php
-																								} else {
-																									?>
-                                                    <li><a
-								href="<?= HTTP . '/' . $submenu ?>"><?= $nome_submenu ?></a></li>
-                                                    <?php
-																								}
-																							}
-																							?>
-                                        </ul></li>
-                                    <?php
-																						} else {
-																							?>
-                                    <li><a
-						href="<?= HTTP . '/' . $menu ?>"><?= $nome_menu ?></a></li>
-                                    <?php
-																						}
-																					}
-																					?>
+                            if (!($result = Cache::getCache("menu"))) {
+                                $result = Menu::geraMenuPorPerfil();
+                                Cache::setCache('menu', $result);
+                            }
 
-                            <li><a
-						href="<?= HTTP . "/Login/efetuarLogout" ?>">Logout</a></li>
-				</ul>
-			</div>
-			<!--/.nav-collapse -->
+                            foreach ($result [$_SESSION ['perfil']] as $nome_menu => $menu) {
+                                if (is_array($menu)) {
+                                    ?>
+                                    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            <?= $nome_menu ?> <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <?php
+                                            foreach ($menu as $nome_submenu => $submenu) {
+                                                if (is_array($submenu)) {
+                                                    ?>
+                                                    <li class="dropdown dropdown-submenu">
+                                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                            <?= $nome_submenu ?>
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                            <?php
+                                                            foreach ($submenu as $nome_opcao => $opcao) {
+                                                                ?>
+                                                                <li>
+                                                                    <a href="<?= HTTP . '/' . $opcao ?>"><?= $nome_opcao ?></a>
+                                                                </li>
+                                                                <?php
+                                                            }
+                                                            ?>
+                                                        </ul>
+                                                    </li>
+                                                    <?php
+                                                } else {
+                                                    ?>
+                                                    <li>
+                                                        <a href="<?= HTTP . '/' . $submenu ?>"><?= $nome_submenu ?></a>
+                                                    </li>
+                                                    <?php
+                                                }
+                                            }
+                                            ?>
+                                        </ul>
+                                    </li>
+                                    <?php
+                                } else {
+                                    ?>
+                                    <li>
+                                        <a href="<?= HTTP . '/' . $menu ?>"><?= $nome_menu ?></a>
+                                    </li>
+                                    <?php
+                                }
+                            }
+                            ?>
+
+                            <li>
+                                <a href="<?= HTTP . "/Login/efetuarLogout" ?>">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--/.nav-collapse -->
                 <?php } ?>
             </div>
-	</nav>
+        </nav>
