@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (C) 2015 - Ednei Leite da Silva
  *
@@ -15,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace application\models;
 
 use system\Model;
@@ -25,94 +27,79 @@ use system\Model;
  * @author Ednei Leite da Silva
  */
 class Feedback extends Model {
-	
-	/**
-	 * Cadastra tipo de feedback
-	 *
-	 * @param string $nome
-	 *        	Nome do feedback
-	 * @param string $abrev
-	 *        	Abreviatura
-	 * @param boolean $descontar
-	 *        	Descontar tempo
-	 * @param string $descricao
-	 *        	Descrição do tipo de feedback
-	 * @return boolean
-	 */
-	public function cadastrar($nome, $abrev, $descontar, $descricao) {
-		$dados = array (
-				'nome' => $nome,
-				'abreviatura' => $abrev,
-				'descontar' => $descontar,
-				'descricao' => $descricao 
-		);
-		
-		return $this->insert ( 'phpmycall.tipo_feedback', $dados );
-	}
-	
-	/**
-	 * Busca os tipos de feedback a partir do nome
-	 *
-	 * @param string $nome
-	 *        	Nome de tipo de feedback
-	 * @return Array Retorna array com os tipos de feedback
-	 */
-	public function getNomeFeedback($nome) {
-		$sql = "SELECT nome AS value FROM phpmycall.tipo_feedback WHERE nome LIKE :nome";
-		
-		return $this->select ( $sql, array (
-				'nome' => '%' . $nome . '%' 
-		) );
-	}
-	
-	/**
-	 * Busca de dados do tipo de feedback
-	 *
-	 * @param string $nome
-	 *        	Nome do tipo de feedback
-	 * @return array Retorna Array com dados do tipo de Feedback
-	 */
-	public function getDadosTipoFeedback($nome) {
-		$sql = "SELECT * FROM phpmycall.tipo_feedback WHERE nome = :nome";
-		return $this->select ( $sql, array (
-				'nome' => $nome 
-		), false );
-	}
-	
-	/**
-	 * Atualiza o tipo de feedback
-	 *
-	 * @param int $id
-	 *        	Código do tipo de feedback
-	 * @param string $nome
-	 *        	Nome do tipo de feedback
-	 * @param string $abrev
-	 *        	Abreviatura do tipo de feedback
-	 * @param boolean $descontar
-	 *        	Descontar do tempo de solução
-	 * @param string $descricao
-	 *        	Descrição do tipo de feedback
-	 * @return boolean Retorna true se sucesso, false caso contrario
-	 */
-	public function alterar($id, $nome, $abrev, $descontar, $descricao) {
-		$dados = array (
-				'nome' => $nome,
-				'abreviatura' => $abrev,
-				'descontar' => $descontar,
-				'descricao' => $descricao 
-		);
-		
-		return $this->update ( 'phpmycall.tipo_feedback', $dados, "id = {$id}" );
-	}
-	
-	/**
-	 * Remove tipo de feedback
-	 *
-	 * @param int $id
-	 *        	Código do tipo de feedback
-	 * @return boolean Retorna true se sucesso, false caso contrario.
-	 */
-	public function excluir($id) {
-		return $this->delete ( 'phpmycall.tipo_feedback', "id = {$id}" );
-	}
+
+    /**
+     * Cadastra tipo de feedback
+     *
+     * @param string $nome Nome do feedback
+     * @param string $abrev Abreviatura
+     * @param boolean $descontar  Descontar tempo
+     * @param string $descricao Descrição do tipo de feedback
+     * @return boolean
+     */
+    public function cadastrar($nome, $abrev, $descontar, $descricao) {
+        $dados = array(
+            'nome' => $nome,
+            'abreviatura' => $abrev,
+            'descontar' => $descontar,
+            'descricao' => $descricao
+        );
+
+        return $this->insert('phpmycall.tipo_feedback', $dados);
+    }
+
+    /**
+     * Busca os tipos de feedback a partir do nome
+     *
+     * @param string $nome Nome de tipo de feedback
+     * @return Array Retorna array com os tipos de feedback
+     */
+    public function getNomeFeedback($nome) {
+        $sql = "SELECT nome AS value FROM phpmycall.tipo_feedback WHERE nome ILIKE :nome";
+
+        return $this->select($sql, array('nome' => '%' . $nome . '%'));
+    }
+
+    /**
+     * Busca de dados do tipo de feedback
+     *
+     * @param string $nome Nome do tipo de feedback
+     * @return array Retorna Array com dados do tipo de Feedback
+     */
+    public function getDadosTipoFeedback($nome) {
+        $sql = "SELECT * FROM phpmycall.tipo_feedback WHERE nome = :nome";
+        return $this->select($sql, array('nome' => $nome), false);
+    }
+
+    /**
+     * Atualiza o tipo de feedback
+     *
+     * @param int $id Código do tipo de feedback
+     * @param string $nome Nome do tipo de feedback
+     * @param string $abrev Abreviatura do tipo de feedback
+     * @param boolean $descontar Descontar do tempo de solução
+     * @param string $descricao Descrição do tipo de feedback
+     * @return boolean Retorna true se sucesso, false caso contrario
+     */
+    public function alterar($id, $nome, $abrev, $descontar, $descricao) {
+        $dados = array(
+            'nome' => $nome,
+            'abreviatura' => $abrev,
+            'descontar' => $descontar,
+            'descricao' => $descricao
+        );
+
+        return $this->update('phpmycall.tipo_feedback', $dados, "id = {$id}");
+    }
+
+    /**
+     * Remove tipo de feedback
+     *
+     * @param int $id Código do tipo de feedback
+     * @return boolean Retorna true se sucesso, false caso contrario.
+     */
+    public function excluir($id) {
+        return $this->delete('phpmycall.tipo_feedback', "id = {$id}");
+    }
+
 }

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace application\controllers;
 
 /**
@@ -24,17 +25,18 @@ namespace application\controllers;
  * @author Ednei Leite da Silva
  */
 class Main extends \system\Controller {
-	public function __construct() {
-		parent::__construct ();
-		if (! Login::verificaLogin ()) {
-			$this->redir ( 'Login/index' );
-		}
-	}
-	public function index($parametros = array()) {
-		$this->loadView ( 'default/header', array (
-				'title' => 'myPhpHelpDesk' 
-		) );
-		$this->loadView ( 'main/index' );
-		$this->loadView ( 'default/footer' );
-	}
+
+    public function __construct() {
+        parent::__construct();
+        if (!Login::verificaLogin()) {
+            $this->redir('Login/index');
+        }
+    }
+
+    public function index($parametros = array()) {
+        $this->loadView('default/header', array( 'title' => 'PhpMyCall'));
+        $this->loadView('main/index');
+        $this->loadView('default/footer');
+    }
+
 }

@@ -31,131 +31,117 @@
             }
         });
 
-        $("input[name='inputProjeto']").on('focusout', function(){
+        $("input[name='inputProjeto']").on('focusout', function () {
             $.ajax({
-				url: '<?= HTTP . '/ProjetosProblemas/getIdProjeto' ?>',
-				data: 'nome=' + $(this).val(),
-				dataType: 'json',
-				type: 'post',
-				success: function (data){
-					$("input[name='inputID']").val(data.id ? data.id : 0);
-				}
-			});
+                url: '<?= HTTP . '/ProjetosProblemas/getIdProjeto' ?>',
+                data: 'nome=' + $(this).val(),
+                dataType: 'json',
+                type: 'post',
+                success: function (data) {
+                    $("input[name='inputID']").val(data.id ? data.id : 0);
+                }
+            });
         });
 
-        $("input[name='inputResposta']").keyup(function(){
-			$(this).val($().mascaraHora($(this).val()));
-		}).focusout(function(){
-			var result = $().validaHoraMaxima($(this).val());
-			
-			if(result){
-				$("#divResposta").removeClass('has-error');
-				$("#divResposta").addClass('has-success');
-			} else {
-				$("#divResposta").removeClass('has-success');
-				$("#divResposta").addClass('has-error');
-			}
-		});
+        $("input[name='inputResposta']").keyup(function () {
+            $(this).val($().mascaraHora($(this).val()));
+        }).focusout(function () {
+            var result = $().validaHoraMaxima($(this).val());
 
-        $("input[name='inputSolucao']").keyup(function(){
-			$(this).val($().mascaraHora($(this).val()));
-		}).focusout(function(){
-			var result = $().validaHoraMaxima($(this).val());
-			
-			if(result){
-				$("#divSolucao").removeClass('has-error');
-				$("#divSolucao").addClass('has-success');
-			} else {
-				$("#divSolucao").removeClass('has-success');
-				$("#divSolucao").addClass('has-error');
-			}
-		});
+            if (result) {
+                $("#divResposta").removeClass('has-error');
+                $("#divResposta").addClass('has-success');
+            } else {
+                $("#divResposta").removeClass('has-success');
+                $("#divResposta").addClass('has-error');
+            }
+        });
+
+        $("input[name='inputSolucao']").keyup(function () {
+            $(this).val($().mascaraHora($(this).val()));
+        }).focusout(function () {
+            var result = $().validaHoraMaxima($(this).val());
+
+            if (result) {
+                $("#divSolucao").removeClass('has-error');
+                $("#divSolucao").addClass('has-success');
+            } else {
+                $("#divSolucao").removeClass('has-success');
+                $("#divSolucao").addClass('has-error');
+            }
+        });
 
     });
 </script>
 
 <div class="container">
 
-	<?php
-	if ((! empty ( $_SESSION ['msg_erro'] )) || (! empty ( $_SESSION ['msg_sucesso'] ))) {
-		?>
-    <div
-		class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger';?> alert-error text-center">
-		<a href="#" class="close" data-dismiss="alert">&times;</a>
-        <?= empty($_SESSION['msg_erro']) ? $_SESSION['msg_sucesso'] : $_SESSION['msg_erro'];?>
-    </div>
-		<?php
-		unset ( $_SESSION ['msg_erro'] );
-		unset ( $_SESSION ['msg_sucesso'] );
-	}
-	?>
+    <?php
+    if ((!empty($_SESSION ['msg_erro'])) || (!empty($_SESSION ['msg_sucesso']))) {
+        ?>
+        <div
+            class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger'; ?> alert-error text-center">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            <?= empty($_SESSION['msg_erro']) ? $_SESSION['msg_sucesso'] : $_SESSION['msg_erro']; ?>
+        </div>
+        <?php
+        unset($_SESSION ['msg_erro']);
+        unset($_SESSION ['msg_sucesso']);
+    }
+    ?>
 
-	<form class="form-horizontal" name="projeto-problemas" method="post"
-		action="<?= $link; ?>">
+    <form class="form-horizontal" name="projeto-problemas" method="post"
+          action="<?= $link; ?>">
 
-		<input type="hidden" name="inputID" id="inputID" value="0" /> <input
-			type="hidden" name="relacaoParticipantes" id="relacaoParticipantes"
-			value="0" /> <input type="hidden" name="descricaoProjeto"
-			id="descricaoProjeto" value="0" /> <input type="hidden"
-			id="inputProjetoOld" name="inputProjetoOld" value="0" /> <input
-			type="hidden" id="inputProjetoProblema" name="inputProjetoProblema"
-			value="0" />
+        <input type="hidden" name="inputID" id="inputID" value="0" />
+        <input type="hidden" name="relacaoParticipantes" id="relacaoParticipantes" value="0" />
+        <input type="hidden" name="descricaoProjeto" id="descricaoProjeto" value="0" />
+        <input type="hidden" id="inputProjetoOld" name="inputProjetoOld" value="0" />
+        <input type="hidden" id="inputProjetoProblema" name="inputProjetoProblema" value="0" />
 
-		<div class="form-group">
-			<label for="inputProjeto" class="control-label col-xs-2">Projeto</label>
-			<div class="col-xs-10">
-				<input type="text" class="form-control" id="inputProjeto"
-					name="inputProjeto" placeholder="Projeto" maxlength="100" required>
-			</div>
-		</div>
+        <div class="form-group">
+            <label for="inputProjeto" class="control-label col-xs-2">Projeto</label>
+            <div class="col-xs-10">
+                <input type="text" class="form-control" id="inputProjeto" name="inputProjeto" placeholder="Projeto" maxlength="100" required>
+            </div>
+        </div>
 
-		<div class="form-group">
-			<label for="inputProblema" class="control-label col-xs-2">Tipo de
-				Problema</label>
-			<div class="col-xs-10">
-				<input type="text" class="form-control" id="inputProblema"
-					name="inputProblema" placeholder="Tipo de problema" maxlength="100"
-					required>
-			</div>
-		</div>
+        <div class="form-group">
+            <label for="inputProblema" class="control-label col-xs-2">Tipo de Problema</label>
+            <div class="col-xs-10">
+                <input type="text" class="form-control" id="inputProblema" name="inputProblema" placeholder="Tipo de problema" maxlength="100" required>
+            </div>
+        </div>
 
-		<div class="form-group">
-			<label for="inputResposta" class="control-label col-xs-2">Tempo de
-				resposta</label>
-			<div class="col-xs-10" id="divResposta">
-				<input type="text" class="form-control" id="inputResposta"
-					maxlength="6" name="inputResposta" placeholder="Tempo de resposta"
-					required>
-			</div>
-		</div>
+        <div class="form-group">
+            <label for="inputResposta" class="control-label col-xs-2">Tempo de resposta</label>
+            <div class="col-xs-10" id="divResposta">
+                <input type="text" class="form-control" id="inputResposta" maxlength="6" name="inputResposta" placeholder="Tempo de resposta" required>
+            </div>
+        </div>
 
-		<div class="form-group">
-			<label for="inputSolucao" class="control-label col-xs-2">Tempo para
-				solução</label>
-			<div class="col-xs-10" id="divSolucao">
-				<input type="text" class="form-control" id="inputSolucao"
-					maxlength="6" name="inputSolucao" placeholder="Tempo para solução"
-					required>
-			</div>
-		</div>
+        <div class="form-group">
+            <label for="inputSolucao" class="control-label col-xs-2">Tempo para solução</label>
+            <div class="col-xs-10" id="divSolucao">
+                <input type="text" class="form-control" id="inputSolucao" maxlength="6" name="inputSolucao" placeholder="Tempo para solução" required>
+            </div>
+        </div>
 
 
-		<div class="form-group">
-			<label for="textDescricao" class="control-label col-xs-2">Descrição
-				do problemas</label>
-			<div class="col-xs-10">
-				<textarea class="form-control" id="textDescricao" maxlength="1000"
-					name="textDescricao" placeholder="Descrição do tipo de problema"></textarea>
-			</div>
-		</div>
+        <div class="form-group">
+            <label for="textDescricao" class="control-label col-xs-2">Descrição do problemas</label>
+            <div class="col-xs-10">
+                <textarea class="form-control" id="textDescricao" maxlength="1000" name="textDescricao" placeholder="Descrição do tipo de problema"></textarea>
+            </div>
+        </div>
 
-		<div class="form-group">
-			<div class="col-xs-offset-2 col-xs-10">
-				<button type="<?= $botao['type'] ?>" name="enviar-form" class="btn btn-default"><?= $botao['value'] ?></button>
-			</div>
-		</div>
+        <div class="form-group">
+            <div class="col-xs-offset-2 col-xs-10">
+                <button type="<?= $botao['type'] ?>" name="enviar-form" class="btn btn-default"><?= $botao['value'] ?></button>
+            </div>
+        </div>
 
-	</form>
+    </form>
 </div>
 
 <div id="participantes" class="modal fade"></div>

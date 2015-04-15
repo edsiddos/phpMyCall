@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace application\controllers;
 
 /**
@@ -24,23 +25,25 @@ namespace application\controllers;
  * @author Ednei Leite da Silva
  */
 class Error extends \system\Controller {
-	public function __construct() {
-		parent::__construct ();
-		if (! Login::verificaLogin ()) {
-			$this->redir ( "Login/index" );
-		}
-	}
-	
-	/**
-	 * Método que mostra a página de erro 404
-	 */
-	public function erro_404() {
-		$vars = array (
-				'title' => 'Página não encontrada.' 
-		);
-		
-		$this->loadView ( 'default/header', $vars );
-		$this->loadView ( 'errors/erro_404' );
-		$this->loadView ( 'default/footer' );
-	}
+
+    public function __construct() {
+        parent::__construct();
+        if (!Login::verificaLogin()) {
+            $this->redir("Login/index");
+        }
+    }
+
+    /**
+     * Método que mostra a página de erro 404
+     */
+    public function erro_404() {
+        $vars = array(
+            'title' => 'Página não encontrada.'
+        );
+
+        $this->loadView('default/header', $vars);
+        $this->loadView('errors/erro_404');
+        $this->loadView('default/footer');
+    }
+
 }

@@ -2,31 +2,31 @@
 
 <script type="text/javascript">
 
-	$(document).ready(function(){
-		
-		$("button[name='enviar-form']").click(function(event){
+    $(document).ready(function () {
 
-			var id = $("input[name='inputID']").val();
+        $("button[name='enviar-form']").click(function (event) {
 
-			if(id == 0){
-				$.ajax({
-					url: '<?= HTTP . '/ProjetosProblemas/relacaoUsuarios'; ?>',
-					data: 'id=' + id,
-					type: 'POST',
-					success: function(data){
-						$('#participantes').html(data);
-						$('#participantes').modal({
-			                backdrop: 'static',
-			                keyboard: false
-			            });
-					}
-				});
-			} else {
-				$("form[name='projeto-problemas']").submit();
-			}
-		});
+            var id = $("input[name='inputID']").val();
 
-	});
+            if (id == 0) {
+                $.ajax({
+                    url: '<?= HTTP . '/ProjetosProblemas/relacaoUsuarios'; ?>',
+                    data: 'id=' + id,
+                    type: 'POST',
+                    success: function (data) {
+                        $('#participantes').html(data);
+                        $('#participantes').modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                    }
+                });
+            } else {
+                $("form[name='projeto-problemas']").submit();
+            }
+        });
+
+    });
 
 </script>
 

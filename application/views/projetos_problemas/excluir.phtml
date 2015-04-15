@@ -1,124 +1,121 @@
 <script type="text/javascript"
-	src="<?= HTTP_JS . '/jquery.select-filter.min.js' ?>"></script>
+src="<?= HTTP_JS . '/jquery.select-filter.min.js' ?>"></script>
 
 <script type="text/javascript">
 
-	$(document).ready(function(){
+    $(document).ready(function () {
 
-		$('#excluir-projeto').modal({
-			backdrop: 'static',
+        $('#excluir-projeto').modal({
+            backdrop: 'static',
             keyboard: false
-		});
+        });
 
-		$('input').attr('readonly', true);
-		$('textarea').attr('readonly', true);
+        $('input').attr('readonly', true);
+        $('textarea').attr('readonly', true);
 
-		$("button[name='enviar-form']").click(function(event){
-			$('#confirmar-excluir-projeto').modal({
-				backdrop: 'static',
-	            keyboard: false
-			});
-		});
+        $("button[name='enviar-form']").click(function (event) {
+            $('#confirmar-excluir-projeto').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        });
 
-		$('#confirma-exclusao').click(function(){
-			$("form[name='projeto-problemas']").submit();
-		});
+        $('#confirma-exclusao').click(function () {
+            $("form[name='projeto-problemas']").submit();
+        });
 
-		$("a[projeto]").click(function(event){
-			event.preventDefault();
-			$('#inputProjetoProblema').val($(this).attr('projeto'));
+        $("a[projeto]").click(function (event) {
+            event.preventDefault();
+            $('#inputProjetoProblema').val($(this).attr('projeto'));
 
-			$.ajax({
-				url: '<?= HTTP . '/ProjetosProblemas/getDadosProjetosProblemas'?>',
-				type: 'POST',
-				data: 'id=' + $(this).attr('projeto'),
-				dataType: 'json',
-				success: function(data){
-					$('#inputID').val(data.id);
-					$('#inputProjetoOld').val(data.id);
-					$('#inputProjeto').val(data.projeto);
-					$('#inputProblema').val(data.problema);
-					$('#inputResposta').val(data.resposta);
-					$('#inputSolucao').val(data.solucao);
-					$('#textDescricao').val(data.descricao);
-					$('#excluir-projeto').modal('hide');
-				}
-			});
-		});
-		
-	});
+            $.ajax({
+                url: '<?= HTTP . '/ProjetosProblemas/getDadosProjetosProblemas' ?>',
+                type: 'POST',
+                data: 'id=' + $(this).attr('projeto'),
+                dataType: 'json',
+                success: function (data) {
+                    $('#inputID').val(data.id);
+                    $('#inputProjetoOld').val(data.id);
+                    $('#inputProjeto').val(data.projeto);
+                    $('#inputProblema').val(data.problema);
+                    $('#inputResposta').val(data.resposta);
+                    $('#inputSolucao').val(data.solucao);
+                    $('#textDescricao').val(data.descricao);
+                    $('#excluir-projeto').modal('hide');
+                }
+            });
+        });
+
+    });
 
 </script>
 
 <div id="excluir-projeto" class="modal fade">
-	<div class="modal-dialog" style="width: 80%;">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Selecione um projeto</h4>
-			</div>
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Selecione um projeto</h4>
+            </div>
 
-			<div class="modal-body">
+            <div class="modal-body">
 
-				<div id="relacao_projetos">
-					<div class="panel-group" id="accordion">
-					<?php foreach ($listaProjeto as $nome_projeto => $projeto){?>
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<h4 class="panel-title">
-									<a data-toggle="collapse" data-parent="#accordion"
-										href="<?= '#' . str_replace(' ', '_', $nome_projeto) ?>">
-										<?= $nome_projeto?>
-									</a>
-								</h4>
-							</div>
-							<div id="<?= str_replace(' ', '_', $nome_projeto) ?>"
-								class="panel-collapse collapse">
-								<div class="panel-body">
-								<?php foreach($projeto as $key => $values){ ?>
-									<p>
-										<a href="#" projeto="<?= $key ?>">
-											<?= $values?>
-										</a>
-									</p>
-								<?php }?>
-								</div>
-							</div>
-						</div>
-						<?php }?>
-					</div>
-				</div>
+                <div id="relacao_projetos">
+                    <div class="panel-group" id="accordion">
+                        <?php foreach ($listaProjeto as $nome_projeto => $projeto) { ?>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="<?= '#' . str_replace(' ', '_', $nome_projeto) ?>">
+                                            <?= $nome_projeto ?>
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="<?= str_replace(' ', '_', $nome_projeto) ?>"
+                                     class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <?php foreach ($projeto as $key => $values) { ?>
+                                            <p>
+                                                <a href="#" projeto="<?= $key ?>">
+                                                    <?= $values ?>
+                                                </a>
+                                            </p>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
 
-			</div>
+            </div>
 
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-			</div>
-		</div>
-	</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 
 
 <div id="confirmar-excluir-projeto" class="modal fade">
-	<div class="modal-dialog" style="width: 80%;">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Atenção</h4>
-			</div>
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Atenção</h4>
+            </div>
 
-			<div class="modal-body">
-				<p class="text-center">Deseja realmente excluir este tipo de
-					problema para este projeto?</p>
-			</div>
+            <div class="modal-body">
+                <p class="text-center">Deseja realmente excluir este tipo de problema para este projeto?</p>
+            </div>
 
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-				<button type="button" class="btn btn-danger" id="confirma-exclusao">Excluir</button>
-			</div>
-		</div>
-	</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirma-exclusao">Excluir</button>
+            </div>
+        </div>
+    </div>
 </div>

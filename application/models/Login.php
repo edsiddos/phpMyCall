@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace application\models;
 
 /**
@@ -24,25 +25,26 @@ namespace application\models;
  * @author Ednei Leite da Silva
  */
 class Login extends \system\Model {
-	
-	/**
-	 * Pesquisa dados do usuário
-	 *
-	 * @param string $usuario        	
-	 * @param string $senha        	
-	 * @return Array Retorna array com <b>nome</b>, <b>usuario</b>, <b>email</b>, <b>perfil</b>.
-	 */
-	public function getDadosLogin($usuario, $senha) {
-		$sql = "SELECT usuario.id, usuario.nome, usuario.usuario, usuario.email, perfil.perfil
-				FROM phpmycall.usuario
+
+    /**
+     * Pesquisa dados do usuário
+     *
+     * @param string $usuario
+     * @param string $senha
+     * @return Array Retorna array com <b>nome</b>, <b>usuario</b>, <b>email</b>, <b>perfil</b>.
+     */
+    public function getDadosLogin($usuario, $senha) {
+        $sql = "SELECT usuario.id, usuario.nome, usuario.usuario, usuario.email, perfil.perfil
+                FROM phpmycall.usuario
                 INNER JOIN phpmycall.perfil ON usuario.perfil = perfil.id
                 WHERE usuario.senha = :senha AND usuario.usuario = :usuario";
-		
-		$array = array (
-				'senha' => sha1 ( md5 ( $senha ) ),
-				'usuario' => $usuario 
-		);
-		
-		return $this->select ( $sql, $array, FALSE );
-	}
+
+        $array = array(
+            'senha' => sha1(md5($senha)),
+            'usuario' => $usuario
+        );
+
+        return $this->select($sql, $array, FALSE);
+    }
+
 }

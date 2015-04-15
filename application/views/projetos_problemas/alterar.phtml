@@ -2,102 +2,99 @@
 
 <script type="text/javascript">
 
-	$(document).ready(function(){
+    $(document).ready(function () {
 
-		$('#alterar-projeto').modal({
-			backdrop: 'static',
+        $('#alterar-projeto').modal({
+            backdrop: 'static',
             keyboard: false
-		});
+        });
 
-		$("button[name='enviar-form']").click(function(event){
+        $("button[name='enviar-form']").click(function (event) {
 
-			var id = $("input[name='inputID']").val();
+            var id = $("input[name='inputID']").val();
 
-			$.ajax({
-				url: '<?= HTTP . '/ProjetosProblemas/relacaoUsuarios'; ?>',
-				type: 'POST',
-				data: 'id=' + id,
-				success: function(data){
-					$('#participantes').html(data);
-					$('#participantes').modal({
-		                backdrop: 'static',
-		                keyboard: false
-		            });
-				}
-			});
-		});
+            $.ajax({
+                url: '<?= HTTP . '/ProjetosProblemas/relacaoUsuarios'; ?>',
+                type: 'POST',
+                data: 'id=' + id,
+                success: function (data) {
+                    $('#participantes').html(data);
+                    $('#participantes').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                }
+            });
+        });
 
-		$("a[projeto]").click(function(event){
-			event.preventDefault();
-			$('#inputProjetoProblema').val($(this).attr('projeto'));
+        $("a[projeto]").click(function (event) {
+            event.preventDefault();
+            $('#inputProjetoProblema').val($(this).attr('projeto'));
 
-			$.ajax({
-				url: '<?= HTTP . '/ProjetosProblemas/getDadosProjetosProblemas'?>',
-				type: 'POST',
-				data: 'id=' + $(this).attr('projeto'),
-				dataType: 'json',
-				success: function(data){
-					$('#inputID').val(data.id);
-					$('#inputProjetoOld').val(data.id);
-					$('#inputProjeto').val(data.projeto);
-					$('#inputProblema').val(data.problema);
-					$('#inputResposta').val(data.resposta);
-					$('#inputSolucao').val(data.solucao);
-					$('#textDescricao').val(data.descricao);
-					$('#alterar-projeto').modal('hide');
-				}
-			});
-		});
-		
-	});
+            $.ajax({
+                url: '<?= HTTP . '/ProjetosProblemas/getDadosProjetosProblemas' ?>',
+                type: 'POST',
+                data: 'id=' + $(this).attr('projeto'),
+                dataType: 'json',
+                success: function (data) {
+                    $('#inputID').val(data.id);
+                    $('#inputProjetoOld').val(data.id);
+                    $('#inputProjeto').val(data.projeto);
+                    $('#inputProblema').val(data.problema);
+                    $('#inputResposta').val(data.resposta);
+                    $('#inputSolucao').val(data.solucao);
+                    $('#textDescricao').val(data.descricao);
+                    $('#alterar-projeto').modal('hide');
+                }
+            });
+        });
+
+    });
 
 </script>
 
 <div id="alterar-projeto" class="modal fade">
-	<div class="modal-dialog" style="width: 80%;">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Selecione um projeto</h4>
-			</div>
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Selecione um projeto</h4>
+            </div>
 
-			<div class="modal-body">
+            <div class="modal-body">
 
-				<div id="relacao_projetos">
-					<div class="panel-group" id="accordion">
-					<?php foreach ($listaProjeto as $nome_projeto => $projeto){?>
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<h4 class="panel-title">
-									<a data-toggle="collapse" data-parent="#accordion"
-										href="<?= '#' . str_replace(' ', '_', $nome_projeto) ?>">
-										<?= $nome_projeto?>
-									</a>
-								</h4>
-							</div>
-							<div id="<?= str_replace(' ', '_', $nome_projeto) ?>"
-								class="panel-collapse collapse">
-								<div class="panel-body">
-								<?php foreach($projeto as $key => $values){ ?>
-									<p>
-										<a href="#" projeto="<?= $key ?>">
-											<?= $values?>
-										</a>
-									</p>
-								<?php }?>
-								</div>
-							</div>
-						</div>
-						<?php }?>
-					</div>
-				</div>
+                <div id="relacao_projetos">
+                    <div class="panel-group" id="accordion">
+                        <?php foreach ($listaProjeto as $nome_projeto => $projeto) { ?>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="<?= '#' . str_replace(' ', '_', $nome_projeto) ?>">
+                                            <?= $nome_projeto ?>
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="<?= str_replace(' ', '_', $nome_projeto) ?>" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <?php foreach ($projeto as $key => $values) { ?>
+                                            <p>
+                                                <a href="#" projeto="<?= $key ?>">
+                                                    <?= $values ?>
+                                                </a>
+                                            </p>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
 
-			</div>
+            </div>
 
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-			</div>
-		</div>
-	</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
 </div>
