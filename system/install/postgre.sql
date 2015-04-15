@@ -1,4 +1,4 @@
-﻿CREATE SCHEMA phpmycall;
+CREATE SCHEMA phpmycall;
 
 CREATE TABLE phpmycall.projeto(
 	id SERIAL,
@@ -59,6 +59,10 @@ INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai
 INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Excluir', 'ProjetosProblemas/excluir', TRUE, TRUE, 18);
 INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Relatórios', '', TRUE, FALSE, NULL);
 INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('SLA', 'SLA/index', TRUE, TRUE, 22);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Empresas', '', TRUE, TRUE, 7);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Cadastrar', 'Empresas/cadastrar', TRUE, TRUE, 24);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Alterar', 'Empresas/alterar', TRUE, TRUE, 24);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Excluir', 'Empresas/excluir', TRUE, TRUE, 24);
 
 
 CREATE TABLE phpmycall.perfil(
@@ -142,6 +146,24 @@ INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (21, 5);
 INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (23, 4); -- SLA
 INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (23, 5);
 -- Final relatórios
+-- Inicio manter Empresas
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (25, 5); -- Cadastrar
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (26, 5); -- Alterar
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (27, 5); -- Excluir
+-- Final manter Empresas
+
+--
+-- Tabela de empresas
+--
+
+CREATE TABLE phpmycall.empresas(
+	id SERIAL,
+	empresa VARCHAR(100) NOT NULL UNIQUE,
+	endereco VARCHAR(100),
+	telefone_fixo VARCHAR(15) NOT NULL UNIQUE,
+	telefone_celular VARCHAR(15),
+	CONSTRAINT pk_empresas PRIMARY KEY (id)
+);
 
 --
 -- Tabela de usuários
@@ -154,9 +176,12 @@ CREATE TABLE phpmycall.usuario(
 	nome VARCHAR(80) NOT NULL,
 	email VARCHAR(150) NOT NULL UNIQUE,
 	perfil INTEGER NOT NULL,
+	telefone VARCHAR(15),
+	empresa INTEGER,
 	dt_troca TIMESTAMP NOT NULL,
 	CONSTRAINT pk_usuario PRIMARY KEY (id),
-	CONSTRAINT fk_perfil_perfil_usuario FOREIGN KEY (perfil) REFERENCES phpmycall.perfil (id)
+	CONSTRAINT fk_perfil_usuario FOREIGN KEY (perfil) REFERENCES phpmycall.perfil (id),
+	CONSTRAINT fk_empresa_usuario FOREIGN KEY (empresa) REFERENCES phpmycall.empresas (id)
 );
 
 -- usuario: admin, senha: admin
@@ -283,6 +308,7 @@ ALTER TABLE phpmycall.projeto_tipo_problema OWNER TO dev;
 ALTER TABLE phpmycall.opcoes_menu OWNER TO dev;
 ALTER TABLE phpmycall.perfil OWNER TO dev;
 ALTER TABLE phpmycall.permissao_perfil OWNER TO dev;
+ALTER TABLE phpmycall.empresas OWNER TO dev;
 ALTER TABLE phpmycall.usuario OWNER TO dev;
 ALTER TABLE phpmycall.solicitacao OWNER TO dev;
 ALTER TABLE phpmycall.reabrir_solicitacao OWNER TO dev;

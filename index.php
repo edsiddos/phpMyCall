@@ -24,15 +24,15 @@ require_once 'system/config.php';
  *        	Classe a ser carregado
  */
 function __autoload($class) {
-	$file = str_replace ( '\\', DIRECTORY_SEPARATOR, $class . '.php' );
-	
-	/*
-	 * Verifica se arquivo existe
-	 */
-	if (file_exists ( $file )) {
-		require_once ($file);
-	}
+    $file = str_replace('\\', DIRECTORY_SEPARATOR, $class . '.php');
+
+    /*
+     * Verifica se arquivo existe
+     */
+    if (file_exists($file)) {
+        require_once ($file);
+    }
 }
 
-$system = new \system\System ( $_GET ['url'] );
-$system->run ();
+$system = new \system\System($_GET ['url']);
+$system->run();
