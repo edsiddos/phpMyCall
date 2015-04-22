@@ -194,12 +194,12 @@ CREATE TABLE phpmycall.solicitacao(
 	solicitante INTEGER NOT NULL,
 	prioridade INTEGER NOT NULL,
 	atendente INTEGER NOT NULL,
-	tecnico INTEGER NOT NULL,
+	tecnico INTEGER,
 	abertura TIMESTAMP NOT NULL,
 	atendimento TIMESTAMP NOT NULL,
 	encerramento TIMESTAMP NOT NULL,
 	solicitacao_origem INTEGER DEFAULT NULL,
-	avaliacao INTEGER NOT NULL,
+	avaliacao INTEGER DEFAULT NULL,
 	justificativa_avaliacao VARCHAR(255),
 	CONSTRAINT pk_solicitacao PRIMARY KEY (id),
 	CONSTRAINT fk_projeto_problema_solicitacao FOREIGN KEY (projeto_problema) REFERENCES phpmycall.projeto_tipo_problema (id),
@@ -227,6 +227,7 @@ CREATE TABLE phpmycall.arquivos(
 	id SERIAL,
 	nome VARCHAR(100) NOT NULL,
 	solicitacao INTEGER NOT NULL,
+        tipo VARCHAR(50) NOT NULL,
 	conteudo BYTEA NOT NULL,
 	CONSTRAINT pk_arquivos PRIMARY KEY (id),
 	CONSTRAINT fk_solicitacao_arquivos FOREIGN KEY (solicitacao) REFERENCES phpmycall.solicitacao (id)
@@ -301,6 +302,21 @@ CREATE TABLE phpmycall.log(
 );
 
 
+CREATE TABLE phpmycall.prioridade(
+        id SERIAL,
+        nome VARCHAR(15) NOT NULL UNIQUE,
+        nivel INTEGER NOT NULL UNIQUE,
+        padrao BOOLEAN DEFAULT FALSE,
+        CONSTRAINT pk_prioridade PRIMARY KEY(id)
+);
+
+INSERT INTO phpmycall.prioridade (nome, nivel) VALUES ('URGENTE', 1);
+INSERT INTO phpmycall.prioridade (nome, nivel) VALUES ('ALTA', 2);
+INSERT INTO phpmycall.prioridade (nome, nivel, padrao) VALUES ('NORMAL', 3, TRUE);
+INSERT INTO phpmycall.prioridade (nome, nivel) VALUES ('BAIXA', 4);
+INSERT INTO phpmycall.prioridade (nome, nivel) VALUES ('MINIMA', 5);
+
+
 ALTER SCHEMA phpmycall OWNER TO dev;
 ALTER TABLE phpmycall.projeto OWNER TO dev;
 ALTER TABLE phpmycall.tipo_problema OWNER TO dev;
@@ -319,3 +335,4 @@ ALTER TABLE phpmycall.feriado OWNER TO dev;
 ALTER TABLE phpmycall.expediente OWNER TO dev;
 ALTER TABLE phpmycall.projeto_responsaveis OWNER TO dev;
 ALTER TABLE phpmycall.log OWNER TO dev;
+ALTER TABLE phpmycall.prioridade OWNER TO dev;

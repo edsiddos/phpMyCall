@@ -1,7 +1,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        $("button[name='submit-dados']").on('click', function () {
+        $("button[name='submit-dados'][type='button']").on('click', function () {
             $.ajax({
                 url: '<?= HTTP . '/Usuarios/getProjetos' ?>',
                 type: 'POST',
