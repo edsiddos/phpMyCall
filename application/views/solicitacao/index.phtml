@@ -1,0 +1,253 @@
+
+<script type="text/javascript" src="<?= HTTP_JS . '/tinymce/tinymce.min.js' ?>"></script>
+
+<script type="text/javascript">
+
+    tinymce.init({
+        selector: '#textareaDescricao',
+        language: 'pt_BR',
+    });
+
+    $(document).ready(function () {
+
+        $("select[name='selectProjeto']").change(function () {
+            if ($(this).val() !== 0) {
+                $.ajax({
+                    url: "<?= HTTP . '/Solicitacao/getSolicitantes' ?>",
+                    data: "projeto=" + $(this).val(),
+                    dataType: "json",
+                    type: "post",
+                    success: function (data) {
+                        var cliente = $("select[name='selectSolicitante'] option:selected").val();
+                        var tecnico = $("select[name='selectTecnico'] option:selected").val();
+                        $("select[name='selectSolicitante'] > option").remove();
+                        $("select[name='selectTecnico'] > option").remove();
+                        $("select[name='selectSolicitante']").append('<option value="0" disabled selected>Solicitante</option>');
+                        $("select[name='selectTecnico']").append('<option value="0" disabled selected>Técnico</option>');
+
+                        $.each(data, function (key, value) {
+                            $("select[name='selectSolicitante']").append('<option value="' + value.id + '" ' + (cliente == value.id ? "selected" : "") + '>' + value.nome + '</option>');
+
+                            if (value.perfil > 1) {
+                                $("select[name='selectTecnico']").append('<option value="' + value.id + '" ' + (tecnico == value.id ? "selected" : "") + '>' + value.nome + '</option>');
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        /**
+         * Exibe informa dos arquivos selecionados que serão
+         * anexado a solicitação
+         */
+        $('#inputArquivos').change(function () {
+            var dados = '';
+            var tamanho = '';
+            $.each(this.files, function (key, file) {
+
+                var size = file.size / 1024;
+                if (size / 1024 > 1) {
+                    if (((size / 1024) / 1024) > 1) {
+                        size = (Math.round(((size / 1024) / 1024) * 100) / 100);
+                        tamanho = size + "Gb";
+                    }
+                    else {
+                        size = (Math.round((size / 1024) * 100) / 100);
+                        tamanho = size + "Mb";
+                    }
+                }
+                else {
+                    size = (Math.round(size * 100) / 100);
+                    tamanho = size + "kb";
+                }
+
+                dados += "Nome: " + file.name + " - Tamanho: " + tamanho + "<br/>";
+            });
+
+            $(".upload-path").html(dados);
+        });
+    });
+</script>
+
+<style type="text/css">
+    div.browse-wrap {
+        top:0;
+        left:0;
+        margin:20px;
+        cursor:pointer;
+        overflow:hidden;
+        padding:20px 60px;
+        text-align:center;
+        position:relative;
+        background-color:#f6f7f8;
+        border:solid 1px #d2d2d7;
+        border-radius: 5px;
+    }
+
+    div.title {
+        color:#3b5998;
+        font-size:14px;
+        font-weight:bold;
+    }
+
+    input.upload {
+        right:0;
+        margin:0;
+        bottom:0;
+        padding:0;
+        opacity:0;
+        height:300px;
+        outline:none;
+        cursor:inherit;
+        position:absolute;
+        font-size:1000px !important;
+    }
+
+    span.upload-path {
+        text-align: center;
+        margin:20px;
+        display:block;
+        font-size: 80%;
+        color:#3b5998;
+        font-weight:bold;
+    }
+
+    button{
+        margin: auto 45%;
+    }
+</style>
+
+<div class="container">
+
+    <?php
+    if ((!empty($_SESSION ['msg_erro'])) || (!empty($_SESSION ['msg_sucesso']))) {
+        ?>
+        <div
+            class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger'; ?> alert-error text-center">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            <?= empty($_SESSION['msg_erro']) ? $_SESSION['msg_sucesso'] : $_SESSION['msg_erro']; ?>
+        </div>
+        <?php
+        unset($_SESSION ['msg_erro']);
+        unset($_SESSION ['msg_sucesso']);
+    }
+    ?>
+
+    <form action="<?= $link ?>"  method="post" enctype="multipart/form-data">
+        <input type="hidden" name="inputID" id="inputID" value="0" />
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label for="selectProjeto" class="control-label col-xs-4">
+                            Projeto: <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-xs-8">
+                            <select name="selectProjeto" required class="form-control" id="selectProjeto">
+                                <option value="0" disabled selected>Projeto</option>
+                                <?php
+                                $id = 0;
+                                foreach ($projetos as $values) {
+                                    if ($id !== $values['id_projeto']) {
+                                        if ($id !== 0) {
+                                            echo '</optgroup>';
+                                        }
+                                        echo '<optgroup label="' . $values['projeto'] . '">';
+                                        $id = $values['id_projeto'];
+                                    }
+                                    ?>
+                                    <option value="<?= $values['id'] ?>">
+                                        <?= $values['problema'] ?>
+                                    </option>
+                                    <?php
+                                }
+                                echo '</optgroup>';
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label for="selectSolicitante" class="control-label col-xs-4">
+                            Solicitante: <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-xs-8">
+                            <select name="selectSolicitante" required class="form-control" id="selectSolicitante">
+                                <option value="0" disabled selected>Solicitante</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label for="selectPrioridade" class="control-label col-xs-4">
+                            Prioridade:
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-xs-8">
+                            <select name="selectPrioridade" required id="selectPrioridade" class="form-control">
+                                <option value="0"></option>
+                                <?php
+                                foreach ($prioridade as $values) {
+                                    ?>
+                                    <option value="<?= $values['id'] ?>" <?= $values['padrao'] ? "selected" : ""; ?>>
+                                        <?= $values['nome'] ?>
+                                    </option>
+                                    <?php
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label for="selectTecnico" class="control-label col-xs-4">Técnico:</label>
+                        <div class="col-xs-8">
+                            <select name="selectTecnico" class="form-control" id="selectTecnico">
+                                <option value="0" disabled selected>Técnico</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-xs-12">
+                <div class="browse-wrap">
+                    <div class="title">Anexar arquivos a esta solicitação</div>
+                    <input type="file" name="inputArquivos[]" class="upload form-control" id="inputArquivos"
+                           title="Anexar arquivos a esta solicitação" multiple>
+                </div>
+                <span class="upload-path"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="textareaDescricao" class="col-xs-12">Descrição:</label>
+            <div class="col-xs-12 form-group">
+                <textarea name="textareaDescricao" id="textareaDescricao"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-12">
+                    <button type="submit" name="submit-dados" class="btn btn-default">
+                        Nova Solicitação
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
