@@ -1,0 +1,61 @@
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('tbody > tr').click(function () {
+            $(location).attr('href', '<?= HTTP . "/Solicitacao/visualizar" ?>/' + $(this).attr('solicitacao'));
+        });
+
+    });
+</script>
+
+
+<div class="container">
+    <div>
+        <table class="table table-responsive table-bordered table-solicitacoes">
+            <thead>
+                <tr>
+                    <th>Projeto</th>
+                    <th>Problema</th>
+                    <th>Prioridade</th>
+                    <th>Solicitante</th>
+                    <th>Atendente</th>
+                    <th>Abertura</th>
+                    <th>Quant. Arquivos</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($solicitacoes as $values) {
+                    ?>
+                    <tr style="background-color: <?= $prioridades[$values['prioridade']] ?>" solicitacao="<?= $values['solicitacao']; ?>">
+                        <td>
+                            <?= $values['projeto'] ?>
+                        </td>
+                        <td>
+                            <?= $values['problema'] ?>
+                        </td>
+                        <td>
+                            <?= $values['prioridade'] ?>
+                        </td>
+                        <td>
+                            <?= $values['solicitante'] ?>
+                        </td>
+                        <td>
+                            <?= $values['atendente'] ?>
+                        </td>
+                        <td>
+                            <?= $values['abertura'] ?>
+                        </td>
+                        <td>
+                            <?= $values['arquivos'] ?>
+                        </td>
+                    </tr>
+                    <?php
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+</div>

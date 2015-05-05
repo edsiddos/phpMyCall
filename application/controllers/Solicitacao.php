@@ -23,6 +23,7 @@ use system\Controller;
 use application\models\Solicitacao as ModelSolicitacao;
 use libs\Menu;
 use libs\Log;
+use libs\Cache;
 use DateTime;
 
 class Solicitacao extends Controller {
@@ -126,7 +127,7 @@ class Solicitacao extends Controller {
                 /*
                  * Se foi enviados arquivos armazena arquivos no banco de dados.
                  */
-                if (count($_FILES['inputArquivos']['name']) > 0) {
+                if (array_search(0, $_FILES['inputArquivos']['error']) !== FALSE) {
                     foreach ($_FILES['inputArquivos']['tmp_name'] as $key => $values) {
                         $dados_arquivos[$key] = array(
                             'nome' => $_FILES['inputArquivos']['name'][$key],
@@ -161,6 +162,106 @@ class Solicitacao extends Controller {
         } else {
             $this->redir('Main/index');
         }
+    }
+
+    /**
+     * Gera tela de solicitações e aberto
+     */
+    public function aberta() {
+        $permissao = "Solicitacao/aberta";
+        $perfil = $_SESSION['perfil'];
+
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $title = array(
+                'title' => 'Solicitações em aberta'
+            );
+
+            $this->listaSolicitacoes(1, $title);
+        }
+    }
+
+    /**
+     * Gera tela de solicitações e andamento
+     */
+    public function andamento() {
+        $permissao = "Solicitacao/andamento";
+        $perfil = $_SESSION['perfil'];
+
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $title = array(
+                'title' => 'Solicitações em andamento'
+            );
+
+            $this->listaSolicitacoes(2, $title);
+        }
+    }
+
+    /**
+     * Solicitações finalizadas
+     */
+    public function finalizadas() {
+        $permissao = "Solicitacao/finalizadas";
+        $perfil = $_SESSION['perfil'];
+
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $title = array(
+                'title' => 'Solicitações encerradas'
+            );
+
+            $this->listaSolicitacoes(3, $title);
+        }
+    }
+
+    /**
+     * Gera dados e tela para mostrar lista de solicitações
+     * @param int $status Status da solicitação 1 - <b>aberta</b>, 2 - <b>atendimento</b>, 3 - <b>encerrada</b>.
+     * @param Array $title Array com title da página.
+     */
+    private function listaSolicitacoes($status, $title) {
+        $perfil = $_SESSION['perfil'];
+        $var['solicitacoes'] = $this->model->getSolicitacoes($_SESSION['id'], $perfil, $status);
+
+        $parametros = Cache::getCache(PARAMETROS);
+        $var['prioridades'] = $parametros['CORES_SOLICITACOES'];
+
+        $this->loadView('default/header', $title);
+        $this->loadView('solicitacao/lista', $var);
+        $this->loadView('default/footer');
+    }
+
+    /**
+     * Visualiza dados da solicitação.
+     * @param Array $id_solicitacao <b>Array</b> com o código da solicitação.
+     */
+    public function visualizar($id_solicitacao) {
+        $perfil = $_SESSION['perfil'];
+
+        $title = array(
+            'title' => 'Solicitações em aberta'
+        );
+
+        /*
+         * Paramentros necessarios para exibição das opções.
+         */
+        $parametros = Cache::getCache(PARAMETROS);
+
+        /*
+         * Busca dados da solicitação.
+         */
+        $solicitacao = $this->model->getDadosSolicitacao($id_solicitacao[0], $_SESSION['id']);
+        $vars['solicitacao'] = $solicitacao;
+
+        $vars['editar'] = (array_search($perfil, $parametros['EDITAR_SOLICITACAO']) !== FALSE) && empty($solicitacao['atendimento']);
+        $vars['atender'] = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && empty($solicitacao['atendimento']);
+        $vars['sub_chamado'] = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && (empty($solicitacao['atendimento']) || empty($solicitacao['encerramento']));
+        $vars['excluir'] = (array_search($perfil, $parametros['EXCLUIR_SOLICITACAO']) !== FALSE) && (empty($solicitacao['atendimento']) || empty($solicitacao['encerramento']));
+        $vars['redirecionar'] = (array_search($perfil, $parametros['REDIRECIONAR_CHAMADO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
+        $vars['feedback'] = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
+        $vars['encerrar'] = (array_search($perfil, $parametros['ENCERRAR_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
+
+        $this->loadView('default/header', $title);
+        $this->loadView('solicitacao/visualizar', $vars);
+        $this->loadView('default/footer');
     }
 
 }

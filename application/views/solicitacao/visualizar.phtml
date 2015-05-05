@@ -1,0 +1,205 @@
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#editar').on('click', function () {
+            $(location).attr('href', '<?= HTTP . '/Solicitacao/editar' ?>');
+        });
+        $('#atender').on('click', function () {
+            $(location).attr('href', '<?= HTTP . '/Solicitacao/atender' ?>');
+        });
+        $('#excluir').on('click', function () {
+            $(location).attr('href', '<?= HTTP . '/Solicitacao/excluir' ?>');
+        });
+        $('#redirecionar').on('click', function () {
+            $(location).attr('href', '<?= HTTP . '/Solicitacao/redirecionar' ?>');
+        });
+        $('#feedback').on('click', function () {
+            $(location).attr('href', '<?= HTTP . '/Solicitacao/feedback' ?>');
+        });
+        $('#encerrar').on('click', function () {
+            $(location).attr('href', '<?= HTTP . '/Solicitacao/encerrar' ?>');
+        });
+    });
+
+</script>
+
+<div class="container">
+
+    <div class="form-group">
+        <div class="well well-sm">
+            <button class="btn btn-default <?= ($editar) ? '' : 'disabled' ?>" id="editar">
+                <span class="glyphicon glyphicon-pencil text-info"></span> Editar
+            </button>
+            <button class="btn btn-default <?= ($atender) ? '' : 'disabled' ?>" id="atender">
+                <span class="glyphicon glyphicon-wrench text-info"></span> Atender
+            </button>
+            <button class="btn btn-default <?= ($sub_chamado) ? '' : 'disabled' ?>" id="sub-chamado">
+                <span class="glyphicon glyphicon-plus-sign text-info"></span> Sub-Chamado
+            </button>
+            <button class="btn btn-default <?= ($excluir) ? '' : 'disabled' ?>" id="excluir">
+                <span class="glyphicon glyphicon-remove text-danger"></span> Excluir
+            </button>
+            <button class="btn btn-default <?= ($redirecionar) ? '' : 'disabled' ?>" id="redirecionar">
+                <span class="glyphicon glyphicon-transfer text-primary"></span> Redirecionar
+            </button>
+            <button class="btn btn-default <?= ($feedback) ? '' : 'disabled' ?>" id="feedback">
+                <span class="glyphicon glyphicon-comment text-primary"></span> Feedback
+            </button>
+            <button class="btn btn-default <?= ($encerrar) ? '' : 'disabled' ?>" id="encerrar">
+                <span class="glyphicon glyphicon-ok text-success"></span> Encerrar
+            </button>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="control-label col-xs-4">
+                        Projeto:
+                    </label>
+                    <div class="col-xs-8">
+                        <input type="text" value="<?= $solicitacao['projeto'] ?>" disabled class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="control-label col-xs-4">
+                        Problema:
+                    </label>
+                    <div class="col-xs-8">
+                        <input type="text" value="<?= $solicitacao['problema'] ?>" disabled class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="control-label col-xs-4">
+                        Prioridade:
+                    </label>
+                    <div class="col-xs-8">
+                        <input type="text" value="<?= $solicitacao['prioridade'] ?>" disabled class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="control-label col-xs-4">
+                        Solicitante:
+                    </label>
+                    <div class="col-xs-8">
+                        <input type="text" value="<?= $solicitacao['solicitante'] ?>" disabled class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="control-label col-xs-4">
+                        Atendente:
+                    </label>
+                    <div class="col-xs-8">
+                        <input type="text" value="<?= $solicitacao['atendente'] ?>" disabled class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="control-label col-xs-4">
+                        Técnico:
+                    </label>
+                    <div class="col-xs-8">
+                        <input type="text" value="<?= $solicitacao['tecnico'] ?>" disabled class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="control-label col-xs-4">
+                        Abertura:
+                    </label>
+                    <div class="col-xs-8">
+                        <input type="text" value="<?= $solicitacao['abertura'] ?>" disabled class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="control-label col-xs-4">
+                        Atendimento:
+                    </label>
+                    <div class="col-xs-8">
+                        <input type="text" value="<?= $solicitacao['atendimento'] ?>" disabled class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="control-label col-xs-4">
+                        Encerramento:
+                    </label>
+                    <div class="col-xs-8">
+                        <input type="text" value="<?= $solicitacao['encerramento'] ?>" disabled class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <label class="panel-title">Descrição:</label>
+                </div>
+                <div class="panel-body">
+                    <?= $solicitacao['descricao'] ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <label class="panel-title">Arquivos anexos:</label>
+                </div>
+                <div class="panel-body text-center">
+                    <?php
+                    if (empty($solicitacao['arquivos'])) {
+                        echo "Esta solicitação não contém nenhum arquivo em anexo.";
+                    } else {
+                        foreach ($solicitacao['arquivos'] as $values) {
+                            echo "<a href=" . HTTP . "/Solicitacao/downloadArquivo/{$values['id']} /> {$values['nome']}</a><br>";
+                        }
+                    }
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

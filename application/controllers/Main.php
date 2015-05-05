@@ -19,6 +19,9 @@
 
 namespace application\controllers;
 
+use application\models\Solicitacao;
+use libs\Cache;
+
 /**
  * Controlador da página principal
  *
@@ -33,9 +36,23 @@ class Main extends \system\Controller {
         }
     }
 
-    public function index($parametros = array()) {
-        $this->loadView('default/header', array( 'title' => 'PhpMyCall'));
-        $this->loadView('main/index');
+    /**
+     * Mostra os projetos em aberto e em andamento na tela inicial.
+     */
+    public function index() {
+        $solicitacao = new Solicitacao();
+
+        $usuario = $_SESSION['id'];
+        $perfil = $_SESSION['perfil'];
+
+        $var['aberta'] = $solicitacao->getSolicitacoes($usuario, $perfil, 1);
+        $var['andamento'] = $solicitacao->getSolicitacoes($usuario, $perfil, 2);
+
+        $parametros = Cache::getCache(PARAMETROS);
+        $var['prioridades'] = $parametros['CORES_SOLICITACOES'];
+
+        $this->loadView('default/header', array('title' => 'PhpMyCall'));
+        $this->loadView('main/index', $var);
         $this->loadView('default/footer');
     }
 
