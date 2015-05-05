@@ -19,58 +19,63 @@
 
 
 // Mostra todos os erros
-define ( 'DEBUG', false );
+define('DEBUG', false);
 
 if (DEBUG === true) {
-	error_reporting ( E_ALL );
-	ini_set ( "display_errors", 1 );
+    error_reporting(E_ALL);
+    ini_set("display_errors", 1);
 }
 
 // ################################################
 // Define os parâmetros de acesso ao banco de dados
 // Endereço do banco de dados
-define ( 'DB_HOST', 'localhost' );
+define('DB_HOST', 'localhost');
 
 // Nome do banco de dados
-define ( 'DB_NOME', 'phpmycall' );
+define('DB_NOME', 'phpmycall');
 
 // Usuário do banco de dados
-define ( 'DB_USER', 'dev' );
+define('DB_USER', 'dev');
 
 // Senha do usuário do banco de dados
-define ( 'DB_PASS', 'dev' );
+define('DB_PASS', 'dev');
 
 // ################################################
 // caminho relativo para a pasta do projeto
-define ( 'PATH', '/var/www/phpmycall' );
+define('PATH', '/var/www/phpmycall');
 
 // Caminha da pasta application
-define ( 'APPLICATION', PATH . '/application' );
+define('APPLICATION', PATH . '/application');
 
 // Caminho para a pasta dos controladores
-define ( 'CONTROLLER', APPLICATION . '/controllers' );
+define('CONTROLLER', APPLICATION . '/controllers');
 
 // Caminho para a pasta das models
-define ( 'MODELS', APPLICATION . '/models' );
+define('MODELS', APPLICATION . '/models');
 
 // Caminho para a pasta das views
-define ( 'VIEWS', APPLICATION . '/views' );
+define('VIEWS', APPLICATION . '/views');
 
 // Caminho para a pasta system
-define ( 'SYSTEM', PATH . '/system' );
+define('SYSTEM', PATH . '/system');
 
 // Caminho para a pasta class
-define ( 'CLASSES', PATH . '/class' );
+define('CLASSES', PATH . '/class');
 
-// ################################################
+##################################################
 // Endereço do site
-define ( 'HTTP', 'http://localhost/phpmycall' );
+define('HTTP', 'http://localhost/phpmycall');
 
 // Pasta dos arquivos css
-define ( 'HTTP_CSS', HTTP . '/static/css' );
+define('HTTP_CSS', HTTP . '/static/css');
 
 // Pasta para imagens
-define ( 'HTTP_IMG', HTTP . '/static/img' );
+define('HTTP_IMG', HTTP . '/static/img');
 
 // Pasta para os arquivos javascript
-define ( 'HTTP_JS', HTTP . '/static/js' );
+define('HTTP_JS', HTTP . '/static/js');
+
+
+##################################################
+// Chave do array (Cache) que armazena valores diversos de configuração
+define('PARAMETROS', 'parametros');
