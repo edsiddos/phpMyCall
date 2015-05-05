@@ -187,6 +187,23 @@ CREATE TABLE phpmycall.usuario(
 -- usuario: admin, senha: admin
 INSERT INTO phpmycall.usuario (usuario, senha, nome, email, perfil, dt_troca) VALUES ('admin', '90b9aa7e25f80cf4f64e990b78a9fc5ebd6cecad', 'Administrador', 'admin@admin.com', 5, '2025-12-01 00:00');
 
+
+CREATE TABLE phpmycall.prioridade(
+        id SERIAL,
+        nome VARCHAR(15) NOT NULL UNIQUE,
+        nivel INTEGER NOT NULL UNIQUE,
+        padrao BOOLEAN DEFAULT FALSE,
+        cor NOT NULL DEFAULT '#FFFFFF'
+        CONSTRAINT pk_prioridade PRIMARY KEY(id)
+);
+
+INSERT INTO phpmycall.prioridade (nome, nivel, cor) VALUES ('URGENTE', 1, '#FF8B8B');
+INSERT INTO phpmycall.prioridade (nome, nivel, cor) VALUES ('ALTA', 2, '#FCD56A');
+INSERT INTO phpmycall.prioridade (nome, nivel, padrao, cor) VALUES ('NORMAL', 3, TRUE, '#FFFFFF');
+INSERT INTO phpmycall.prioridade (nome, nivel, cor) VALUES ('BAIXA', 4, '#A4FCEF');
+INSERT INTO phpmycall.prioridade (nome, nivel, cor) VALUES ('MINIMA', 5, '#A4FCC4');
+
+
 CREATE TABLE phpmycall.solicitacao(
 	id SERIAL,
 	projeto_problema INTEGER NOT NULL,
@@ -203,24 +220,11 @@ CREATE TABLE phpmycall.solicitacao(
 	justificativa_avaliacao VARCHAR(255),
 	CONSTRAINT pk_solicitacao PRIMARY KEY (id),
 	CONSTRAINT fk_projeto_problema_solicitacao FOREIGN KEY (projeto_problema) REFERENCES phpmycall.projeto_tipo_problema (id),
+        CONSTRAINT fk_prioridade_solicitacao FOREIGN KEY (prioridade) REFERENCES phpmycall.prioridade (id),
 	CONSTRAINT fk_solicitante_solicitacao FOREIGN KEY (solicitante) REFERENCES phpmycall.usuario(id),
 	CONSTRAINT fk_atendente_solicitacao FOREIGN KEY (atendente) REFERENCES phpmycall.usuario(id),
 	CONSTRAINT fk_tecnico_solicitacao FOREIGN KEY (tecnico) REFERENCES phpmycall.usuario(id),
 	CONSTRAINT fk_solicitacao_origem_solicitacao FOREIGN KEY (solicitacao_origem) REFERENCES phpmycall.solicitacao (id)
-);
-
-CREATE TABLE phpmycall.reabrir_solicitacao(
-	id SERIAL,
-	solicitacao INTEGER NOT NULL UNIQUE, -- uma solicitação só pode ser reaberta uma vez
-	motivo TEXT NOT NULL, -- justificativa para reabertura do chamado
-	resposta TEXT DEFAULT NULL, -- resposta do gerente á reabertura
-	abertura TIMESTAMP NOT NULL,
-	autorizacao TIMESTAMP NOT NULL,
-	encerrado TIMESTAMP NOT NULL,
-	autorizado BOOLEAN DEFAULT FALSE, -- aguardando liberação se false
-	aberto BOOLEAN DEFAULT TRUE, -- ainda não foi resolvida
-	CONSTRAINT pk_reabrir_solicitacao PRIMARY KEY (id),
-	CONSTRAINT fk_solicitacao_reabrir_solicitacao FOREIGN KEY (solicitacao) REFERENCES phpmycall.solicitacao (id)
 );
 
 CREATE TABLE phpmycall.arquivos(
@@ -302,19 +306,22 @@ CREATE TABLE phpmycall.log(
 );
 
 
-CREATE TABLE phpmycall.prioridade(
-        id SERIAL,
-        nome VARCHAR(15) NOT NULL UNIQUE,
-        nivel INTEGER NOT NULL UNIQUE,
-        padrao BOOLEAN DEFAULT FALSE,
-        CONSTRAINT pk_prioridade PRIMARY KEY(id)
+CREATE TABLE phpmycall.config(
+        parametro varchar(30) NOT NULL,
+        texto text NOT NULL,
+        comentario text NOT NULL,
+        CONSTRAINT pk_parametro_config PRIMARY KEY (parametro)
 );
 
-INSERT INTO phpmycall.prioridade (nome, nivel) VALUES ('URGENTE', 1);
-INSERT INTO phpmycall.prioridade (nome, nivel) VALUES ('ALTA', 2);
-INSERT INTO phpmycall.prioridade (nome, nivel, padrao) VALUES ('NORMAL', 3, TRUE);
-INSERT INTO phpmycall.prioridade (nome, nivel) VALUES ('BAIXA', 4);
-INSERT INTO phpmycall.prioridade (nome, nivel) VALUES ('MINIMA', 5);
+INSERT INTO phpmycall.config (parametro, texto, comentario) VALUES ('VALIDADE_SENHA_DIAS', '30', 'Periodo de validade da senha.');
+INSERT INTO phpmycall.config (parametro, texto, comentario) VALUES ('UPLOAD_FILE', '10MB', 'Tamanho máximo de upload.');
+INSERT INTO phpmycall.config (parametro, texto, comentario) VALUES ('VISUALIZAR_SOLICITACAO', '2, 3, 4, 5', 'Permite ao perfil visualizar todas as solicitações independente se tenha aberto, atendido ou seja o técnico responsavel pela resolução');
+INSERT INTO phpmycall.config (parametro, texto, comentario) VALUES ('DIRECIONAR_CHAMADO', '3, 4, 5', 'Permite ao atendente do chamado direcionar um chamado a um técnico');
+INSERT INTO phpmycall.config (parametro, texto, comentario) VALUES ('REDIRECIONAR_CHAMADO', '3, 4, 5', 'Permite a um determinado perfil redirecionar um chamado a um técnico');
+INSERT INTO phpmycall.config (parametro, texto, comentario) VALUES ('EDITAR_SOLICITACAO', '2, 3, 4, 5', 'Permite a edição de um solicitação em aberto');
+INSERT INTO phpmycall.config (parametro, texto, comentario) VALUES ('ATENDER_SOLICITACAO', '3, 4, 5', 'Permitir atender solicitação em aberto.');
+INSERT INTO phpmycall.config (parametro, texto, comentario) VALUES ('EXCLUIR_SOLICITACAO', '4, 5', 'Permitir a excluir solicitação em aberto ou atendimento.');
+INSERT INTO phpmycall.config (parametro, texto, comentario) VALUES ('ENCERRAR_SOLICITACAO', '3, 4, 5', 'Permitir o encerramento de um solicitação que esteja em atendimento.');
 
 
 ALTER SCHEMA phpmycall OWNER TO dev;
@@ -327,7 +334,6 @@ ALTER TABLE phpmycall.permissao_perfil OWNER TO dev;
 ALTER TABLE phpmycall.empresas OWNER TO dev;
 ALTER TABLE phpmycall.usuario OWNER TO dev;
 ALTER TABLE phpmycall.solicitacao OWNER TO dev;
-ALTER TABLE phpmycall.reabrir_solicitacao OWNER TO dev;
 ALTER TABLE phpmycall.arquivos OWNER TO dev;
 ALTER TABLE phpmycall.tipo_feedback OWNER TO dev;
 ALTER TABLE phpmycall.feedback OWNER TO dev;
@@ -336,3 +342,4 @@ ALTER TABLE phpmycall.expediente OWNER TO dev;
 ALTER TABLE phpmycall.projeto_responsaveis OWNER TO dev;
 ALTER TABLE phpmycall.log OWNER TO dev;
 ALTER TABLE phpmycall.prioridade OWNER TO dev;
+ALTER TABLE phpmycall.config OWNER TO dev;
