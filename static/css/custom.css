@@ -187,3 +187,11 @@ border-top-right-radius: 0;*/
 .form-horizontal .control-label{
     text-align: left;
 }
+
+.table-solicitacoes thead{
+    background-color: #AAAAAA;
+}
+
+.table-solicitacoes tbody tr{
+    cursor: pointer;
+}
