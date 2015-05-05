@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace libs;
 
 /**
@@ -24,17 +25,16 @@ namespace libs;
  * @author Ednei Leite da Silva
  */
 final class Utils {
-	
-	/**
-	 * Verica a existencia de um valor dentro de um array.
-	 *
-	 * @param mixed $values
-	 *        	Valor a ser procurado.
-	 * @param Array $array
-	 *        	Array onde será buscado o valor desejado
-	 * @return boolean Retorna TRUE se valor for encontrado.
-	 */
-	public static function existValueArray($values, $array) {
-		return (! is_bool ( array_search ( $values, $array ) ));
-	}
+
+    /**
+     * Verica a existencia de um valor dentro de um array.
+     *
+     * @param mixed $values Valor a ser procurado.
+     * @param Array $array Array onde será buscado o valor desejado
+     * @return boolean Retorna <b>TRUE</b> se valor for encontrado.
+     */
+    public static function existValueArray($values, $array) {
+        return (!is_bool(array_search($values, $array)));
+    }
+
 }

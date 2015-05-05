@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (C) 2015 - Ednei Leite da Silva
  *
@@ -15,9 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace libs;
 
-use system\Model, DateTime;
+use system\Model,
+    DateTime;
 
 /**
  * Grava log de operações realizada no sistema
@@ -25,31 +28,30 @@ use system\Model, DateTime;
  * @author Ednei Leite da Silva
  */
 class Log {
-	
-	/**
-	 * Grava log no banco de dados
-	 *
-	 * @param array $dados
-	 *        	Array com dados gerais do log
-	 * @param integer $id_usuario
-	 *        	ID do usuário que executou a operação
-	 */
-	public static function gravar(array $dados, $id_usuario) {
-		$model = new Model ();
-		
-		$ip = $_SERVER ['REMOTE_ADDR'];
-		
-		$hoje = new DateTime ();
-		
-		$dados_json = json_encode ( $dados );
-		
-		$insert = array (
-				'ip' => $ip,
-				'data_hora' => $hoje->format ( 'Y-m-d H:i:s' ),
-				'dados' => $dados_json,
-				'usuario' => $id_usuario 
-		);
-		
-		$model->insert ( 'phpmycall.log', $insert );
-	}
+
+    /**
+     * Grava log no banco de dados
+     *
+     * @param array $dados Array com dados gerais do log
+     * @param integer $id_usuario ID do usuário que executou a operação
+     */
+    public static function gravar(array $dados, $id_usuario) {
+        $model = new Model ();
+
+        $ip = $_SERVER ['REMOTE_ADDR'];
+
+        $hoje = new DateTime ();
+
+        $dados_json = json_encode($dados);
+
+        $insert = array(
+            'ip' => $ip,
+            'data_hora' => $hoje->format('Y-m-d H:i:s'),
+            'dados' => $dados_json,
+            'usuario' => $id_usuario
+        );
+
+        $model->insert('phpmycall.log', $insert);
+    }
+
 }
