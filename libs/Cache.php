@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace libs;
 
 /**
@@ -25,12 +26,32 @@ namespace libs;
  */
 class Cache {
 
+    /**
+     * Captura dados armazenados em Cache.
+     * @param type $chave Conteudo buscado
+     * @return Mixed Retorna variavel ou array caso sucesso.
+     */
     public static function getCache($chave) {
         return apc_fetch($chave);
     }
 
+    /**
+     * Armazena dados.
+     * @param string $chave Chave responsavel por armazenar dados.
+     * @param Mixed $valor Valor a ser armazendo em cache.
+     * @return boolean Caso dados estejam armazenados com sucesso.
+     */
     public static function setCache($chave, $valor) {
         return apc_add($chave, $valor);
+    }
+
+    /**
+     * Remove conteudo do cache.
+     * @param string $chave Chave a ser removida
+     * @return boolean <b>TRUE</b> caso sucesso, <b>FALSE</b> caso falha
+     */
+    public static function deleteCache($chave) {
+        return apc_delete($chave);
     }
 
 }
