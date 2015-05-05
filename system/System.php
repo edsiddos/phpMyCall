@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace system;
 
 use \system\Controller;
@@ -27,64 +28,65 @@ use \application\controllers\Error;
  * @author Ednei Leite da Silva
  */
 class System {
-	private $url;
-	private $explode;
-	private $controller;
-	private $action;
-	
-	/**
-	 * Método construtor
-	 *
-	 * @param string $url
-	 *        	Dados informados no formato url amigavel.
-	 */
-	public function __construct($url) {
-		if (empty ( $url )) {
-			$this->url = 'Main/index';
-		} else {
-			$this->url = $url;
-		}
-		
-		$this->explode = explode ( '/', $this->url );
-		
-		$this->setController ();
-		$this->setAction ();
-	}
-	
-	/**
-	 * Retira o controlador da url amigavel
-	 */
-	private function setController() {
-		$this->controller = '\\application\\controllers\\' . array_shift ( $this->explode );
-	}
-	
-	/**
-	 * Retira a action da url amigavel
-	 */
-	private function setAction() {
-		$this->action = array_shift ( $this->explode );
-	}
-	
-	/**
-	 * Executa controlador com action e passa os parâmetros
-	 */
-	public function run() {
-		if (class_exists ( $this->controller )) {
-			$controlador = $this->controller;
-			
-			$obj = new $controlador ();
-			
-			if (method_exists ( $obj, $this->action )) {
-				$method = $this->action;
-				
-				$obj->$method ( $this->explode );
-			} else {
-				$error = new Error ();
-				$error->erro_404 ();
-			}
-		} else {
-			$error = new Error ();
-			$error->erro_404 ();
-		}
-	}
+
+    private $url;
+    private $explode;
+    private $controller;
+    private $action;
+
+    /**
+     * Método construtor
+     *
+     * @param string $url Dados informados no formato url amigavel.
+     */
+    public function __construct($url) {
+        if (empty($url)) {
+            $this->url = 'Main/index';
+        } else {
+            $this->url = $url;
+        }
+
+        $this->explode = explode('/', $this->url);
+
+        $this->setController();
+        $this->setAction();
+    }
+
+    /**
+     * Retira o controlador da url amigavel
+     */
+    private function setController() {
+        $this->controller = '\\application\\controllers\\' . array_shift($this->explode);
+    }
+
+    /**
+     * Retira a action da url amigavel
+     */
+    private function setAction() {
+        $this->action = array_shift($this->explode);
+    }
+
+    /**
+     * Executa controlador com action e passa os parâmetros
+     */
+    public function run() {
+        if (class_exists($this->controller)) {
+            $controlador = $this->controller;
+
+            $obj = new $controlador ();
+
+            if (method_exists($obj, $this->action)) {
+                $method = $this->action;
+
+                $obj->$method($this->explode);
+            } else {
+                $error = new Error ();
+                $error->erro_404();
+            }
+        } else {
+            $error = new Error ();
+            $error->erro_404();
+        }
+    }
+
 }
