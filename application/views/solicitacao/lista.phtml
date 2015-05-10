@@ -12,6 +12,21 @@
 
 
 <div class="container">
+
+    <?php
+    if ((!empty($_SESSION ['msg_erro'])) || (!empty($_SESSION ['msg_sucesso']))) {
+        ?>
+        <div
+            class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger'; ?> alert-error text-center">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            <?= empty($_SESSION['msg_erro']) ? $_SESSION['msg_sucesso'] : $_SESSION['msg_erro']; ?>
+        </div>
+        <?php
+        unset($_SESSION ['msg_erro']);
+        unset($_SESSION ['msg_sucesso']);
+    }
+    ?>
+
     <div>
         <table class="table table-responsive table-bordered table-solicitacoes">
             <thead>

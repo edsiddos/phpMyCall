@@ -20,6 +20,7 @@
                     success: function (data) {
                         var cliente = $("select[name='selectSolicitante'] option:selected").val();
                         var tecnico = $("select[name='selectTecnico'] option:selected").val();
+
                         $("select[name='selectSolicitante'] > option").remove();
                         $("select[name='selectTecnico'] > option").remove();
                         $("select[name='selectSolicitante']").append('<option value="0" disabled selected>Solicitante</option>');
@@ -28,7 +29,7 @@
                         $.each(data, function (key, value) {
                             $("select[name='selectSolicitante']").append('<option value="' + value.id + '" ' + (cliente == value.id ? "selected" : "") + '>' + value.nome + '</option>');
 
-                            if (value.perfil > 1) {
+                            if (value.tecnico) {
                                 $("select[name='selectTecnico']").append('<option value="' + value.id + '" ' + (tecnico == value.id ? "selected" : "") + '>' + value.nome + '</option>');
                             }
                         });
@@ -65,7 +66,7 @@
                 dados += "Nome: " + file.name + " - Tamanho: " + tamanho + "<br/>";
             });
 
-            $(".upload-path").html(dados);
+            $("#arquivos-novos").html(dados);
         });
     });
 </script>
@@ -113,7 +114,7 @@
         font-weight:bold;
     }
 
-    button{
+    button[type='submit']{
         margin: auto 45%;
     }
 </style>
@@ -136,6 +137,7 @@
 
     <form action="<?= $link ?>"  method="post" enctype="multipart/form-data">
         <input type="hidden" name="inputID" id="inputID" value="0" />
+        <input type="hidden" name="solicitacaoOrigem" id="solicitacaoOrigem" value="0" />
 
         <div class="form-group">
             <div class="row">
@@ -189,8 +191,7 @@
                 <div class="col-xs-6">
                     <div class="form-group">
                         <label for="selectPrioridade" class="control-label col-xs-4">
-                            Prioridade:
-                            <span class="text-danger">*</span>
+                            Prioridade: <span class="text-danger">*</span>
                         </label>
                         <div class="col-xs-8">
                             <select name="selectPrioridade" required id="selectPrioridade" class="form-control">
@@ -222,17 +223,6 @@
         </div>
 
         <div class="form-group">
-            <div class="col-xs-12">
-                <div class="browse-wrap">
-                    <div class="title">Anexar arquivos a esta solicitação</div>
-                    <input type="file" name="inputArquivos[]" class="upload form-control" id="inputArquivos"
-                           title="Anexar arquivos a esta solicitação" multiple>
-                </div>
-                <span class="upload-path"></span>
-            </div>
-        </div>
-
-        <div class="form-group">
             <label for="textareaDescricao" class="col-xs-12">Descrição:</label>
             <div class="col-xs-12 form-group">
                 <textarea name="textareaDescricao" id="textareaDescricao"></textarea>
@@ -240,10 +230,26 @@
         </div>
 
         <div class="form-group">
+            <div class="col-xs-12">
+                <div class="browse-wrap">
+                    <div class="title">Anexar arquivos a esta solicitação</div>
+                    <input type="file" name="inputArquivos[]" class="upload form-control" id="inputArquivos"
+                           title="Anexar arquivos a esta solicitação" multiple>
+                </div>
+                <span id="arquivos-novos" class="upload-path"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-xs-12" id="arquivos-antigos">
+            </div>
+        </div>
+
+        <div class="form-group">
             <div class="row">
                 <div class="col-xs-12">
                     <button type="submit" name="submit-dados" class="btn btn-default">
-                        Nova Solicitação
+                        Salvar solicitação
                     </button>
                 </div>
             </div>

@@ -65,12 +65,17 @@ class Solicitacao extends Model {
      * @return Array Retorna todos os usuários participantes de um projeto.
      */
     public function getSolicitantes($projeto) {
+        $parametros = $this->getParametros();
+
+        $tecnicos = "'" . implode("', '", $parametros['ATENDER_SOLICITACAO']) . "'";
+
         $sql = "SELECT usuario.id,
                     usuario.nome,
-                    usuario.perfil
+                    perfil.perfil IN ({$tecnicos})::int AS tecnico
                 FROM phpmycall.usuario
                 INNER JOIN phpmycall.projeto_responsaveis ON usuario.id = projeto_responsaveis.usuario
                 INNER JOIN phpmycall.projeto_tipo_problema ON projeto_responsaveis.projeto = projeto_tipo_problema.projeto
+                INNER JOIN phpmycall.perfil ON usuario.perfil = perfil.id
                 WHERE projeto_tipo_problema.id = :projeto
                 ORDER BY usuario.nome";
 
@@ -241,13 +246,15 @@ class Solicitacao extends Model {
     /**
      * Busca dados da solicitação caso o usuário seja participantes do projeto.
      * @param int $solicitacao Código da Solicitação.
+     * @param string $perfil Perfil do usuário.
      * @param int $usuario Código do Usuário.
      * @return Array Retorna <b>Array</b> com dados de uma determinada solicitação
      */
-    public function getDadosSolicitacao($solicitacao, $usuario) {
+    public function getDadosSolicitacao($solicitacao, $perfil, $usuario) {
         $config = $this->getParametros();
 
-        $sql = "SELECT projeto.nome AS projeto,
+        $sql = "SELECT projeto_tipo_problema.id AS projeto_problema,
+                    projeto.nome AS projeto,
                     tipo_problema.nome AS problema,
                     prioridade.nome AS prioridade,
                     solicitante.nome AS solicitante,
@@ -268,7 +275,6 @@ class Solicitacao extends Model {
                 INNER JOIN phpmycall.tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id
                 INNER JOIN phpmycall.prioridade ON solicitacao.prioridade = prioridade.id
                 INNER JOIN phpmycall.projeto_responsaveis ON projeto.id = projeto_responsaveis.projeto
-                LEFT JOIN phpmycall.arquivos ON solicitacao.id = arquivos.solicitacao
                 WHERE solicitacao.id = :solicitacao AND projeto_responsaveis.usuario = :usuario";
 
         if (array_search($perfil, $config['VISUALIZAR_SOLICITACAO']) === FALSE) {
@@ -284,6 +290,153 @@ class Solicitacao extends Model {
         $result['arquivos'] = $this->select($sql, array('solicitacao' => $solicitacao));
 
         return $result;
+    }
+
+    /**
+     * Busca dados de um solicitação
+     * @param int $solicitacao <b>ID</b> da solicitação
+     * @param int $usuario <b>ID</b> do usuário que deseja visualizar dados
+     * @param string $perfil <b>perfil</b> do usuário.
+     * @return Array Retorna um <b>Array</b> com dados referentes a solicitação.
+     */
+    public function getSolicitacao($solicitacao, $usuario, $perfil) {
+        $config = $this->getParametros();
+
+        $sql = "SELECT projeto_tipo_problema.id AS projeto_problema,
+                    projeto.id AS projeto,
+                    tipo_problema.id AS problema,
+                    solicitacao.id AS solicitacao,
+                    solicitacao.prioridade AS prioridade,
+                    solicitacao.solicitante AS solicitante,
+                    solicitacao.atendente AS atendente,
+                    solicitacao.tecnico AS tecnico,
+                    solicitacao.solicitacao_origem AS solicitacao_origem,
+                    solicitacao.descricao AS descricao
+                FROM phpmycall.solicitacao
+                INNER JOIN phpmycall.projeto_tipo_problema ON solicitacao.projeto_problema = projeto_tipo_problema.id
+                INNER JOIN phpmycall.projeto ON projeto_tipo_problema.projeto = projeto.id
+                INNER JOIN phpmycall.tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id
+                INNER JOIN phpmycall.projeto_responsaveis ON projeto.id = projeto_responsaveis.projeto
+                WHERE solicitacao.id = :solicitacao AND projeto_responsaveis.usuario = :usuario";
+
+        if (array_search($perfil, $config['VISUALIZAR_SOLICITACAO']) === FALSE) {
+            $sql .= " AND (solicitacao.solicitante = :usuario OR solicitacao.atendente = :usuario OR solicitacao.tecnico = :usuario)";
+        }
+
+        /*
+         * Dados referente a solicitação
+         */
+        $result = $this->select($sql, array('solicitacao' => $solicitacao, 'usuario' => $usuario), FALSE);
+
+        $sql = "SELECT arquivos.id,
+                    arquivos.nome
+                FROM phpmycall.arquivos WHERE arquivos.solicitacao = :solicitacao";
+
+        /*
+         * Dados referentes aos arquivos anexos
+         */
+        $result['arquivos'] = $this->select($sql, array('solicitacao' => $solicitacao));
+
+        return $result;
+    }
+
+    /**
+     * Remove arquivo anexo a uma solicitação
+     * @param int $arquivo <b>ID</b> do anexo.
+     * @param int $projeto_tipo_problema <b>ID</b> do tipo de problema.
+     * @param int $usuario <b>ID</b> do usuário.
+     * @return boolean Retorna <b>TRUE</b> se sucesso, <b>FALSE</b> falha.
+     */
+    public function removerArquivo($arquivo, $projeto_tipo_problema, $usuario) {
+        $sql = "SELECT EXISTS(SELECT projeto_responsaveis.usuario
+                    FROM phpmycall.projeto_responsaveis
+                    INNER JOIN phpmycall.projeto_tipo_problema ON projeto_responsaveis.projeto = projeto_tipo_problema.projeto
+                    WHERE projeto_tipo_problema.id = :projeto_tipo_problema
+                        AND projeto_responsaveis.usuario = :usuario
+                ) AS result";
+
+        $result = $this->select($sql, array('usuario' => $usuario, 'projeto_tipo_problema' => $projeto_tipo_problema), FALSE);
+
+        if ($result['result']) {
+            $result = $this->delete('phpmycall.arquivos', "id = {$arquivo}");
+        } else {
+            $result = FALSE;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Atualiza dados de uma solicitação em aberto
+     * @param Array $dados Array com dados a ser alterados da solicitação.
+     * @param int $solicitacao <b>ID</b> da solicitação a ser alterada.
+     * @return boolean Retorna <b>TRUE</b> se sucesso, <b>FALSE</b> falha.
+     */
+    public function atualizaSolicitacao($dados, $solicitacao) {
+        /*
+         * Atualiza apenas se a solicitação não esta
+         * sendo atendida por um técnico.
+         */
+        return $this->update('phpmycall.solicitacao', $dados, "id = {$solicitacao} AND abertura = atendimento");
+    }
+
+    /**
+     * Realiza o atendimento de um solicitação em aberto.
+     * @param string $hoje <b>Data e Hora</b> do inicio do atendimento, no formato <i>ANO-MÊS-DIA HORA:MINUTOS:SEGUNDOS</i>.
+     * @param int $solicitacao <b>ID</b> da solicitação.
+     * @param int $usuario <b>ID</b> do usuário.
+     * @return boolean Retorna <b>TRUE</b> se sucesso, <b>FALSE</b> se erro.
+     */
+    public function atenderSolicitacao($hoje, $solicitacao, $usuario) {
+        $sql = "SELECT EXISTS(
+                    SELECT solicitacao.id
+                    FROM phpmycall.solicitacao
+                    WHERE (solicitacao.tecnico IS NULL OR solicitacao.tecnico = :usuario)
+                        AND solicitacao.id = :solicitacao
+                        AND solicitacao.abertura = solicitacao.atendimento
+                ) AS autorizado";
+
+        $result = $this->select($sql, array('usuario' => $usuario, 'solicitacao' => $solicitacao), FALSE);
+
+        if ($result['autorizado'] == TRUE) {
+            $dados = array(
+                'atendimento' => $hoje,
+                'encerramento' => $hoje,
+                'tecnico' => $usuario
+            );
+
+            $where = "id = {$solicitacao}";
+
+            if ($this->update('phpmycall.solicitacao', $dados, $where)) {
+                $result['msg'] = "Solicitação em atendimento.";
+                $result['status'] = TRUE;
+            } else {
+                $result['msg'] = "Falha ao iniciar atendimento";
+                $result['status'] = FALSE;
+            }
+        } else {
+            $result['msg'] = "Não permitida o atendimento desta solicitação. Verifique se está solicitação já possui técnico.";
+            $result['status'] = FALSE;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Verifica status da solicitação.
+     * @param int $solicitacao
+     * @return string Retorna o status da solicitação <b>aberta</b>, <b>atendimento</b> e <b>encerrada</b>.
+     */
+    public function statusSolicitacao($solicitacao) {
+        $sql = "SELECT CASE WHEN abertura = atendimento THEN 'aberta'
+                    WHEN abertura < atendimento AND atendimento = encerramento THEN 'atendimento'
+                    ELSE 'encerrada' END AS status
+                FROM phpmycall.solicitacao
+                WHERE solicitacao.id = :solicitacao";
+
+        $result = $this->select($sql, array('solicitacao' => $solicitacao), FALSE);
+
+        return $result['status'];
     }
 
 }

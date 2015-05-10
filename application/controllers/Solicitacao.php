@@ -108,7 +108,7 @@ class Solicitacao extends Controller {
                 'abertura' => $hoje,
                 'atendimento' => $hoje,
                 'encerramento' => $hoje,
-                'solicitacao_origem' => NULL,
+                'solicitacao_origem' => empty($_POST['solicitacaoOrigem'] ? NULL : $_POST['solicitacaoOrigem']),
                 'avaliacao' => NULL,
                 'justificativa_avaliacao' => NULL
             );
@@ -248,8 +248,9 @@ class Solicitacao extends Controller {
         /*
          * Busca dados da solicitação.
          */
-        $solicitacao = $this->model->getDadosSolicitacao($id_solicitacao[0], $_SESSION['id']);
+        $solicitacao = $this->model->getDadosSolicitacao($id_solicitacao[0], $perfil, $_SESSION['id']);
         $vars['solicitacao'] = $solicitacao;
+        $vars['id_solicitacao'] = $id_solicitacao[0];
 
         $vars['editar'] = (array_search($perfil, $parametros['EDITAR_SOLICITACAO']) !== FALSE) && empty($solicitacao['atendimento']);
         $vars['atender'] = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && empty($solicitacao['atendimento']);
@@ -262,6 +263,201 @@ class Solicitacao extends Controller {
         $this->loadView('default/header', $title);
         $this->loadView('solicitacao/visualizar', $vars);
         $this->loadView('default/footer');
+    }
+
+    /**
+     * Abre tela para edição de uma solicitação
+     * @param Array $id_solicitacao Array com id da solicitação
+     */
+    public function editar($id_solicitacao) {
+        $perfil = $_SESSION['perfil'];
+        $parametros = Cache::getCache(PARAMETROS);
+
+        $status = $this->model->statusSolicitacao($id_solicitacao[0]);
+
+        /*
+         * Verifica status da solicitação
+         */
+        if ($status !== "aberta") {
+
+            /* Caso esteja encerrada ou em atendimento exibe mensagem de operação ilegal */
+            $_SESSION['msg_erro'] = "Operação ilegal. Esta solicitação está ";
+            $_SESSION['msg_erro'] .= $status === 'encerrada' ? $status : "em {$status}.";
+
+            $this->redir("Solicitacao/visualizar/{$id_solicitacao[0]}");
+        } else if (array_search($perfil, $parametros['EDITAR_SOLICITACAO']) !== FALSE) {
+
+            /* Caso solicitação esteja aberta busca dados para alteração */
+            $title = array(
+                'title' => 'Editar Solicitação'
+            );
+
+            $dados_solicitacao = $this->model->getSolicitacao($id_solicitacao[0], $_SESSION['id'], $perfil);
+
+            /*
+             * Dados necessarios para alteração
+             */
+            $var = array(
+                'link' => HTTP . '/Solicitacao/atualizarSolicitacao',
+                'projetos' => $this->model->getProjetos($_SESSION['id']),
+                'prioridade' => $this->model->getPrioridades(),
+                'solicitacao' => json_encode($dados_solicitacao),
+                'participantes' => json_encode($this->model->getSolicitantes($dados_solicitacao['projeto']))
+            );
+
+            $this->loadView('default/header', $title);
+            $this->loadView('solicitacao/index', $var);
+            $this->loadView('solicitacao/editar', $var);
+            $this->loadView('default/footer');
+        }
+    }
+
+    /**
+     * Remove um arquivo anexo a solicitação
+     */
+    public function removerArquivo() {
+        $perfil = $_SESSION['perfil'];
+        $parametros = Cache::getCache(PARAMETROS);
+
+        /* Verifica se perfil do usuário tem a permissão de editar solicitação */
+        if (array_search($perfil, $parametros['EDITAR_SOLICITACAO']) !== FALSE) {
+            $arquivo = $_POST['id'];
+            $projeto_tipo_problema = $_POST['projeto_tipo_problema'];
+
+            /* Verifica se arquivo foi removido */
+            if ($this->model->removerArquivo($arquivo, $projeto_tipo_problema, $_SESSION['id'])) {
+                echo json_encode(array('id' => $arquivo, 'status' => TRUE));
+            } else {
+                echo json_encode(array('id' => $arquivo, 'status' => FALSE));
+            }
+        }
+    }
+
+    /**
+     * Realiza a atualização de um solicitação
+     * <b>método chamado ao submeter formulario edição de solicitação</b>
+     */
+    public function atualizarSolicitacao() {
+        $perfil = $_SESSION['perfil'];
+        $parametros = Cache::getCache(PARAMETROS);
+
+        if (array_search($perfil, $parametros['EDITAR_SOLICITACAO']) !== FALSE) {
+            /*
+             * Manipulação dos dados a ser inseridos.
+             */
+            $dados = array(
+                'projeto_problema' => $_POST['selectProjeto'],
+                'descricao' => $_POST['textareaDescricao'],
+                'solicitante' => $_POST['selectSolicitante'],
+                'prioridade' => $_POST['selectPrioridade'],
+                'atendente' => $_SESSION['id'],
+                'tecnico' => empty($_POST['selectTecnico']) ? NULL : $_POST['selectTecnico'],
+                'solicitacao_origem' => empty($_POST['solicitacaoOrigem'] ? NULL : $_POST['solicitacaoOrigem']),
+                'avaliacao' => NULL,
+                'justificativa_avaliacao' => NULL
+            );
+
+            $solicitacao = $_POST['inputID'];
+
+            if ($this->model->atualizaSolicitacao($dados, $solicitacao)) {
+
+                /*
+                 * Dados manipulados para geração de log
+                 */
+                $dados['id'] = $solicitacao;
+
+                $_SESSION['msg_sucesso'] = 'Solicitação alterada com sucesso.<br/>';
+
+                /*
+                 * Se foi enviados arquivos armazena arquivos no banco de dados.
+                 */
+                if (array_search(0, $_FILES['inputArquivos']['error']) !== FALSE) {
+                    foreach ($_FILES['inputArquivos']['tmp_name'] as $key => $values) {
+                        $dados_arquivos[$key] = array(
+                            'nome' => $_FILES['inputArquivos']['name'][$key],
+                            'tipo' => $_FILES['inputArquivos']['type'][$key],
+                            'solicitacao' => $solicitacao
+                        );
+
+                        $arquivos[$key] = array(
+                            'conteudo' => $values
+                        );
+
+                        if (!$this->model->gravaArquivoSolicitacao($dados_arquivos[$key], $arquivos[$key])) {
+                            $_SESSION['msg_sucesso'] .= 'Erro ao adicionar o arquivo: ' . $_FILES['inputArquivos']['name'][$key] . '<br/>';
+                        }
+                    }
+                }
+            } else {
+                $_SESSION ['msg_erro'] = 'Erro ao alterar Solicitação';
+            }
+
+            /*
+             * Grava log da solicitação
+             */
+            $log = array(
+                'dados' => $dados,
+                'aplicacao' => "Solicitacao/editar",
+                'msg' => empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']
+            );
+
+            Log::gravar($log, $_SESSION ['id']);
+            $this->redir("Solicitacao/visualizar/{$solicitacao}");
+        } else {
+            $this->redir('Main/index');
+        }
+    }
+
+    /**
+     * Atribui um atendente a uma solicitação e inicia atendimento
+     * @param Array $solicitacao Array contendo o <b>ID</b> da solicitação.
+     */
+    public function atender($solicitacao) {
+        $perfil = $_SESSION['perfil'];
+        $parametros = Cache::getCache(PARAMETROS);
+
+        /* Verifica se usuário tem permissão de atender um solicitação */
+        if (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) {
+            $hoje = new DateTime();
+            $hoje = $hoje->format('Y-m-d H:i:s');
+
+            /*
+             * Realiza atendimento de uma solicitação e retorna
+             * informações de erro ou de sucesso.
+             */
+            $result = $this->model->atenderSolicitacao($hoje, $solicitacao[0], $_SESSION['id']);
+
+            $dados = array(
+                'id' => $solicitacao[0],
+                'atendimento' => $hoje,
+                'encerramento' => $hoje,
+                'tecnico' => $_SESSION['id']
+            );
+
+            if ($result['status']) {
+                $_SESSION['msg_sucesso'] = $result['msg'];
+            } else {
+                $_SESSION['msg_erro'] = $result['msg'];
+            }
+
+            /*
+             * Gera dados para gravação de log.
+             */
+            $log = array(
+                'dados' => $dados,
+                'aplicacao' => "Solicitacao/editar",
+                'msg' => empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']
+            );
+
+            /*
+             * Grava dados da operação realizada
+             */
+            Log::gravar($log, $_SESSION ['id']);
+            $this->redir("Solicitacao/visualizar/{$solicitacao[0]}");
+        } else {
+            $_SESSION['msg_erro'] = "Perfil não possui permissão para atender um solicitação.";
+            $this->redir("Solicitacao/visualizar/{$solicitacao[0]}");
+        }
     }
 
 }
