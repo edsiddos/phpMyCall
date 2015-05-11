@@ -1,6 +1,5 @@
 
-<script type="text/javascript"
-src="<?= HTTP_JS . '/jquery.select-filter.min.js' ?>"></script>
+<script type="text/javascript" src="<?= HTTP_JS . '/jquery.select-filter.min.js' ?>"></script>
 
 <style type="text/css">
     #select1 {
@@ -14,90 +13,93 @@ src="<?= HTTP_JS . '/jquery.select-filter.min.js' ?>"></script>
     #div-botoes button {
         width: 100%;
         margin: 12px 0;
+        font-size: 12px;
     }
 </style>
 
 
-<div class="modal-dialog" style="width: 80%;">
-    <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Adicionar Participantes</h4>
-        </div>
+<div id="usuarios_projeto" title="Adicionar Participantes">
 
-        <div class="modal-body">
+    <div class="form-horizontal">
+        <div id="relacao_usuarios">
 
-            <div class="form-horizontal">
-                <div id="relacao_usuarios">
-
-                    <div class="form-group">
-                        <div class="col-xs-5">
-                            <p class="text-center">Usuários</p>
-                            <select multiple class="form-control" id="select1">
-                                <?php foreach ($usuarios as $values) { ?>
-                                    <option value="<?= $values['id'] ?>">
-                                        <?= $values['nome'] . ' - ' . $values['perfil'] ?>
-                                    </option>
-                                <?php } ?>
-                            </select>
-                        </div>
-
-                        <div class="col-xs-2 text-center" id="div-botoes">
-                            <button class="btn btn-primary" id="add" type="button">
-                                <span class="glyphicon glyphicon-step-forward icon-space"></span>
-                                Adicionar
-                            </button>
-                            <button class="btn btn-primary" id="remove" type="button">
-                                <span class="glyphicon glyphicon-step-backward icon-space"></span>
-                                Remover
-                            </button>
-                            <button class="btn btn-primary" id="add-all" type="button">
-                                <span class="glyphicon glyphicon-forward  icon-space"></span>
-                                Adicionar Todos
-                            </button>
-                            <button class="btn btn-primary" id="remove-all" type="button">
-                                <span class="glyphicon glyphicon-backward  icon-space"></span>
-                                Remover Todos
-                            </button>
-                        </div>
-
-                        <div class="col-xs-5">
-                            <p class="text-center">Participantes</p>
-                            <select multiple class="form-control" id="select2">
-                                <?php foreach ($participantes as $values) { ?>
-                                    <option value="<?= $values['id'] ?>">
-                                        <?= $values['nome'] . ' - ' . $values['perfil'] ?>
-                                    </option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
-
+            <div class="form-group">
+                <div class="col-xs-5">
+                    <p class="text-center">Usuários</p>
+                    <select multiple class="form-control" id="select1">
+                        <?php foreach ($usuarios as $values) { ?>
+                            <option value="<?= $values['id'] ?>">
+                                <?= $values['nome'] . ' - ' . $values['perfil'] ?>
+                            </option>
+                        <?php } ?>
+                    </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="textProjeto" class="control-label col-xs-2">
-                        Descrição do projeto (Opcional):
-                    </label>
-                    <div class="col-xs-10">
-                        <textarea class="form-control" id="textProjeto" name="textProjeto" placeholder="Descrição do projeto" maxlength="500"><?= trim($descricao_projeto) ?></textarea>
-                    </div>
+                <div class="col-xs-2 text-center" id="div-botoes">
+                    <button class="btn btn-primary" id="add" type="button">
+                        <span class="glyphicon glyphicon-step-forward icon-space"></span>
+                        Adicionar
+                    </button>
+                    <button class="btn btn-primary" id="remove" type="button">
+                        <span class="glyphicon glyphicon-step-backward icon-space"></span>
+                        Remover
+                    </button>
+                    <button class="btn btn-primary" id="add-all" type="button">
+                        <span class="glyphicon glyphicon-forward  icon-space"></span>
+                        Adicionar Todos
+                    </button>
+                    <button class="btn btn-primary" id="remove-all" type="button">
+                        <span class="glyphicon glyphicon-backward  icon-space"></span>
+                        Remover Todos
+                    </button>
+                </div>
+
+                <div class="col-xs-5">
+                    <p class="text-center">Participantes</p>
+                    <select multiple class="form-control" id="select2">
+                        <?php foreach ($participantes as $values) { ?>
+                            <option value="<?= $values['id'] ?>">
+                                <?= $values['nome'] . ' - ' . $values['perfil'] ?>
+                            </option>
+                        <?php } ?>
+                    </select>
                 </div>
             </div>
 
         </div>
 
-        <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-            <button type="button" name="salvar-participantes" class="btn btn-success">Salvar</button>
+        <div class="form-group">
+            <label for="textProjeto" class="control-label col-xs-2">
+                Descrição do projeto (Opcional):
+            </label>
+            <div class="col-xs-10">
+                <textarea class="form-control" id="textProjeto" name="textProjeto" placeholder="Descrição do projeto" maxlength="500"><?= trim($descricao_projeto) ?></textarea>
+            </div>
         </div>
-
     </div>
+
 </div>
+
 
 <script type="text/javascript">
     $(document).ready(function () {
 
+        var dialog = $('#usuarios_projeto').dialog({
+            width: 1000,
+            modal: true,
+            buttons: {
+                "Salvar": function () {
+                    $('#select2 option').prop('selected', true);
+
+                    $("input[name='relacaoParticipantes']").val($('#select2').val());
+                    $("input[name='descricaoProjeto']").val($('#textProjeto').val());
+
+                    $("form[name='projeto-problemas']").submit();
+                }, "Cancelar": function () {
+                    dialog.dialog('close');
+                }
+            }
+        });
         $('#select1').selectFilter({
             width: '100%',
             searchDelay: 0,
@@ -121,16 +123,6 @@ src="<?= HTTP_JS . '/jquery.select-filter.min.js' ?>"></script>
         $('#remove-all').click(function () {
             $('#select2 option').prop('selected', true);
             return !$('#select2 option:selected').remove().appendTo('#select1');
-        });
-
-        $("button[name='salvar-participantes']").click(function () {
-            $('#select2 option').prop('selected', true);
-
-            var form = $("form[name='projeto-problemas']");
-            $("input[name='relacaoParticipantes']").val($('#select2').val());
-            $("input[name='descricaoProjeto']").val($('#textProjeto').val());
-
-            form.submit();
         });
 
     });

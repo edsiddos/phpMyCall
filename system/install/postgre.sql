@@ -1,4 +1,4 @@
-CREATE SCHEMA phpmycall;
+﻿CREATE SCHEMA phpmycall;
 
 CREATE TABLE phpmycall.projeto(
 	id SERIAL,
@@ -193,7 +193,7 @@ CREATE TABLE phpmycall.prioridade(
         nome VARCHAR(15) NOT NULL UNIQUE,
         nivel INTEGER NOT NULL UNIQUE,
         padrao BOOLEAN DEFAULT FALSE,
-        cor NOT NULL DEFAULT '#FFFFFF'
+        cor NOT NULL DEFAULT '#FFFFFF',
         CONSTRAINT pk_prioridade PRIMARY KEY(id)
 );
 

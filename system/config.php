@@ -19,10 +19,10 @@
 
 
 // Mostra todos os erros
-define('DEBUG', false);
+define('DEBUG', FALSE);
 
 if (DEBUG === true) {
-    error_reporting(E_ALL);
+    error_reporting(E_ERROR | E_WARNING);
     ini_set("display_errors", 1);
 }
 
@@ -42,7 +42,7 @@ define('DB_PASS', 'dev');
 
 // ################################################
 // caminho relativo para a pasta do projeto
-define('PATH', '/var/www/phpmycall');
+define('PATH', '/var/www/html/phpmycall');
 
 // Caminha da pasta application
 define('APPLICATION', PATH . '/application');

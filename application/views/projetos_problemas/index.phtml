@@ -71,6 +71,16 @@
             }
         });
 
+        $('#alert_dialog').dialog({
+            autoOpen: false,
+            modal: true,
+            buttons: {
+                "OK": function () {
+                    $('#alert_dialog').dialog('close');
+                }
+            }
+        });
+
     });
 </script>
 
@@ -144,4 +154,8 @@
     </form>
 </div>
 
-<div id="participantes" class="modal fade"></div>
+<div id="alert_dialog" title="Aviso">
+    <p id="alert_dialog_msg"></p>
+</div>
+
+<div id="participantes"></div>
