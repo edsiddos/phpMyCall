@@ -99,10 +99,10 @@ class Solicitacao extends Model {
                         AND abertura = :abertura
                         AND atendimento = :atendimento
                         AND encerramento = :encerramento
-                        AND solicitacao_origem IS NULL
                         AND avaliacao IS NULL
                         AND justificativa_avaliacao IS NULL";
 
+            $sql .= empty($dados['solicitacao_origem']) ? " AND solicitacao_origem IS NULL" : " AND solicitacao_origem = :solicitacao_origem";
             $sql .= empty($dados['tecnico']) ? " AND tecnico IS NULL" : " AND tecnico = :tecnico";
 
             return $this->select($sql, $dados, FALSE);
@@ -261,6 +261,9 @@ class Solicitacao extends Model {
                     atendente.nome AS atendente,
                     tecnico.nome AS tecnico,
                     solicitacao.descricao AS descricao,
+                    solicitacao.atendente AS id_atendente,
+                    solicitacao.solicitante AS id_solicitante,
+                    solicitacao.tecnico AS id_tecnico,
                     TO_CHAR(solicitacao.abertura, 'FMDD/MM/YYYY  HH24:MI:SS') AS abertura,
                     CASE WHEN solicitacao.abertura = solicitacao.atendimento THEN NULL
                     ELSE TO_CHAR(solicitacao.atendimento, 'FMDD/MM/YYYY  HH24:MI:SS') END AS atendimento,
@@ -385,13 +388,16 @@ class Solicitacao extends Model {
      * @param string $hoje <b>Data e Hora</b> do inicio do atendimento, no formato <i>ANO-MÊS-DIA HORA:MINUTOS:SEGUNDOS</i>.
      * @param int $solicitacao <b>ID</b> da solicitação.
      * @param int $usuario <b>ID</b> do usuário.
-     * @return boolean Retorna <b>TRUE</b> se sucesso, <b>FALSE</b> se erro.
+     * @return Array Retorna array com mensagem da operação, e <b>TRUE</b> se sucesso ou <b>FALSE</b> se erro.
      */
     public function atenderSolicitacao($hoje, $solicitacao, $usuario) {
         $sql = "SELECT EXISTS(
                     SELECT solicitacao.id
                     FROM phpmycall.solicitacao
+                    INNER JOIN phpmycall.projeto_tipo_problema ON solicitacao.projeto_problema = projeto_tipo_problema.id
+                    INNER JOIN phpmycall.projeto_responsaveis ON projeto_tipo_problema.projeto = projeto_responsaveis.projeto
                     WHERE (solicitacao.tecnico IS NULL OR solicitacao.tecnico = :usuario)
+                        AND projeto_responsaveis.usuario = :usuario
                         AND solicitacao.id = :solicitacao
                         AND solicitacao.abertura = solicitacao.atendimento
                 ) AS autorizado";
@@ -437,6 +443,45 @@ class Solicitacao extends Model {
         $result = $this->select($sql, array('solicitacao' => $solicitacao), FALSE);
 
         return $result['status'];
+    }
+
+    /**
+     * Exclui uma solicitação em aberto ou em atendimento.
+     * @param int $solicitacao <b>ID</b> da solicitação.
+     * @param int $usuario <b>ID</b> do usuário.
+     * @return Array Retorna array com mensagem da operação, e <b>TRUE</b> se sucesso ou <b>FALSE</b> se erro.
+     */
+    public function excluirSolicitacao($solicitacao, $usuario) {
+        $sql = "SELECT EXISTS(
+                    SELECT solicitacao.id
+                    FROM phpmycall.solicitacao
+                    INNER JOIN phpmycall.projeto_tipo_problema ON solicitacao.projeto_problema = projeto_tipo_problema.id
+                    INNER JOIN phpmycall.projeto_responsaveis ON projeto_tipo_problema.projeto = projeto_responsaveis.projeto
+                    WHERE projeto_responsaveis.usuario = :usuario
+                        AND solicitacao.id = :solicitacao
+                        AND (solicitacao.abertura = solicitacao.atendimento OR solicitacao.atendimento = solicitacao.encerramento)
+                ) AS autorizado";
+
+        $result = $this->select($sql, array('usuario' => $usuario, 'solicitacao' => $solicitacao), FALSE);
+
+        if ($result['autorizado'] == TRUE) {
+
+            $where = "id = {$solicitacao}";
+            $arquivos = "solicitacao = {$solicitacao}";
+
+            if ($this->delete('phpmycall.arquivos', $arquivos) && $this->delete('phpmycall.solicitacao', $where)) {
+                $result['msg'] = "Solicitação excluida.";
+                $result['status'] = TRUE;
+            } else {
+                $result['msg'] = "Falha ao excluir solicitação";
+                $result['status'] = FALSE;
+            }
+        } else {
+            $result['msg'] = "Exclusão não permitida desta solicitação.";
+            $result['status'] = FALSE;
+        }
+
+        return $result;
     }
 
 }

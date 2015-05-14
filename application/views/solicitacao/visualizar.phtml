@@ -2,14 +2,32 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
+
+        var excluir_solicitacao = $('#excluir-solicitacao').dialog({
+            autoOpen: false,
+            modal: true,
+            buttons: {
+                "Excluir": function () {
+                    $(location).attr('href', '<?= HTTP . "/Solicitacao/excluir/{$id_solicitacao}" ?>');
+                    excluir_solicitacao.dialog('close');
+                },
+                "Cancelar": function () {
+                    excluir_solicitacao.dialog('close');
+                }
+            }
+        });
+
         $('#editar').on('click', function () {
             $(location).attr('href', '<?= HTTP . "/Solicitacao/editar/{$id_solicitacao}" ?>');
         });
         $('#atender').on('click', function () {
             $(location).attr('href', '<?= HTTP . "/Solicitacao/atender/{$id_solicitacao}" ?>');
         });
+        $('#sub-chamado').on('click', function () {
+            $(location).attr('href', '<?= HTTP . "/Solicitacao/subChamado/{$id_solicitacao}" ?>');
+        });
         $('#excluir').on('click', function () {
-            $(location).attr('href', '<?= HTTP . "/Solicitacao/excluir/{$id_solicitacao}" ?>');
+            excluir_solicitacao.dialog('open');
         });
         $('#redirecionar').on('click', function () {
             $(location).attr('href', '<?= HTTP . "/Solicitacao/redirecionar/{$id_solicitacao}" ?>');
@@ -41,7 +59,7 @@
     ?>
 
     <div class="form-group">
-        <div class="well well-sm">
+        <div class="ui-widget-header ui-corner-all">
             <button class="btn btn-default <?= ($editar) ? '' : 'disabled' ?>" id="editar">
                 <span class="glyphicon glyphicon-pencil text-info"></span> Editar
             </button>
@@ -215,4 +233,8 @@
         </div>
     </div>
 
+</div>
+
+<div id="excluir-solicitacao" title="Atenção">
+    <p>Deseja excluir está solicitação?</p>
 </div>

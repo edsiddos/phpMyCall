@@ -49,8 +49,9 @@ class Solicitacao extends Controller {
 
     /**
      * Tela de abertura de chamados
+     * @param Array $dados Dados necessários para abrir um solicitação
      */
-    public function abrir() {
+    public function abrir($dados = array()) {
         $permissao = "Solicitacao/abrir";
         $perfil = $_SESSION ['perfil'];
 
@@ -62,12 +63,31 @@ class Solicitacao extends Controller {
             $var = array(
                 'link' => HTTP . '/Solicitacao/novaSolicitacao',
                 'projetos' => $this->model->getProjetos($_SESSION['id']),
-                'prioridade' => $this->model->getPrioridades()
+                'prioridade' => $this->model->getPrioridades(),
+                'solicitacaoOrigem' => (empty($dados[0]) ? 0 : $dados[0])
             );
 
             $this->loadView('default/header', $title);
             $this->loadView('solicitacao/index', $var);
             $this->loadView('default/footer');
+        }
+    }
+
+    public function subChamado($dados = array()) {
+        $perfil = $_SESSION['perfil'];
+        $solicitacao = $this->model->getDadosSolicitacao($dados[0], $perfil, $_SESSION['id']);
+        $parametros = Cache::getCache(PARAMETROS);
+        
+        print_r($solicitacao);
+        die();
+
+        $sub_chamado = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE);
+        $sub_chamado &= (empty($solicitacao['atendimento']) || ((!empty($solicitacao['atendimento'])) && ($solicitacao['id_tecnico'] == $_SESSION['id']) && empty($solicitacao['encerramento'])));
+
+        if (empty($dados[0]) || (!$sub_chamado)) {
+            $this->redir("Main/index");
+        } else {
+            $this->abrir($dados);
         }
     }
 
@@ -108,7 +128,7 @@ class Solicitacao extends Controller {
                 'abertura' => $hoje,
                 'atendimento' => $hoje,
                 'encerramento' => $hoje,
-                'solicitacao_origem' => empty($_POST['solicitacaoOrigem'] ? NULL : $_POST['solicitacaoOrigem']),
+                'solicitacao_origem' => empty($_POST['solicitacaoOrigem']) ? NULL : $_POST['solicitacaoOrigem'],
                 'avaliacao' => NULL,
                 'justificativa_avaliacao' => NULL
             );
@@ -252,9 +272,18 @@ class Solicitacao extends Controller {
         $vars['solicitacao'] = $solicitacao;
         $vars['id_solicitacao'] = $id_solicitacao[0];
 
+        /*
+         * Habilita as opções de editar, atender, sub-chamado, excluir, redimencionar, feedback e encerrar
+         * ==> Editar e Atender se estiver em aberto.
+         * ==> Sub-Chamado disponível a todos participantes se em aberto, quando em atendimento
+         *      somente o técnico responsavel pela solicitação.
+         * ==> Excluir quando tiver em aberto ou em atendimento.
+         * ==> Redirecionar, Feedback e Encerrar quando estiver em atendimento.
+         */
         $vars['editar'] = (array_search($perfil, $parametros['EDITAR_SOLICITACAO']) !== FALSE) && empty($solicitacao['atendimento']);
         $vars['atender'] = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && empty($solicitacao['atendimento']);
-        $vars['sub_chamado'] = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && (empty($solicitacao['atendimento']) || empty($solicitacao['encerramento']));
+        $vars['sub_chamado'] = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE);
+        $vars['sub_chamado'] &= (empty($solicitacao['atendimento']) || ((!empty($solicitacao['atendimento'])) && ($solicitacao['id_tecnico'] == $_SESSION['id']) && empty($solicitacao['encerramento'])));
         $vars['excluir'] = (array_search($perfil, $parametros['EXCLUIR_SOLICITACAO']) !== FALSE) && (empty($solicitacao['atendimento']) || empty($solicitacao['encerramento']));
         $vars['redirecionar'] = (array_search($perfil, $parametros['REDIRECIONAR_CHAMADO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
         $vars['feedback'] = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
@@ -445,7 +474,7 @@ class Solicitacao extends Controller {
              */
             $log = array(
                 'dados' => $dados,
-                'aplicacao' => "Solicitacao/editar",
+                'aplicacao' => "Solicitacao/atender",
                 'msg' => empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']
             );
 
@@ -455,7 +484,46 @@ class Solicitacao extends Controller {
             Log::gravar($log, $_SESSION ['id']);
             $this->redir("Solicitacao/visualizar/{$solicitacao[0]}");
         } else {
-            $_SESSION['msg_erro'] = "Perfil não possui permissão para atender um solicitação.";
+            $_SESSION['msg_erro'] = "Perfil não possui permissão para atender uma solicitação.";
+            $this->redir("Solicitacao/visualizar/{$solicitacao[0]}");
+        }
+    }
+
+    public function excluir($dados = array()) {
+        $perfil = $_SESSION['perfil'];
+        $parametros = Cache::getCache(PARAMETROS);
+        $solicitacao = $this->model->getDadosSolicitacao($dados[0], $perfil, $_SESSION['id']);
+
+        /* Verifica se usuário tem permissão de excluir um solicitação */
+        if ((array_search($perfil, $parametros['EXCLUIR_SOLICITACAO']) !== FALSE) && (empty($solicitacao['atendimento']) || empty($solicitacao['encerramento']))) {
+            $result = $this->model->excluirSolicitacao($dados[0], $_SESSION['id']);
+
+            $dados = array(
+                'id' => $dados[0]
+            );
+
+            if ($result['status']) {
+                $_SESSION['msg_sucesso'] = $result['msg'];
+            } else {
+                $_SESSION['msg_erro'] = $result['msg'];
+            }
+
+            /*
+             * Gera dados para gravação de log.
+             */
+            $log = array(
+                'dados' => $dados,
+                'aplicacao' => "Solicitacao/excluir",
+                'msg' => empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']
+            );
+
+            /*
+             * Grava dados da operação realizada
+             */
+            Log::gravar($log, $_SESSION ['id']);
+            $this->redir("Solicitacao/aberta");
+        } else {
+            $_SESSION['msg_erro'] = "Perfil não possui permissão para excluir uma solicitação.";
             $this->redir("Solicitacao/visualizar/{$solicitacao[0]}");
         }
     }

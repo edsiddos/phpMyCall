@@ -188,6 +188,10 @@ border-top-right-radius: 0;*/
     text-align: left;
 }
 
+.table-solicitacoes{
+    font-size: 15px;
+}
+
 .table-solicitacoes thead{
     background-color: #AAAAAA;
 }

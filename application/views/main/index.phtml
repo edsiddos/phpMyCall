@@ -7,127 +7,121 @@
             $(location).attr('href', '<?= HTTP . "/Solicitacao/visualizar" ?>/' + $(this).attr('solicitacao'));
         });
 
+        $('#accordion').accordion({
+            collapsible: true
+        });
+
     });
 </script>
 
 
 <div class="container">
 
-    <div class="panel-group" id="accordion">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"> Solicitações em aberto </a>
-                </h4>
-            </div>
-            <div id="collapseOne" class="panel-collapse collapse in">
-                <div class="panel-body">
+    <div id="accordion">
+        <h3>
+            Solicitações em aberto
+        </h3>
+        <div>
 
-                    <table class="table table-responsive table-bordered table-solicitacoes">
-                        <thead>
-                            <tr>
-                                <th>Projeto</th>
-                                <th>Problema</th>
-                                <th>Prioridade</th>
-                                <th>Solicitante</th>
-                                <th>Atendente</th>
-                                <th>Abertura</th>
-                                <th>Quant. Arquivos</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            foreach ($aberta as $values) {
-                                ?>
-                                <tr style="background-color: <?= $prioridades[$values['prioridade']] ?>" solicitacao="<?= $values['solicitacao']; ?>">
-                                    <td>
-                                        <?= $values['projeto'] ?>
-                                    </td>
-                                    <td>
-                                        <?= $values['problema'] ?>
-                                    </td>
-                                    <td>
-                                        <?= $values['prioridade'] ?>
-                                    </td>
-                                    <td>
-                                        <?= $values['solicitante'] ?>
-                                    </td>
-                                    <td>
-                                        <?= $values['atendente'] ?>
-                                    </td>
-                                    <td>
-                                        <?= $values['abertura'] ?>
-                                    </td>
-                                    <td>
-                                        <?= $values['arquivos'] ?>
-                                    </td>
-                                </tr>
-                                <?php
-                            }
-                            ?>
-                        </tbody>
-                    </table>
+            <table class="table table-responsive table-bordered table-solicitacoes">
+                <thead>
+                    <tr>
+                        <th class="col-xs-3 text-center">Projeto</th>
+                        <th class="col-xs-2 text-center">Problema</th>
+                        <th class="col-xs-1 text-center">Prioridade</th>
+                        <th class="text-center">Solicitante</th>
+                        <th class="text-center">Atendente</th>
+                        <th class="text-center">Abertura</th>
+                        <th class="text-center">Q. Arquivos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($aberta as $values) {
+                        ?>
+                        <tr style="background-color: <?= $prioridades[$values['prioridade']] ?>" solicitacao="<?= $values['solicitacao']; ?>">
+                            <td>
+                                <?= $values['projeto'] ?>
+                            </td>
+                            <td>
+                                <?= $values['problema'] ?>
+                            </td>
+                            <td>
+                                <?= $values['prioridade'] ?>
+                            </td>
+                            <td>
+                                <?= $values['solicitante'] ?>
+                            </td>
+                            <td>
+                                <?= $values['atendente'] ?>
+                            </td>
+                            <td>
+                                <?= $values['abertura'] ?>
+                            </td>
+                            <td>
+                                <?= $values['arquivos'] ?>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                </tbody>
+            </table>
 
-                </div>
-            </div>
         </div>
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Solicitações em atendimento </a>
-                </h4>
-            </div>
-            <div id="collapseTwo" class="panel-collapse collapse">
-                <div class="panel-body">
 
-                    <table class="table table-responsive table-bordered table-solicitacoes">
-                        <thead>
-                            <tr>
-                                <th>Projeto</th>
-                                <th>Problema</th>
-                                <th>Prioridade</th>
-                                <th>Solicitante</th>
-                                <th>Atendente</th>
-                                <th>Abertura</th>
-                                <th>Quant. Arquivos</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            foreach ($andamento as $values) {
-                                ?>
-                                <tr style="background-color: <?= $prioridades[$values['prioridade']] ?>" solicitacao="<?= $values['solicitacao']; ?>">
-                                    <td>
-                                        <?= $values['projeto'] ?>
-                                    </td>
-                                    <td>
-                                        <?= $values['problema'] ?>
-                                    </td>
-                                    <td>
-                                        <?= $values['prioridade'] ?>
-                                    </td>
-                                    <td>
-                                        <?= $values['solicitante'] ?>
-                                    </td>
-                                    <td>
-                                        <?= $values['atendente'] ?>
-                                    </td>
-                                    <td>
-                                        <?= $values['abertura'] ?>
-                                    </td>
-                                    <td>
-                                        <?= $values['arquivos'] ?>
-                                    </td>
-                                </tr>
-                                <?php
-                            }
-                            ?>
-                        </tbody>
-                    </table>
+        <h3>
+            Solicitações em atendimento
+        </h3>
+        <div>
 
-                </div>
-            </div>
+            <table class="table table-responsive table-bordered table-solicitacoes">
+                <thead>
+                    <tr>
+                        <th class="col-xs-3 text-center">Projeto</th>
+                        <th class="col-xs-2 text-center">Problema</th>
+                        <th class="col-xs-1 text-center">Prioridade</th>
+                        <th class="text-center">Solicitante</th>
+                        <th class="text-center">Atendente</th>
+                        <th class="text-center">Abertura</th>
+                        <th class="text-center">Q. Arquivos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($andamento as $values) {
+                        ?>
+                        <tr style="background-color: <?= $prioridades[$values['prioridade']] ?>" solicitacao="<?= $values['solicitacao']; ?>">
+                            <td>
+                                <?= $values['projeto'] ?>
+                            </td>
+                            <td>
+                                <?= $values['problema'] ?>
+                            </td>
+                            <td>
+                                <?= $values['prioridade'] ?>
+                            </td>
+                            <td>
+                                <?= $values['solicitante'] ?>
+                            </td>
+                            <td>
+                                <?= $values['atendente'] ?>
+                            </td>
+                            <td>
+                                <?= $values['abertura'] ?>
+                            </td>
+                            <td>
+                                <?= $values['arquivos'] ?>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                </tbody>
+            </table>
+
         </div>
+
     </div>
 
 </div>
