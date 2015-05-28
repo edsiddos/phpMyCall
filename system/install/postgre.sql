@@ -193,7 +193,7 @@ CREATE TABLE phpmycall.prioridade(
         nome VARCHAR(15) NOT NULL UNIQUE,
         nivel INTEGER NOT NULL UNIQUE,
         padrao BOOLEAN DEFAULT FALSE,
-        cor NOT NULL DEFAULT '#FFFFFF',
+        cor CHAR(7) NOT NULL DEFAULT '#FFFFFF',
         CONSTRAINT pk_prioridade PRIMARY KEY(id)
 );
 

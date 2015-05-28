@@ -77,12 +77,10 @@ class Solicitacao extends Controller {
         $perfil = $_SESSION['perfil'];
         $solicitacao = $this->model->getDadosSolicitacao($dados[0], $perfil, $_SESSION['id']);
         $parametros = Cache::getCache(PARAMETROS);
-        
-        print_r($solicitacao);
-        die();
 
         $sub_chamado = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE);
         $sub_chamado &= (empty($solicitacao['atendimento']) || ((!empty($solicitacao['atendimento'])) && ($solicitacao['id_tecnico'] == $_SESSION['id']) && empty($solicitacao['encerramento'])));
+        $sub_chamado &= $this->model->usuarioParticipante($_SESSION['id'], $dados[0]);
 
         if (empty($dados[0]) || (!$sub_chamado)) {
             $this->redir("Main/index");
@@ -288,6 +286,10 @@ class Solicitacao extends Controller {
         $vars['redirecionar'] = (array_search($perfil, $parametros['REDIRECIONAR_CHAMADO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
         $vars['feedback'] = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
         $vars['encerrar'] = (array_search($perfil, $parametros['ENCERRAR_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
+
+        if ($vars['redirecionar']) {
+            $vars['tecnicos'] = $this->model->getSolicitantesBySolicitacao($id_solicitacao[0]);
+        }
 
         $this->loadView('default/header', $title);
         $this->loadView('solicitacao/visualizar', $vars);
@@ -525,6 +527,56 @@ class Solicitacao extends Controller {
         } else {
             $_SESSION['msg_erro'] = "Perfil não possui permissão para excluir uma solicitação.";
             $this->redir("Solicitacao/visualizar/{$solicitacao[0]}");
+        }
+    }
+
+    /**
+     * Implementa opção de redirecionamento a outro técnico.
+     * @param Array $dados Array com código da solicitação e técnico.
+     */
+    public function redirecionar($dados) {
+        $perfil = $_SESSION['perfil'];
+        $parametros = Cache::getCache(PARAMETROS);
+        $solicitacao = $this->model->getDadosSolicitacao($dados[0], $perfil, $_SESSION['id']);
+
+        /*
+         * Verifica se o perfil do usuário tem autorização para
+         * realizar o redirecionamento da solicitação.
+         */
+        if ((array_search($perfil, $parametros['REDIRECIONAR_CHAMADO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento'])) {
+            $result = $this->model->redirecionarSolicitacao($_SESSION['id'], $dados[0], $dados[1]);
+
+            /*
+             * Prepara dados para gravação de log da operação realizada.
+             */
+            $dados = array(
+                'id' => $dados[0],
+                'tecnico' => $dados[1]
+            );
+
+            if ($result['status']) {
+                $_SESSION['msg_sucesso'] = $result['msg'];
+            } else {
+                $_SESSION['msg_erro'] = $result['msg'];
+            }
+
+            /*
+             * Gera dados para gravação de log.
+             */
+            $log = array(
+                'dados' => $dados,
+                'aplicacao' => "Solicitacao/redirecionar",
+                'msg' => empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']
+            );
+
+            /*
+             * Grava dados da operação realizada
+             */
+            Log::gravar($log, $_SESSION ['id']);
+            $this->redir("Solicitacao/visualizar/{$dados['id']}");
+        } else {
+            $_SESSION['msg_erro'] = "Perfil não possui permissão para redirecionar solicitação.";
+            $this->redir("Solicitacao/visualizar/{$dados[0]}");
         }
     }
 

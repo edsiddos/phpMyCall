@@ -17,6 +17,22 @@
             }
         });
 
+        var redirecionar_solicitacao = $('#redirecionar-solicitacao').dialog({
+            autoOpen: false,
+            modal: true,
+            width: 450,
+            buttons: {
+                "Redirecionar": function () {
+                    var tecnico = $('select[name=selectTecnico]').val();
+                    $(location).attr('href', '<?= HTTP . "/Solicitacao/redirecionar/{$id_solicitacao}" ?>/' + tecnico);
+                    redirecionar_solicitacao.dialog('close');
+                },
+                "Cancelar": function () {
+                    redirecionar_solicitacao.dialog('close');
+                }
+            }
+        });
+
         $('#editar').on('click', function () {
             $(location).attr('href', '<?= HTTP . "/Solicitacao/editar/{$id_solicitacao}" ?>');
         });
@@ -30,7 +46,7 @@
             excluir_solicitacao.dialog('open');
         });
         $('#redirecionar').on('click', function () {
-            $(location).attr('href', '<?= HTTP . "/Solicitacao/redirecionar/{$id_solicitacao}" ?>');
+            redirecionar_solicitacao.dialog('open');
         });
         $('#feedback').on('click', function () {
             $(location).attr('href', '<?= HTTP . "/Solicitacao/feedback/{$id_solicitacao}" ?>');
@@ -237,4 +253,28 @@
 
 <div id="excluir-solicitacao" title="Atenção">
     <p>Deseja excluir está solicitação?</p>
+</div>
+
+<div id="redirecionar-solicitacao" title="Redirecionamento de chamado a outro técnico.">
+    <div class="col-xs-12">
+        <div class="form-group">
+            <label class="control-label col-xs-4">
+                Técnico:
+            </label>
+            <div class="col-xs-8">
+                <select name="selectTecnico" id="selectTecnico" class="form-control">
+                    <option value=""></option>
+                    <?php
+                    foreach ($tecnicos as $values) {
+                        if ($values['tecnico'] == 1) {
+                            ?>
+                            <option value="<?= $values['id'] ?>"><?= $values['nome']; ?></option>
+                            <?php
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+    </div>
 </div>

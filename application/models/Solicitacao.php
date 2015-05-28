@@ -83,6 +83,30 @@ class Solicitacao extends Model {
     }
 
     /**
+     * Relação de participantes do projeto a partir do ID Solicitação.
+     * @param int $solicitacao Código da solicitação.
+     * @return Array Retorna um array.
+     */
+    public function getSolicitantesBySolicitacao($solicitacao) {
+        $parametros = $this->getParametros();
+
+        $tecnicos = "'" . implode("', '", $parametros['ATENDER_SOLICITACAO']) . "'";
+
+        $sql = "SELECT usuario.id,
+                    usuario.nome,
+                    perfil.perfil IN ({$tecnicos})::int AS tecnico
+                FROM phpmycall.usuario
+                INNER JOIN phpmycall.projeto_responsaveis ON usuario.id = projeto_responsaveis.usuario
+                INNER JOIN phpmycall.projeto_tipo_problema ON projeto_responsaveis.projeto = projeto_tipo_problema.projeto
+                INNER JOIN phpmycall.perfil ON usuario.perfil = perfil.id
+                INNER JOIN phpmycall.solicitacao ON projeto_tipo_problema.id = solicitacao.projeto_problema
+                WHERE solicitacao.id = :solicitacao
+                ORDER BY usuario.nome";
+
+        return $this->select($sql, array('solicitacao' => $solicitacao));
+    }
+
+    /**
      * Grava uma nova solicitação.
      * @param int $dados Array com dados da solicitação.
      * @return Mixed Retorna <b>Array</b> com id da solicitação, retorna <b>FALSE</b> se ocorrer ao gravar solicitação.
@@ -478,6 +502,76 @@ class Solicitacao extends Model {
             }
         } else {
             $result['msg'] = "Exclusão não permitida desta solicitação.";
+            $result['status'] = FALSE;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Verifica se usuário é participantes do projeto.
+     * @param int $usuario Código do usuário
+     * @param int $solicitacao Código da solicitação
+     * @return boolean Retorna <b>TRUE</b> se usuário tem permissão, <b>FALSE</b> caso contrário.
+     */
+    public function usuarioParticipante($usuario, $solicitacao) {
+        $sql = "SELECT EXISTS(SELECT solicitacao.id FROM phpmycall.projeto_responsaveis
+                    INNER JOIN phpmycall.projeto_tipo_problema ON projeto_responsaveis.projeto = projeto_tipo_problema.problema
+                    INNER JOIN phpmycall.solicitacao ON projeto_tipo_problema.id = solicitacao.projeto_problema
+                    WHERE projeto_responsaveis.usuario = :usuario
+                        AND solicitacao.id = :solicitacao
+                ) AS responsavel";
+
+        $result = $this->select($sql, array('usuario' => $usuario, 'solicitacao' => $solicitacao), FALSE);
+
+        return $result['responsavel'];
+    }
+
+    /**
+     * Realiza redirecionamento de uma solicitação em atendimento para
+     * outro técnico
+     * @param int $usuario Código do usuário.
+     * @param int $solicitacao Código da solicitação.
+     * @param int $tecnico Código do técnico que ficara responsavel.
+     * @return Array Retorna um array com o resultado da operação realizada.
+     */
+    public function redirecionarSolicitacao($usuario, $solicitacao, $tecnico) {
+        $sql = "SELECT EXISTS(
+                    SELECT solicitacao.id
+                    FROM phpmycall.solicitacao
+                    INNER JOIN phpmycall.projeto_tipo_problema ON solicitacao.projeto_problema = projeto_tipo_problema.id
+                    INNER JOIN phpmycall.projeto_responsaveis ON projeto_tipo_problema.projeto = projeto_responsaveis.projeto
+                    WHERE projeto_responsaveis.usuario = :usuario
+                        AND solicitacao.id = :solicitacao
+                        AND (solicitacao.abertura < solicitacao.atendimento OR solicitacao.atendimento = solicitacao.encerramento)
+                ) AS autorizado";
+
+        $result = $this->select($sql, array('usuario' => $usuario, 'solicitacao' => $solicitacao), FALSE);
+
+        /*
+         * Verifica se o perfil do usuário tem autorização para
+         * redirecionar uma solicitação e se este tem permissão dentro do projeto.
+         */
+        if ($result['autorizado'] == TRUE) {
+
+            $dados = array('tecnico' => $tecnico);
+            $where = "id = {$solicitacao}";
+
+            /*
+             * Realização operação de redirecionamento e informa resultado da operação.
+             */
+            if ($this->update('phpmycall.solicitacao', $dados, $where)) {
+                $result['msg'] = "Solicitação redirecionada com sucesso";
+                $result['status'] = TRUE;
+            } else {
+                $result['msg'] = "Erro ao redirecionar solicitação a outro técnico.";
+                $result['status'] = FALSE;
+            }
+        } else {
+            /*
+             * Informa erro de permissão no redirecionamento.
+             */
+            $result['msg'] = "Redirecionamento de solicitação não permitida.";
             $result['status'] = FALSE;
         }
 
