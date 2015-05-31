@@ -207,3 +207,10 @@ border-top-right-radius: 0;*/
 .table-solicitacoes tbody tr{
     cursor: pointer;
 }
+
+/**/
+
+.ui-button-warning{
+    background-color: #eb9316;
+    background-image: none;
+}
