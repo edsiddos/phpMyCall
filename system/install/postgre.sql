@@ -250,7 +250,7 @@ CREATE TABLE phpmycall.feedback(
 	id SERIAL,
 	tipo_feedback INTEGER NOT NULL,
 	pergunta TEXT NOT NULL,
-	resposta TEXT NOT NULL,
+	resposta TEXT,
 	inicio TIMESTAMP NOT NULL,
 	fim TIMESTAMP NOT NULL,
 	solicitacao INTEGER NOT NULL,

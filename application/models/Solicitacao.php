@@ -408,6 +408,39 @@ class Solicitacao extends Model {
     }
 
     /**
+     * Busca lista de tipo de feedback.
+     * @return Array Retorno array com código e tipo de feedback.
+     */
+    public function getTipoFeedback() {
+        $sql = "SELECT id, nome FROM phpmycall.tipo_feedback";
+
+        return $this->select($sql);
+    }
+
+    /**
+     * Busca todas os feedback para esta solicitação.
+     * @param int $solicitacao Código da solicitação.
+     * @return Array Dados referentes aos feedback da solicitação.
+     */
+    public function feedbackPendentesAtendidos($solicitacao) {
+        $sql = "SELECT feedback.id,
+                    substring(pergunta from 0 for 30) || '...' AS pergunta,
+                    resposta,
+                    TO_CHAR(inicio, 'FMDD/MM/YYYY  HH24:MI:SS') AS inicio,
+                    CASE WHEN fim = inicio THEN NULL
+                    ELSE TO_CHAR(fim, 'FMDD/MM/YYYY  HH24:MI:SS') END AS fim,
+                    CASE WHEN fim = inicio THEN TRUE
+                    ELSE FALSE END AS aberta,
+                    usuario.nome AS nome_responsavel,
+                    responsavel
+                FROM phpmycall.feedback
+                INNER JOIN phpmycall.usuario ON feedback.responsavel = usuario.id
+                WHERE solicitacao = :solicitacao";
+
+        return $this->select($sql, array('solicitacao' => $solicitacao));
+    }
+
+    /**
      * Realiza o atendimento de um solicitação em aberto.
      * @param string $hoje <b>Data e Hora</b> do inicio do atendimento, no formato <i>ANO-MÊS-DIA HORA:MINUTOS:SEGUNDOS</i>.
      * @param int $solicitacao <b>ID</b> da solicitação.
@@ -576,6 +609,10 @@ class Solicitacao extends Model {
         }
 
         return $result;
+    }
+
+    public function feedback($dados) {
+        return $this->insert('phpmycall.feedback', $dados);
     }
 
 }

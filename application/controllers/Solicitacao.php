@@ -287,8 +287,14 @@ class Solicitacao extends Controller {
         $vars['feedback'] = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
         $vars['encerrar'] = (array_search($perfil, $parametros['ENCERRAR_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
 
-        if ($vars['redirecionar']) {
+        $vars['feedback_solicitado'] = $this->model->feedbackPendentesAtendidos($id_solicitacao[0]);
+
+        if ($vars['redirecionar'] || $vars['feedback']) {
             $vars['tecnicos'] = $this->model->getSolicitantesBySolicitacao($id_solicitacao[0]);
+        }
+
+        if ($vars['feedback']) {
+            $vars['tipos_feedback'] = $this->model->getTipoFeedback();
         }
 
         $this->loadView('default/header', $title);
@@ -577,6 +583,63 @@ class Solicitacao extends Controller {
         } else {
             $_SESSION['msg_erro'] = "Perfil não possui permissão para redirecionar solicitação.";
             $this->redir("Solicitacao/visualizar/{$dados[0]}");
+        }
+    }
+
+    public function feedback() {
+        $id_solicitacao = $_POST['solicitacao'];
+        $feedback = $_POST['selectFeedback'];
+        $destinatario = $_POST['selectDestinatario'];
+        $pergunta = $_POST['textareaDescricao'];
+
+        $perfil = $_SESSION['perfil'];
+        $parametros = Cache::getCache(PARAMETROS);
+        $solicitacao = $this->model->getDadosSolicitacao($id_solicitacao, $perfil, $_SESSION['id']);
+
+        if ((array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento'])) {
+            if ($this->model->usuarioParticipante($_SESSION['id'], $id_solicitacao)) {
+                $hoje = new DateTime();
+                $hoje = $hoje->format('Y-m-d H:i:s');
+
+                $dados = array(
+                    'tipo_feedback' => $feedback,
+                    'pergunta' => $pergunta,
+                    'resposta' => NULL,
+                    'inicio' => $hoje,
+                    'fim' => $hoje,
+                    'solicitacao' => $id_solicitacao,
+                    'responsavel' => $_SESSION['id']
+                );
+
+                if ($this->model->feedback($dados)) {
+                    $_SESSION['msg_sucesso'] = "Feedback gravado com sucesso.";
+                } else {
+                    $_SESSION['msg_erro'] = "Falha ao adicionar feedback.";
+                }
+
+                /*
+                 * Gera dados para gravação de log.
+                 */
+                $log = array(
+                    'dados' => $dados,
+                    'aplicacao' => "Solicitacao/feedback",
+                    'msg' => empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']
+                );
+
+                /*
+                 * Grava dados da operação realizada
+                 */
+                Log::gravar($log, $_SESSION ['id']);
+                $this->redir("Solicitacao/visualizar/{$id_solicitacao}");
+            } else {
+                $_SESSION['msg_erro'] = "Usuário não possui permissão neste projeto.";
+
+                $this->redir("Solicitacao/visualizar/{$id_solicitacao}");
+            }
+        } else {
+            $_SESSION['msg_erro'] = "Perfil do usuário não possui permissão para solicitar feedback.";
+
+            $this->redir("Solicitacao/visualizar/{$id_solicitacao}");
         }
     }
 
