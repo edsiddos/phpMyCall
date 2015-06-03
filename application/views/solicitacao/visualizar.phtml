@@ -4,7 +4,7 @@
 <script type="text/javascript">
 
     tinymce.init({
-        selector: '#textareaDescricao',
+        selector: '#perguntaFeedback',
         language: 'pt_BR',
     });
 
@@ -18,67 +18,178 @@
         var excluir_solicitacao = $('#excluir-solicitacao').dialog({
             autoOpen: false,
             modal: true,
-            buttons: {
-                "Excluir": function () {
-                    $(location).attr('href', '<?= HTTP . "/Solicitacao/excluir/{$id_solicitacao}" ?>');
-                    excluir_solicitacao.dialog('close');
+            buttons: [
+                {
+                    text: "Excluir",
+                    icons: {
+                        primary: 'ui-icon-closethick'
+                    },
+                    click: function () {
+                        $(location).attr('href', '<?= HTTP . "/Solicitacao/excluir/{$id_solicitacao}" ?>');
+                        excluir_solicitacao.dialog('close');
+                    }
                 },
-                "Cancelar": function () {
-                    excluir_solicitacao.dialog('close');
+                {
+                    text: "Cancelar",
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
+                    click: function () {
+                        excluir_solicitacao.dialog('close');
+                    }
                 }
-            }
+            ],
+            position: {my: "center center-150", of: window}
         });
 
         var redirecionar_solicitacao = $('#redirecionar-solicitacao').dialog({
             autoOpen: false,
             modal: true,
             width: 450,
-            buttons: {
-                "Redirecionar": function () {
-                    var tecnico = $('select[name=selectTecnico]').val();
-                    $(location).attr('href', '<?= HTTP . "/Solicitacao/redirecionar/{$id_solicitacao}" ?>/' + tecnico);
-                    redirecionar_solicitacao.dialog('close');
+            buttons: [
+                {
+                    text: "Redirecionar",
+                    icons: {
+                        primary: 'ui-icon-transferthick-e-w'
+                    },
+                    click: function () {
+                        var tecnico = $('select[name=selectTecnico]').val();
+                        $(location).attr('href', '<?= HTTP . "/Solicitacao/redirecionar/{$id_solicitacao}" ?>/' + tecnico);
+                        redirecionar_solicitacao.dialog('close');
+                    }
                 },
-                "Cancelar": function () {
-                    redirecionar_solicitacao.dialog('close');
+                {
+                    text: "Cancelar",
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
+                    click: function () {
+                        redirecionar_solicitacao.dialog('close');
+                    }
                 }
-            }
+            ],
+            position: {my: "center center-150", of: window}
         });
 
         var feedback_solicitacao = $('#feedback-solicitacao').dialog({
             autoOpen: false,
             modal: true,
-            width: 850,
-            buttons: {
-                "Criar Feedback": function () {
-                    feedback_solicitacao.dialog('close');
-                    $('form[name=solicitar-feedback]').submit();
+            width: 920,
+            buttons: [
+                {
+                    text: "Criar Feedback",
+                    icons: {
+                        primary: 'ui-icon-comment'
+                    },
+                    click: function () {
+                        feedback_solicitacao.dialog('close');
+                        $('form[name=solicitar-feedback]').submit();
+                    }
                 },
-                "Cancelar": function () {
-                    feedback_solicitacao.dialog('close');
+                {
+                    text: "Cancelar",
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
+                    click: function () {
+                        feedback_solicitacao.dialog('close');
+                    }
                 }
-            }
+            ],
+            position: {my: "center center-150", of: window}
         });
 
         var responder_feedback = $('#responderFeedback').dialog({
             autoOpen: false,
             modal: true,
             width: 850,
-            buttons: {
-                "Responder Feedback": function () {
-                    responder_feedback.dialog('close');
+            buttons: [
+                {
+                    text: "Responder Feedback",
+                    icons: {
+                        primary: 'ui-icon-check'
+                    },
+                    click: function () {
+                        responder_feedback.dialog('close');
+                        $('form[name=respostaFeedback]').submit();
+                    }
                 },
-                "Cancelar": function () {
-                    responder_feedback.dialog('close');
+                {
+                    text: "Cancelar",
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
+                    click: function () {
+                        responder_feedback.dialog('close');
+                    }
                 }
-            }
+            ],
+            position: {my: "center center-150", of: window}
         });
 
-        $("button[class=feedback-aberto]").button().on('click', function () {
-            $("input[type=hidden][name=feedback_id]").val($(this).attr("feedback"));
+        $("#responderFeedback > div").accordion();
+
+        var visualizar_feedback = $('#visualizarFeedback').dialog({
+            autoOpen: false,
+            modal: true,
+            width: 850,
+            buttons: [
+                {
+                    text: "Fechar",
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
+                    click: function () {
+                        visualizar_feedback.dialog('close');
+                    }
+                }
+            ],
+            position: {my: "center center-150", of: window}
+        });
+
+        $("#visualizarFeedback > div").accordion();
+
+        $("button[class=feedback-aberto]").button({
+            icons: {
+                primary: 'ui-icon-comment'
+            }
+        }).on('click', function () {
+            var id_feedback = $(this).attr("feedback");
+            $("input[type=hidden][name=feedback_id]").val(id_feedback);
+
+            $.ajax({
+                url: '<?= HTTP . '/Solicitacao/getPerguntaRespostaFeedback' ?>',
+                data: 'feedback_id=' + id_feedback,
+                type: 'POST',
+                dataType: 'json',
+                success: function (data) {
+                    $('#feedbackRespostaPergunta').html(data.pergunta);
+                }
+            });
+
             responder_feedback.dialog('open');
         });
-        $("button[class=feedback-atendida]").button();
+
+        $("button[class=feedback-atendida]").button({
+            icons: {
+                primary: 'ui-icon-check'
+            }
+        }).on('click', function () {
+            var id_feedback = $(this).attr("feedback");
+
+            $.ajax({
+                url: '<?= HTTP . '/Solicitacao/getPerguntaRespostaFeedback' ?>',
+                data: 'feedback_id=' + id_feedback,
+                type: 'POST',
+                dataType: 'json',
+                success: function (data) {
+                    $('#visualizarFeedbackPergunta').html(data.pergunta);
+                    $('#visualizarFeedbackResposta').html(data.resposta);
+                }
+            });
+
+            visualizar_feedback.dialog('open');
+        });
 
         $('#editar').button({
             icons: {
@@ -139,6 +250,17 @@
 
 </script>
 
+<style type="text/css">
+    #visualizarFeedbackPergunta, #visualizarFeedbackResposta {
+        overflow: auto;
+        height: 250px;
+    }
+
+    #feedbackRespostaPergunta, #feedbackResposta{
+        height: 250px;
+    }
+</style>
+
 <div class="container">
 
     <?php
@@ -157,7 +279,7 @@
 
     <div class="form-group">
         <div class="ui-widget-header ui-corner-all">
-            <button class="ui-button-warning" <?= ($editar) ? '' : 'disabled' ?> id="editar">
+            <button <?= ($editar) ? '' : 'disabled' ?> id="editar">
                 Editar
             </button>
             <button <?= ($atender) ? '' : 'disabled' ?> id="atender">
@@ -325,8 +447,8 @@
                             foreach ($feedback_solicitado as $values) {
                                 ?>
                                 <tr class="<?= $values['aberta'] ? 'warning' : 'success'; ?>">
-                                    <td><?= $values['pergunta'] ?></td>
-                                    <td><?= $values['resposta'] ?></td>
+                                    <td><?= strip_tags($values['pergunta']) ?></td>
+                                    <td><?= strip_tags($values['resposta']) ?></td>
                                     <td><?= $values['inicio'] ?></td>
                                     <td><?= $values['fim'] ?></td>
                                     <td class="row">
@@ -429,60 +551,85 @@
 <div id="feedback-solicitacao" title="Solicitação de feedback">
     <form action="<?= HTTP . "/Solicitacao/feedback" ?>" name="solicitar-feedback" method="POST">
         <input type="hidden" name="solicitacao" value="<?= "{$id_solicitacao}" ?>" />
+
         <div class="form-group">
-            <div class="col-xs-12">
-                <label class="control-label col-xs-4">Tipo de feedback:</label>
-                <div class="col-xs-8">
-                    <select name="selectFeedback" id="selectFeedback" class="form-control">
-                        <option value=""></option>
-                        <?php
-                        foreach ($tipos_feedback AS $values) {
-                            ?>
-                            <option value="<?= $values['id'] ?>">
-                                <?= $values['nome'] ?>
-                            </option>
+            <div class="row">
+                <div class="col-xs-12">
+                    <label class="control-label col-xs-4">Tipo de feedback:</label>
+                    <div class="col-xs-8">
+                        <select name="selectFeedback" id="selectFeedback" class="form-control">
+                            <option value=""></option>
                             <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-xs-12">
-                <label class="control-label col-xs-4">Destinátario:</label>
-                <div class="col-xs-8">
-                    <select name="selectDestinatario" id="selectDestinatario" class="form-control">
-                        <option value=""></option>
-                        <?php
-                        foreach ($tecnicos as $values) {
+                            foreach ($tipos_feedback AS $values) {
+                                ?>
+                                <option value="<?= $values['id'] ?>">
+                                    <?= $values['nome'] ?>
+                                </option>
+                                <?php
+                            }
                             ?>
-                            <option value="<?= $values['id'] ?>"><?= $values['nome']; ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="form-group">
-            <label for="textareaDescricao" class="col-xs-12">Descrição:</label>
+            <div class="row">
+                <div class="col-xs-12">
+                    <label class="control-label col-xs-4">Destinátario:</label>
+                    <div class="col-xs-8">
+                        <select name="selectDestinatario" id="selectDestinatario" class="form-control">
+                            <option value=""></option>
+                            <?php
+                            foreach ($tecnicos as $values) {
+                                ?>
+                                <option value="<?= $values['id'] ?>"><?= $values['nome']; ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="perguntaFeedback" class="col-xs-12">Descrição:</label>
             <div class="col-xs-12 form-group">
-                <textarea name="textareaDescricao" id="textareaDescricao"></textarea>
+                <textarea name="perguntaFeedback" id="perguntaFeedback"></textarea>
             </div>
         </div>
     </form>
 </div>
 
-<div id="responderFeedback">
-    <form method="post" name="respostaFeedback">
-        <input type="hidden" name="feedback_id" id="feedback_id" />
-        <div class="form-group">
-            <label for="respostaFeedback" class="col-xs-12">Resposta:</label>
-            <div class="col-xs-12 form-group">
+
+<div id="responderFeedback" title="Responder Feedback">
+
+    <div>
+        <h3>Pergunta</h3>
+        <div id="feedbackRespostaPergunta"></div>
+
+        <h3>Resposta</h3>
+        <div id="feedbackResposta">
+            <form method="post" name="respostaFeedback" action="<?= HTTP . "/Solicitacao/responderFeedback" ?>">
+                <input type="hidden" name="feedback_id" id="feedback_id" />
+                <input type="hidden" name="solicitacao" value="<?= "{$id_solicitacao}" ?>" />
                 <textarea name="respostaFeedback" id="respostaFeedback"></textarea>
-            </div>
+            </form>
         </div>
-    </form>
+    </div>
+</div>
+
+
+<div id="visualizarFeedback" title="Visualização de Feedback">
+
+    <div>
+        <h3>Pergunta</h3>
+        <div id="visualizarFeedbackPergunta"></div>
+
+        <h3>Resposta</h3>
+        <div id="visualizarFeedbackResposta"></div>
+    </div>
+
 </div>

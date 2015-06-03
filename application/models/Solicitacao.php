@@ -425,7 +425,7 @@ class Solicitacao extends Model {
     public function feedbackPendentesAtendidos($solicitacao) {
         $sql = "SELECT feedback.id,
                     substring(pergunta from 0 for 30) || '...' AS pergunta,
-                    resposta,
+                    substring(resposta from 0 for 30) || '...' AS resposta,
                     TO_CHAR(inicio, 'FMDD/MM/YYYY  HH24:MI:SS') AS inicio,
                     CASE WHEN fim = inicio THEN NULL
                     ELSE TO_CHAR(fim, 'FMDD/MM/YYYY  HH24:MI:SS') END AS fim,
@@ -613,6 +613,23 @@ class Solicitacao extends Model {
 
     public function feedback($dados) {
         return $this->insert('phpmycall.feedback', $dados);
+    }
+
+    public function getPerguntaRespostaFeedback($id_feedback, $usuario) {
+        $sql = "SELECT feedback.pergunta,
+                    feedback.resposta
+                FROM phpmycall.feedback
+                INNER JOIN phpmycall.solicitacao ON feedback.solicitacao = solicitacao.id
+                INNER JOIN phpmycall.projeto_tipo_problema ON solicitacao.projeto_problema = projeto_tipo_problema.id
+                INNER JOIN phpmycall.projeto_responsaveis ON projeto_tipo_problema.projeto = projeto_responsaveis.projeto
+                WHERE feedback.id = :feedback
+                    AND projeto_responsaveis.usuario = :usuario";
+
+        return $this->select($sql, array('feedback' => $id_feedback, 'usuario' => $usuario), FALSE);
+    }
+
+    public function responderFeedback($dados, $id_feedback) {
+        return $this->update('phpmycall.feedback', $dados, "id = {$id_feedback}");
     }
 
 }

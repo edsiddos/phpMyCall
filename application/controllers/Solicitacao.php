@@ -590,7 +590,7 @@ class Solicitacao extends Controller {
         $id_solicitacao = $_POST['solicitacao'];
         $feedback = $_POST['selectFeedback'];
         $destinatario = $_POST['selectDestinatario'];
-        $pergunta = $_POST['textareaDescricao'];
+        $pergunta = $_POST['perguntaFeedback'];
 
         $perfil = $_SESSION['perfil'];
         $parametros = Cache::getCache(PARAMETROS);
@@ -638,6 +638,54 @@ class Solicitacao extends Controller {
             }
         } else {
             $_SESSION['msg_erro'] = "Perfil do usuário não possui permissão para solicitar feedback.";
+
+            $this->redir("Solicitacao/visualizar/{$id_solicitacao}");
+        }
+    }
+
+    public function getPerguntaRespostaFeedback() {
+        $id_feedback = $_POST['feedback_id'];
+        $usuario = $_SESSION['id'];
+
+        echo json_encode($this->model->getPerguntaRespostaFeedback($id_feedback, $usuario));
+    }
+
+    public function responderFeedback() {
+        $id_feedback = $_POST['feedback_id'];
+        $id_solicitacao = $_POST['solicitacao'];
+
+        if ($this->model->usuarioParticipante($_SESSION['id'], $id_solicitacao)) {
+            $resposta = $_POST['respostaFeedback'];
+            $hoje = new DateTime();
+            $hoje = $hoje->format('Y-m-d H:i:s');
+
+            $dados = array(
+                'resposta' => $resposta,
+                'fim' => $hoje
+            );
+
+            if ($this->model->responderFeedback($dados, $id_feedback)) {
+                $_SESSION['msg_sucesso'] = "Feedback respondido com sucesso.";
+            } else {
+                $_SESSION['msg_erro'] = "Falha ao responder feedback.";
+            }
+
+            /*
+             * Gera dados para gravação de log.
+             */
+            $log = array(
+                'dados' => $dados,
+                'aplicacao' => "Solicitacao/responderFeedback",
+                'msg' => empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']
+            );
+
+            /*
+             * Grava dados da operação realizada
+             */
+            Log::gravar($log, $_SESSION ['id']);
+            $this->redir("Solicitacao/visualizar/{$id_solicitacao}");
+        } else {
+            $_SESSION['msg_erro'] = "Usuário não é participante deste projeto.";
 
             $this->redir("Solicitacao/visualizar/{$id_solicitacao}");
         }
