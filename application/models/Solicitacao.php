@@ -137,12 +137,11 @@ class Solicitacao extends Model {
 
     /**
      * Grava arquivo no banco de dados.
-     * @param Array $dados Array com ID da solicitação, nome do arquivo, tipo de arquivo.
-     * @param Array $arquivos Array com caminho do arquivo.
+     * @param Array $dados Array com ID da solicitação, nome do arquivo, tipo de arquivo e caminho do arquivo.
      * @return boolean Retorna <b>TRUE</b> se sucesso, <b>FALSE</b> se falha
      */
-    public function gravaArquivoSolicitacao($dados, $arquivos) {
-        return $this->insertFile('phpmycall.arquivos', $dados, $arquivos);
+    public function gravaArquivoSolicitacao($dados) {
+        return $this->insert('phpmycall.arquivos', $dados);
     }
 
     /**
@@ -312,9 +311,14 @@ class Solicitacao extends Model {
 
         $sql = "SELECT arquivos.id,
                     arquivos.nome
-                FROM phpmycall.arquivos WHERE arquivos.solicitacao = :solicitacao";
+                FROM phpmycall.arquivos
+                INNER JOIN phpmycall.solicitacao ON arquivos.solicitacao = solicitacao.id
+                INNER JOIN phpmycall.projeto_tipo_problema ON solicitacao.projeto_problema = projeto_tipo_problema.id
+                INNER JOIN phpmycall.projeto_responsaveis ON projeto_tipo_problema.projeto = projeto_responsaveis.projeto
+                WHERE arquivos.solicitacao = :solicitacao
+                    AND projeto_responsaveis.usuario = :usuario";
 
-        $result['arquivos'] = $this->select($sql, array('solicitacao' => $solicitacao));
+        $result['arquivos'] = $this->select($sql, array('solicitacao' => $solicitacao, 'usuario' => $usuario));
 
         return $result;
     }
@@ -384,8 +388,12 @@ class Solicitacao extends Model {
 
         $result = $this->select($sql, array('usuario' => $usuario, 'projeto_tipo_problema' => $projeto_tipo_problema), FALSE);
 
-        if ($result['result']) {
-            $result = $this->delete('phpmycall.arquivos', "id = {$arquivo}");
+        $sql = "SELECT caminho FROM phpmycall.arquivos WHERE id = :id";
+        $caminho = $this->select($sql, array('id' => $arquivo), FALSE);
+
+        if ($result['result'] && unlink($caminho['caminho'])) {
+
+            $result = $this->delete("phpmycall.arquivos", "id = {$arquivo}");
         } else {
             $result = FALSE;
         }
@@ -435,7 +443,8 @@ class Solicitacao extends Model {
                     responsavel
                 FROM phpmycall.feedback
                 INNER JOIN phpmycall.usuario ON feedback.responsavel = usuario.id
-                WHERE solicitacao = :solicitacao";
+                WHERE solicitacao = :solicitacao
+                ORDER BY feedback.inicio DESC";
 
         return $this->select($sql, array('solicitacao' => $solicitacao));
     }
@@ -525,8 +534,21 @@ class Solicitacao extends Model {
 
             $where = "id = {$solicitacao}";
             $arquivos = "solicitacao = {$solicitacao}";
+            $feedback = "solicitacao = {$solicitacao}";
 
-            if ($this->delete('phpmycall.arquivos', $arquivos) && $this->delete('phpmycall.solicitacao', $where)) {
+            /*
+             * Remove os arquivos anexos para
+             * depois remover os arquivos no banco de dados
+             */
+            $sql = "SELECT caminho FROM phpmycall.arquivos WHERE solicitacao = :solicitacao";
+            $caminho = $this->select($sql, array('solicitacao' => $solicitacao));
+            $delete_files = true;
+
+            foreach ($caminho as $values) {
+                $delete_files &= unlink($values['caminho']);
+            }
+
+            if ($this->delete('phpmycall.feedback', $feedback) && $this->delete('phpmycall.arquivos', $arquivos) && $this->delete('phpmycall.solicitacao', $where)) {
                 $result['msg'] = "Solicitação excluida.";
                 $result['status'] = TRUE;
             } else {
@@ -611,10 +633,21 @@ class Solicitacao extends Model {
         return $result;
     }
 
+    /**
+     * Grava um novo feedback
+     * @param Array $dados Array com os dados necessários.
+     * @return boolean <b>TRUE</b> sucesso, <b>FALSE</b> erro.
+     */
     public function feedback($dados) {
         return $this->insert('phpmycall.feedback', $dados);
     }
 
+    /**
+     * Busca Pergunta e resposta de um feedback.
+     * @param int $id_feedback Código do feedback.
+     * @param int $usuario Código do solicitante.
+     * @return Array Retorna array com pergunta e resposta.
+     */
     public function getPerguntaRespostaFeedback($id_feedback, $usuario) {
         $sql = "SELECT feedback.pergunta,
                     feedback.resposta
@@ -628,8 +661,46 @@ class Solicitacao extends Model {
         return $this->select($sql, array('feedback' => $id_feedback, 'usuario' => $usuario), FALSE);
     }
 
+    /**
+     * Método que grava resposta do feedback.
+     * @param array $dados Array com resposta e horario da resposta.
+     * @param int $id_feedback Código do feedback.
+     * @return boolean Retorna <b>TRUE</b> sucesso, <b>FALSE</b> erro.
+     */
     public function responderFeedback($dados, $id_feedback) {
         return $this->update('phpmycall.feedback', $dados, "id = {$id_feedback}");
+    }
+
+    /**
+     * Encerra uma solicitação.
+     * @param int $solicitacao Código da solicitação.
+     * @param Array $dados Array com horário da finalização da solicitação.
+     * @return boolean Retorna <b>TRUE</b> se sucesso, <b>FALSE</b> se erro.
+     */
+    public function encerrar($solicitacao, $dados) {
+        return $this->update('phpmycall.solicitacao', $dados, "id = {$solicitacao}");
+    }
+
+    /**
+     * Método que busca dados referente ao arquivo anexo.
+     * @param type $arquivo Código do arquivo
+     * @param type $usuario Código do usuário
+     * @return Array Retorna dados do arquivo anexo de um solicitação.
+     */
+    public function getContentArquivo($arquivo, $usuario) {
+        $sql = "SELECT arquivos.nome,
+                    arquivos.tipo,
+                    arquivos.caminho
+                FROM phpmycall.arquivos
+                INNER JOIN phpmycall.solicitacao ON arquivos.solicitacao = solicitacao.id
+                INNER JOIN phpmycall.projeto_tipo_problema ON solicitacao.projeto_problema = projeto_tipo_problema.id
+                INNER JOIN phpmycall.projeto_responsaveis ON projeto_tipo_problema.projeto = projeto_responsaveis.projeto
+                WHERE arquivos.id = :arquivo
+                    AND projeto_responsaveis.usuario = :usuario";
+
+        $arquivos = $this->select($sql, array('arquivo' => $arquivo, 'usuario' => $usuario), FALSE);
+
+        return $arquivos;
     }
 
 }

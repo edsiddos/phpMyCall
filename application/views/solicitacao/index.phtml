@@ -5,7 +5,7 @@
 
     tinymce.init({
         selector: '#textareaDescricao',
-        language: 'pt_BR',
+        language: 'pt_BR'
     });
 
     $(document).ready(function () {
@@ -68,6 +68,13 @@
 
             $("#arquivos-novos").html(dados);
         });
+
+        $('button[name=submit-dados]').button({
+            icons: {
+                primary: 'ui-icon-circle-check'
+            }
+        });
+
     });
 </script>
 
@@ -248,8 +255,8 @@
         <div class="form-group">
             <div class="row">
                 <div class="col-xs-12">
-                    <button type="submit" name="submit-dados" class="btn btn-default">
-                        Salvar solicitação
+                    <button type="submit" name="submit-dados">
+                        Salvar
                     </button>
                 </div>
             </div>

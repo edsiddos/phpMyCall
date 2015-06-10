@@ -159,45 +159,4 @@ class Model {
         return $sth->execute();
     }
 
-    /**
-     * Grava arquivo no banco de dados.
-     * @param String $table String nome da tabela que será armazenados os dados.
-     * @param Array $data Array com dados adicionais que serão inseridos na tabela.
-     * @param Array $file Array com caminho para arquivo que será armazendo no banco de dados.
-     * @return boolean Retorna <b>TRUE</b> se arquivo armazenado com sucesso.
-     */
-    public function insertFile($table, $data, $file) {
-        $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $this->conn->beginTransaction();
-
-        $oid = $this->conn->pgsqlLOBCreate();
-        $stream = $this->conn->pgsqlLOBOpen($oid, 'w');
-
-        /*
-         * Abri arquivo e copia conteúdo binario
-         */
-        $column_file = key($file);
-        $local = fopen($file[$column_file], 'rb');
-        stream_copy_to_stream($local, $stream);
-        $local = null;
-        $stream = null;
-
-        /*
-         * Gera conteudo a para ser armazenado no banco de dados
-         */
-        $column = implode(", ", array_keys($data)) . ", " . $column_file;
-        $values = ":" . implode(", :", array_keys($data)) . ", :" . $column_file;
-        $values_insert = array_values($data);
-        $values_insert[] = $oid;
-
-        $sql = "INSERT INTO {$table} (" . $column . ") VALUES (" . $values . ")";
-
-        $stmt = $this->conn->prepare($sql);
-
-        $result = $stmt->execute($values_insert);
-        $this->conn->commit();
-
-        return $result;
-    }
-
 }

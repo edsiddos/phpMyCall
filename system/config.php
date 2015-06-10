@@ -19,7 +19,7 @@
 
 
 // Mostra todos os erros
-define('DEBUG', FALSE);
+define('DEBUG', true);
 
 if (DEBUG === true) {
     error_reporting(E_ERROR | E_WARNING);
@@ -41,6 +41,9 @@ define('DB_USER', 'dev');
 define('DB_PASS', 'dev');
 
 // ################################################
+// Caminho absoluto para pasta que armazena os arquivos anexos as solicitações
+define('FILES', '/var/www/html/files');
+
 // caminho relativo para a pasta do projeto
 define('PATH', '/var/www/html/phpmycall');
 

@@ -232,7 +232,7 @@ CREATE TABLE phpmycall.arquivos(
 	nome VARCHAR(100) NOT NULL,
 	solicitacao INTEGER NOT NULL,
         tipo VARCHAR(50) NOT NULL,
-	conteudo BYTEA NOT NULL,
+	caminho VARCHAR(250) NOT NULL UNIQUE,
 	CONSTRAINT pk_arquivos PRIMARY KEY (id),
 	CONSTRAINT fk_solicitacao_arquivos FOREIGN KEY (solicitacao) REFERENCES phpmycall.solicitacao (id)
 );

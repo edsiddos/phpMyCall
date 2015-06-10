@@ -147,17 +147,20 @@ class Solicitacao extends Controller {
                  */
                 if (array_search(0, $_FILES['inputArquivos']['error']) !== FALSE) {
                     foreach ($_FILES['inputArquivos']['tmp_name'] as $key => $values) {
+                        $caminho_arquivo = FILES . '/' . md5($_FILES['inputArquivos']['name'][$key]);
+
                         $dados_arquivos[$key] = array(
                             'nome' => $_FILES['inputArquivos']['name'][$key],
                             'tipo' => $_FILES['inputArquivos']['type'][$key],
-                            'solicitacao' => $solicitacao['id']
+                            'solicitacao' => $solicitacao['id'],
+                            'caminho' => $caminho_arquivo
                         );
 
-                        $arquivos[$key] = array(
-                            'conteudo' => $values
-                        );
-
-                        if (!$this->model->gravaArquivoSolicitacao($dados_arquivos[$key], $arquivos[$key])) {
+                        if (move_uploaded_file($values, $caminho_arquivo)) {
+                            if (!$this->model->gravaArquivoSolicitacao($dados_arquivos[$key])) {
+                                $_SESSION['msg_sucesso'] .= 'Erro ao adicionar o arquivo: ' . $_FILES['inputArquivos']['name'][$key] . '<br/>';
+                            }
+                        } else {
                             $_SESSION['msg_sucesso'] .= 'Erro ao adicionar o arquivo: ' . $_FILES['inputArquivos']['name'][$key] . '<br/>';
                         }
                     }
@@ -176,7 +179,7 @@ class Solicitacao extends Controller {
             );
 
             Log::gravar($log, $_SESSION ['id']);
-            $this->redir('Solicitacao/abrir');
+            $this->redir('Solicitacao/aberta');
         } else {
             $this->redir('Main/index');
         }
@@ -253,6 +256,7 @@ class Solicitacao extends Controller {
      */
     public function visualizar($id_solicitacao) {
         $perfil = $_SESSION['perfil'];
+        $usuario = $_SESSION['id'];
 
         $title = array(
             'title' => 'Solicitações em aberta'
@@ -266,7 +270,7 @@ class Solicitacao extends Controller {
         /*
          * Busca dados da solicitação.
          */
-        $solicitacao = $this->model->getDadosSolicitacao($id_solicitacao[0], $perfil, $_SESSION['id']);
+        $solicitacao = $this->model->getDadosSolicitacao($id_solicitacao[0], $perfil, $usuario);
         $vars['solicitacao'] = $solicitacao;
         $vars['id_solicitacao'] = $id_solicitacao[0];
 
@@ -283,9 +287,9 @@ class Solicitacao extends Controller {
         $vars['sub_chamado'] = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE);
         $vars['sub_chamado'] &= (empty($solicitacao['atendimento']) || ((!empty($solicitacao['atendimento'])) && ($solicitacao['id_tecnico'] == $_SESSION['id']) && empty($solicitacao['encerramento'])));
         $vars['excluir'] = (array_search($perfil, $parametros['EXCLUIR_SOLICITACAO']) !== FALSE) && (empty($solicitacao['atendimento']) || empty($solicitacao['encerramento']));
-        $vars['redirecionar'] = (array_search($perfil, $parametros['REDIRECIONAR_CHAMADO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
+        $vars['redirecionar'] = (array_search($perfil, $parametros['REDIRECIONAR_CHAMADO']) !== FALSE) && empty($solicitacao['encerramento']);
         $vars['feedback'] = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
-        $vars['encerrar'] = (array_search($perfil, $parametros['ENCERRAR_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
+        $vars['encerrar'] = (array_search($perfil, $parametros['ENCERRAR_SOLICITACAO']) !== FALSE) && ($solicitacao['id_tecnico'] == $usuario) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
 
         $vars['feedback_solicitado'] = $this->model->feedbackPendentesAtendidos($id_solicitacao[0]);
 
@@ -293,13 +297,37 @@ class Solicitacao extends Controller {
             $vars['tecnicos'] = $this->model->getSolicitantesBySolicitacao($id_solicitacao[0]);
         }
 
-        if ($vars['feedback']) {
+        if ((array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento']))) {
             $vars['tipos_feedback'] = $this->model->getTipoFeedback();
         }
 
         $this->loadView('default/header', $title);
         $this->loadView('solicitacao/visualizar', $vars);
         $this->loadView('default/footer');
+    }
+
+    /**
+     * Método que realiza download dos arquivos anexos a uma solicitação
+     * @param Array $arquivo Array com código do anexo.
+     */
+    public function downloadArquivo($arquivo) {
+        $dados_arquivos = $this->model->getContentArquivo($arquivo[0], $_SESSION['id']);
+
+        header('Cache-control: private');
+        header('Content-Type: ' . $dados_arquivos['tipo']);
+        header('Content-Length: ' . filesize($dados_arquivos['caminho']));
+        header('Content-Disposition: filename=' . $dados_arquivos['nome']);
+
+        flush();
+        $file = fopen($dados_arquivos['caminho'], "r");
+        $download_rate = 20.5;
+        while (!feof($file)) {
+
+            print fread($file, round($download_rate * 1024));
+
+            flush();
+        }
+        fclose($file);
     }
 
     /**
@@ -410,17 +438,20 @@ class Solicitacao extends Controller {
                  */
                 if (array_search(0, $_FILES['inputArquivos']['error']) !== FALSE) {
                     foreach ($_FILES['inputArquivos']['tmp_name'] as $key => $values) {
+                        $caminho_arquivo = FILES . '/' . md5($_FILES['inputArquivos']['name'][$key]);
+
                         $dados_arquivos[$key] = array(
                             'nome' => $_FILES['inputArquivos']['name'][$key],
                             'tipo' => $_FILES['inputArquivos']['type'][$key],
-                            'solicitacao' => $solicitacao
+                            'solicitacao' => $solicitacao['id'],
+                            'caminho' => $caminho_arquivo
                         );
 
-                        $arquivos[$key] = array(
-                            'conteudo' => $values
-                        );
-
-                        if (!$this->model->gravaArquivoSolicitacao($dados_arquivos[$key], $arquivos[$key])) {
+                        if (move_uploaded_file($values, $caminho_arquivo)) {
+                            if (!$this->model->gravaArquivoSolicitacao($dados_arquivos[$key])) {
+                                $_SESSION['msg_sucesso'] .= 'Erro ao adicionar o arquivo: ' . $_FILES['inputArquivos']['name'][$key] . '<br/>';
+                            }
+                        } else {
                             $_SESSION['msg_sucesso'] .= 'Erro ao adicionar o arquivo: ' . $_FILES['inputArquivos']['name'][$key] . '<br/>';
                         }
                     }
@@ -497,6 +528,10 @@ class Solicitacao extends Controller {
         }
     }
 
+    /**
+     * Exclui solicitação com dados relacionados
+     * @param int $dados Array com código da solicitação
+     */
     public function excluir($dados = array()) {
         $perfil = $_SESSION['perfil'];
         $parametros = Cache::getCache(PARAMETROS);
@@ -549,7 +584,7 @@ class Solicitacao extends Controller {
          * Verifica se o perfil do usuário tem autorização para
          * realizar o redirecionamento da solicitação.
          */
-        if ((array_search($perfil, $parametros['REDIRECIONAR_CHAMADO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento'])) {
+        if ((array_search($perfil, $parametros['REDIRECIONAR_CHAMADO']) !== FALSE) && empty($solicitacao['encerramento'])) {
             $result = $this->model->redirecionarSolicitacao($_SESSION['id'], $dados[0], $dados[1]);
 
             /*
@@ -586,6 +621,9 @@ class Solicitacao extends Controller {
         }
     }
 
+    /**
+     * Implementa método que grava solicitação de resposta sobre determinada solicitação.
+     */
     public function feedback() {
         $id_solicitacao = $_POST['solicitacao'];
         $feedback = $_POST['selectFeedback'];
@@ -596,11 +634,17 @@ class Solicitacao extends Controller {
         $parametros = Cache::getCache(PARAMETROS);
         $solicitacao = $this->model->getDadosSolicitacao($id_solicitacao, $perfil, $_SESSION['id']);
 
+        /*
+         * Verifica se usuário tem permissão para realizar solicitação de feedback
+         */
         if ((array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento'])) {
             if ($this->model->usuarioParticipante($_SESSION['id'], $id_solicitacao)) {
                 $hoje = new DateTime();
                 $hoje = $hoje->format('Y-m-d H:i:s');
 
+                /*
+                 * Dados necessários para gravação de um feedback
+                 */
                 $dados = array(
                     'tipo_feedback' => $feedback,
                     'pergunta' => $pergunta,
@@ -608,7 +652,7 @@ class Solicitacao extends Controller {
                     'inicio' => $hoje,
                     'fim' => $hoje,
                     'solicitacao' => $id_solicitacao,
-                    'responsavel' => $_SESSION['id']
+                    'responsavel' => $destinatario
                 );
 
                 if ($this->model->feedback($dados)) {
@@ -643,6 +687,9 @@ class Solicitacao extends Controller {
         }
     }
 
+    /**
+     * Método que busca dados sobre o feedback a partir do <b>ID</b> do feedback
+     */
     public function getPerguntaRespostaFeedback() {
         $id_feedback = $_POST['feedback_id'];
         $usuario = $_SESSION['id'];
@@ -650,10 +697,18 @@ class Solicitacao extends Controller {
         echo json_encode($this->model->getPerguntaRespostaFeedback($id_feedback, $usuario));
     }
 
+    /**
+     * Grava resposta de um feedback.
+     */
     public function responderFeedback() {
         $id_feedback = $_POST['feedback_id'];
         $id_solicitacao = $_POST['solicitacao'];
 
+        /*
+         * Verifica se o usuário e participante do projeto
+         * OBS.: Não é necessario mais verificação pois pode ser solicitado
+         * dados de qualquer participante do projeto.
+         */
         if ($this->model->usuarioParticipante($_SESSION['id'], $id_solicitacao)) {
             $resposta = $_POST['respostaFeedback'];
             $hoje = new DateTime();
@@ -686,6 +741,63 @@ class Solicitacao extends Controller {
             $this->redir("Solicitacao/visualizar/{$id_solicitacao}");
         } else {
             $_SESSION['msg_erro'] = "Usuário não é participante deste projeto.";
+
+            $this->redir("Solicitacao/visualizar/{$id_solicitacao}");
+        }
+    }
+
+    /**
+     * Finaliza um solicitação que esta em atendimento.
+     * @param Array $dados Array com o código da solicitação a ser finalizada
+     */
+    public function encerrar($dados) {
+        $id_solicitacao = $dados[0];
+        $perfil = $_SESSION['perfil'];
+        $usuario = $_SESSION['id'];
+
+        $parametros = Cache::getCache(PARAMETROS);
+        $solicitacao = $this->model->getDadosSolicitacao($id_solicitacao, $perfil, $usuario);
+
+        /*
+         * Verifica se usuário tem permissão para encerra solicitação e
+         * se o usuário é o técnico responsavel pelo projeto e se a solicitação não esta encerrada.
+         */
+        if ((array_search($perfil, $parametros['ENCERRAR_SOLICITACAO']) !== FALSE) && ($solicitacao['id_tecnico'] == $usuario) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento'])) {
+            $hoje = new DateTime();
+            $hoje = $hoje->format('Y-m-d H:i:s');
+
+            /*
+             * Passa os dados referente ao encerramento da solicitação
+             */
+            $dados = array(
+                'encerramento' => $hoje
+            );
+
+            /*
+             * Realização o encerramento da solicitação e informa o resultado da execução
+             */
+            if ($this->model->encerrar($id_solicitacao, $dados)) {
+                $_SESSION['msg_sucesso'] = "Solicitação encerrada com sucesso.";
+            } else {
+                $_SESSION['msg_erro'] = "Falha ao encerrar solicitação.";
+            }
+
+            /*
+             * Gera dados para gravação de log.
+             */
+            $log = array(
+                'dados' => $dados,
+                'aplicacao' => "Solicitacao/encerrar",
+                'msg' => empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']
+            );
+
+            /*
+             * Grava dados da operação realizada
+             */
+            Log::gravar($log, $_SESSION ['id']);
+            $this->redir("Solicitacao/visualizar/{$id_solicitacao}");
+        } else {
+            $_SESSION['msg_erro'] = "Usuário sem autorização para encerrar esta solicitação.";
 
             $this->redir("Solicitacao/visualizar/{$id_solicitacao}");
         }

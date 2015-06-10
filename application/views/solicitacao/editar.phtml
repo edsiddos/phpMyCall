@@ -54,7 +54,7 @@
 
             $.each(solicitacao.arquivos, function (key, value) {
                 table += '<tr id="arquivos' + value.id + '"><td>' + value.nome + '</td>' +
-                        '<td><button class="btn btn-danger" data-id="' + value.id + '" type="button">Excluir</button></td></tr>';
+                        '<td><button class="excluir" data-id="' + value.id + '" type="button">Excluir</button></td></tr>';
             });
 
             $('#table-arquivos > tbody').html(table);
@@ -64,7 +64,11 @@
          * Implementa operações referentes a remoção de anexos
          */
 
-        $('td > button[type=button]').on('click', function () {
+        $('td > button[type=button][class=excluir]').button({
+            icons: {
+                primary: 'ui-icon-closethick'
+            }
+        }).on('click', function () {
             $("input[type='hidden'][name='id_arquivo']").val($(this).attr('data-id'));
             delete_file.dialog('open');
         });
@@ -107,7 +111,8 @@
                 "Cancelar": function () {
                     delete_file.dialog('close');
                 }
-            }
+            },
+            position: {my: "center center-150", of: window}
         });
 
         /*
@@ -121,7 +126,8 @@
                 "OK": function () {
                     status_msg.dialog("close");
                 }
-            }
+            },
+            position: {my: "center center-150", of: window}
         });
 
     });
