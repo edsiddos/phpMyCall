@@ -140,8 +140,11 @@ class ProjetosProblemas extends \system\Controller {
             $participantes = $this->model->getRelacaoParticipantes($id);
             $vars = $this->model->getDescricaoProjeto($id);
 
+            $vars['usuarios'] = array();
+            $vars['participantes'] = array();
+
             foreach ($usuarios as $values) {
-                if (in_array($values ['id'], $participantes)) {
+                if (in_array($values ['value'], $participantes)) {
                     $vars ['participantes'] [] = $values;
                 } else {
                     $vars ['usuarios'] [] = $values;

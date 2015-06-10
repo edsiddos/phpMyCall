@@ -100,7 +100,8 @@ class ProjetosProblemas extends \system\Model {
      * @param string $perfil Nome do perfil
      */
     public function relacaoUsuarios($perfil) {
-        $sql = "SELECT usuario.id, usuario.nome, perfil.perfil FROM phpmycall.usuario
+        $sql = "SELECT usuario.id AS value, usuario.nome || ' - ' || perfil.perfil AS name
+                FROM phpmycall.usuario
                 INNER JOIN phpmycall.perfil ON usuario.perfil = perfil.id
                 WHERE usuario.perfil <= (SELECT id FROM phpmycall.perfil WHERE perfil = :perfil)";
 
