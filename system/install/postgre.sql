@@ -269,7 +269,7 @@ CREATE TABLE phpmycall.feriado(
 );
 
 CREATE TABLE phpmycall.expediente(
-	id SERIAL,
+	id SMALLINT UNIQUE NOT NULL,
 	dia_semana VARCHAR(15) NOT NULL UNIQUE,
 	entrada_manha TIME DEFAULT '7:00:00',
 	saida_manha TIME DEFAULT '11:00:00',
@@ -278,13 +278,13 @@ CREATE TABLE phpmycall.expediente(
 	CONSTRAINT pk_expediente PRIMARY KEY (id)
 );
 
-INSERT INTO phpmycall.expediente (dia_semana) VALUES('DOMINGO');
-INSERT INTO phpmycall.expediente (dia_semana) VALUES('SEGUNDA-FEIRA');
-INSERT INTO phpmycall.expediente (dia_semana) VALUES('TERÇA-FEIRA');
-INSERT INTO phpmycall.expediente (dia_semana) VALUES('QUARTA-FEIRA');
-INSERT INTO phpmycall.expediente (dia_semana) VALUES('QUINTA-FEIRA');
-INSERT INTO phpmycall.expediente (dia_semana) VALUES('SEXTA-FEIRA');
-INSERT INTO phpmycall.expediente (dia_semana) VALUES('SÁBADO');
+INSERT INTO phpmycall.expediente (id, dia_semana) VALUES(1, 'DOMINGO');
+INSERT INTO phpmycall.expediente (id, dia_semana) VALUES(2, 'SEGUNDA-FEIRA');
+INSERT INTO phpmycall.expediente (id, dia_semana) VALUES(3, 'TERÇA-FEIRA');
+INSERT INTO phpmycall.expediente (id, dia_semana) VALUES(4, 'QUARTA-FEIRA');
+INSERT INTO phpmycall.expediente (id, dia_semana) VALUES(5, 'QUINTA-FEIRA');
+INSERT INTO phpmycall.expediente (id, dia_semana) VALUES(6, 'SEXTA-FEIRA');
+INSERT INTO phpmycall.expediente (id, dia_semana) VALUES(7, 'SÁBADO');
 
 CREATE TABLE phpmycall.projeto_responsaveis(
 	id SERIAL,

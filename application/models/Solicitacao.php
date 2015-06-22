@@ -209,7 +209,7 @@ class Solicitacao extends Model {
      * Método que busca todos os parametros referente a solicitações.
      * @return Array Retorna todos os parametros referente a solicitações.
      */
-    private function getParametros() {
+    public function getParametros() {
         $parametros = Cache::getCache(PARAMETROS);
 
         if (empty($parametros['VISUALIZAR_SOLICITACAO']) || empty($parametros['CORES_SOLICITACOES']) ||

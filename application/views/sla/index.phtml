@@ -1,0 +1,187 @@
+
+<script type="text/javascript">
+
+    var projetoProblema = function () {
+
+        this.init = function (data) {
+            var cliente = $("select[name='selectSolicitante'] option:selected").val();
+            var tecnico = $("select[name='selectTecnico'] option:selected").val();
+            var select_cliente = '<option value="0" disabled selected>Solicitante</option>';
+            var select_tecnico = '<option value="0" disabled selected>Técnico</option>';
+
+            $.each(data, function (key, value) {
+                select_cliente += '<option value="' + value.id + '">' + value.nome + '</option>';
+                if (value.tecnico) {
+                    select_tecnico += '<option value="' + value.id + '">' + value.nome + '</option>';
+                }
+            });
+
+            $("select[name='selectSolicitante']").html(select_cliente).val(cliente);
+            $("select[name='selectTecnico']").html(select_tecnico).val(tecnico);
+        };
+    };
+
+    $(document).ready(function () {
+
+        var projeto_problema = new projetoProblema();
+
+        $('select').selectmenu();
+
+        $("select[name='selectProjeto']").selectmenu({
+            change: function (event, ui) {
+                var projeto = $("select[name='selectProjeto'] option:selected").attr('projeto');
+                var projeto_old = $('input[name=projetoID]').val();
+
+                if (typeof projeto !== 'undefined' && projeto !== projeto_old) {
+                    $('input[name=projetoID]').val(projeto);
+
+                    $.ajax({
+                        url: "<?= HTTP . '/SLA/getParticipantes' ?>",
+                        data: "projeto=" + projeto,
+                        dataType: "json",
+                        type: "post",
+                        success: function (data) {
+                            projeto_problema.init(data);
+                        }
+                    });
+                }
+            }
+        });
+
+        $('button[name=submit-dados]').button({
+            icons: {
+                primary: 'ui-icon-circle-check'
+            }
+        });
+    });
+
+</script>
+
+<style type="text/css">
+    button[type='submit']{
+        margin: auto 45%;
+    }
+</style>
+
+<div class="container">
+
+    <?php
+    if ((!empty($_SESSION ['msg_erro'])) || (!empty($_SESSION ['msg_sucesso']))) {
+        ?>
+        <div
+            class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger'; ?> alert-error text-center">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            <?= empty($_SESSION['msg_erro']) ? $_SESSION['msg_sucesso'] : $_SESSION['msg_erro']; ?>
+        </div>
+        <?php
+        unset($_SESSION ['msg_erro']);
+        unset($_SESSION ['msg_sucesso']);
+    }
+    ?>
+
+    <form action="<?= $link ?>"  method="post">
+        <input type="hidden" name="projetoID" id="projetoID" value="" />
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label for="selectProjeto" class="control-label col-xs-4">
+                            Projeto: <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-xs-8">
+                            <select name="selectProjeto" required class="form-control" id="selectProjeto">
+                                <option value="0" disabled selected>Projeto</option>
+                                <?php
+                                $id = 0;
+                                foreach ($projetos as $values) {
+                                    if ($id !== $values['id_projeto']) {
+                                        if ($id !== 0) {
+                                            echo '</optgroup>';
+                                        }
+                                        echo '<optgroup label="' . $values['projeto'] . '">';
+                                        echo '<option value="0" projeto="' . $values['id_projeto'] . '">';
+                                        echo 'Todos os tipos de problemas';
+                                        echo '</option>';
+                                        $id = $values['id_projeto'];
+                                    }
+                                    ?>
+                                    <option value="<?= $values['id'] ?>" projeto="<?= $values['id_projeto'] ?>">
+                                        <?= $values['problema'] ?>
+                                    </option>
+                                    <?php
+                                }
+                                echo '</optgroup>';
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label for="selectSolicitante" class="control-label col-xs-4">
+                            Solicitante:
+                        </label>
+                        <div class="col-xs-8">
+                            <select name="selectSolicitante" class="form-control" id="selectSolicitante">
+                                <option value="0" disabled selected>Solicitante</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label for="selectPrioridade" class="control-label col-xs-4">
+                            Prioridade:
+                        </label>
+                        <div class="col-xs-8">
+                            <select name="selectPrioridade" id="selectPrioridade" class="form-control">
+                                <option value="0" selected></option>
+                                <?php
+                                foreach ($prioridade as $values) {
+                                    ?>
+                                    <option value="<?= $values['id'] ?>">
+                                        <?= $values['nome'] ?>
+                                    </option>
+                                    <?php
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label for="selectTecnico" class="control-label col-xs-4">Técnico:</label>
+                        <div class="col-xs-8">
+                            <select name="selectTecnico" class="form-control" id="selectTecnico">
+                                <option value="0" disabled selected>Técnico</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-xs-12" id="arquivos-antigos">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-12">
+                    <button type="submit" name="submit-dados">
+                        Gerar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
