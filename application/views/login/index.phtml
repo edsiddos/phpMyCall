@@ -7,27 +7,30 @@
 
             <form class="form-signin" role="form" method="post" action="<?= HTTP . '/Login/efetuarLogin' ?>">
 
-                <div class="input-group">
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-user"></span>
-                    </span>
-                    <input type="text" class="form-control" name="usuario" placeholder="Usuário" required autofocus>
+                <div class="row">
+                    <div class="columns twelve">
+                        <label class="columns four" for="usuario">Usuário:</label>
+                        <input type="text" class="columns eight" name="usuario" placeholder="Usuário" required autofocus>
+                    </div>
                 </div>
-                <br>
 
-                <div class="input-group">
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-asterisk"></span>
-                    </span>
-                    <input type="password" class="form-control" name="senha" placeholder="Senha" required>
+                <div class="row">
+                    <div class="columns twelve">
+                        <label class="columns four" for="senha">Senha:</label>
+                        <input type="password" class="columns eight" name="senha" placeholder="Senha" required>
+                    </div>
                 </div>
-                <br>
 
-                <button type="submit" class="btn btn-lg btn-primary btn-block">
-                    <span class="glyphicon glyphicon-log-in"></span> Entrar
-                </button>
-            </form>
+                <div class="row">
+                    <button type="submit" class="button-secondary float-right">
+                        Entrar
+                    </button>
+                </div>
 
         </div>
+
+        </form>
+
     </div>
+</div>
 </div>

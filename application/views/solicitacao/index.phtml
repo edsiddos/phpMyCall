@@ -131,9 +131,7 @@
     <?php
     if ((!empty($_SESSION ['msg_erro'])) || (!empty($_SESSION ['msg_sucesso']))) {
         ?>
-        <div
-            class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger'; ?> alert-error text-center">
-            <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <div class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger'; ?> alert-error text-center">
             <?= empty($_SESSION['msg_erro']) ? $_SESSION['msg_sucesso'] : $_SESSION['msg_erro']; ?>
         </div>
         <?php
@@ -146,98 +144,78 @@
         <input type="hidden" name="inputID" id="inputID" value="0" />
         <input type="hidden" name="solicitacaoOrigem" id="solicitacaoOrigem" value="<?= $solicitacaoOrigem; ?>" />
 
-        <div class="form-group">
-            <div class="row">
-                <div class="col-xs-6">
-                    <div class="form-group">
-                        <label for="selectProjeto" class="control-label col-xs-4">
-                            Projeto: <span class="text-danger">*</span>
-                        </label>
-                        <div class="col-xs-8">
-                            <select name="selectProjeto" required class="form-control" id="selectProjeto">
-                                <option value="0" disabled selected>Projeto</option>
-                                <?php
-                                $id = 0;
-                                foreach ($projetos as $values) {
-                                    if ($id !== $values['id_projeto']) {
-                                        if ($id !== 0) {
-                                            echo '</optgroup>';
-                                        }
-                                        echo '<optgroup label="' . $values['projeto'] . '">';
-                                        $id = $values['id_projeto'];
-                                    }
-                                    ?>
-                                    <option value="<?= $values['id'] ?>">
-                                        <?= $values['problema'] ?>
-                                    </option>
-                                    <?php
-                                }
+        <div class="row">
+            <div class="six columns">
+                <label for="selectProjeto" class="four columns">
+                    Projeto:
+                </label>
+                <select name="selectProjeto" required class="eight columns" id="selectProjeto">
+                    <option value="0" disabled selected>Projeto</option>
+                    <?php
+                    $id = 0;
+                    foreach ($projetos as $values) {
+                        if ($id !== $values['id_projeto']) {
+                            if ($id !== 0) {
                                 echo '</optgroup>';
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-6">
-                    <div class="form-group">
-                        <label for="selectSolicitante" class="control-label col-xs-4">
-                            Solicitante: <span class="text-danger">*</span>
-                        </label>
-                        <div class="col-xs-8">
-                            <select name="selectSolicitante" required class="form-control" id="selectSolicitante">
-                                <option value="0" disabled selected>Solicitante</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                            }
+                            echo '<optgroup label="' . $values['projeto'] . '">';
+                            $id = $values['id_projeto'];
+                        }
+                        ?>
+                        <option value="<?= $values['id'] ?>">
+                            <?= $values['problema'] ?>
+                        </option>
+                        <?php
+                    }
+                    echo '</optgroup>';
+                    ?>
+                </select>
+            </div>
+            <div class="six columns">
+                <label for="selectSolicitante" class="four columns">
+                    Solicitante:
+                </label>
+                <select name="selectSolicitante" required class="eight columns" id="selectSolicitante">
+                    <option value="0" disabled selected>Solicitante</option>
+                </select>
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="row">
-                <div class="col-xs-6">
-                    <div class="form-group">
-                        <label for="selectPrioridade" class="control-label col-xs-4">
-                            Prioridade: <span class="text-danger">*</span>
-                        </label>
-                        <div class="col-xs-8">
-                            <select name="selectPrioridade" required id="selectPrioridade" class="form-control">
-                                <option value="0"></option>
-                                <?php
-                                foreach ($prioridade as $values) {
-                                    ?>
-                                    <option value="<?= $values['id'] ?>" <?= $values['padrao'] ? "selected" : ""; ?>>
-                                        <?= $values['nome'] ?>
-                                    </option>
-                                    <?php
-                                }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-6">
-                    <div class="form-group">
-                        <label for="selectTecnico" class="control-label col-xs-4">Técnico:</label>
-                        <div class="col-xs-8">
-                            <select name="selectTecnico" class="form-control" id="selectTecnico">
-                                <option value="0" disabled selected>Técnico</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+        <div class="row">
+            <div class="six columns">
+                <label for="selectPrioridade" class="four columns">
+                    Prioridade: <span class="text-danger">*</span>
+                </label>
+                <select name="selectPrioridade" required id="selectPrioridade" class="eight columns">
+                    <option value="0"></option>
+                    <?php
+                    foreach ($prioridade as $values) {
+                        ?>
+                        <option value="<?= $values['id'] ?>" <?= $values['padrao'] ? "selected" : ""; ?>>
+                            <?= $values['nome'] ?>
+                        </option>
+                        <?php
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="six columns">
+                <label for="selectTecnico" class="four columns">Técnico:</label>
+                <select name="selectTecnico" class="eight columns" id="selectTecnico">
+                    <option value="0" disabled selected>Técnico</option>
+                </select>
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="textareaDescricao" class="col-xs-12">Descrição:</label>
-            <div class="col-xs-12 form-group">
+        <div class="row">
+            <label for="textareaDescricao" class="twelve columns">Descrição:</label>
+            <div class="twelve columns">
                 <textarea name="textareaDescricao" id="textareaDescricao"></textarea>
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="col-xs-12">
+        <div class="row">
+            <div class="twelve columns">
                 <div class="browse-wrap">
                     <div class="title">Anexar arquivos a esta solicitação</div>
                     <input type="file" name="inputArquivos[]" class="upload form-control" id="inputArquivos"
@@ -247,18 +225,16 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="col-xs-12" id="arquivos-antigos">
+        <div class="row">
+            <div class="twelve columns" id="arquivos-antigos">
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="row">
-                <div class="col-xs-12">
-                    <button type="submit" name="submit-dados">
-                        Salvar
-                    </button>
-                </div>
+        <div class="row">
+            <div class="twelve columns">
+                <button type="submit" name="submit-dados">
+                    Salvar
+                </button>
             </div>
         </div>
 

@@ -4,13 +4,8 @@
 <script type="text/javascript">
 
     tinymce.init({
-        selector: '#perguntaFeedback',
-        language: 'pt_BR',
-    });
-
-    tinymce.init({
-        selector: '#respostaFeedback',
-        language: 'pt_BR',
+        selector: '#perguntaFeedback, #respostaFeedback',
+        language: 'pt_BR'
     });
 
     $(document).ready(function () {
@@ -275,9 +270,7 @@
     <?php
     if ((!empty($_SESSION ['msg_erro'])) || (!empty($_SESSION ['msg_sucesso']))) {
         ?>
-        <div
-            class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger'; ?> alert-error text-center">
-            <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <div class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger'; ?> text-center">
             <?= empty($_SESSION['msg_erro']) ? $_SESSION['msg_sucesso'] : $_SESSION['msg_erro']; ?>
         </div>
         <?php
@@ -286,7 +279,7 @@
     }
     ?>
 
-    <div class="form-group">
+    <div class="row">
         <div class="ui-widget-header ui-corner-all">
             <button id="editar">
                 Editar
@@ -312,118 +305,73 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <div class="row">
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label class="control-label col-xs-4">
-                        Projeto:
-                    </label>
-                    <div class="col-xs-8">
-                        <input type="text" value="<?= $solicitacao['projeto'] ?>" disabled class="form-control" />
-                    </div>
-                </div>
-            </div>
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label class="control-label col-xs-4">
-                        Problema:
-                    </label>
-                    <div class="col-xs-8">
-                        <input type="text" value="<?= $solicitacao['problema'] ?>" disabled class="form-control" />
-                    </div>
-                </div>
-            </div>
+    <div class="row">
+        <div class="six columns">
+            <label class="four columns">
+                Projeto:
+            </label>
+            <input type="text" value="<?= $solicitacao['projeto'] ?>" disabled class="eight columns" />
+        </div>
+        <div class="six columns">
+            <label class="four columns">
+                Problema:
+            </label>
+            <input type="text" value="<?= $solicitacao['problema'] ?>" disabled class="eight columns" />
         </div>
     </div>
 
-    <div class="form-group">
-        <div class="row">
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label class="control-label col-xs-4">
-                        Prioridade:
-                    </label>
-                    <div class="col-xs-8">
-                        <input type="text" value="<?= $solicitacao['prioridade'] ?>" disabled class="form-control" />
-                    </div>
-                </div>
-            </div>
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label class="control-label col-xs-4">
-                        Solicitante:
-                    </label>
-                    <div class="col-xs-8">
-                        <input type="text" value="<?= $solicitacao['solicitante'] ?>" disabled class="form-control" />
-                    </div>
-                </div>
-            </div>
+    <div class="row">
+        <div class="six columns">
+            <label class="four columns">
+                Prioridade:
+            </label>
+            <input type="text" value="<?= $solicitacao['prioridade'] ?>" disabled class="eight columns" />
+        </div>
+        <div class="six columns">
+            <label class="four columns">
+                Solicitante:
+            </label>
+            <input type="text" value="<?= $solicitacao['solicitante'] ?>" disabled class="eight columns" />
         </div>
     </div>
 
-    <div class="form-group">
-        <div class="row">
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label class="control-label col-xs-4">
-                        Atendente:
-                    </label>
-                    <div class="col-xs-8">
-                        <input type="text" value="<?= $solicitacao['atendente'] ?>" disabled class="form-control" />
-                    </div>
-                </div>
-            </div>
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label class="control-label col-xs-4">
-                        Técnico:
-                    </label>
-                    <div class="col-xs-8">
-                        <input type="text" value="<?= $solicitacao['tecnico'] ?>" disabled class="form-control" />
-                    </div>
-                </div>
-            </div>
+
+    <div class="row">
+        <div class="six columns">
+            <label class="four columns">
+                Atendente:
+            </label>
+            <input type="text" value="<?= $solicitacao['atendente'] ?>" disabled class="eight columns" />
+        </div>
+        <div class="six columns">
+            <label class="four columns">
+                Técnico:
+            </label>
+            <input type="text" value="<?= $solicitacao['tecnico'] ?>" disabled class="eight columns" />
         </div>
     </div>
 
-    <div class="form-group">
-        <div class="row">
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label class="control-label col-xs-4">
-                        Abertura:
-                    </label>
-                    <div class="col-xs-8">
-                        <input type="text" value="<?= $solicitacao['abertura'] ?>" disabled class="form-control" />
-                    </div>
-                </div>
-            </div>
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label class="control-label col-xs-4">
-                        Atendimento:
-                    </label>
-                    <div class="col-xs-8">
-                        <input type="text" value="<?= $solicitacao['atendimento'] ?>" disabled class="form-control" />
-                    </div>
-                </div>
-            </div>
+    <div class="row">
+        <div class="six columns">
+            <label class="four columns">
+                Abertura:
+            </label>
+            <input type="text" value="<?= $solicitacao['abertura'] ?>" disabled class="eight columns" />
+        </div>
+        <div class="six columns">
+            <label class="four columns">
+                Atendimento:
+            </label>
+            <input type="text" value="<?= $solicitacao['atendimento'] ?>" disabled class="eight columns" />
         </div>
     </div>
 
-    <div class="form-group">
-        <div class="row">
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label class="control-label col-xs-4">
-                        Encerramento:
-                    </label>
-                    <div class="col-xs-8">
-                        <input type="text" value="<?= $solicitacao['encerramento'] ?>" disabled class="form-control" />
-                    </div>
-                </div>
-            </div>
+    <div class="row">
+        <div class="six columns">
+            <label class="four columns">
+                Encerramento:
+            </label>
+            <input type="text" value="<?= $solicitacao['encerramento'] ?>" disabled class="eight columns" />
         </div>
     </div>
 
@@ -431,68 +379,66 @@
     if (!empty($feedback_solicitado)) {
         ?>
 
-        <div class="form-group">
-            <div class="col-xs-12">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <label class="panel-title">Feedback</label>
-                    </div>
-                    <div class="panel-body text-center">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th rowspan="2" class="col-xs-2">Pergunta</th>
-                                    <th rowspan="2" class="col-xs-2">Resposta</th>
-                                    <th colspan="2" class="col-xs-4">Data feedback</th>
-                                    <th rowspan="2" class="col-xs-4">Responsável pelo feedback</th>
-                                </tr>
-                                <tr>
-                                    <th class="col-xs-2">
-                                        Pegunta
-                                    </th>
-                                    <th class="col-xs-2">
-                                        Resposta
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                foreach ($feedback_solicitado as $values) {
-                                    ?>
-                                    <tr class="<?= $values['aberta'] ? 'warning' : 'success'; ?>">
-                                        <td><?= strip_tags($values['pergunta']) ?></td>
-                                        <td><?= strip_tags($values['resposta']) ?></td>
-                                        <td><?= $values['inicio'] ?></td>
-                                        <td><?= $values['fim'] ?></td>
-                                        <td class="row">
-                                            <div class="col-xs-6">
-                                                <?php echo $values['nome_responsavel']; ?>
-                                            </div>
-                                            <div class="col-xs-6 text-center" style="float: right;">
-                                                <?php
-                                                if ($values['aberta'] && $values['responsavel'] === $_SESSION['id']) {
-                                                    ?>
-                                                    <button type="button" class="feedback-aberto" feedback="<?= $values['id'] ?>">
-                                                        Responder
-                                                    </button>
-                                                    <?php
-                                                } else {
-                                                    ?>
-                                                    <button type="button" class="feedback-atendida" feedback="<?= $values['id'] ?>">
-                                                        Visualizar
-                                                    </button>
-                                                    <?php
-                                                }
-                                                ?>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <?php
-                                }
+        <div class="row">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Feedback
+                </div>
+                <div class="panel-body text-center">
+                    <table class="u-full-width">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" class="col2">Pergunta</th>
+                                <th rowspan="2" class="col2">Resposta</th>
+                                <th colspan="2" class="col4">Data feedback</th>
+                                <th rowspan="2" class="col4">Responsável pelo feedback</th>
+                            </tr>
+                            <tr>
+                                <th class="col2">
+                                    Pegunta
+                                </th>
+                                <th class="col2">
+                                    Resposta
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            foreach ($feedback_solicitado as $values) {
                                 ?>
-                            </tbody>
-                        </table>
-                    </div>
+                                <tr class="<?= $values['aberta'] ? 'warning' : 'success'; ?>">
+                                    <td><?= strip_tags($values['pergunta']) ?></td>
+                                    <td><?= strip_tags($values['resposta']) ?></td>
+                                    <td><?= $values['inicio'] ?></td>
+                                    <td><?= $values['fim'] ?></td>
+                                    <td class="row">
+                                        <div class="six columns">
+                                            <?php echo $values['nome_responsavel']; ?>
+                                        </div>
+                                        <div class="six columns text-center" style="float: right;">
+                                            <?php
+                                            if ($values['aberta'] && $values['responsavel'] === $_SESSION['id']) {
+                                                ?>
+                                                <button type="button" class="feedback-aberto" feedback="<?= $values['id'] ?>">
+                                                    Responder
+                                                </button>
+                                                <?php
+                                            } else {
+                                                ?>
+                                                <button type="button" class="feedback-atendida" feedback="<?= $values['id'] ?>">
+                                                    Visualizar
+                                                </button>
+                                                <?php
+                                            }
+                                            ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                            ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -501,71 +447,63 @@
     }
     ?>
 
-    <div class="form-group">
-        <div class="col-xs-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <label class="panel-title">Descrição:</label>
-                </div>
-                <div class="panel-body">
-                    <?= $solicitacao['descricao'] ?>
-                </div>
+    <div class="row">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Descrição:
+            </div>
+            <div class="panel-body">
+                <?= $solicitacao['descricao'] ?>
             </div>
         </div>
     </div>
 
     <div class="form-group">
-        <div class="col-xs-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <label class="panel-title">Arquivos anexos:</label>
-                </div>
-                <div class="panel-body text-center">
-                    <?php
-                    if (empty($solicitacao['arquivos'])) {
-                        echo "Esta solicitação não contém nenhum arquivo em anexo.";
-                    } else {
-                        foreach ($solicitacao['arquivos'] as $values) {
-                            ?>
-                            <a href="<?= HTTP . "/Solicitacao/downloadArquivo/{$values['id']}" ?>" target="_blank">
-                                <?= $values['nome'] ?>
-                            </a><br>
-                            <?php
-                        }
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Arquivos anexos:
+            </div>
+            <div class="panel-body text-center">
+                <?php
+                if (empty($solicitacao['arquivos'])) {
+                    echo "Esta solicitação não contém nenhum arquivo em anexo.";
+                } else {
+                    foreach ($solicitacao['arquivos'] as $values) {
+                        ?>
+                        <a href="<?= HTTP . "/Solicitacao/downloadArquivo/{$values['id']}" ?>" target="_blank">
+                            <?= $values['nome'] ?>
+                        </a><br>
+                        <?php
                     }
-                    ?>
-                </div>
+                }
+                ?>
             </div>
         </div>
     </div>
-
 </div>
+
 
 <div id="excluir-solicitacao" title="Atenção">
     <p>Deseja excluir está solicitação?</p>
 </div>
 
 <div id="redirecionar-solicitacao" title="Redirecionamento de chamado a outro técnico.">
-    <div class="col-xs-12">
-        <div class="form-group">
-            <label class="control-label col-xs-4">
-                Técnico:
-            </label>
-            <div class="col-xs-8">
-                <select name="selectTecnico" id="selectTecnico" class="form-control">
-                    <option value=""></option>
-                    <?php
-                    foreach ($tecnicos as $values) {
-                        if ($values['tecnico'] == 1) {
-                            ?>
-                            <option value="<?= $values['id'] ?>"><?= $values['nome']; ?></option>
-                            <?php
-                        }
-                    }
+    <div class="twelve columns">
+        <label class="four columns">
+            Técnico:
+        </label>
+        <select name="selectTecnico" id="selectTecnico" class="eight columns">
+            <option value=""></option>
+            <?php
+            foreach ($tecnicos as $values) {
+                if ($values['tecnico'] == 1) {
                     ?>
-                </select>
-            </div>
-        </div>
+                    <option value="<?= $values['id'] ?>"><?= $values['nome']; ?></option>
+                    <?php
+                }
+            }
+            ?>
+        </select>
     </div>
 </div>
 
@@ -573,51 +511,43 @@
     <form action="<?= HTTP . "/Solicitacao/feedback" ?>" name="solicitar-feedback" method="POST">
         <input type="hidden" name="solicitacao" value="<?= "{$id_solicitacao}" ?>" />
 
-        <div class="form-group">
-            <div class="row">
-                <div class="col-xs-12">
-                    <label class="control-label col-xs-4">Tipo de feedback:</label>
-                    <div class="col-xs-8">
-                        <select name="selectFeedback" id="selectFeedback" class="form-control">
-                            <option value=""></option>
-                            <?php
-                            foreach ($tipos_feedback AS $values) {
-                                ?>
-                                <option value="<?= $values['id'] ?>">
-                                    <?= $values['nome'] ?>
-                                </option>
-                                <?php
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
+        <div class="row">
+            <div class="twelve columns">
+                <label class="four columns">Tipo de feedback:</label>
+                <select name="selectFeedback" id="selectFeedback" class="eight columns">
+                    <option value=""></option>
+                    <?php
+                    foreach ($tipos_feedback AS $values) {
+                        ?>
+                        <option value="<?= $values['id'] ?>">
+                            <?= $values['nome'] ?>
+                        </option>
+                        <?php
+                    }
+                    ?>
+                </select>
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="row">
-                <div class="col-xs-12">
-                    <label class="control-label col-xs-4">Destinátario:</label>
-                    <div class="col-xs-8">
-                        <select name="selectDestinatario" id="selectDestinatario" class="form-control">
-                            <option value=""></option>
-                            <?php
-                            foreach ($tecnicos as $values) {
-                                ?>
-                                <option value="<?= $values['id'] ?>"><?= $values['nome']; ?></option>
-                                <?php
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
+        <div class="row">
+            <div class="twelve columns">
+                <label class="four columns">Destinátario:</label>
+                <select name="selectDestinatario" id="selectDestinatario" class="eight columns">
+                    <option value=""></option>
+                    <?php
+                    foreach ($tecnicos as $values) {
+                        ?>
+                        <option value="<?= $values['id'] ?>"><?= $values['nome']; ?></option>
+                        <?php
+                    }
+                    ?>
+                </select>
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="perguntaFeedback" class="col-xs-12">Descrição:</label>
-            <div class="col-xs-12 form-group">
+        <div class="row">
+            <label for="perguntaFeedback" class="twelve columns">Descrição:</label>
+            <div class="twelve columns">
                 <textarea name="perguntaFeedback" id="perguntaFeedback"></textarea>
             </div>
         </div>
