@@ -17,6 +17,7 @@ use \application\controllers\Login,
         <link rel="stylesheet" href="<?= HTTP_CSS . '/jquery-ui.structure.css' ?>" />
         <link rel="stylesheet" href="<?= HTTP_CSS . '/jquery-ui.theme.css' ?>" />
         <link rel="stylesheet" href="<?= HTTP_CSS . '/custom.css' ?>" />
+        <link rel="stylesheet" href="<?= HTTP_CSS . '/icons.css' ?>" />
         <script type="text/javascript" src="<?= HTTP_JS . '/jquery-1.11.2.min.js' ?>"></script>
         <script type="text/javascript" src="<?= HTTP_JS . '/jquery-ui.min.js' ?>"></script>
     </head>
@@ -52,7 +53,7 @@ use \application\controllers\Login,
                                                         ?>
                                                         <li>
                                                             <a href="#">
-                                                                <?= $nome_submenu ?>
+                                                                <?= $nome_submenu ?> <span class="caret-right"></span>
                                                             </a>
                                                             <ul>
                                                                 <?php

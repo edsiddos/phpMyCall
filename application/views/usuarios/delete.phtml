@@ -34,47 +34,56 @@
             }
         });
 
-        $('#inputNome').attr('readonly', true);
-        $('#inputEMail').attr('readonly', true);
-        $('#selectPerfil').attr('disabled', true);
-        $('#inputSenha').attr('readonly', true);
-        $('#inputSenha').attr('required', false);
-        $('#inputChangeme').attr('disabled', true);
-        $('#inputTelefone').attr('readonly', true);
-        $('#selectEmpresa').attr('readonly', true);
+        $('#inputNome').prop('disabled', true);
+        $('#inputEMail').prop('disabled', true);
+        $('#selectPerfil').prop('disabled', true);
+        $('#inputSenha').prop('disabled', true);
+        $('#inputSenha').prop('required', false);
+        $('#inputChangeme').prop('disabled', true);
+        $('#inputTelefone').prop('disabled', true);
+        $('#selectEmpresa').prop('disabled', true);
+
+        $('#confirmar-exclusao').dialog({
+            autoOpen: false,
+            modal: true,
+            closeOnEscape: false,
+            width: '25%',
+            buttons: [
+                {
+                    text: 'Excluir',
+                    icons: {
+                        primary: 'ui-icon-trash'
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                        // cancela o disabled para poder ser enviado
+                        $('#inputEMail').prop('disabled', false);
+                        $('form[name=formUsuario]').submit();
+                    }
+                },
+                {
+                    text: 'Cancelar',
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            ]
+        });
 
         $("button[name='submit-dados']").on('click', function () {
 
-            $('#confirmar-exclusao').modal({
-                backdrop: 'static',
-                keyboard: false
-            });
+            $('#confirmar-exclusao').dialog('open');
         });
 
-        $('#confirma-exclusao').on('click', function () {
-            $('form').submit();
-        });
-
+        $('#confirmar-exclusao').removeClass('hide');
     });
 </script>
 
-<div id="confirmar-exclusao" class="modal fade">
-    <div class="modal-dialog" style="width: 80%;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                        aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Atenção</h4>
-            </div>
-
-            <div class="modal-body">
-                <p class="text-center">Deseja excluir este usuário?</p>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="confirma-exclusao">Excluir</button>
-            </div>
-        </div>
+<div id="confirmar-exclusao" class="hide" type="Atenção">
+    <div>
+        <p class="text-center">Deseja excluir este usuário?</p>
     </div>
 </div>

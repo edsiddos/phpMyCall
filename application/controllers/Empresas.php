@@ -84,7 +84,7 @@ class Empresas extends \system\Controller {
         $permissao = "Empresas/cadastrar";
 
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $empresa = trim($_POST['empresa']);
+            $empresa = trim(filter_input(INPUT_POST, 'empresa'));
 
             if (empty($empresa)) {
                 echo json_encode(array('status' => 1));
@@ -103,10 +103,10 @@ class Empresas extends \system\Controller {
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
 
             $dados = array(
-                'empresa' => $_POST['inputEmpresa'],
-                'endereco' => (empty($_POST['inputEndereco']) ? NULL : $_POST['inputEndereco']),
-                'telefone_fixo' => $_POST['inputTelefoneFixo'],
-                'telefone_celular' => (empty($_POST['inputTelefoneCelular']) ? NULL : $_POST['inputTelefoneCelular'])
+                'empresa' => filter_input(INPUT_POST, 'inputEmpresa', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
+                'endereco' => filter_input(INPUT_POST, 'inputEndereco', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
+                'telefone_fixo' => filter_input(INPUT_POST, 'inputTelefoneFixo', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
+                'telefone_celular' => filter_input(INPUT_POST, 'inputTelefoneCelular', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL)
             );
 
             if ($this->model->cadastraEmpresa($dados)) {
@@ -165,7 +165,7 @@ class Empresas extends \system\Controller {
         $perfil = $_SESSION['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $empresa = $_POST['term'];
+            $empresa = filter_input(INPUT_POST, 'term', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
 
             echo json_encode($this->model->getNomeEmpresa($empresa));
         }
@@ -179,7 +179,7 @@ class Empresas extends \system\Controller {
         $perfil = $_SESSION['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $empresa = $_POST['empresa'];
+            $empresa = filter_input(INPUT_POST, 'empresa', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
 
             echo json_encode($this->model->getDadosEmpresas($empresa));
         }
@@ -194,13 +194,13 @@ class Empresas extends \system\Controller {
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
 
             $dados = array(
-                'empresa' => $_POST['inputEmpresa'],
-                'endereco' => (empty($_POST['inputEndereco']) ? NULL : $_POST['inputEndereco']),
-                'telefone_fixo' => $_POST['inputTelefoneFixo'],
-                'telefone_celular' => (empty($_POST['inputTelefoneCelular']) ? NULL : $_POST['inputTelefoneCelular'])
+                'empresa' => filter_input(INPUT_POST, 'inputEmpresa', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
+                'endereco' => filter_input(INPUT_POST, 'inputEndereco', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
+                'telefone_fixo' => filter_input(INPUT_POST, 'inputTelefoneFixo', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
+                'telefone_celular' => filter_input(INPUT_POST, 'inputTelefoneCelular', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL)
             );
 
-            $id = $_POST['inputID'];
+            $id = filter_input(INPUT_POST, 'inputID', FILTER_SANITIZE_NUMBER_INT, FILTER_NULL_ON_FAILURE);
 
             if ($this->model->atualizaEmpresa($id, $dados)) {
                 $_SESSION ['msg_sucesso'] = 'Sucesso ao alterar dados da empresa';
@@ -262,13 +262,13 @@ class Empresas extends \system\Controller {
         if (Menu::possuePermissao($perfil, $permissao)) {
 
             $dados = array(
-                'empresa' => $_POST['inputEmpresa'],
-                'endereco' => (empty($_POST['inputEndereco']) ? NULL : $_POST['inputEndereco']),
-                'telefone_fixo' => $_POST['inputTelefoneFixo'],
-                'telefone_celular' => (empty($_POST['inputTelefoneCelular']) ? NULL : $_POST['inputTelefoneCelular'])
+                'empresa' => filter_input(INPUT_POST, 'inputEmpresa', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
+                'endereco' => filter_input(INPUT_POST, 'inputEndereco', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
+                'telefone_fixo' => filter_input(INPUT_POST, 'inputTelefoneFixo', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
+                'telefone_celular' => filter_input(INPUT_POST, 'inputTelefoneCelular', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL)
             );
 
-            $id = $_POST['inputID'];
+            $id = filter_input(INPUT_POST, 'inputID', FILTER_SANITIZE_NUMBER_INT, FILTER_NULL_ON_FAILURE);
 
             if ($this->model->excluirEmpresa($id)) {
                 $_SESSION ['msg_sucesso'] = 'Empresa excluida com sucesso';

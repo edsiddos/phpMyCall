@@ -1,51 +1,72 @@
 
 <script type="text/javascript">
-
     $(document).ready(function () {
-        $("#add-projetos").modal({
-            backdrop: 'static',
-            keyboard: false
+
+        $('#projeto_participante').dialog({
+            autoOpen: false,
+            modal: true,
+            closeOnEscape: false,
+            width: 450,
+            buttons: [
+                {
+                    text: 'Adicionar',
+                    icons: {
+                        primary: 'ui-icon-circle-plus'
+                    },
+                    click: function () {
+                        var value = '';
+
+                        $('input[type=checkbox][name=projeto]:checked').each(function () {
+                            value += (value === '' ? '' : ',') + $(this).val();
+                        });
+
+                        $('input[name=inputProjetos]').val(value);
+                        $('#formUsuario').submit();
+                    }
+                },
+                {
+                    text: 'Cancelar',
+                    icons: {
+                        primary: 'ui-icon-circle-close'
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            ]
         });
 
-        $("#confirma").on('click', function () {
-            $('form').submit();
+        $("button[name='submit-dados'][type='button']").on('click', function () {
+            $.ajax({
+                url: '<?= HTTP . '/Usuarios/getProjetos' ?>',
+                type: 'POST',
+                dataType: 'JSON',
+                data: 'id=' + $('#inputID').val(),
+                success: function (dados) {
+                    var checkbox = '';
+
+                    $.each(dados, function (key, value) {
+                        checkbox += '<div class="row">';
+                        checkbox += '<label for="projeto' + value.id + '" class="twelve columns">';
+                        checkbox += '<input type="checkbox" name="projeto" id="projeto' + value.id + '" value="' + value.id + '" ' + (value.participante == 1 ? "checked" : '') + '/>';
+                        checkbox += '<span style="margin-left: 5%;">';
+                        checkbox += value.nome;
+                        checkbox += '</span>';
+                        checkbox += '</label>';
+                        checkbox += '</div>';
+                    });
+
+                    $('#projetos').html(checkbox);
+                    $('#projeto_participante').dialog('open');
+
+                }
+            });
         });
+
+        $('#projeto_participante').removeClass('hide');
     });
-
 </script>
 
-<div id="add-projetos" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Selecione os projetos que o usuário irá participar?</h4>
-            </div>
-
-            <div class="modal-body">
-
-                <div class="form-horizontal">
-                    <?php
-                    foreach ($projetos as $values) {
-                        ?>
-                        <div class="form-group">
-                            <label for="projeto<?= $values['id']; ?>"
-                                   class="control-label col-xs-12 text-right">
-                                <input type="checkbox" name="projeto[]" id="projeto<?= $values['id'] ?>" value="<?= $values['id'] ?>" <?= ($values['participante'] == 1) ? "checked" : ''; ?> />
-                                <?= $values['nome']; ?>
-                            </label>
-                        </div>
-                        <?php
-                    }
-                    ?>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success" id="confirma">Adicionar</button>
-            </div>
-        </div>
-    </div>
+<div id="projeto_participante" class="hide" title="Selecione os projetos que o usuário irá participar?">
+    <div id="projetos"></div>
 </div>

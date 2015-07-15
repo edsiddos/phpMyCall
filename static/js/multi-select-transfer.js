@@ -28,14 +28,14 @@
                                     <td rowspan="4" class="select">\
                                         <select multiple="" name="' + data.name_select_origin + '" id="origin"></select>\
                                     </td>\
-                                    <td class="botoes"><button id="select-add">></button></td>\
+                                    <td class="botoes"><button type="button" id="select-add">></button></td>\
                                     <td rowspan="4" class="select">\
                                         <select multiple="" name="' + data.name_select_destiny + '" id="destiny"></select>\
                                     </td>\
                                 </tr>\
-                                <tr><td class="botoes"><button id="select-add-all">>></button></td></tr>\
-                                <tr><td class="botoes"><button id="select-rem"><</button></td></tr>\
-                                <tr><td class="botoes"><button id="select-rem-all"><<</button></td></tr>\
+                                <tr><td class="botoes"><button type="button" id="select-add-all">>></button></td></tr>\
+                                <tr><td class="botoes"><button type="button" id="select-rem"><</button></td></tr>\
+                                <tr><td class="botoes"><button type="button" id="select-rem-all"><<</button></td></tr>\
                             </tbody>\
                         </table>';
 
@@ -181,11 +181,11 @@
         var elem = $(this);
 
         var data_select = {
-            origin: (typeof data.origin === "undefined" ? "" : data.origin),
-            destiny: (typeof data.destiny === "undefined" ? "" : data.destiny),
-            placeholder_filters: (typeof data.placeholder_filters === "undefined" ? "" : data.placeholder_filters),
-            name_select_origin: (typeof data.name_select_origin === "undefined" ? "origin" : data.name_select_origin),
-            name_select_destiny: (typeof data.name_select_destiny === "undefined" ? "destiny" : data.name_select_destiny)
+            origin: (typeof data === "undefined" || typeof data.origin === "undefined" ? "" : data.origin),
+            destiny: (typeof data === "undefined" || typeof data.destiny === "undefined" ? "" : data.destiny),
+            placeholder_filters: (typeof data === "undefined" || typeof data.placeholder_filters === "undefined" ? "" : data.placeholder_filters),
+            name_select_origin: (typeof data === "undefined" || typeof data.name_select_origin === "undefined" ? "origin" : data.name_select_origin),
+            name_select_destiny: (typeof data === "undefined" || typeof data.name_select_destiny === "undefined" ? "destiny" : data.name_select_destiny)
         };
 
         var multi = new MultiSelectTransfer(elem, data_select);

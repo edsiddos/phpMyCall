@@ -45,24 +45,12 @@ INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai
 INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Administração', '', TRUE, FALSE, NULL);
 INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Expediente', 'Horarios/alterarExpediente', TRUE, TRUE, 7);
 INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Feriados', 'Horarios/manterFeriados', TRUE, TRUE, 7);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Usuários', '', TRUE, FALSE, 7);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Cadastrar', 'Usuarios/cadastrar', TRUE, TRUE, 10);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Alterar', 'Usuarios/alterar', TRUE, TRUE, 10);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Excluir', 'Usuarios/excluir', TRUE, TRUE, 10);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Tipos de Feedback', '', TRUE, FALSE, 7);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Cadastrar', 'Feedback/cadastrar', TRUE, TRUE, 14);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Alterar', 'Feedback/alterar', TRUE, TRUE, 14);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Excluir', 'Feedback/excluir', TRUE, TRUE, 14);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Projetos e Problemas', '', TRUE, FALSE, 7);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Cadastrar', 'ProjetosProblemas/cadastrar', TRUE, TRUE, 18);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Alterar', 'ProjetosProblemas/alterar', TRUE, TRUE, 18);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Excluir', 'ProjetosProblemas/excluir', TRUE, TRUE, 18);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Usuários', 'Usuarios/index', TRUE, TRUE, 7);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Tipos de Feedback', 'Feedback/index', TRUE, TRUE, 7);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Projetos e Problemas', 'ProjetosProblemas/index', TRUE, TRUE, 7);
 INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Relatórios', '', TRUE, FALSE, NULL);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('SLA', 'SLA/index', TRUE, TRUE, 22);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Empresas', '', TRUE, TRUE, 7);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Cadastrar', 'Empresas/cadastrar', TRUE, TRUE, 24);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Alterar', 'Empresas/alterar', TRUE, TRUE, 24);
-INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Excluir', 'Empresas/excluir', TRUE, TRUE, 24);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('SLA', 'SLA/index', TRUE, TRUE, 13);
+INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai) VALUES ('Empresas', 'Empresas/index', TRUE, TRUE, 7);
 
 
 CREATE TABLE phpmycall.perfil(
@@ -119,37 +107,23 @@ INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (6, 5);
 INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (8, 5); -- expediente
 INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (9, 5); -- feriados
 -- Inicio manter usuário
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (11, 4); -- cadastrar
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (11, 5);
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (12, 4); -- alterar
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (12, 5);
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (13, 4); -- excluir
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (13, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (10, 4); -- cadastrar / alterar / excluir
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (10, 5);
 -- Final manter usuário
 -- Inicio manter tipos de feedback
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (15, 4); -- cadastrar
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (15, 5);
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (16, 4); -- alterar
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (16, 5);
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (17, 4); -- excluir
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (17, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (11, 4); -- cadastrar / alterar / excluir
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (11, 5);
 -- Final manter tipos de feedback
 -- Inicio manter projetos e problemas
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (19, 4); -- cadastrar
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (19, 5);
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (20, 4); -- alterar
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (20, 5);
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (21, 4); -- excluir
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (21, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (12, 4); -- cadastrar / alterar / excluir
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (12, 5);
 -- Final manter projetos e problemas
 -- Inicio relatórios
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (23, 4); -- SLA
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (23, 5);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (14, 4); -- SLA
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (14, 5);
 -- Final relatórios
 -- Inicio manter Empresas
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (25, 5); -- Cadastrar
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (26, 5); -- Alterar
-INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (27, 5); -- Excluir
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (15, 5); -- Cadastrar / Alterar / Excluir
 -- Final manter Empresas
 
 --

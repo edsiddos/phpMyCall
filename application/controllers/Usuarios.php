@@ -49,6 +49,30 @@ class Usuarios extends \system\Controller {
         }
     }
 
+    public function index() {
+        $permissao = 'Usuarios/index';
+        $perfil = $_SESSION ['perfil'];
+
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $title = array(
+                "title" => "Usuário"
+            );
+
+            $vars = array(
+                'perfil' => $this->model->getPerfil($_SESSION ['perfil']),
+                'empresas' => $this->model->getEmpresas(),
+                'usuarios' => $this->model->getUsuarios($perfil)
+            );
+
+            $this->loadView("default/header", $title);
+            $this->loadView("usuarios/index", $vars);
+            $this->loadView("usuarios/form", $vars);
+            $this->loadView("default/footer");
+        } else {
+            $this->redir('Main/index');
+        }
+    }
+
     /**
      * Gera tela com formulário para inserção de novo usuário
      */
@@ -73,7 +97,7 @@ class Usuarios extends \system\Controller {
             );
 
             $this->loadView("default/header", $title);
-            $this->loadView("usuarios/cadastrar");
+            $this->loadView("usuarios/projeto_problemas");
             $this->loadView("usuarios/index", $vars);
             $this->loadView("default/footer");
         } else {
@@ -115,15 +139,16 @@ class Usuarios extends \system\Controller {
      * @return Array Retorna um array com os dados do usuário.
      */
     private function getDadosPostUsuario() {
-        $nome = $_POST ['inputNome'];
-        $usuario = $_POST ['inputUsuario'];
-        $senha = (isset($_POST ['inputSenha']) ? $_POST ['inputSenha'] : NULL);
-        $changeme = (isset($_POST ['inputChangeme'] [0]) ? TRUE : FALSE);
-        $email = $_POST ['inputEMail'];
-        $telefone = (empty($_POST['inputTelefone']) ? NULL : $_POST['inputTelefone']);
-        $perfil = $_POST ['selectPerfil'];
-        $empresa = (empty($_POST ['selectEmpresa']) ? NULL : $_POST ['selectEmpresa']);
-        $projeto = $_POST ['projeto'];
+        $nome = filter_input(INPUT_POST, 'inputNome');
+        $usuario = filter_input(INPUT_POST, 'inputUsuario');
+        $senha = filter_input(INPUT_POST, 'inputSenha') OR NULL;
+        $changeme = filter_input(INPUT_POST, 'inputChangeme', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY)[0];
+        $changeme = $changeme === 'changeme' ? TRUE : FALSE;
+        $email = filter_input(INPUT_POST, 'inputEMail');
+        $telefone = filter_input(INPUT_POST, 'inputTelefone') OR NULL;
+        $perfil = filter_input(INPUT_POST, 'selectPerfil');
+        $empresa = filter_input(INPUT_POST, 'selectEmpresa') OR NULL;
+        $projeto = explode(',', filter_input(INPUT_POST, 'inputProjetos'));
 
         /* Verifica se todos os dados necessários foram informados */
         $datetime = NULL;
@@ -165,10 +190,10 @@ class Usuarios extends \system\Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $user = $_POST ['user'];
-            $id = $_POST ['id'];
+            $user = filter_input(INPUT_POST, 'user');
+            $id = filter_input(INPUT_POST, 'id');
 
-            echo json_encode($this->model->getUsuario($user, $id));
+            echo json_encode($this->model->validaUsuario($user, $id));
         }
     }
 
@@ -181,8 +206,8 @@ class Usuarios extends \system\Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $email = $_POST ['email'];
-            $id = $_POST ['id'];
+            $email = filter_input(INPUT_POST, 'email');
+            $id = filter_input(INPUT_POST, 'id');
 
             echo json_encode($this->model->getEmail($email, $id));
         }
@@ -213,6 +238,7 @@ class Usuarios extends \system\Controller {
 
             $this->loadView("default/header", $title);
             $this->loadView("usuarios/alterar");
+            $this->loadView("usuarios/projeto_problemas");
             $this->loadView("usuarios/index", $vars);
             $this->loadView("default/footer");
         } else {
@@ -229,7 +255,7 @@ class Usuarios extends \system\Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $usuario = $_POST ['term'];
+            $usuario = filter_input(INPUT_POST, 'term');
 
             echo json_encode($this->model->getUsuarioNome($usuario, $perfil));
         }
@@ -244,7 +270,7 @@ class Usuarios extends \system\Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $usuario = $_POST ['usuario'];
+            $usuario = filter_input(INPUT_POST, 'usuario');
 
             echo json_encode($this->model->getDadosUsuarios($usuario));
         }
@@ -259,7 +285,7 @@ class Usuarios extends \system\Controller {
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
             $dados = $this->getDadosPostUsuario();
 
-            $id = $_POST ['inputID'];
+            $id = filter_input(INPUT_POST, 'inputID');
 
             if ($this->model->atualizaUsuario($dados ['usuario'], $id)) {
                 $return = $this->model->ligaUsuarioProjeto($dados ['usuario'] ['usuario'], $dados ['projeto']);
@@ -316,9 +342,9 @@ class Usuarios extends \system\Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $id = $_POST ['inputID'];
-            $usuario = $_POST ['inputUsuario'];
-            $email = $_POST ['inputEMail'];
+            $id = filter_input(INPUT_POST, 'inputID');
+            $usuario = filter_input(INPUT_POST, 'inputUsuario');
+            $email = filter_input(INPUT_POST, 'inputEMail');
 
             $dados = array(
                 'dados' => array(
@@ -351,15 +377,13 @@ class Usuarios extends \system\Controller {
      * e os projetos disponiveis.
      */
     public function getProjetos() {
-        $permissao_1 = "Usuarios/alterar";
-        $permissao_2 = "Usuarios/cadastrar";
+        $permissao = "Usuarios/index";
         $perfil = $_SESSION ['perfil'];
 
-        if ((Menu::possuePermissao($perfil, $permissao_1)) || (Menu::possuePermissao($perfil, $permissao_2))) {
-            $id = $_POST ['id'];
-            $vars ['projetos'] = $this->model->relacaoProjetos($id);
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT, FILTER_NULL_ON_FAILURE);
 
-            $this->loadView('usuarios/projeto_problemas', $vars);
+            echo json_encode($this->model->relacaoProjetos($id));
         }
     }
 

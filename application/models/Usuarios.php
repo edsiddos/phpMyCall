@@ -51,12 +51,32 @@ class Usuarios extends \system\Model {
     }
 
     /**
+     * Busca todos os usuários que tem perfil com menor permissão.
+     * 
+     * @param string $perfil Perfil do usuário.
+     * @return Array Retorna Array relação de usuários.
+     */
+    public function getUsuarios($perfil) {
+        $sql = "SELECT usuario.id,
+                    usuario.usuario,
+                    usuario.nome,
+                    usuario.email,
+                    perfil.perfil,
+                    usuario.telefone
+                FROM phpmycall.usuario
+                INNER JOIN phpmycall.perfil ON usuario.perfil < perfil.id
+                WHERE perfil.perfil = :perfil";
+
+        return $this->select($sql, array('perfil' => $perfil));
+    }
+
+    /**
      * Verifica se usuário existe
      *
      * @param string $user Usuário
      * @return Array
      */
-    public function getUsuario($user, $id) {
+    public function validaUsuario($user, $id) {
         $sql = "SELECT EXISTS(SELECT * FROM phpmycall.usuario WHERE usuario = :user AND id <> :id) AS exist";
 
         return $this->select($sql, array('user' => $user, 'id' => $id), false);
@@ -129,10 +149,14 @@ class Usuarios extends \system\Model {
      * @return boolean True se excluido com sucesso, False se falha.
      */
     public function excluirUsuario($id, $usuario, $email, $perfil) {
-        $where = "id = {$id} AND usuario = '{$usuario}' AND email = '{$email}' AND perfil < ";
-        $where .= "(SELECT id FROM phpmycall.perfil WHERE perfil = '{$perfil}')";
+        $del_usuario = "id = {$id} AND usuario = '{$usuario}' AND email = '{$email}' AND perfil < ";
+        $del_usuario .= "(SELECT id FROM phpmycall.perfil WHERE perfil = '{$perfil}')";
 
-        return $this->delete('phpmycall.usuario', $where);
+        $del_projeto = " usuario = (SELECT usuario.id FROM phpmycall.usuario";
+        $del_projeto .= " INNER JOIN phpmycall.perfil ON usuario.perfil < perfil.id";
+        $del_projeto .= " WHERE usuario.id = {$id} AND perfil.perfil = '{$perfil}')";
+
+        return ($this->delete('phpmycall.projeto_responsaveis', $del_projeto) && $this->delete('phpmycall.usuario', $del_usuario));
     }
 
     /**
@@ -181,10 +205,9 @@ class Usuarios extends \system\Model {
     /**
      * Relaciona usuário com projetos.
      *
-     * @param string $usuario
-     * @param array $projetos
-     *        	Array com os códigos do projetos
-     * @return Array Retorna dois arrays relação de projetos inseridos e excluidos
+     * @param string $usuario login do usuário.
+     * @param array $projetos Array com os códigos do projetos.
+     * @return Array Retorna dois <b>arrays</b> relação de projetos inseridos e excluidos.
      */
     public function ligaUsuarioProjeto($usuario, $projetos) {
         $sql = "SELECT id FROM phpmycall.usuario WHERE usuario = :usuario";

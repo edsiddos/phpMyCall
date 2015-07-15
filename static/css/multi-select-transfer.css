@@ -3,6 +3,11 @@
     width: 100%;
 }
 
+#multi-select-transfer td{
+    border: none !important;
+    padding: 0px;
+}
+
 #multi-select-transfer input {
     width: 99%;
 }

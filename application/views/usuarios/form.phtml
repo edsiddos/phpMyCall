@@ -1,0 +1,193 @@
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#inputUsuario').on('focusout', function () {
+            if ($(this).val() != '') {
+                $.ajax({
+                    url: '<?= HTTP . '/Usuarios/validaUsuario' ?>',
+                    data: 'user=' + $(this).val() + '&id=' + $('#inputID').val(),
+                    type: 'POST',
+                    success: function (values) {
+                        var exists = $.parseJSON(values);
+
+                        if (exists.exist == 1) {
+                            $("#inputUsuario").removeClass('has-success');
+                            $("#inputUsuario").addClass('has-error');
+                        } else {
+                            $("#inputUsuario").removeClass('has-error');
+                            $("#inputUsuario").addClass('has-success');
+                        }
+                    }
+                });
+            } else {
+                $("#inputUsuario").removeClass('has-success');
+                $("#inputUsuario").addClass('has-error');
+            }
+        });
+
+        $('#inputEMail').on('focusout', function () {
+            if ($(this).val() != '') {
+                $.ajax({
+                    url: '<?= HTTP . '/Usuarios/validaEmail' ?>',
+                    data: 'email=' + $(this).val() + '&id=' + $('#inputID').val(),
+                    type: 'POST',
+                    success: function (values) {
+                        var exists = $.parseJSON(values);
+
+                        if (exists.exist == 1) {
+                            $("#inputEMail").removeClass('has-success');
+                            $("#inputEMail").addClass('has-error');
+                        } else {
+                            $("#inputEMail").removeClass('has-error');
+                            $("#inputEMail").addClass('has-success');
+                        }
+                    }
+                });
+            } else {
+                $("#inputEMail").removeClass('has-success');
+                $("#inputEMail").addClass('has-error');
+            }
+        });
+
+        $('#empresa').hide();
+
+        $('#selectPerfil').on('change', function () {
+            if ($(this).val() == 1) {
+                $('#empresa').show();
+            } else {
+                $('#empresa').hide();
+            }
+        });
+
+        $('#selectProjeto').multiSelectTransfer();
+
+        /*
+         * Gera dialog para inserção de dados cadastro e alteração de usuários
+         */
+
+        $('#formulario_cadastro').dialog({
+            autoOpen: false,
+            modal: true,
+            closeOnEscape: false,
+            width: '85%',
+            height: 600,
+            buttons: [
+                {
+                    text: 'Cadastrar',
+                    icons: {
+                        primary: 'ui-icon-disk'
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                        alert($('#formUsuario').serialize());
+                    }
+                },
+                {
+                    text: 'Cancelar',
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            ],
+            position: {my: 'top', at: 'top', of: window}
+        });
+
+        $('#formUsuario').tabs();
+
+        $('#formulario_cadastro').removeClass('hide');
+    });
+
+</script>
+
+<div id="formulario_cadastro" class="hide" title="">
+    <form method="post" name="formUsuario" id="formUsuario">
+
+        <ul>
+            <li><a href="#dadosUsuario">Dados Usuário</a></li>
+            <li><a href="#projetos">Projetos</a></li>
+        </ul>
+
+        <div id="dadosUsuario">
+            <input type="hidden" name="inputID" id="inputID" value="0" />
+            <div class="row">
+                <div class="twelve columns">
+                    <label for="inputNome" class="two columns">Nome</label>
+                    <input type="text" class="ten columns" id="inputNome" required name="inputNome" placeholder="Nome">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="twelve columns" id="divUsuario">
+                    <label for="inputUsuario" class="two columns">Usuário</label>
+                    <input type="text" class="ten columns" id="inputUsuario" required name="inputUsuario" placeholder="Usuário">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="twelve columns">
+                    <label for="inputSenha" class="two columns">Senha</label>
+                    <input type="password" class="six columns" id="inputSenha" required name="inputSenha" placeholder="Senha">
+                    <label for="inputChangeme" class="four columns">
+                        <input type="checkbox"name="inputChangeme[]" id="inputChangeme" value="changeme" /> Senha temporária
+                    </label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="twelve columns" id="divEMail">
+                    <label for="inputEMail" class="two columns">E-Mail</label>
+                    <input type="text" class="ten columns" id="inputEMail" name="inputEMail" required placeholder="E-Mail">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="twelve columns" id="divTelefone">
+                    <label for="inputTelefone" class="two columns">Telefone</label>
+                    <input type="text" class="ten columns" id="inputTelefone" name="inputTelefone" required placeholder="Telefone">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="twelve columns">
+                    <label for="selectPerfil" class="two columns">Perfil</label>
+                    <select class="ten columns" name="selectPerfil" id="selectPerfil" required>
+                        <option disabled selected>Selecione um perfil</option>
+                        <?php
+                        foreach ($perfil as $values) {
+                            ?>
+                            <option value="<?= $values['id']; ?>"><?= $values['perfil']; ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+
+            <div id="empresa" class="row">
+                <div class="twelve columns">
+                    <label for="selectEmpresa" class="two columns">Empresa</label>
+                    <select class="ten columns" name="selectEmpresa" id="selectEmpresa">
+                        <option disabled selected>Selecione uma empresa</option>
+                        <?php
+                        foreach ($empresas as $values) {
+                            ?>
+                            <option value="<?= $values['id']; ?>"><?= $values['empresa']; ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="projetos">
+            <div id="selectProjeto"></div>
+        </div>
+
+    </form>
+</div>
