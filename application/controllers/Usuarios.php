@@ -60,8 +60,7 @@ class Usuarios extends \system\Controller {
 
             $vars = array(
                 'perfil' => $this->model->getPerfil($_SESSION ['perfil']),
-                'empresas' => $this->model->getEmpresas(),
-                'usuarios' => $this->model->getUsuarios($perfil)
+                'empresas' => $this->model->getEmpresas()
             );
 
             $this->loadView("default/header", $title);
@@ -74,34 +73,43 @@ class Usuarios extends \system\Controller {
     }
 
     /**
-     * Gera tela com formulário para inserção de novo usuário
+     * Busca os projetos que o usuário está cadastro
+     * e os projetos disponiveis.
      */
-    public function cadastrar() {
-        $permissao = 'Usuarios/cadastrar';
+    public function getProjetos() {
+        $permissao = "Usuarios/index";
+        $perfil = $_SESSION ['perfil'];
 
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $title = array(
-                "title" => "Cadastro de usuário"
-            );
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-            $existe_projeto = $this->model->existeProjeto();
+            echo json_encode($this->model->relacaoProjetos($id));
+        }
+    }
 
-            $vars = array(
-                'perfil' => $this->model->getPerfil($_SESSION ['perfil']),
-                'empresas' => $this->model->getEmpresas(),
-                'link' => HTTP . '/Usuarios/novoUsuario',
-                'botao' => array(
-                    'value' => ($existe_projeto ? "Próximo" : "Cadastrar Usuário"),
-                    'type' => ($existe_projeto ? "button" : "submit")
-                )
-            );
+    public function getUsuarios() {
+        $permissao = 'Usuarios/index';
+        $perfil = $_SESSION ['perfil'];
 
-            $this->loadView("default/header", $title);
-            $this->loadView("usuarios/projeto_problemas");
-            $this->loadView("usuarios/index", $vars);
-            $this->loadView("default/footer");
-        } else {
-            $this->redir('Main/index');
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            echo json_encode($this->model->getUsuarios($perfil));
+        }
+    }
+
+    /**
+     * Busca dados do usuario selecionado para alteração
+     */
+    public function getDadosUsuarios() {
+        $permissao = 'Usuarios/index';
+        $perfil = $_SESSION ['perfil'];
+
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $usuario = filter_input(INPUT_POST, 'usuario', FILTER_SANITIZE_NUMBER_INT);
+
+            $dados_usuario = $this->model->getDadosUsuarios($usuario);
+            $dados_usuario['projeto'] = $this->model->relacaoProjetos($usuario);
+
+            echo json_encode($dados_usuario);
         }
     }
 
@@ -109,7 +117,10 @@ class Usuarios extends \system\Controller {
      * Realiza a inserção de um novo usuário no sistema
      */
     public function novoUsuario() {
-        $permissao = 'Usuarios/cadastrar';
+        $permissao = 'Usuarios/index';
+
+        var_dump($_POST);
+        die();
 
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
             $dados = $this->getDadosPostUsuario();
@@ -139,16 +150,16 @@ class Usuarios extends \system\Controller {
      * @return Array Retorna um array com os dados do usuário.
      */
     private function getDadosPostUsuario() {
-        $nome = filter_input(INPUT_POST, 'inputNome');
-        $usuario = filter_input(INPUT_POST, 'inputUsuario');
-        $senha = filter_input(INPUT_POST, 'inputSenha') OR NULL;
+        $nome = filter_input(INPUT_POST, 'inputNome', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
+        $usuario = filter_input(INPUT_POST, 'inputUsuario', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
+        $senha = filter_input(INPUT_POST, 'inputSenha', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
         $changeme = filter_input(INPUT_POST, 'inputChangeme', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY)[0];
         $changeme = $changeme === 'changeme' ? TRUE : FALSE;
-        $email = filter_input(INPUT_POST, 'inputEMail');
-        $telefone = filter_input(INPUT_POST, 'inputTelefone') OR NULL;
-        $perfil = filter_input(INPUT_POST, 'selectPerfil');
-        $empresa = filter_input(INPUT_POST, 'selectEmpresa') OR NULL;
-        $projeto = explode(',', filter_input(INPUT_POST, 'inputProjetos'));
+        $email = filter_input(INPUT_POST, 'inputEMail', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
+        $telefone = filter_input(INPUT_POST, 'inputTelefone', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
+        $perfil = filter_input(INPUT_POST, 'selectPerfil', FILTER_SANITIZE_NUMBER_INT);
+        $empresa = filter_input(INPUT_POST, 'selectEmpresa', FILTER_SANITIZE_NUMBER_INT);
+        $projeto = filter_input(INPUT_POST, 'inputProjetos', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 
         /* Verifica se todos os dados necessários foram informados */
         $datetime = NULL;
@@ -214,39 +225,6 @@ class Usuarios extends \system\Controller {
     }
 
     /**
-     * Busca usuário para realizar alteração
-     */
-    public function alterar() {
-        $permissao = 'Usuarios/alterar';
-
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $title = array(
-                "title" => "Alterar usuário"
-            );
-
-            $existe_projeto = $this->model->existeProjeto();
-
-            $vars = array(
-                'perfil' => $this->model->getPerfil($_SESSION ['perfil']),
-                'empresas' => $this->model->getEmpresas(),
-                'link' => HTTP . '/Usuarios/atualizaUsuario',
-                'botao' => array(
-                    "value" => ($existe_projeto ? "Próximo" : "Alterar Usuário"),
-                    "type" => ($existe_projeto ? "button" : "submit")
-                )
-            );
-
-            $this->loadView("default/header", $title);
-            $this->loadView("usuarios/alterar");
-            $this->loadView("usuarios/projeto_problemas");
-            $this->loadView("usuarios/index", $vars);
-            $this->loadView("default/footer");
-        } else {
-            $this->redir('Main/index');
-        }
-    }
-
-    /**
      * Busca os nomes de usuários
      */
     public function getUsuarioNome() {
@@ -262,30 +240,15 @@ class Usuarios extends \system\Controller {
     }
 
     /**
-     * Busca dados do usuario selecionado para alteração
-     */
-    public function getDadosUsuarios() {
-        $permissao_1 = 'Usuarios/alterar';
-        $permissao_2 = 'Usuarios/excluir';
-        $perfil = $_SESSION ['perfil'];
-
-        if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $usuario = filter_input(INPUT_POST, 'usuario');
-
-            echo json_encode($this->model->getDadosUsuarios($usuario));
-        }
-    }
-
-    /**
      * Realiza a atualização do usuário
      */
     public function atualizaUsuario() {
-        $permissao = 'Usuarios/alterar';
+        $permissao = 'Usuarios/index';
 
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
             $dados = $this->getDadosPostUsuario();
 
-            $id = filter_input(INPUT_POST, 'inputID');
+            $id = filter_input(INPUT_POST, 'inputID', FILTER_SANITIZE_NUMBER_INT);
 
             if ($this->model->atualizaUsuario($dados ['usuario'], $id)) {
                 $return = $this->model->ligaUsuarioProjeto($dados ['usuario'] ['usuario'], $dados ['projeto']);
@@ -298,10 +261,6 @@ class Usuarios extends \system\Controller {
             }
 
             Log::gravar($dados, $_SESSION ['id']);
-
-            $this->redir('Usuarios/alterar');
-        } else {
-            $this->redir('Main/index');
         }
     }
 
@@ -369,21 +328,6 @@ class Usuarios extends \system\Controller {
             $this->redir('Usuarios/excluir');
         } else {
             $this->redir('Main/index');
-        }
-    }
-
-    /**
-     * Busca os projetos que o usuário está cadastro
-     * e os projetos disponiveis.
-     */
-    public function getProjetos() {
-        $permissao = "Usuarios/index";
-        $perfil = $_SESSION ['perfil'];
-
-        if (Menu::possuePermissao($perfil, $permissao)) {
-            $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT, FILTER_NULL_ON_FAILURE);
-
-            echo json_encode($this->model->relacaoProjetos($id));
         }
     }
 

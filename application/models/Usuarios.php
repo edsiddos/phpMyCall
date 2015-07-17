@@ -64,8 +64,13 @@ class Usuarios extends \system\Model {
                     perfil.perfil,
                     usuario.telefone
                 FROM phpmycall.usuario
-                INNER JOIN phpmycall.perfil ON usuario.perfil < perfil.id
-                WHERE perfil.perfil = :perfil";
+                INNER JOIN phpmycall.perfil ON usuario.perfil = perfil.id
+                WHERE usuario.perfil < (
+                    SELECT perfil.id
+                    FROM phpmycall.perfil
+                    WHERE perfil = :perfil
+                )
+                ORDER BY perfil.id DESC";
 
         return $this->select($sql, array('perfil' => $perfil));
     }
@@ -121,11 +126,11 @@ class Usuarios extends \system\Model {
      * @param int $id ID do usuário
      * @return Array Retorna array com os dados do usuário
      */
-    public function getDadosUsuarios($usuario) {
+    public function getDadosUsuarios($id) {
         $sql = "SELECT id, usuario, nome, email, telefone, perfil, empresa
-                 FROM phpmycall.usuario WHERE usuario = :usuario";
+                 FROM phpmycall.usuario WHERE id = :id";
 
-        return $this->select($sql, array('usuario' => $usuario), false);
+        return $this->select($sql, array('id' => $id), false);
     }
 
     /**
@@ -178,28 +183,26 @@ class Usuarios extends \system\Model {
      * @return Array
      */
     public function relacaoProjetos($id_usuario) {
-        $sql = "SELECT id, nome FROM phpmycall.projeto";
-        $projetos = $this->select($sql);
-
-        $sql = "SELECT projeto.id
+        $sql = "SELECT projeto.id AS value,
+                    nome AS name
                 FROM phpmycall.projeto
                 INNER JOIN phpmycall.projeto_responsaveis ON projeto.id = projeto_responsaveis.projeto
                 WHERE usuario = :usuario";
-        $projeto_responsaveis = $this->select($sql, array('usuario' => $id_usuario));
+        $dados['participa'] = $this->select($sql, array('usuario' => $id_usuario));
 
-        foreach ($projeto_responsaveis as $values) {
-            $responsaveis [] = $values ['id'];
+        $participa = array();
+        foreach ($dados['participa'] AS $values) {
+            $participa[] = $values['value'];
         }
 
-        if (count($responsaveis) > 0) {
-            foreach ($projetos as $key => $values) {
-                if (array_search($values ['id'], $responsaveis) !== false) {
-                    $projetos [$key] ['participante'] = 1;
-                }
-            }
-        }
+        $participa = implode(',', $participa);
 
-        return $projetos;
+        $sql = "SELECT id AS value, nome AS name FROM phpmycall.projeto ";
+        $sql .= empty($participa) ? '' : "WHERE id NOT IN ({$participa})";
+
+        $dados['projeto'] = $this->select($sql);
+
+        return $dados;
     }
 
     /**

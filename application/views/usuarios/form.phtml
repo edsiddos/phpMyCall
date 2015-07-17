@@ -61,7 +61,6 @@
             }
         });
 
-        $('#selectProjeto').multiSelectTransfer();
 
         /*
          * Gera dialog para inserção de dados cadastro e alteração de usuários
@@ -81,7 +80,7 @@
                     },
                     click: function () {
                         $(this).dialog('close');
-                        alert($('#formUsuario').serialize());
+                        usuario.submitFormularioUsuario();
                     }
                 },
                 {

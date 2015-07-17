@@ -4,19 +4,202 @@
 
 <script type="text/javascript">
 
+    var Usuario = function () {
+
+        var usuarios = '';
+        var formulario = ''; // cadastro ou alteração
+
+        this.carregaTabelaUsuarios = function () {
+            getUsuarios();
+            geraTabelaUsuarios();
+            buttonEditar();
+            buttonExcluir();
+        };
+
+        this.getDadosUsuario = function (id) {
+
+            $.ajax({
+                url: '<?= HTTP . '/Usuarios/getDadosUsuarios' ?>',
+                data: 'usuario=' + id,
+                dataType: 'JSON',
+                type: 'POST',
+                async: false,
+                success: function (json) {
+                    $('#inputID').val(json.id);
+                    $('#inputNome').val(json.nome);
+                    $('#inputUsuario').val(json.usuario);
+                    $('#inputEMail').val(json.email);
+                    $('#inputTelefone').val(json.telefone);
+                    $('#selectPerfil').val(json.perfil);
+                    $('#selectEmpresa').val(json.empresa);
+                    $('#selectPerfil').change();
+
+                    multi.setOrigin(json.projeto.projeto);
+                    multi.setDestiny(json.projeto.participa);
+                }
+            });
+
+        };
+
+        this.setFormularioCadastro = function () {
+            formulario = 'cadastro';
+        };
+
+        this.setFormularioAlteracao = function () {
+            formulario = 'alteração';
+        };
+
+        this.submitFormularioUsuario = function () {
+
+            if (formulario === 'cadastro') {
+                cadastrar();
+            } else if (formulario === 'alteração') {
+                alterar();
+            }
+
+            this.carregaTabelaUsuarios();
+        };
+
+        var cadastrar = function () {
+            // Seleciona os projetos escolhidos
+            multi.destinySelect();
+
+            /*
+             $.ajax({
+             url: '<?= HTTP . '/Usuarios/atualizaUsuario' ?>',
+             data: $('#formUsuario').serialize(),
+             type: 'POST',
+             async: false
+             });
+             */
+        };
+
+        var alterar = function () {
+            // Seleciona os projetos escolhidos
+            multi.destinySelect();
+
+            $.ajax({
+                url: '<?= HTTP . '/Usuarios/atualizaUsuario' ?>',
+                data: $('#formUsuario').serialize(),
+                type: 'POST',
+                async: false
+            });
+        };
+
+        var getUsuarios = function () {
+
+            $.ajax({
+                url: '<?= HTTP . '/Usuarios/getUsuarios' ?>',
+                dataType: 'JSON',
+                async: false,
+                success: function (data) {
+                    usuarios = data;
+                }
+            });
+
+        };
+
+        var geraTabelaUsuarios = function () {
+            var tabela = '<table class="u-full-width">';
+            tabela += '<thead>';
+            tabela += '<tr>';
+            tabela += '<th>Nome</th>';
+            tabela += '<th>Usuário</th>';
+            tabela += '<th>E-Mail</th>';
+            tabela += '<th colspan="2">Perfil</th>';
+            tabela += '</tr>';
+            tabela += '</thead>';
+
+            $.each(usuarios, function (key, value) {
+
+                tabela += '<tr usuario="' + value.id + '">';
+                tabela += '<td class="col3">' + value.nome + '</td>';
+                tabela += '<td class="col1">' + value.usuario + '</td>';
+                tabela += '<td class="col3">' + value.email + '</td>';
+                tabela += '<td class="col3">' + value.perfil + '</td>';
+
+                tabela += '<td class="col2">';
+                tabela += '<button type="button" usuario="' + value.id + '" class="editar">Editar</button>';
+                tabela += '<button type="button" usuario="' + value.id + '" class="excluir">Excluir</button>';
+                tabela += '</td>';
+
+                tabela += '</tr>';
+
+            });
+
+            tabela += '</table>';
+            $('#relacaoUsuarios').html(tabela);
+        };
+
+        var buttonEditar = function () {
+
+            $('button.editar').button({
+                text: false,
+                icons: {
+                    primary: 'ui-icon-pencil'
+                }
+            }).on('click', function () {
+                usuario.getDadosUsuario($(this).attr('usuario'));
+                usuario.setFormularioAlteracao();
+
+                $('#formulario_cadastro').dialog('option', 'title', 'Alterar usuário');
+                $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
+                $('#formulario_cadastro').dialog('open');
+            });
+
+        };
+
+        var buttonExcluir = function () {
+
+            $('button.Excluir').button({
+                text: false,
+                icons: {
+                    primary: 'ui-icon-close'
+                }
+            });
+
+        };
+    };
+
+    usuario = new Usuario();
+
     $(document).ready(function () {
+
+        usuario.carregaTabelaUsuarios();
+
+        var data = {name_select_destiny: 'inputProjetos'};
+
+        multi = new MultiSelectTransfer('#selectProjeto', data);
+        multi.init();
 
         $('button[type=button][name=cadastrar]').button({
             icons: {
                 primary: 'ui-icon-circle-plus'
             }
         }).on('click', function () {
+            usuario.setFormularioCadastro();
 
             $.ajax({
                 url: '<?= HTTP . '/Usuarios/getProjetos' ?>',
+                dataType: 'JSON',
+                async: false,
+                success: function (data) {
+                    multi.setOrigin(data.projeto);
+                    multi.setDestiny(data.participa);
+                }
             });
 
+            $('#inputID').val(0);
+            $('#inputNome').val('');
+            $('#inputUsuario').val('');
+            $('#inputEMail').val('');
+            $('#inputTelefone').val('');
+            $('#selectPerfil').val('');
+            $('#selectEmpresa').val('');
+            $('#selectPerfil').change();
+
             $('#formulario_cadastro').dialog('option', 'title', 'Cadastrar usuário');
+            $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Cadastrar');
             $('#formulario_cadastro').dialog('open');
         });
 
@@ -41,5 +224,7 @@
     <div class="row">
         <button type="button" name="cadastrar" id="cadastrar">Cadastrar</button>
     </div>
+
+    <div id="relacaoUsuarios"></div>
 
 </div>
