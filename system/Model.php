@@ -41,6 +41,29 @@ class Model {
     private $statement;
 
     /**
+     *
+     * @var Array Array contendo todas sequencias do banco de dados
+     */
+    protected $sequences = array(
+        'arquivos' => 'phpmycall.arquivos_id_seq',
+        'empresas' => 'phpmycall.empresas_id_seq',
+        'feedback' => 'phpmycall.feedback_id_seq',
+        'feriado' => 'phpmycall.feriado_id_seq',
+        'log' => 'phpmycall.log_id_seq',
+        'opcoes_menu' => 'phpmycall.opcoes_menu_id_seq',
+        'perfil' => 'phpmycall.perfil_id_seq',
+        'permissao_perfil' => 'phpmycall.permissao_perfil_id_seq',
+        'prioridade' => 'phpmycall.prioridade_id_seq',
+        'projeto' => 'phpmycall.projeto_id_seq',
+        'projeto_responsaveis' => 'phpmycall.projeto_responsaveis_id_seq',
+        'projeto_tipo_problema' => 'phpmycall.projeto_tipo_problema_id_seq',
+        'solicitacao' => 'phpmycall.solicitacao_id_seq',
+        'tipo_feedback' => 'phpmycall.tipo_feedback_id_seq',
+        'tipo_problema' => 'phpmycall.tipo_problema_id_seq',
+        'usuario' => 'phpmycall.usuario_id_seq'
+    );
+
+    /**
      * Método construtor que inicializa conexão com banco de dados
      */
     public function __construct() {

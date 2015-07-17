@@ -1,20 +1,20 @@
-﻿CREATE SCHEMA phpmycall;
+CREATE SCHEMA phpmycall;
 
 CREATE TABLE phpmycall.projeto(
-	id SERIAL,
+	id SMALLSERIAL,
 	nome VARCHAR(100) NOT NULL UNIQUE,
 	descricao VARCHAR(500) DEFAULT NULL,
 	CONSTRAINT pk_problema PRIMARY KEY(id)
 );
 
 CREATE TABLE phpmycall.tipo_problema(
-	id SERIAL,
+	id SMALLSERIAL,
 	nome VARCHAR(100) NOT NULL UNIQUE,
 	CONSTRAINT pk_tipo_problema PRIMARY KEY(id)
 );
 
 CREATE TABLE phpmycall.projeto_tipo_problema(
-	id SERIAL,
+	id SMALLSERIAL,
 	projeto INTEGER NOT NULL,
 	problema INTEGER NOT NULL,
 	resposta VARCHAR(6) DEFAULT NULL, -- tempo para resposta
@@ -26,7 +26,7 @@ CREATE TABLE phpmycall.projeto_tipo_problema(
 );
 
 CREATE TABLE phpmycall.opcoes_menu(
-	id SERIAL,
+	id SMALLSERIAL,
 	nome VARCHAR(100) NOT NULL, -- Nome a ser mostrado ao usuário
 	link VARCHAR(255),
 	interno BOOLEAN NOT NULL DEFAULT TRUE, -- o link será interno ou externo
@@ -54,7 +54,7 @@ INSERT INTO phpmycall.opcoes_menu (nome, link, interno, funcionalidade, menu_pai
 
 
 CREATE TABLE phpmycall.perfil(
-	id SERIAL,
+	id SMALLSERIAL,
 	perfil VARCHAR(25) NOT NULL UNIQUE,
 	CONSTRAINT pk_perfil PRIMARY KEY (id)
 );
@@ -66,7 +66,7 @@ INSERT INTO phpmycall.perfil (perfil) VALUES ('Gerente');
 INSERT INTO phpmycall.perfil (perfil) VALUES ('Administrador de Sistema');
 
 CREATE TABLE phpmycall.permissao_perfil(
-	id SERIAL,
+	id SMALLSERIAL,
 	menu INTEGER NOT NULL,
 	perfil INTEGER NOT NULL,
 	CONSTRAINT pk_permissao_perfil PRIMARY KEY (id),
@@ -131,7 +131,7 @@ INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (15, 5); -- Cadastr
 --
 
 CREATE TABLE phpmycall.empresas(
-	id SERIAL,
+	id SMALLSERIAL,
 	empresa VARCHAR(100) NOT NULL UNIQUE,
 	endereco VARCHAR(100),
 	telefone_fixo VARCHAR(15) NOT NULL UNIQUE,
@@ -144,7 +144,7 @@ CREATE TABLE phpmycall.empresas(
 --
 
 CREATE TABLE phpmycall.usuario(
-	id SERIAL,
+	id SMALLSERIAL,
 	usuario VARCHAR(15) NOT NULL UNIQUE,
 	senha VARCHAR(50) NOT NULL,
 	nome VARCHAR(80) NOT NULL,
@@ -163,7 +163,7 @@ INSERT INTO phpmycall.usuario (usuario, senha, nome, email, perfil, dt_troca) VA
 
 
 CREATE TABLE phpmycall.prioridade(
-        id SERIAL,
+        id SMALLSERIAL,
         nome VARCHAR(15) NOT NULL UNIQUE,
         nivel INTEGER NOT NULL UNIQUE,
         padrao BOOLEAN DEFAULT FALSE,
@@ -212,7 +212,7 @@ CREATE TABLE phpmycall.arquivos(
 );
 
 CREATE TABLE phpmycall.tipo_feedback(
-	id SERIAL,
+	id SMALLSERIAL,
 	nome VARCHAR(50) UNIQUE NOT NULL,
 	abreviatura VARCHAR(10) UNIQUE NOT NULL,
 	descontar BOOLEAN DEFAULT TRUE,
@@ -236,7 +236,7 @@ CREATE TABLE phpmycall.feedback(
 );
 
 CREATE TABLE phpmycall.feriado(
-	id SERIAL,
+	id SMALLSERIAL,
 	dia DATE NOT NULL UNIQUE,
 	nome VARCHAR(50) NOT NULL,
 	CONSTRAINT pk_feriado PRIMARY KEY (id)
@@ -261,7 +261,7 @@ INSERT INTO phpmycall.expediente (id, dia_semana) VALUES(6, 'SEXTA-FEIRA');
 INSERT INTO phpmycall.expediente (id, dia_semana) VALUES(7, 'SÁBADO');
 
 CREATE TABLE phpmycall.projeto_responsaveis(
-	id SERIAL,
+	id SMALLSERIAL,
 	usuario INTEGER NOT NULL,
 	projeto INTEGER NOT NULL,
 	CONSTRAINT pk_projeto_responsaveis PRIMARY KEY(id),
@@ -270,7 +270,7 @@ CREATE TABLE phpmycall.projeto_responsaveis(
 );
 
 CREATE TABLE phpmycall.log(
-	id SERIAL,
+	id BIGSERIAL,
 	ip VARCHAR(15) NOT NULL,
 	data_hora TIMESTAMP NOT NULL,
 	dados TEXT NOT NULL,
