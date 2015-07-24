@@ -1,21 +1,46 @@
 
 <script type="text/javascript" src="<?= HTTP_JS . '/multi-select-transfer.js' ?>"></script>
+<script type="text/javascript" src="<?= HTTP_JS . '/jquery.mask.min.js' ?>"></script>
+
 <link href="<?= HTTP_CSS . '/multi-select-transfer.css' ?>" rel="stylesheet" />
 
 <script type="text/javascript">
 
+    /*
+     * Instancia objeto para exiber mensagem de aguarde.
+     */
+    var aguarde = new Aguarde('<?= HTTP_IMG . '/change.gif' ?>');
+
+    /*
+     * Cria classe para manipula de usuarios responsavel por:
+     *      * Criar tela com relação de usuários;
+     *      * Cadastrar, alterar e excluir usuários.
+     */
     var Usuario = function () {
 
         var usuarios = '';
         var formulario = ''; // cadastro ou alteração
+        var id_usuario = 0;
 
-        this.carregaTabelaUsuarios = function () {
+        /*
+         * Método que busca usuários cadastrados
+         * e botões para editar ou excluir
+         */
+        var carregaTabelaUsuarios = function () {
+            aguarde.mostrar();
+
             getUsuarios();
             geraTabelaUsuarios();
             buttonEditar();
             buttonExcluir();
+
+            aguarde.ocultar();
         };
 
+        /*
+         * Busca dados do usuário para alteração do cadastro
+         * e preenche dialog com formulário
+         */
         this.getDadosUsuario = function (id) {
 
             $.ajax({
@@ -28,6 +53,7 @@
                     $('#inputID').val(json.id);
                     $('#inputNome').val(json.nome);
                     $('#inputUsuario').val(json.usuario);
+                    $('#inputSenha').val('');
                     $('#inputEMail').val(json.email);
                     $('#inputTelefone').val(json.telefone);
                     $('#selectPerfil').val(json.perfil);
@@ -46,34 +72,90 @@
         };
 
         this.setFormularioAlteracao = function () {
-            formulario = 'alteração';
+            formulario = 'alteracao';
         };
 
+        /*
+         * Método chamado oa clicar no botão Cadastrar ou Alterar
+         */
         this.submitFormularioUsuario = function () {
-
+            aguarde.mostrar();
             if (formulario === 'cadastro') {
                 cadastrar();
-            } else if (formulario === 'alteração') {
+            } else if (formulario === 'alteracao') {
                 alterar();
             }
 
-            this.carregaTabelaUsuarios();
+            carregaTabelaUsuarios();
+            aguarde.ocultar();
         };
 
+        /*
+         * Se o id do usuário que será excluido
+         */
+        this.setIDUsuario = function (id) {
+            id_usuario = id;
+        };
+
+        /*
+         * Exclui usuário após confirmação
+         */
+        this.excluirUsuario = function () {
+            aguarde.mostrar();
+
+            $.ajax({
+                url: '<?= HTTP . '/Usuarios/removeUsuario' ?>',
+                data: 'id=' + id_usuario,
+                dataType: 'JSON',
+                type: 'POST',
+                async: false,
+                success: function (data) {
+                    if (data.status) {
+                        $('#msg-status').removeClass('hide alert-danger').addClass('alert-success');
+                        $('#msg-status').html(data.msg);
+                    } else {
+                        $('#msg-status').removeClass('hide alert-success').addClass('alert-danger');
+                        $('#msg-status').html(data.msg);
+                    }
+                }
+            });
+
+            carregaTabelaUsuarios();
+            aguarde.ocultar();
+        };
+
+        /*
+         * Envia dados para cadastro de novo usuário
+         * e logo após mostra todos os usuários cadastrados
+         * e se a operação foi realizada com sucesso
+         */
         var cadastrar = function () {
             // Seleciona os projetos escolhidos
             multi.destinySelect();
 
-            /*
-             $.ajax({
-             url: '<?= HTTP . '/Usuarios/atualizaUsuario' ?>',
-             data: $('#formUsuario').serialize(),
-             type: 'POST',
-             async: false
-             });
-             */
+            $.ajax({
+                url: '<?= HTTP . '/Usuarios/novoUsuario' ?>',
+                data: $('#formUsuario').serialize(),
+                dataType: 'JSON',
+                type: 'POST',
+                async: false,
+                success: function (data) {
+                    if (data.status) {
+                        $('#msg-status').removeClass('hide alert-danger').addClass('alert-success');
+                        $('#msg-status').html(data.msg);
+                    } else {
+                        $('#msg-status').removeClass('hide alert-success').addClass('alert-danger');
+                        $('#msg-status').html(data.msg);
+                    }
+                }
+            });
         };
 
+        /*
+         * Envia dados para alteração de usuário
+         * e logo após mostra todos os usuários cadastrados
+         * e se a operação foi realizada com sucesso
+         */
         var alterar = function () {
             // Seleciona os projetos escolhidos
             multi.destinySelect();
@@ -81,11 +163,24 @@
             $.ajax({
                 url: '<?= HTTP . '/Usuarios/atualizaUsuario' ?>',
                 data: $('#formUsuario').serialize(),
+                dataType: 'JSON',
                 type: 'POST',
-                async: false
+                async: false,
+                success: function (data) {
+                    if (data.status) {
+                        $('#msg-status').removeClass('hide alert-danger').addClass('alert-success');
+                        $('#msg-status').html(data.msg);
+                    } else {
+                        $('#msg-status').removeClass('hide alert-success').addClass('alert-danger');
+                        $('#msg-status').html(data.msg);
+                    }
+                }
             });
         };
 
+        /*
+         * Busca usuários cadastrados
+         */
         var getUsuarios = function () {
 
             $.ajax({
@@ -130,53 +225,72 @@
             tabela += '</table>';
             $('#relacaoUsuarios').html(tabela);
         };
-
-        var buttonEditar = function () {
-
-            $('button.editar').button({
-                text: false,
-                icons: {
-                    primary: 'ui-icon-pencil'
-                }
-            }).on('click', function () {
-                usuario.getDadosUsuario($(this).attr('usuario'));
-                usuario.setFormularioAlteracao();
-
-                $('#formulario_cadastro').dialog('option', 'title', 'Alterar usuário');
-                $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
-                $('#formulario_cadastro').dialog('open');
-            });
-
-        };
-
-        var buttonExcluir = function () {
-
-            $('button.Excluir').button({
-                text: false,
-                icons: {
-                    primary: 'ui-icon-close'
-                }
-            });
-
-        };
     };
 
-    usuario = new Usuario();
+
+    var usuario = new Usuario();
+
+    /*
+     * Função chamada para gerar botões de editar usuário
+     * e ação ao clicar
+     */
+    var buttonEditar = function () {
+
+        $('button.editar').button({
+            text: false,
+            icons: {
+                primary: 'ui-icon-pencil'
+            }
+        }).on('click', function () {
+            aguarde.mostrar();
+
+            usuario.getDadosUsuario($(this).attr('usuario'));
+            usuario.setFormularioAlteracao();
+
+            $('#formulario_cadastro').dialog('option', 'title', 'Alterar usuário');
+            $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
+            $('#formulario_cadastro').dialog('open');
+
+            aguarde.ocultar();
+        });
+
+    };
+
+    /*
+     * Função que gera botões de excluir usuários
+     * e aplica ação a clica-lo.
+     */
+    var buttonExcluir = function () {
+
+        $('button.Excluir').button({
+            text: false,
+            icons: {
+                primary: 'ui-icon-close'
+            }
+        }).on('click', function () {
+            usuario.setIDUsuario($(this).attr('usuario'));
+            $('#alertaExclusao').dialog('open');
+        });
+
+    };
 
     $(document).ready(function () {
 
-        usuario.carregaTabelaUsuarios();
+        buttonEditar();
+        buttonExcluir();
 
-        var data = {name_select_destiny: 'inputProjetos'};
-
-        multi = new MultiSelectTransfer('#selectProjeto', data);
+        multi = new MultiSelectTransfer('#selectProjeto', {name_select_destiny: 'inputProjetos'});
         multi.init();
 
+        /*
+         * Gera botão de cadastrar usuário e ação de clica-lo
+         */
         $('button[type=button][name=cadastrar]').button({
             icons: {
                 primary: 'ui-icon-circle-plus'
             }
         }).on('click', function () {
+            aguarde.mostrar();
             usuario.setFormularioCadastro();
 
             $.ajax({
@@ -192,6 +306,7 @@
             $('#inputID').val(0);
             $('#inputNome').val('');
             $('#inputUsuario').val('');
+            $('#inputSenha').val('');
             $('#inputEMail').val('');
             $('#inputTelefone').val('');
             $('#selectPerfil').val('');
@@ -201,6 +316,40 @@
             $('#formulario_cadastro').dialog('option', 'title', 'Cadastrar usuário');
             $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Cadastrar');
             $('#formulario_cadastro').dialog('open');
+            aguarde.ocultar();
+        });
+
+        $('#alertaExclusao').removeClass('hide');
+
+        /*
+         * Cria dialog solicitação de confirmação
+         * para exclusão de usuário
+         */
+        $('#alertaExclusao').dialog({
+            autoOpen: false,
+            modal: true,
+            closeOnEscape: false,
+            buttons: [
+                {
+                    text: 'Excluir',
+                    icons: {
+                        primary: 'ui-icon-trash'
+                    },
+                    click: function () {
+                        usuario.excluirUsuario();
+                        $(this).dialog('close');
+                    }
+                },
+                {
+                    text: 'Cancelar',
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            ]
         });
 
     });
@@ -209,22 +358,46 @@
 
 <div class="container">
 
-    <?php
-    if ((!empty($_SESSION ['msg_erro'])) || (!empty($_SESSION ['msg_sucesso']))) {
-        ?>
-        <div class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger'; ?> text-center">
-            <?= empty($_SESSION['msg_erro']) ? $_SESSION['msg_sucesso'] : $_SESSION['msg_erro']; ?>
-        </div>
-        <?php
-        unset($_SESSION ['msg_erro']);
-        unset($_SESSION ['msg_sucesso']);
-    }
-    ?>
+    <div class="row">
+        <div id="msg-status" class="alert hide text-center"></div>
+    </div>
 
     <div class="row">
         <button type="button" name="cadastrar" id="cadastrar">Cadastrar</button>
     </div>
 
-    <div id="relacaoUsuarios"></div>
+    <div id="relacaoUsuarios">
+        <table class="u-full-width">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Usuário</th>
+                    <th>E-Mail</th>
+                    <th colspan="2">Perfil</th>
+                </tr>
+            </thead>
 
+            <?php foreach ($usuarios as $values) { ?>
+
+                <tr usuario="<?= $values['id'] ?>">
+                    <td class="col3"><?= $values['nome'] ?></td>
+                    <td class="col1"><?= $values['usuario'] ?></td>
+                    <td class="col3"><?= $values['email'] ?></td>
+                    <td class="col3"><?= $values['perfil'] ?></td>
+
+                    <td class="col2">
+                        <button type="button" usuario="<?= $values['id'] ?>" class="editar">Editar</button>
+                        <button type="button" usuario="<?= $values['id'] ?>" class="excluir">Excluir</button>
+                    </td>
+                </tr>
+
+            <?php } ?>
+
+        </table>
+    </div>
+
+</div>
+
+<div id="alertaExclusao" class="hide" title="Aviso de exclusão">
+    <p>Deseja remover este usuário?</p>
 </div>

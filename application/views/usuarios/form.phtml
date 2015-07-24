@@ -3,6 +3,11 @@
 
     $(document).ready(function () {
 
+        /*
+         * Verifica se usuário já existe
+         *      Caso exista a borda do input ficará vermelha
+         *      Caso não exista a borda ficará verde
+         */
         $('#inputUsuario').on('focusout', function () {
             if ($(this).val() != '') {
                 $.ajax({
@@ -27,6 +32,11 @@
             }
         });
 
+        /*
+         * Verifica se o e endereço de e-mail informa já
+         * existe ou é inválido neste caso o input ficará vermelho.
+         * Caso sejá valido ou inexistente ficará verde.
+         */
         $('#inputEMail').on('focusout', function () {
             if ($(this).val() != '') {
                 $.ajax({
@@ -51,7 +61,30 @@
             }
         });
 
+        /*
+         * Aplica formato da mascara para os telefones com 9 e 8 digitos
+         */
+        var MascaraNonoDigito = function (val) {
+            return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
+        };
+
+        var NonoDigitoOpcoes = {
+            onKeyPress: function (val, e, field, options) {
+                field.mask(MascaraNonoDigito.apply({}, arguments), options);
+            }
+        };
+
+        $('#inputTelefone').mask(MascaraNonoDigito, NonoDigitoOpcoes);
+
+        /*
+         * Oculta o select com as empresas
+         */
+
         $('#empresa').hide();
+
+        /*
+         * Ao selecionar o perfil cliente mostra as empresas cadastradas
+         */
 
         $('#selectPerfil').on('change', function () {
             if ($(this).val() == 1) {
@@ -132,7 +165,7 @@
                     <label for="inputSenha" class="two columns">Senha</label>
                     <input type="password" class="six columns" id="inputSenha" required name="inputSenha" placeholder="Senha">
                     <label for="inputChangeme" class="four columns">
-                        <input type="checkbox"name="inputChangeme[]" id="inputChangeme" value="changeme" /> Senha temporária
+                        <input type="checkbox" name="inputChangeme[]" id="inputChangeme" value="changeme" /> Senha temporária
                     </label>
                 </div>
             </div>

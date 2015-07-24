@@ -70,7 +70,7 @@ class Usuarios extends \system\Model {
                     FROM phpmycall.perfil
                     WHERE perfil = :perfil
                 )
-                ORDER BY perfil.id DESC";
+                ORDER BY perfil.id DESC, usuario.nome";
 
         return $this->select($sql, array('perfil' => $perfil));
     }
@@ -97,27 +97,6 @@ class Usuarios extends \system\Model {
         $sql = "SELECT EXISTS(SELECT * FROM phpmycall.usuario WHERE email = :email AND id <> :id) AS exist";
 
         return $this->select($sql, array('email' => $email, 'id' => $id), false);
-    }
-
-    /**
-     * Busca usuários a partir de um nome informado.
-     *
-     * @param string $nome Nome do usuário.
-     * @param string $perfil Perfil do usuário (nível de acesso).
-     * @return Array Retorna relação de nomes semelhantes.
-     */
-    public function getUsuarioNome($usuario, $perfil) {
-        $sql = "SELECT nome, usuario FROM phpmycall.usuario WHERE usuario ILIKE :usuario
-                AND perfil < (SELECT id FROM phpmycall.perfil WHERE perfil = :perfil)";
-
-        $result = $this->select($sql, array('usuario' => "%{$usuario}%", 'perfil' => $perfil));
-
-        foreach ($result as $key => $values) {
-            $return [$key] ['label'] = $values ['usuario'] . ' (' . $values ['nome'] . ')';
-            $return [$key] ['value'] = $values ['usuario'];
-        }
-
-        return $return;
     }
 
     /**
@@ -148,32 +127,17 @@ class Usuarios extends \system\Model {
      * Realiza a exclusão de usuários.
      *
      * @param int $id Id do usuário.
-     * @param string $usuario Nome do usuário.
-     * @param string $email e-mail do usuário.
      * @param string $perfil Perfil do usuário solicitante de exclusão.
      * @return boolean True se excluido com sucesso, False se falha.
      */
-    public function excluirUsuario($id, $usuario, $email, $perfil) {
-        $del_usuario = "id = {$id} AND usuario = '{$usuario}' AND email = '{$email}' AND perfil < ";
-        $del_usuario .= "(SELECT id FROM phpmycall.perfil WHERE perfil = '{$perfil}')";
+    public function excluirUsuario($id, $perfil) {
+        $del_usuario = "id = {$id} AND perfil < (SELECT id FROM phpmycall.perfil WHERE perfil = '{$perfil}')";
 
         $del_projeto = " usuario = (SELECT usuario.id FROM phpmycall.usuario";
         $del_projeto .= " INNER JOIN phpmycall.perfil ON usuario.perfil < perfil.id";
         $del_projeto .= " WHERE usuario.id = {$id} AND perfil.perfil = '{$perfil}')";
 
         return ($this->delete('phpmycall.projeto_responsaveis', $del_projeto) && $this->delete('phpmycall.usuario', $del_usuario));
-    }
-
-    /**
-     * Verifica se existe projeto
-     *
-     * @return boolean True caso exista.
-     */
-    public function existeProjeto() {
-        $sql = "SELECT id, nome FROM phpmycall.projeto";
-        $projetos = $this->select($sql, array(), false);
-
-        return (!empty($projetos));
     }
 
     /**
@@ -229,7 +193,7 @@ class Usuarios extends \system\Model {
         $projeto_participante = $this->select($sql, array('usuario' => $usuario));
 
         $delete = array();
-        $insert = $projetos;
+        $insert = is_array($projetos) ? $projetos : array();
 
         foreach ($projeto_participante as $values) {
             if (!in_array($values ['id'], $insert)) {

@@ -51,22 +51,17 @@ class Usuarios extends \system\Controller {
 
     public function index() {
         $permissao = 'Usuarios/index';
-        $perfil = $_SESSION ['perfil'];
+        $perfil = $_SESSION['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $title = array(
-                "title" => "Usuário"
-            );
-
             $vars = array(
-                'perfil' => $this->model->getPerfil($_SESSION ['perfil']),
+                "title" => "Usuário",
+                'perfil' => $this->model->getPerfil($perfil),
+                'usuarios' => $this->model->getUsuarios($perfil),
                 'empresas' => $this->model->getEmpresas()
             );
 
-            $this->loadView("default/header", $title);
-            $this->loadView("usuarios/index", $vars);
-            $this->loadView("usuarios/form", $vars);
-            $this->loadView("default/footer");
+            $this->loadView(array("usuarios/index", "usuarios/form"), $vars);
         } else {
             $this->redir('Main/index');
         }
@@ -119,28 +114,25 @@ class Usuarios extends \system\Controller {
     public function novoUsuario() {
         $permissao = 'Usuarios/index';
 
-        var_dump($_POST);
-        die();
-
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
+        if (Menu::possuePermissao($_SESSION['perfil'], $permissao)) {
             $dados = $this->getDadosPostUsuario();
 
             if ($this->model->inserirUsuario($dados ['usuario'])) {
-                $return = $this->model->ligaUsuarioProjeto($dados ['usuario'] ['usuario'], $dados ['projeto']);
-                $_SESSION ['msg_sucesso'] = "Usuário inserido com sucesso.";
-                $dados ['dados'] = $return;
+                $return = $this->model->ligaUsuarioProjeto($dados['usuario']['usuario'], $dados['projeto']);
+                $msg['status'] = true;
+                $msg['msg'] = "Usuário inserido com sucesso.";
+                $dados['dados'] = $return;
             } else {
-                $_SESSION ['msg_erro'] = "Erro ao inserir novo usuário. Verifique dados e tente novamente.";
+                $msg['status'] = false;
+                $msg['msg'] = "Erro ao inserir novo usuário. Verifique dados e tente novamente.";
             }
 
-            $dados ['aplicacao'] = $permissao;
-            $dados ['msg'] = (empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']);
+            $dados['aplicacao'] = $permissao;
+            $dados['msg'] = $msg['msg'];
 
-            Log::gravar($dados, $_SESSION ['id']);
+            Log::gravar($dados, $_SESSION['id']);
 
-            $this->redir('Usuarios/cadastrar');
-        } else {
-            $this->redir('Main/index');
+            echo json_encode($msg);
         }
     }
 
@@ -196,13 +188,12 @@ class Usuarios extends \system\Controller {
      * Verifica se o usuário existe
      */
     public function validaUsuario() {
-        $permissao_1 = 'Usuarios/cadastrar';
-        $permissao_2 = 'Usuarios/alterar';
+        $permissao = 'Usuarios/index';
         $perfil = $_SESSION ['perfil'];
 
-        if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $user = filter_input(INPUT_POST, 'user');
-            $id = filter_input(INPUT_POST, 'id');
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $user = filter_input(INPUT_POST, 'user', FILTER_SANITIZE_STRING);
+            $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
             echo json_encode($this->model->validaUsuario($user, $id));
         }
@@ -210,32 +201,21 @@ class Usuarios extends \system\Controller {
 
     /**
      * Verifica se existe email para algum usuário
+     * e se este é valido
      */
     public function validaEmail() {
-        $permissao_1 = 'Usuarios/cadastrar';
-        $permissao_2 = 'Usuarios/alterar';
+        $permissao = 'Usuarios/index';
         $perfil = $_SESSION ['perfil'];
 
-        if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $email = filter_input(INPUT_POST, 'email');
-            $id = filter_input(INPUT_POST, 'id');
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+            $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-            echo json_encode($this->model->getEmail($email, $id));
-        }
-    }
-
-    /**
-     * Busca os nomes de usuários
-     */
-    public function getUsuarioNome() {
-        $permissao_1 = 'Usuarios/alterar';
-        $permissao_2 = 'Usuarios/excluir';
-        $perfil = $_SESSION ['perfil'];
-
-        if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $usuario = filter_input(INPUT_POST, 'term');
-
-            echo json_encode($this->model->getUsuarioNome($usuario, $perfil));
+            if (eregi("^[a-zA-Z0-9\._-]+@[a-zA-Z0-9\._-]+\.([a-zA-Z]{2,4})$", $email)) {
+                echo json_encode($this->model->getEmail($email, $id));
+            } else {
+                echo json_encode(array('exist' => true));
+            }
         }
     }
 
@@ -245,51 +225,26 @@ class Usuarios extends \system\Controller {
     public function atualizaUsuario() {
         $permissao = 'Usuarios/index';
 
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
+        if (Menu::possuePermissao($_SESSION['perfil'], $permissao)) {
             $dados = $this->getDadosPostUsuario();
 
             $id = filter_input(INPUT_POST, 'inputID', FILTER_SANITIZE_NUMBER_INT);
 
-            if ($this->model->atualizaUsuario($dados ['usuario'], $id)) {
-                $return = $this->model->ligaUsuarioProjeto($dados ['usuario'] ['usuario'], $dados ['projeto']);
-                $_SESSION ['msg_sucesso'] = "Usuário alterado com sucesso.";
-                $dados ['status'] = $permissao . ' - ok';
-                $dados = array_merge($dados, $return);
+            if ($this->model->atualizaUsuario($dados['usuario'], $id)) {
+                $return = $this->model->ligaUsuarioProjeto($dados['usuario']['usuario'], $dados['projeto']);
+                $msg['status'] = true;
+                $msg['msg'] = "Usuário alterado com sucesso.";
+                $dados['dados'] = $return;
             } else {
-                $_SESSION ['msg_erro'] = "Erro ao alterar usuário. Verifique dados e tente novamente.";
-                $dados ['status'] = $permissao . ' - falha';
+                $msg['status'] = false;
+                $msg['msg'] = "Erro ao alterar usuário. Verifique dados e tente novamente.";
             }
 
+            $dados['aplicacao'] = $permissao;
+            $dados['msg'] = $msg['msg'];
+
             Log::gravar($dados, $_SESSION ['id']);
-        }
-    }
-
-    /**
-     * Exibe tela de exclusão de usuários
-     */
-    public function excluir() {
-        $permissao = 'Usuarios/excluir';
-
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $title = array(
-                "title" => "Excluir usuário"
-            );
-
-            $vars = array(
-                'perfil' => $this->model->getPerfil($_SESSION ['perfil']),
-                'link' => HTTP . '/Usuarios/removeUsuario',
-                'botao' => array(
-                    "value" => "Excluir Usuário",
-                    "type" => "button"
-                )
-            );
-
-            $this->loadView("default/header", $title);
-            $this->loadView("usuarios/delete");
-            $this->loadView("usuarios/index", $vars);
-            $this->loadView("default/footer");
-        } else {
-            $this->redir('Main/index');
+            echo json_encode($msg);
         }
     }
 
@@ -297,37 +252,33 @@ class Usuarios extends \system\Controller {
      * Remove usuário selecionado
      */
     public function removeUsuario() {
-        $permissao = 'Usuarios/excluir';
-        $perfil = $_SESSION ['perfil'];
+        $permissao = 'Usuarios/index';
+        $perfil = $_SESSION['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $id = filter_input(INPUT_POST, 'inputID');
-            $usuario = filter_input(INPUT_POST, 'inputUsuario');
-            $email = filter_input(INPUT_POST, 'inputEMail');
+            $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
             $dados = array(
                 'dados' => array(
                     'id' => $id,
-                    'usuario' => $usuario,
-                    'email' => $email,
                     'perfil' => $perfil
                 )
             );
 
-            if ($this->model->excluirUsuario($id, $usuario, $email, $perfil)) {
-                $_SESSION ['msg_sucesso'] = "Usuário excluido com sucesso.";
+            if ($this->model->excluirUsuario($id, $perfil)) {
+                $msg['status'] = true;
+                $msg['msg'] = "Usuário excluido com sucesso.";
             } else {
-                $_SESSION ['msg_erro'] = "Erro ao excluir usuário. Verifique dados e tente novamente.";
+                $msg['status'] = false;
+                $msg['msg'] = "Erro ao excluir usuário. Verifique dados e tente novamente.";
             }
 
-            $dados ['msg'] = (empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']);
-            $dados ['aplicacao'] = $permissao;
+            $dados['msg'] = $msg['msg'];
+            $dados['aplicacao'] = $permissao;
 
-            Log::gravar($dados, $_SESSION ['id']);
+            Log::gravar($dados, $_SESSION['id']);
 
-            $this->redir('Usuarios/excluir');
-        } else {
-            $this->redir('Main/index');
+            echo json_encode($msg);
         }
     }
 
