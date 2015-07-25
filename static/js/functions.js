@@ -14,40 +14,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-$(function() {
 
-	/**
-	 * Plugin que insere mascará de hora
-	 */
-	$.fn.mascaraHora = function($value) {
-		valor = $value;
-		valor = valor.replace(":", "");
-		tamanho = valor.length;
 
-		if (tamanho > 2) {
-			minutos = valor.substring((tamanho - 2), (tamanho));
-			hora = valor.substring(0, (tamanho - 2));
+$(function () {
 
-			return hora + ':' + minutos;
-		} else {
-			return valor;
-		}
-	}
+    /**
+     * Plugin que insere mascará de hora
+     */
+    $.fn.mascaraHora = function ($value) {
+        valor = $value;
+        valor = valor.replace(":", "");
+        tamanho = valor.length;
 
-	/**
-	 * Verifica se o valor da hora entre 0:00 e 838:00
-	 */
-	$.fn.validaHoraMaxima = function($value) {
-		patt = new RegExp("^([0-9]{1,2}|[1-7][0-9]{2}|8([0-2][0-9]|3[0-8])):([0-5][0-9])$");
-		return patt.test($value);
-	}
-	
-	/**
-	 * Verifica se o valor da hora entre 0:00 e 23:59
-	 */
-	$.fn.validaHora = function($value) {
-		patt = new RegExp("^([01]{0,1}[0-9]|2[0-3]):([0-5][0-9])$");
-		return patt.test($value);
-	}
+        if (tamanho > 2) {
+            minutos = valor.substring((tamanho - 2), (tamanho));
+            hora = valor.substring(0, (tamanho - 2));
+
+            return hora + ':' + minutos;
+        } else {
+            return valor;
+        }
+    }
+
+    /**
+     * Verifica se o valor da hora entre 0:00 e 838:00
+     */
+    $.fn.validaHoraMaxima = function ($value) {
+        patt = new RegExp("^([0-9]{1,2}|[1-7][0-9]{2}|8([0-2][0-9]|3[0-8])):([0-5][0-9])$");
+        return patt.test($value);
+    }
+
+    /**
+     * Verifica se o valor da hora entre 0:00 e 23:59
+     */
+    $.fn.validaHora = function ($value) {
+        patt = new RegExp("^([01]{0,1}[0-9]|2[0-3]):([0-5][0-9])$");
+        return patt.test($value);
+    }
 
 });
