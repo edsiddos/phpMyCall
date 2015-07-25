@@ -91,7 +91,9 @@ class ProjetosProblemas extends \system\Model {
     public function getIdProjeto($nome) {
         $sql = "SELECT id FROM phpmycall.projeto WHERE nome = :nome";
 
-        return $this->select($sql, array('nome' => $nome), false);
+        $result = $this->select($sql, array('nome' => $nome), false);
+
+        return $result['id'];
     }
 
     /**
@@ -105,7 +107,9 @@ class ProjetosProblemas extends \system\Model {
                 INNER JOIN phpmycall.perfil ON usuario.perfil = perfil.id
                 WHERE usuario.perfil <= (SELECT id FROM phpmycall.perfil WHERE perfil = :perfil)";
 
-        return $this->select($sql, array('perfil' => $perfil));
+        $result = $this->select($sql, array('perfil' => $perfil));
+
+        return (empty($result) ? array() : $result);
     }
 
     /**
@@ -271,6 +275,7 @@ class ProjetosProblemas extends \system\Model {
         $sql = "SELECT usuario FROM phpmycall.projeto_responsaveis WHERE projeto = :id";
 
         $result = $this->select($sql, array('id' => $id));
+        $retorno = array();
 
         foreach ($result as $values) {
             $retorno [] = $values ['usuario'];

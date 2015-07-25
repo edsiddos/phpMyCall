@@ -50,31 +50,19 @@ class ProjetosProblemas extends \system\Controller {
     }
 
     /**
-     * Tela de cadastro de projetos e problemas
+     * Gera tela para manutenção de projetos e problemas
      */
-    public function cadastrar() {
-        $permissao = "ProjetosProblemas/cadastrar";
-        $perfil = $_SESSION ['perfil'];
+    public function index() {
+        $permissao = "ProjetosProblemas/index";
+        $perfil = $_SESSION['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $title = array(
-                'title' => 'Cadastrar projetos'
-            );
-
-            $existe_usuario = $this->model->existeUsuarios($perfil);
 
             $pagina = array(
-                'link' => HTTP . '/ProjetosProblemas/novoProjetoProblema',
-                'botao' => array(
-                    'value' => ($existe_usuario ? 'Próximo' : 'Cadastrar Projeto'),
-                    'type' => ($existe_usuario ? 'button' : 'submit')
-                )
+                'title' => 'Projetos tipo de problema.'
             );
 
-            $this->loadView('default/header', $title);
-            $this->loadView('projetos_problemas/cadastrar');
-            $this->loadView('projetos_problemas/index', $pagina);
-            $this->loadView('default/footer');
+            $this->loadView(array('projetos_problemas/index', 'projetos_problemas/form'), $pagina);
         } else {
             $this->redir('Main/index');
         }
@@ -84,12 +72,11 @@ class ProjetosProblemas extends \system\Controller {
      * Busca os tipos de projetos
      */
     public function getProjetos() {
-        $permissao_1 = "ProjetosProblemas/cadastrar";
-        $permissao_2 = "ProjetosProblemas/alterar";
+        $permissao = "ProjetosProblemas/index";
         $perfil = $_SESSION ['perfil'];
 
-        if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $nome = $_POST ['term'];
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $nome = filter_input(INPUT_POST, 'term', FILTER_SANITIZE_NUMBER_INT);
 
             echo json_encode($this->model->getProjetos($nome));
         }
@@ -99,12 +86,11 @@ class ProjetosProblemas extends \system\Controller {
      * Busca os tipos de problemas existentes
      */
     public function getProblemas() {
-        $permissao_1 = "ProjetosProblemas/cadastrar";
-        $permissao_2 = "ProjetosProblemas/alterar";
+        $permissao = "ProjetosProblemas/index";
         $perfil = $_SESSION ['perfil'];
 
-        if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $nome = $_POST ['term'];
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $nome = filter_input(INPUT_POST, 'term', FILTER_SANITIZE_NUMBER_INT);
 
             echo json_encode($this->model->getProblemas($nome));
         }
@@ -113,28 +99,13 @@ class ProjetosProblemas extends \system\Controller {
     /**
      * Busca ID de um projeto
      */
-    public function getIdProjeto() {
-        $permissao_1 = "ProjetosProblemas/cadastrar";
-        $permissao_2 = "ProjetosProblemas/alterar";
-        $perfil = $_SESSION ['perfil'];
+    public function getDadosProjeto() {
+        $permissao = "ProjetosProblemas/index";
+        $perfil = $_SESSION['perfil'];
 
-        if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $nome = $_POST ['nome'];
-
-            echo json_encode($this->model->getIdProjeto($nome));
-        }
-    }
-
-    /**
-     * Retorna relação de usuários com id
-     */
-    public function relacaoUsuarios() {
-        $permissao_1 = "ProjetosProblemas/cadastrar";
-        $permissao_2 = "ProjetosProblemas/alterar";
-        $perfil = $_SESSION ['perfil'];
-
-        if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $id = $_POST ['id'];
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
+            $id = $this->model->getIdProjeto($nome);
 
             $usuarios = $this->model->relacaoUsuarios($perfil);
             $participantes = $this->model->getRelacaoParticipantes($id);
@@ -145,13 +116,13 @@ class ProjetosProblemas extends \system\Controller {
 
             foreach ($usuarios as $values) {
                 if (in_array($values ['value'], $participantes)) {
-                    $vars ['participantes'] [] = $values;
+                    $vars['participantes'][] = $values;
                 } else {
-                    $vars ['usuarios'] [] = $values;
+                    $vars['usuarios'][] = $values;
                 }
             }
 
-            $this->loadView('projetos_problemas/usuarios', $vars);
+            echo json_encode($vars);
         }
     }
 
