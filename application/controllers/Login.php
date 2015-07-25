@@ -39,9 +39,7 @@ class Login extends \system\Controller {
      */
     public function index($parametros = array()) {
         if (!Login::verificaLogin()) {
-            $this->loadView('/default/header', array('title' => 'Efetuar Login'));
-            $this->loadView('/login/index');
-            $this->loadView('/default/footer');
+            $this->loadView(array('login/index'), array('title' => 'Efetuar Login'));
         } else {
             $this->redir("Main/index");
         }

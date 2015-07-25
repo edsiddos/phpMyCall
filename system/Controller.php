@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace system;
 
 /**
@@ -24,48 +25,46 @@ namespace system;
  * @author Ednei Leite da Silva
  */
 class Controller {
-	private $session = array ();
-	public function __construct() {
-		setlocale ( LC_ALL, 'pt_BR.utf8' );
-		header ( 'Content-Type: text/html; charset=UTF-8' );
-	}
-	
-	/**
-	 * Carrega as views das aplicações
-	 *
-	 * @param string $path
-	 *        	Caminho a partir da pasta view.
-	 * @param Array $vars
-	 *        	Array com as variaveis.
-	 */
-	protected function loadView($path, $vars = NULL) {
-		if (file_exists ( VIEWS . '/' . $path . '.phtml' )) {
-			if (count ( $vars ) > 0 && is_array ( $vars )) {
-				extract ( $vars, EXTR_PREFIX_SAME, 'data' );
-			}
-			require_once VIEWS . '/' . $path . '.phtml';
-		} else {
-			$this->error ( "Página não encontrada" );
-		}
-	}
-	
-	/**
-	 * Exibe erro ao acessar a página
-	 *
-	 * @param string $mensagem
-	 *        	Mensagem de erro
-	 */
-	private function error($mensagem) {
-		echo $mensagem;
-	}
-	
-	/**
-	 * Redireciona página
-	 *
-	 * @param string $url
-	 *        	Caminho relativo (link interno)
-	 */
-	public function redir($url) {
-		header ( "Location: " . HTTP . "/{$url}" );
-	}
+
+    private $session = array();
+
+    public function __construct() {
+        setlocale(LC_ALL, 'pt_BR.utf8');
+        header('Content-Type: text/html; charset=UTF-8');
+    }
+
+    /**
+     * Carrega as views das aplicações
+     *
+     * @param Array $paths Array com os Caminhos a partir da pasta view.
+     * @param Array $vars Array com as variaveis.
+     */
+    protected function loadView($paths, $vars = NULL) {
+        if (count($vars) > 0 && is_array($vars)) {
+            extract($vars, EXTR_PREFIX_SAME, 'data');
+        }
+
+        ob_clean();
+        ob_start();
+
+        foreach ($paths AS $path) {
+            if (file_exists(VIEWS . '/' . $path . '.phtml')) {
+                require_once VIEWS . '/' . $path . '.phtml';
+            }
+        }
+
+        define('CONTENT_HTML', ob_get_clean());
+
+        require_once VIEWS . '/default/index.phtml';
+    }
+
+    /**
+     * Redireciona página
+     *
+     * @param string $url Caminho relativo (link interno)
+     */
+    public function redir($url) {
+        header("Location: " . HTTP . "/{$url}");
+    }
+
 }

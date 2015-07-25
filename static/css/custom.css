@@ -18,6 +18,12 @@ html {
     min-height: 100%;
 }
 
+body{
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
 th, td{
     vertical-align: middle !important;
 }
@@ -29,12 +35,6 @@ th, td{
 
 header, #header_page > #menus ul ul{
     background-color: #BBBBBB;
-}
-
-#main {
-    display: table;
-    height: 100%;
-    width: 100%;
 }
 
 .block {
@@ -293,6 +293,10 @@ label {
     color: #000;
 }
 
+/**************************************************************************/
+/*********************   INPUT E FORMULARIOS   ****************************/
+/**************************************************************************/
+
 .button-success, .button-error, .button-warning, .button-secondary,
 .button-success:hover, .button-error:hover, .button-warning:hover, .button-secondary:hover,
 .button-success:focus, .button-error:focus, .button-warning:focus, .button-secondary:focus{
@@ -331,6 +335,22 @@ input[type="text"]:-moz-read-only, textarea:-moz-read-only{
 
 .button-secondary {
     background: rgb(66, 184, 221);
+}
+
+fieldset {
+    margin: 0;
+    padding: 0.35em 0 0.75em;
+    border: 0;
+    margin-bottom: 10px;
+}
+
+legend {
+    display: block;
+    width: 100%;
+    padding: 0.3em 0;
+    margin-bottom: 0.3em;
+    color: #333;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .has-success {

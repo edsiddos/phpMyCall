@@ -45,15 +45,16 @@ class Main extends \system\Controller {
         $usuario = $_SESSION['id'];
         $perfil = $_SESSION['perfil'];
 
-        $var['aberta'] = $solicitacao->getSolicitacoes($usuario, $perfil, 1);
-        $var['andamento'] = $solicitacao->getSolicitacoes($usuario, $perfil, 2);
-
         $parametros = Cache::getCache(PARAMETROS);
-        $var['prioridades'] = $parametros['CORES_SOLICITACOES'];
 
-        $this->loadView('default/header', array('title' => 'PhpMyCall'));
-        $this->loadView('main/index', $var);
-        $this->loadView('default/footer');
+        $var = array(
+            'aberta' => $solicitacao->getSolicitacoes($usuario, $perfil, 1),
+            'andamento' => $solicitacao->getSolicitacoes($usuario, $perfil, 2),
+            'prioridades' => $parametros['CORES_SOLICITACOES'],
+            'title' => 'PhpMyCall'
+        );
+
+        $this->loadView(array('main/index'), $var);
     }
 
 }
