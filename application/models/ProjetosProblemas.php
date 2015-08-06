@@ -27,22 +27,6 @@ namespace application\models;
 class ProjetosProblemas extends \system\Model {
 
     /**
-     * Verifica se existem usuários cadastros
-     *
-     * @param string $perfil Perfil de quem irá criar o projeto
-     * @return boolean True se existe usuários
-     */
-    public function existeUsuarios($perfil) {
-        $sql = "SELECT COUNT(usuario.id) AS count
-                FROM phpmycall.usuario
-                WHERE usuario.perfil <= (SELECT id FROM phpmycall.perfil WHERE perfil = :perfil)";
-
-        $return = $this->select($sql, array('perfil' => $perfil), false);
-
-        return ($return ['count'] > 0);
-    }
-
-    /**
      * Busca os nome dos projetos existentes
      *
      * @param string $nome Nome do projeto.
@@ -123,8 +107,7 @@ class ProjetosProblemas extends \system\Model {
         $sql = "SELECT projeto_tipo_problema.id FROM phpmycall.projeto_tipo_problema
                 INNER JOIN phpmycall.projeto ON projeto_tipo_problema.projeto = projeto.id
                 INNER JOIN phpmycall.tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id
-                WHERE projeto.nome = :projeto
-                    AND tipo_problema.nome = :problema";
+                WHERE projeto.nome = :projeto AND tipo_problema.nome = :problema";
 
         $return = $this->select($sql, array('projeto' => $projeto, 'problema' => $problema), false);
 
@@ -139,15 +122,16 @@ class ProjetosProblemas extends \system\Model {
      * @return mixed Retorna <b>id</b> (int) do projeto ou <b>false</b> caso de erro.
      */
     public function insertProjeto($nome, $descricao) {
+        $sql = "SELECT NEXTVAL('{$this->sequences['projeto']}') as id";
+        $return = $this->select($sql, NULL, false);
+
         $array = array(
+            'id' => $return['id'],
             'nome' => $nome,
             'descricao' => $descricao
         );
 
         if ($this->insert('phpmycall.projeto', $array)) {
-            $sql = "SELECT id FROM phpmycall.projeto WHERE nome = :nome AND descricao = :descricao";
-
-            $return = $this->select($sql, $array, false);
             return $return ['id'];
         } else {
             return FALSE;
@@ -177,12 +161,17 @@ class ProjetosProblemas extends \system\Model {
      * @return mixed Retorna <b>código do problema</b> caso sucesso, <b>FALSE</b> caso erro.
      */
     public function insertTipoProblema($nome) {
-        $array = array('nome' => $nome);
+        $sql = "SELECT NEXTVAL('{$this->sequences['tipo_problema']}') AS id";
+        $id = $this->select($sql, NULL, false);
+
+        $array = array(
+            'id' => $id['id'],
+            'nome' => $nome
+        );
+
+        var_dump($array);
 
         if ($this->insert('phpmycall.tipo_problema', $array)) {
-            $sql = "SELECT id FROM phpmycall.tipo_problema WHERE nome = :nome";
-
-            $id = $this->select($sql, $array, false);
             return $id ['id'];
         } else {
             return FALSE;
@@ -192,13 +181,12 @@ class ProjetosProblemas extends \system\Model {
     /**
      * Adiciona participantes do projeto
      *
-     * @param string $participantes String com os participantes
+     * @param array $participantes Array com os id dos participantes
      * @param int $projeto Código do projeto
      */
     public function adicionaPartcipantesProjeto($participantes, $projeto) {
-        $usuarios = explode(',', $participantes);
 
-        foreach ($usuarios as $values) {
+        foreach ($participantes as $values) {
             $this->insert('phpmycall.projeto_responsaveis', array('usuario' => $values, 'projeto' => $projeto));
         }
     }
@@ -230,15 +218,22 @@ class ProjetosProblemas extends \system\Model {
      * @return array Retorna lista
      */
     public function listaProjetoProblemas() {
-        $sql = "SELECT projeto_tipo_problema.id, projeto.nome AS projeto, tipo_problema.nome AS problema
+        $sql = "SELECT projeto_tipo_problema.id,
+                    projeto.id AS id_projeto,
+                    projeto.nome AS projeto,
+                    tipo_problema.nome AS problema
                 FROM phpmycall.projeto_tipo_problema
                 INNER JOIN phpmycall.projeto ON projeto_tipo_problema.projeto = projeto.id
-                INNER JOIN phpmycall.tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id";
+                INNER JOIN phpmycall.tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id
+                ORDER BY projeto.nome, tipo_problema.nome";
 
         $result = $this->select($sql);
 
+        $return = NULL;
+
         foreach ($result as $values) {
-            $return [$values ['projeto']] [$values ['id']] = $values ['problema'];
+            $return[$values['projeto']]['projeto_tipo_problema'][$values ['id']] = $values ['problema'];
+            $return[$values['projeto']]['id_projeto'] = $values ['id_projeto'];
         }
 
         return $return;
@@ -251,9 +246,11 @@ class ProjetosProblemas extends \system\Model {
      * @return array
      */
     public function getDadosProjetoProblema($id) {
-        $sql = "SELECT projeto.id,
-                    projeto.nome AS projeto,
-                    tipo_problema.nome AS problema,
+        $sql = "SELECT projeto.id AS id_projeto,
+                    projeto.nome AS nome_projeto,
+                    projeto.descricao AS descricao_projeto,
+                    tipo_problema.id AS id_problema,
+                    tipo_problema.nome AS nome_problema,
                     projeto_tipo_problema.resposta AS resposta,
                     projeto_tipo_problema.solucao AS solucao,
                     projeto_tipo_problema.descricao AS descricao

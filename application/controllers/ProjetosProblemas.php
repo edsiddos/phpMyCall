@@ -22,6 +22,7 @@ namespace application\controllers;
 use \application\models\ProjetosProblemas as ModelProjetosProblemas;
 use \libs\Menu;
 use \libs\Log;
+use \libs\Utils;
 
 /**
  * Manipulas os projetos e tipos de problemas
@@ -59,7 +60,8 @@ class ProjetosProblemas extends \system\Controller {
         if (Menu::possuePermissao($perfil, $permissao)) {
 
             $pagina = array(
-                'title' => 'Projetos tipo de problema.'
+                'title' => 'Projetos tipo de problema.',
+                'listaProjeto' => $this->model->listaProjetoProblemas()
             );
 
             $this->loadView(array('projetos_problemas/index', 'projetos_problemas/form'), $pagina);
@@ -76,7 +78,7 @@ class ProjetosProblemas extends \system\Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $nome = filter_input(INPUT_POST, 'term', FILTER_SANITIZE_NUMBER_INT);
+            $nome = filter_input(INPUT_POST, 'term', FILTER_SANITIZE_STRING);
 
             echo json_encode($this->model->getProjetos($nome));
         }
@@ -90,7 +92,7 @@ class ProjetosProblemas extends \system\Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $nome = filter_input(INPUT_POST, 'term', FILTER_SANITIZE_NUMBER_INT);
+            $nome = filter_input(INPUT_POST, 'term', FILTER_SANITIZE_STRING);
 
             echo json_encode($this->model->getProblemas($nome));
         }
@@ -129,107 +131,78 @@ class ProjetosProblemas extends \system\Controller {
     /**
      * Insere um novo projeto com os respectivos participantes
      */
-    public function novoProjetoProblema() {
-        $permissao = 'ProjetosProblemas/cadastrar';
+    public function cadastrar() {
+        $permissao = 'ProjetosProblemas/index';
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $id = $_POST ['inputID'];
-            $participantes = $_POST ['relacaoParticipantes'];
-            $projeto = $_POST ['inputProjeto'];
-            $problema = $_POST ['inputProblema'];
-            $resposta = $_POST ['inputResposta'];
-            $solucao = $_POST ['inputSolucao'];
-            $descricao = $_POST ['textDescricao'];
-            $descricao_projeto = $_POST ['descricaoProjeto'];
+            $utils = new Utils();
+            $valida_hora = array('options' => array($utils, 'validaFormatoHora'));
+
+            $participantes = filter_input(INPUT_POST, 'participantes', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+            $projeto = filter_input(INPUT_POST, 'inputNomeProjeto', FILTER_SANITIZE_STRING);
+            $problema = filter_input(INPUT_POST, 'inputNomeProblema', FILTER_SANITIZE_STRING);
+            $resposta = filter_input(INPUT_POST, 'inputResposta', FILTER_CALLBACK, $valida_hora);
+            $solucao = filter_input(INPUT_POST, 'inputSolucao', FILTER_CALLBACK, $valida_hora);
+            $descricao_projeto = filter_input(INPUT_POST, 'textProjeto', FILTER_SANITIZE_STRING);
+            $descricao = filter_input(INPUT_POST, 'textDescricao', FILTER_SANITIZE_STRING);
 
             if (!$this->model->existeProjetoProblema($projeto, $problema)) {
-                if (empty($id)) {
-                    $id = $this->model->insertProjeto($projeto, $descricao_projeto);
+                $idProjeto = $this->model->getIdProjeto($projeto);
+                $id = $idProjeto;
 
-                    if (empty($id)) {
-                        $_SESSION ['msg_erro'] = "Erro ao criar projeto";
+                if (empty($idProjeto)) {
+                    $idProjeto = $this->model->insertProjeto($projeto, $descricao_projeto);
+
+                    if (empty($idProjeto)) {
+                        $dados = array('status' => false, 'msg' => "Erro ao criar projeto");
                     } else if (!empty($participantes)) {
-                        $this->model->adicionaPartcipantesProjeto($participantes, $id);
+                        $this->model->adicionaPartcipantesProjeto($participantes, $idProjeto);
                     }
                 }
 
-                if (!empty($id)) {
-                    $id_problema = $this->model->getIdProblema($problema);
+                if (!empty($idProjeto)) {
+                    $idProblema = $this->model->getIdProblema($problema);
 
-                    if (empty($id_problema)) {
-                        $id_problema = $this->model->insertTipoProblema($problema);
+                    if (empty($idProblema)) {
+                        $idProblema = $this->model->insertTipoProblema($problema);
 
-                        if (empty($id_problema)) {
-                            $_SESSION ['msg_erro'] = "Erro ao criar tipo de problema";
+                        if (empty($idProblema)) {
+                            $dados = array('status' => false, 'msg' => "Erro ao criar tipo de problema");
                         }
                     }
 
-                    if (!empty($id_problema)) {
-                        $this->model->criaProjetoProblemas($id, $id_problema, $resposta, $solucao, $descricao);
-                        $_SESSION ['msg_sucesso'] = 'Projeto criado com sucesso';
+                    if (!empty($idProblema)) {
+                        $this->model->criaProjetoProblemas($idProjeto, $idProblema, $resposta, $solucao, $descricao);
+                        $dados = array('status' => true, 'msg' => 'Projeto criado com sucesso');
                     }
                 }
 
-                $dados = array(
+                $dados_log = array(
                     'dados' => array(
                         'operacao' => empty($id) ? 'Criação projeto e problema' : 'Adição de tipo de problema',
-                        'id_projeto' => $id,
+                        'id_projeto' => $idProjeto,
                         'nome_projeto' => $projeto,
                         'descricao_projeto' => $descricao_projeto,
-                        'id_tipo_problema' => $id_problema,
+                        'id_tipo_problema' => $idProblema,
                         'nome_tipo_problema' => $problema,
                         'tempo_resposta' => $resposta,
                         'tempo_solucao' => $solucao,
-                        'projeto_tipo_problema' => $descricao,
-                        'novos_usuarios' => $participantes
+                        'novos_usuarios' => implode(',', $participantes)
                     )
                 );
             } else {
-                $_SESSION ['msg_erro'] = "Já existe projeto com este tipo de problema.";
+                $dados = array('status' => false, 'msg' => "Já existe projeto com este tipo de problema.");
             }
 
-            $dados ['msg'] = empty($_SESSION ['msg_erro']) ? $_SESSION ['msg_sucesso'] : $_SESSION ['msg_erro'];
-            $dados ['aplicacao'] = $permissao;
+            $dados_log ['msg'] = $dados['msg'];
+            $dados_log ['aplicacao'] = $permissao;
 
-            Log::gravar($dados, $_SESSION ['id']);
+            Log::gravar($dados_log, $_SESSION ['id']);
 
-            $this->redir('ProjetosProblemas/cadastrar');
-        } else {
-            $this->redir('Main/index');
-        }
-    }
+            $dados['listaProjetoProblemas'] = $this->model->listaProjetoProblemas();
 
-    /**
-     * Tela de alteração dos projetos
-     */
-    public function alterar() {
-        $permissao = "ProjetosProblemas/alterar";
-        $perfil = $_SESSION ['perfil'];
-
-        if (Menu::possuePermissao($perfil, $permissao)) {
-            $title = array(
-                'title' => 'Alterar projetos'
-            );
-
-            $existe_usuario = $this->model->existeUsuarios($perfil);
-
-            $pagina = array(
-                'link' => HTTP . '/ProjetosProblemas/atualizarProjetoProblema',
-                'botao' => array(
-                    'value' => ($existe_usuario ? 'Próximo' : 'Alterar Projeto'),
-                    'type' => ($existe_usuario ? 'button' : 'submit')
-                )
-            );
-
-            $listaProjetos ['listaProjeto'] = $this->model->listaProjetoProblemas();
-
-            $this->loadView('default/header', $title);
-            $this->loadView('projetos_problemas/alterar', $listaProjetos);
-            $this->loadView('projetos_problemas/index', $pagina);
-            $this->loadView('default/footer');
-        } else {
-            $this->redir('Main/index');
+            echo json_encode($dados);
         }
     }
 
@@ -237,42 +210,50 @@ class ProjetosProblemas extends \system\Controller {
      * Busca informações sobre o projeto.
      */
     public function getDadosProjetosProblemas() {
-        $id = $_POST ['id'];
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $permissao = "ProjetosProblemas/index";
+        $perfil = $_SESSION['perfil'];
 
-        echo json_encode($this->model->getDadosProjetoProblema($id));
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            echo json_encode($this->model->getDadosProjetoProblema($id));
+        }
     }
 
     /**
      * Realiza a operação de atualização do projeto (alterar)
      */
-    public function atualizarProjetoProblema() {
-        $id_projeto = $_POST ['inputID'];
-        $participantes = $_POST ['relacaoParticipantes'];
-        $descricao_projeto = $_POST ['descricaoProjeto'];
-        $id_projeto_old = $_POST ['inputProjetoOld'];
-        $id_projeto_problema = $_POST ['inputProjetoProblema'];
-        $projeto = $_POST ['inputProjeto'];
-        $problema = $_POST ['inputProblema'];
-        $resposta = $_POST ['inputResposta'];
-        $solucao = $_POST ['inputSolucao'];
-        $descricao_problema_projeto = $_POST ['textDescricao'];
-        $permissao = "ProjetosProblemas/alterar";
+    public function alterar() {
+        $permissao = 'ProjetosProblemas/index';
+        $perfil = $_SESSION ['perfil'];
 
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $utils = new Utils();
+            $valida_hora = array('options' => array($utils, 'validaFormatoHora'));
+
+            $id_projeto = filter_input(INPUT_POST, 'inputProjeto', FILTER_SANITIZE_NUMBER_INT);
+            $id_problema = filter_input(INPUT_POST, 'inputProblema', FILTER_SANITIZE_NUMBER_INT);
+            $id_projeto_problema = filter_input(INPUT_POST, 'inputProjetoProblema', FILTER_SANITIZE_NUMBER_INT);
+            $participantes = filter_input(INPUT_POST, 'participantes', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+            $projeto = filter_input(INPUT_POST, 'inputNomeProjeto', FILTER_SANITIZE_STRING);
+            $problema = filter_input(INPUT_POST, 'inputNomeProblema', FILTER_SANITIZE_STRING);
+            $resposta = filter_input(INPUT_POST, 'inputResposta', FILTER_CALLBACK, $valida_hora);
+            $solucao = filter_input(INPUT_POST, 'inputSolucao', FILTER_CALLBACK, $valida_hora);
+            $descricao_projeto = filter_input(INPUT_POST, 'textProjeto', FILTER_SANITIZE_STRING);
+            $descricao = filter_input(INPUT_POST, 'textDescricao', FILTER_SANITIZE_STRING);
 
             $update_projeto = array(
                 'nome' => $projeto,
                 'descricao' => $descricao_projeto
             );
 
-            if ($this->model->alteraProjeto($update_projeto, $id_projeto_old)) {
-                $participantes_old = $this->model->getRelacaoParticipantes($id_projeto_old);
-                $insert = explode(',', $participantes);
+            if ($this->model->alteraProjeto($update_projeto, $id_projeto)) {
+                $participantes_old = $this->model->getRelacaoParticipantes($id_projeto);
+                $insert = $participantes;
                 $delete = array();
 
                 foreach ($participantes_old as $value) {
                     if (!in_array($value, $insert)) {
-                        $this->model->deleteParticipantesProjeto($value, $id_projeto_old);
+                        $this->model->deleteParticipantesProjeto($value, $id_projeto);
                         $delete [] = $value;
                     }
 
@@ -282,10 +263,10 @@ class ProjetosProblemas extends \system\Controller {
                     }
                 }
 
+                $this->model->adicionaPartcipantesProjeto($insert, $id_projeto);
+
                 $delete = implode(',', $delete);
                 $insert = implode(',', $insert);
-
-                $this->model->adicionaPartcipantesProjeto($insert, $id_projeto_old);
 
                 $id_problema = $this->model->getIdProblema($problema);
 
@@ -293,19 +274,21 @@ class ProjetosProblemas extends \system\Controller {
                     $id_problema = $this->model->insertTipoProblema($problema);
 
                     if (empty($id_problema)) {
-                        $_SESSION ['msg_erro'] = "Erro ao criar tipo de problema";
+                        $dados = array('status' => false, 'msg' => "Erro ao criar tipo de problema");
                     }
                 }
 
+                /*
+                 * Verifica se foi inserido ou existe tipo do problema
+                 */
                 if (!empty($id_problema)) {
-                    $this->model->atualizaProjetoProblemas($id_projeto_problema, $id_projeto_old, $id_problema, $resposta, $solucao, $descricao_problema_projeto);
-                    $_SESSION ['msg_sucesso'] = "Atualização de projeto, problema realizada com sucesso";
+                    $this->model->atualizaProjetoProblemas($id_projeto_problema, $id_projeto, $id_problema, $resposta, $solucao, $descricao);
+                    $dados = array('status' => true, 'msg' => "Atualização de projeto problema realizada com sucesso");
                 }
 
-                $dados = array(
+                $dados_log = array(
                     'dados' => array(
-                        'altera_nome_projeto' => $id_projeto == 0 ? 'sim' : 'não',
-                        'id_projeto' => $id_projeto_old,
+                        'id_projeto' => $id_projeto,
                         'nome_projeto' => $projeto,
                         'descricao_projeto' => $descricao_projeto,
                         'id_tipo_problema' => $id_problema,
@@ -313,88 +296,53 @@ class ProjetosProblemas extends \system\Controller {
                         'id_projeto_tipo_problema' => $id_projeto_problema,
                         'tempo_resposta' => $resposta,
                         'tempo_solucao' => $solucao,
-                        'projeto_tipo_problema' => $descricao_problema_projeto,
+                        'projeto_tipo_problema' => $descricao,
                         'novos_usuarios' => $insert,
                         'excluir_usuarios' => $delete
                     ),
-                    'msg' => empty($_SESSION ['msg_erro']) ? $_SESSION ['msg_sucesso'] : $_SESSION ['msg_erro'],
+                    'msg' => $dados['msg'],
                     'aplicacao' => $permissao
                 );
 
                 Log::gravar($dados, $_SESSION ['id']);
+
+                $dados['listaProjetoProblemas'] = $this->model->listaProjetoProblemas();
+
+                echo json_encode($dados);
             }
-
-            $this->redir('ProjetosProblemas/alterar');
-        } else {
-            $this->main('Main/index');
-        }
-    }
-
-    /**
-     * Tela de exclusão de projeto
-     */
-    public function excluir() {
-        $permissao = "ProjetosProblemas/excluir";
-
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $title = array(
-                'title' => 'Excluir projetos'
-            );
-
-            $pagina = array(
-                'link' => HTTP . '/ProjetosProblemas/excluirProjetoProblema',
-                'botao' => array(
-                    'value' => 'Excluir',
-                    'type' => 'button'
-                )
-            );
-
-            $listaProjetos ['listaProjeto'] = $this->model->listaProjetoProblemas();
-
-            $this->loadView('default/header', $title);
-            $this->loadView('projetos_problemas/excluir', $listaProjetos);
-            $this->loadView('projetos_problemas/index', $pagina);
-            $this->loadView('default/footer');
-        } else {
-            $this->redir('Main/index');
         }
     }
 
     /**
      * Realiza a exclusão do projeto tipo de problema selecionado
      */
-    public function excluirProjetoProblema() {
-        $permissao = "ProjetosProblemas/excluir";
+    public function excluir() {
+        $permissao = "ProjetosProblemas/index";
 
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $id_projeto = $_POST ['inputID'];
-            $id_projeto_problema = $_POST ['inputProjetoProblema'];
-
-            $projeto = $_POST ['inputProjeto'];
-            $problema = $_POST ['inputProblema'];
+            $id_projeto = filter_input(INPUT_POST, 'projeto', FILTER_SANITIZE_NUMBER_INT);
+            $id_projeto_problema = filter_input(INPUT_POST, 'projetoProblema', FILTER_SANITIZE_NUMBER_INT);
 
             if ($this->model->excluirProjetoProblemas($id_projeto, $id_projeto_problema)) {
-                $_SESSION ['msg_sucesso'] = 'Sucesso ao excluir projeto tipo de problema';
+                $dados = array('status' => true, 'msg' => 'Sucesso ao excluir projeto tipo de problema');
             } else {
-                $_SESSION ['msg_erro'] = 'Erro ao excluir projeto tipo de problema';
+                $dados = array('status' => false, 'msg' => 'Erro ao excluir projeto tipo de problema');
             }
 
-            $dados = array(
+            $log = array(
                 'dados' => array(
                     'id_projeto' => $id_projeto,
-                    'id_projeto_problema' => $id_projeto_problema,
-                    'projeto' => $projeto,
-                    'problema' => $problema
+                    'id_projeto_problema' => $id_projeto_problema
                 ),
                 'aplicacao' => $permissao,
-                'msg' => empty($_SESSION ['msg_erro']) ? $_SESSION ['msg_sucesso'] : $_SESSION ['msg_erro']
+                'msg' => $dados['msg']
             );
 
-            Log::gravar($dados, $_SESSION ['id']);
+            Log::gravar($log, $_SESSION ['id']);
 
-            $this->redir('ProjetosProblemas/excluir');
-        } else {
-            $this->redir('Main/index');
+            $dados['listaProjetoProblemas'] = $this->model->listaProjetoProblemas();
+
+            echo json_encode($dados);
         }
     }
 
