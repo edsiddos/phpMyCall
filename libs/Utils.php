@@ -37,4 +37,17 @@ final class Utils {
         return (!is_bool(array_search($values, $array)));
     }
 
+    /**
+     * Valida string no formato horas minutos.
+     * @param type $str String no formata de horas com 4 digitos e minutos
+     * @return mixed <b>string</b> no formato da hora se sucesso, <b>NULL</b> em caso de falha
+     */
+    public function validaFormatoHora($str) {
+        if (eregi('[0-9]{1,4}:[0-5][0-9]', $str)) {
+            return $str;
+        } else {
+            return NULL;
+        }
+    }
+
 }
