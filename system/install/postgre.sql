@@ -17,8 +17,8 @@ CREATE TABLE phpmycall.projeto_tipo_problema(
 	id SMALLSERIAL,
 	projeto INTEGER NOT NULL,
 	problema INTEGER NOT NULL,
-	resposta VARCHAR(6) DEFAULT NULL, -- tempo para resposta
-	solucao VARCHAR(6) DEFAULT NULL, -- tempo para solução
+	resposta VARCHAR(7) DEFAULT NULL, -- tempo para resposta
+	solucao VARCHAR(7) DEFAULT NULL, -- tempo para solução
 	descricao VARCHAR(1000) DEFAULT NULL, -- informação geral do tipo de problema
 	CONSTRAINT pk_projeto_tipo_problema PRIMARY KEY (id),
 	CONSTRAINT fk_projeto_projeto_tipo_problema FOREIGN KEY (projeto) REFERENCES phpmycall.projeto(id),
