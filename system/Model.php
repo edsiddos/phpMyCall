@@ -125,7 +125,7 @@ class Model {
         // Define os dados
         foreach ($data as $key => $value) {
             // Se o tipo do dado for inteiro, usa PDO::PARAM_INT, caso contrário, PDO::PARAM_STR
-            $tipo = (is_int($value)) ? PDO::PARAM_INT : PDO::PARAM_STR;
+            $tipo = (is_string($value)) ? PDO::PARAM_STR : PDO::PARAM_INT;
 
             // Define o dado
             $sth->bindValue(":$key", $value, $tipo);
@@ -158,8 +158,7 @@ class Model {
 
         // Define os dados
         foreach ($data as $key => $value) {
-            // Se o tipo do dado for inteiro, usa PDO::PARAM_INT, caso contrário, PDO::PARAM_STR
-            $tipo = (is_int($value)) ? PDO::PARAM_INT : PDO::PARAM_STR;
+            $tipo = (is_string($value)) ? PDO::PARAM_STR : PDO::PARAM_INT;
 
             // Define o dado
             $sth->bindValue(":{$key}", $value, $tipo);
