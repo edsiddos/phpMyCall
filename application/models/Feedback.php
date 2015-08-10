@@ -49,26 +49,25 @@ class Feedback extends Model {
     }
 
     /**
-     * Busca os tipos de feedback a partir do nome
+     * Busca de dados do tipo de feedback
      *
-     * @param string $nome Nome de tipo de feedback
-     * @return Array Retorna array com os tipos de feedback
+     * @return array Retorna Array com dados do tipo de Feedback
      */
-    public function getNomeFeedback($nome) {
-        $sql = "SELECT nome AS value FROM phpmycall.tipo_feedback WHERE nome ILIKE :nome";
-
-        return $this->select($sql, array('nome' => '%' . $nome . '%'));
+    public function getDadosTipoFeedback() {
+        $sql = "SELECT id, nome, abreviatura, descontar, descricao FROM phpmycall.tipo_feedback";
+        return $this->select($sql);
     }
 
     /**
-     * Busca de dados do tipo de feedback
+     * Busca tipo de feedback a partir do id
      *
-     * @param string $nome Nome do tipo de feedback
-     * @return array Retorna Array com dados do tipo de Feedback
+     * @param int $feedback Código do tipo de feedback
+     * @return Array Retorna array com os dados do tipo de feedback
      */
-    public function getDadosTipoFeedback($nome) {
-        $sql = "SELECT * FROM phpmycall.tipo_feedback WHERE nome = :nome";
-        return $this->select($sql, array('nome' => $nome), false);
+    public function getFeedback($feedback) {
+        $sql = "SELECT * FROM phpmycall.tipo_feedback WHERE id = :feedback";
+
+        return $this->select($sql, array('feedback' => $feedback), FALSE);
     }
 
     /**

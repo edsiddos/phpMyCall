@@ -55,23 +55,17 @@ class Feedback extends Controller {
     /**
      * Telas de cadastro de tipo de feedback
      */
-    public function cadastrar() {
-        $permissao = "Feedback/cadastrar";
+    public function index() {
+        $permissao = "Feedback/index";
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $title = array(
-                "title" => "Cadastro Feedback"
-            );
-
             $vars = array(
-                'link' => HTTP . '/Feedback/novoFeedback',
-                'title_botao' => "Cadastrar Feedback"
+                "title" => "Cadastro Feedback",
+                "feedback" => $this->model->getDadosTipoFeedback()
             );
 
-            $this->loadView("default/header", $title);
-            $this->loadView("feedback/index", $vars);
-            $this->loadView("default/footer");
+            $this->loadView(array('feedback/index', 'feedback/form'), $vars);
         } else {
             $this->redir('Main/index');
         }
@@ -80,78 +74,41 @@ class Feedback extends Controller {
     /**
      * Realiza cadastro de tipo de feedback
      */
-    public function novoFeedback() {
-        $permissao = "Feedback/cadastrar";
+    public function cadastrar() {
+        $permissao = "Feedback/index";
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $nome = (empty($_POST ['inputNome']) ? NULL : $_POST ['inputNome']);
-            $abrev = (empty($_POST ['inputAbreviatura']) ? NULL : $_POST ['inputAbreviatura']);
-            $descontar = (empty($_POST ['inputDescontar'] [0]) ? FALSE : TRUE);
-            $descricao = (empty($_POST ['textDescricao']) ? NULL : $_POST ['textDescricao']);
+            $nome = trim(filter_input(INPUT_POST, 'inputNome', FILTER_SANITIZE_STRING));
+            $abrev = trim(filter_input(INPUT_POST, 'inputAbreviatura', FILTER_SANITIZE_STRING));
+            $descontar = (filter_input(INPUT_POST, 'inputDescontar', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY)[0] === 'descontar' ? TRUE : FALSE);
+            $descricao = filter_input(INPUT_POST, 'textDescricao', FILTER_SANITIZE_STRING);
 
-            if ($this->model->cadastrar($nome, $abrev, $descontar, $descricao)) {
-                $_SESSION ['msg_sucesso'] = 'Sucesso ao criar tipo de feedback';
-            } else {
-                $_SESSION ['msg_erro'] = 'Erro ao criar tipo de feedback';
+            if (!(empty($nome) || empty($abrev))) {
+                if ($this->model->cadastrar($nome, $abrev, $descontar, $descricao)) {
+                    $dados['status'] = true;
+                    $dados['msg'] = 'Sucesso ao criar tipo de feedback';
+                } else {
+                    $dados['status'] = false;
+                    $dados['msg'] = 'Erro ao criar tipo de feedback';
+                }
+
+                $dados['feedback'] = $this->model->getDadosTipoFeedback();
+
+                $log = array(
+                    'dados' => array(
+                        'nome' => $nome,
+                        'abreviatura' => $abrev,
+                        'descontar' => $descontar,
+                        'descricao' => $descricao
+                    ),
+                    'aplicacao' => $permissao,
+                    'msg' => $dados['msg']
+                );
+
+                Log::gravar($log, $_SESSION ['id']);
+                echo json_encode($dados);
             }
-
-            $log = array(
-                'dados' => array(
-                    'nome' => $nome,
-                    'abreviatura' => $abrev,
-                    'descontar' => $descontar,
-                    'descricao' => $descricao
-                ),
-                'aplicacao' => $permissao,
-                'msg' => empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']
-            );
-
-            Log::gravar($log, $_SESSION ['id']);
-
-            $this->redir('Feedback/cadastrar');
-        } else {
-            $this->redir('Main/index');
-        }
-    }
-
-    /**
-     * Tela de alteração de tipo de feedback
-     */
-    public function alterar() {
-        $permissao = "Feedback/alterar";
-        $perfil = $_SESSION ['perfil'];
-
-        if (Menu::possuePermissao($perfil, $permissao)) {
-            $title = array(
-                "title" => "Alterar Feedback"
-            );
-
-            $vars = array(
-                'link' => HTTP . '/Feedback/atualizarFeedback',
-                'title_botao' => "Alterar Feedback"
-            );
-
-            $this->loadView("default/header", $title);
-            $this->loadView("feedback/alterar");
-            $this->loadView("feedback/index", $vars);
-            $this->loadView("default/footer");
-        } else {
-            $this->redir("Main/index");
-        }
-    }
-
-    /**
-     * Busca os tipos de feedbacks pelo nome
-     */
-    public function nomesFeedback() {
-        $permissao_1 = "Feedback/alterar";
-        $permissao_2 = "Feedback/alterar";
-        $perfil = $_SESSION ['perfil'];
-
-        if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $nome = $_POST ['term'];
-            echo json_encode($this->model->getNomeFeedback($nome));
         }
     }
 
@@ -159,119 +116,104 @@ class Feedback extends Controller {
      * Busca dados dos tipos de feedbacks
      */
     public function getDadosTipoFeedback() {
-        $permissao_1 = "Feedback/alterar";
-        $permissao_2 = "Feedback/alterar";
+        $permissao = "Feedback/index";
         $perfil = $_SESSION ['perfil'];
 
-        if (Menu::possuePermissao($perfil, $permissao_1) || Menu::possuePermissao($perfil, $permissao_2)) {
-            $nome = $_POST ['nome'];
-            echo json_encode($this->model->getDadosTipoFeedback($nome));
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            echo json_encode($this->model->getDadosTipoFeedback());
+        }
+    }
+
+    /**
+     * Busca dados de um tipo de feedback
+     */
+    public function getFeedback() {
+        $permissao = "Feedback/index";
+        $perfil = $_SESSION ['perfil'];
+
+        if (Menu::possuePermissao($perfil, $permissao)) {
+            $feedback = filter_input(INPUT_POST, 'feedback', FILTER_SANITIZE_NUMBER_INT);
+            echo json_encode($this->model->getFeedback($feedback));
         }
     }
 
     /**
      * Atualiza tipos de feedbacks
      */
-    public function atualizarFeedback() {
-        $permissao = "Feedback/alterar";
+    public function alterar() {
+        $permissao = "Feedback/index";
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $id = (empty($_POST ['inputID']) ? NULL : $_POST ['inputID']);
-            $nome = (empty($_POST ['inputNome']) ? NULL : $_POST ['inputNome']);
-            $abrev = (empty($_POST ['inputAbreviatura']) ? NULL : $_POST ['inputAbreviatura']);
-            $descontar = (empty($_POST ['inputDescontar'] [0]) ? FALSE : TRUE);
-            $descricao = (empty($_POST ['textDescricao']) ? NULL : $_POST ['textDescricao']);
+            $id = filter_input(INPUT_POST, 'inputID', FILTER_SANITIZE_NUMBER_INT);
+            $nome = trim(filter_input(INPUT_POST, 'inputNome', FILTER_SANITIZE_STRING));
+            $abrev = trim(filter_input(INPUT_POST, 'inputAbreviatura', FILTER_SANITIZE_STRING));
+            $descontar = (filter_input(INPUT_POST, 'inputDescontar', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY)[0] === 'descontar' ? TRUE : FALSE);
+            $descricao = filter_input(INPUT_POST, 'textDescricao', FILTER_SANITIZE_STRING);
 
-            if ($this->model->alterar($id, $nome, $abrev, $descontar, $descricao)) {
-                $_SESSION ['msg_sucesso'] = 'Sucesso ao alterar tipo de feedback';
-            } else {
-                $_SESSION ['msg_erro'] = 'Erro ao alterar tipo de feedback';
+            if (!(empty($nome) || empty($abrev))) {
+                if ($this->model->alterar($id, $nome, $abrev, $descontar, $descricao)) {
+                    $dados['status'] = true;
+                    $dados['msg'] = 'Sucesso ao alterar tipo de feedback';
+                } else {
+                    $dados['status'] = false;
+                    $dados['msg'] = 'Erro ao alterar tipo de feedback';
+                }
+
+                $dados['feedback'] = $this->model->getDadosTipoFeedback();
+
+                $log = array(
+                    'dados' => array(
+                        'id' => $id,
+                        'nome' => $nome,
+                        'abreviatura' => $abrev,
+                        'descontar' => $descontar,
+                        'descricao' => $descricao
+                    ),
+                    'aplicacao' => $permissao,
+                    'msg' => $dados['msg']
+                );
+
+                Log::gravar($log, $_SESSION ['id']);
+
+                echo json_encode($dados);
             }
-
-            $log = array(
-                'dados' => array(
-                    'id' => $id,
-                    'nome' => $nome,
-                    'abreviatura' => $abrev,
-                    'descontar' => $descontar,
-                    'descricao' => $descricao
-                ),
-                'aplicacao' => $permissao,
-                'msg' => empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']
-            );
-
-            Log::gravar($log, $_SESSION ['id']);
-
-            $this->redir('Feedback/alterar');
-        } else {
-            $this->redir("Main/index");
-        }
-    }
-
-    /**
-     * Tela de tipos de feedbacks
-     */
-    public function excluir() {
-        $permissao = "Feedback/excluir";
-        $perfil = $_SESSION ['perfil'];
-
-        if (Menu::possuePermissao($perfil, $permissao)) {
-            $title = array(
-                "title" => "Excluir Feedback"
-            );
-
-            $vars = array(
-                'link' => HTTP . '/Feedback/excluirFeedback',
-                'title_botao' => "Excluir Feedback"
-            );
-
-            $this->loadView("default/header", $title);
-            $this->loadView("feedback/delete");
-            $this->loadView("feedback/index", $vars);
-            $this->loadView("default/footer");
-        } else {
-            $this->redir("Main/index");
         }
     }
 
     /**
      * Excluir tipo de feedbacks
      */
-    public function excluirFeedback() {
-        $permissao = "Feedback/excluir";
+    public function excluir() {
+        $permissao = "Feedback/index";
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $id = (empty($_POST ['inputID']) ? NULL : $_POST ['inputID']);
-            $nome = (empty($_POST ['inputNome']) ? NULL : $_POST ['inputNome']);
-            $abrev = (empty($_POST ['inputAbreviatura']) ? NULL : $_POST ['inputAbreviatura']);
-            $descontar = (empty($_POST ['inputDescontar'] [0]) ? FALSE : TRUE);
-            $descricao = (empty($_POST ['textDescricao']) ? NULL : $_POST ['textDescricao']);
+            $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
             if ($this->model->excluir($id)) {
-                $_SESSION ['msg_sucesso'] = 'Sucesso ao excluir tipo de feedback';
+                $dados = array(
+                    'status' => true,
+                    'msg' => 'Sucesso ao excluir tipo de feedback'
+                );
             } else {
-                $_SESSION ['msg_erro'] = 'Erro ao excluir tipo de feedback';
+                $dados = array(
+                    'status' => false,
+                    'msg' => 'Erro ao excluir tipo de feedback'
+                );
             }
 
+            $dados['feedback'] = $this->model->getDadosTipoFeedback();
+
             $log = array(
-                'dados' => array(
-                    'id' => $id,
-                    'nome' => $nome,
-                    'abreviatura' => $abrev,
-                    'descontar' => $descontar,
-                    'descricao' => $descricao
-                ),
+                'dados' => $this->model->getFeedback($id),
                 'aplicacao' => $permissao,
-                'msg' => empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']
+                'msg' => $dados['msg']
             );
 
             Log::gravar($log, $_SESSION ['id']);
 
-            $this->redir('Feedback/excluir');
-        } else {
-            $this->redir("Main/index");
+            echo json_encode($dados);
         }
     }
 
