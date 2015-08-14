@@ -52,26 +52,16 @@ class Empresas extends \system\Controller {
     /**
      * Gera tela com formulário para inserção de nova empresa
      */
-    public function cadastrar() {
-        $permissao = 'Empresas/cadastrar';
+    public function index() {
+        $permissao = 'Empresas/index';
 
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $title = array(
-                "title" => "Cadastro de empresa"
-            );
-
             $vars = array(
-                'link' => HTTP . '/Empresas/novaEmpresa',
-                'botao' => array(
-                    'value' => "Cadastrar Empresa",
-                    'type' => "submit"
-                )
+                "title" => "Cadastro de empresa",
+                "empresas" => $this->model->getEmpresas()
             );
 
-            $this->loadView("default/header", $title);
-            $this->loadView("empresas/cadastrar");
-            $this->loadView("empresas/index", $vars);
-            $this->loadView("default/footer");
+            $this->loadView(array("empresas/index", "empresas/form"), $vars);
         } else {
             $this->redir('Main/index');
         }
@@ -81,10 +71,10 @@ class Empresas extends \system\Controller {
      * Verifica se um empresa já esta cadastrada
      */
     public function existeEmpresa() {
-        $permissao = "Empresas/cadastrar";
+        $permissao = "Empresas/index";
 
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $empresa = trim(filter_input(INPUT_POST, 'empresa'));
+            $empresa = trim(filter_input(INPUT_POST, 'empresa', FILTER_SANITIZE_STRING));
 
             if (empty($empresa)) {
                 echo json_encode(array('status' => 1));
@@ -97,63 +87,40 @@ class Empresas extends \system\Controller {
     /**
      * Realiza a inserção de uma nova empresa
      */
-    public function novaEmpresa() {
-        $permissao = 'Empresas/cadastrar';
+    public function cadastrar() {
+        $permissao = 'Empresas/index';
 
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
 
             $dados = array(
-                'empresa' => filter_input(INPUT_POST, 'inputEmpresa', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
-                'endereco' => filter_input(INPUT_POST, 'inputEndereco', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
-                'telefone_fixo' => filter_input(INPUT_POST, 'inputTelefoneFixo', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
-                'telefone_celular' => filter_input(INPUT_POST, 'inputTelefoneCelular', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL)
+                'empresa' => filter_input(INPUT_POST, 'inputEmpresa', FILTER_SANITIZE_STRING),
+                'endereco' => filter_input(INPUT_POST, 'inputEndereco', FILTER_SANITIZE_STRING),
+                'telefone_fixo' => filter_input(INPUT_POST, 'inputTelefoneFixo', FILTER_SANITIZE_STRING),
+                'telefone_celular' => filter_input(INPUT_POST, 'inputTelefoneCelular', FILTER_SANITIZE_STRING)
             );
 
             if ($this->model->cadastraEmpresa($dados)) {
-                $_SESSION ['msg_sucesso'] = 'Sucesso ao cadastrar empresa';
+                $status = array(
+                    'status' => true,
+                    'msg' => 'Sucesso ao cadastrar empresa'
+                );
             } else {
-                $_SESSION ['msg_erro'] = 'Erro ao cadastar empresa';
+                $status = array(
+                    'status' => false,
+                    'msg' => 'Erro ao cadastar empresa'
+                );
             }
+
+            $status['empresas'] = $this->model->getEmpresas();
 
             $log = array(
                 'dados' => $dados,
                 'aplicacao' => $permissao,
-                'msg' => empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']
+                'msg' => $status['msg']
             );
 
             Log::gravar($log, $_SESSION ['id']);
-
-            $this->redir('Empresas/cadastrar');
-        } else {
-            $this->redir('Main/index');
-        }
-    }
-
-    /**
-     * Busca empresa para realizar alteração
-     */
-    public function alterar() {
-        $permissao = 'Empresas/alterar';
-
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $title = array(
-                "title" => "Alterar empresa"
-            );
-
-            $vars = array(
-                'link' => HTTP . '/Empresas/atualizaEmpresa',
-                'botao' => array(
-                    "value" => "Alterar Empresa",
-                    "type" => "submit"
-                )
-            );
-
-            $this->loadView("default/header", $title);
-            $this->loadView("empresas/alterar");
-            $this->loadView("empresas/index", $vars);
-            $this->loadView("default/footer");
-        } else {
-            $this->redir('Main/index');
+            echo json_encode($status);
         }
     }
 
@@ -161,35 +128,33 @@ class Empresas extends \system\Controller {
      * Busca empresas a partir de parte do nome
      */
     public function getEmpresas() {
-        $permissao = "Empresas/alterar";
+        $permissao = "Empresas/index";
         $perfil = $_SESSION['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $empresa = filter_input(INPUT_POST, 'term', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
-
-            echo json_encode($this->model->getNomeEmpresa($empresa));
+            echo json_encode($this->model->getEmpresas());
         }
     }
 
     /**
      * Busca dados da empresa a partir do nome
      */
-    public function getDadosEmpresas() {
-        $permissao = "Empresas/alterar";
+    public function getDadosEmpresa() {
+        $permissao = "Empresas/index";
         $perfil = $_SESSION['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $empresa = filter_input(INPUT_POST, 'empresa', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
+            $empresa = filter_input(INPUT_POST, 'empresa', FILTER_SANITIZE_NUMBER_INT);
 
-            echo json_encode($this->model->getDadosEmpresas($empresa));
+            echo json_encode($this->model->getDadosEmpresa($empresa));
         }
     }
 
     /**
      * Realiza a atualização do dados da empresa
      */
-    public function atualizaEmpresa() {
-        $permissao = 'Empresas/alterar';
+    public function alterar() {
+        $permissao = 'Empresas/index';
 
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
 
@@ -200,13 +165,21 @@ class Empresas extends \system\Controller {
                 'telefone_celular' => filter_input(INPUT_POST, 'inputTelefoneCelular', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL)
             );
 
-            $id = filter_input(INPUT_POST, 'inputID', FILTER_SANITIZE_NUMBER_INT, FILTER_NULL_ON_FAILURE);
+            $id = filter_input(INPUT_POST, 'inputID', FILTER_SANITIZE_NUMBER_INT);
 
             if ($this->model->atualizaEmpresa($id, $dados)) {
-                $_SESSION ['msg_sucesso'] = 'Sucesso ao alterar dados da empresa';
+                $status = array(
+                    'status' => true,
+                    'msg' => 'Sucesso ao alterar dados da empresa'
+                );
             } else {
-                $_SESSION ['msg_erro'] = 'Erro ao alterar dados da empresa';
+                $status = array(
+                    'status' => false,
+                    'msg' => 'Erro ao alterar dados da empresa'
+                );
             }
+
+            $status['empresas'] = $this->model->getEmpresas();
 
             $dados['id'] = $id;
 
@@ -218,77 +191,46 @@ class Empresas extends \system\Controller {
 
             Log::gravar($log, $_SESSION ['id']);
 
-            $this->redir('Empresas/alterar');
-        } else {
-            $this->redir('Main/index');
-        }
-    }
-
-    /**
-     * Exibe tela de exclusão de empresa
-     */
-    public function excluir() {
-        $permissao = 'Empresas/excluir';
-
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $title = array(
-                "title" => "Excluir empresa"
-            );
-
-            $vars = array(
-                'link' => HTTP . '/Empresas/removeEmpresa',
-                'botao' => array(
-                    "value" => "Excluir Empresa",
-                    "type" => "submit"
-                )
-            );
-
-            $this->loadView("default/header", $title);
-            $this->loadView("empresas/delete");
-            $this->loadView("empresas/index", $vars);
-            $this->loadView("default/footer");
-        } else {
-            $this->redir('Main/index');
+            echo json_encode($status);
         }
     }
 
     /**
      * Remove empresa selecionado
      */
-    public function removeEmpresa() {
-        $permissao = 'Empresas/excluir';
+    public function excluir() {
+        $permissao = 'Empresas/index';
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
 
-            $dados = array(
-                'empresa' => filter_input(INPUT_POST, 'inputEmpresa', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
-                'endereco' => filter_input(INPUT_POST, 'inputEndereco', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
-                'telefone_fixo' => filter_input(INPUT_POST, 'inputTelefoneFixo', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL),
-                'telefone_celular' => filter_input(INPUT_POST, 'inputTelefoneCelular', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL)
-            );
+            $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-            $id = filter_input(INPUT_POST, 'inputID', FILTER_SANITIZE_NUMBER_INT, FILTER_NULL_ON_FAILURE);
+            $dados = $this->model->getDadosEmpresa($id);
 
             if ($this->model->excluirEmpresa($id)) {
-                $_SESSION ['msg_sucesso'] = 'Empresa excluida com sucesso';
+                $status = array(
+                    'status' => true,
+                    'msg' => 'Empresa excluida com sucesso'
+                );
             } else {
-                $_SESSION ['msg_erro'] = 'Erro ao excluir empresa';
+                $status = array(
+                    'status' => false,
+                    'msg' => 'Erro ao excluir empresa'
+                );
             }
 
-            $dados['id'] = $id;
+            $status['empresas'] = $this->model->getEmpresas();
 
             $log = array(
                 'dados' => $dados,
                 'aplicacao' => $permissao,
-                'msg' => empty($_SESSION ['msg_sucesso']) ? $_SESSION ['msg_erro'] : $_SESSION ['msg_sucesso']
+                'msg' => $status['msg']
             );
 
             Log::gravar($log, $_SESSION ['id']);
 
-            $this->redir('Empresas/excluir');
-        } else {
-            $this->redir('Main/index');
+            echo json_encode($status);
         }
     }
 

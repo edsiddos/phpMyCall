@@ -41,9 +41,7 @@ class Error extends \system\Controller {
             'title' => 'Página não encontrada.'
         );
 
-        $this->loadView('default/header', $vars);
-        $this->loadView('errors/erro_404');
-        $this->loadView('default/footer');
+        $this->loadView(array('errors/erro_404'), $vars);
     }
 
 }

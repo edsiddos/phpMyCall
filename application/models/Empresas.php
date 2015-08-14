@@ -41,31 +41,30 @@ class Empresas extends \system\Model {
      * @return Array Retorna array com resultado da consulta.
      */
     public function existeEmpresa($empresa) {
-        $sql = "SELECT COUNT(empresas.empresa) AS status FROM phpmycall.empresas WHERE empresas.empresa = :empresa";
+        $sql = "SELECT COUNT(empresas.empresa) AS status FROM phpmycall.empresas WHERE empresas.empresa ILIKE :empresa";
 
         return $this->select($sql, array('empresa' => "$empresa"), FALSE);
     }
 
     /**
      * Busca as empresas cadastradas.
-     * @param type $empresa Nome parcial da empresa
-     * @return Array Retorna array com os nomes das empresas
+     * @return Array Retorna array com dados das empresas
      */
-    public function getNomeEmpresa($empresa) {
-        $sql = "SELECT empresas.empresa AS value FROM phpmycall.empresas WHERE empresas.empresa ILIKE :empresa";
+    public function getEmpresas() {
+        $sql = "SELECT * FROM phpmycall.empresas";
 
-        return $this->select($sql, array('empresa' => "%$empresa%"));
+        return $this->select($sql);
     }
 
     /**
      * Busca dados da empresa a partir do nome.
-     * @param String $empresa Nome da empresa.
+     * @param int $empresa Código da empresa.
      * @return Array Retorna dados da empresa.
      */
-    public function getDadosEmpresas($empresa) {
-        $sql = "SELECT * FROM phpmycall.empresas WHERE empresas.empresa = :empresa";
+    public function getDadosEmpresa($empresa) {
+        $sql = "SELECT * FROM phpmycall.empresas WHERE empresas.id = :id";
 
-        return $this->select($sql, array('empresa' => "$empresa"), FALSE);
+        return $this->select($sql, array('id' => "$empresa"), FALSE);
     }
 
     /**
