@@ -31,15 +31,18 @@ class Horarios extends Model {
     /**
      * Busca todos os feriados cadastrado no sistema
      *
+     * @param boolean $mostrar Sinaliza se determinada data será exibida
      * @return array
      */
-    public function getFeriados() {
-        $sql = "SELECT dia FROM phpmycall.feriado";
+    public function getFeriados($mostrar) {
+        $sql = "SELECT dia, '', nome FROM phpmycall.feriado";
 
         $result = $this->select($sql);
 
+        $return = array();
+
         foreach ($result as $values) {
-            $return [] = '"' . $values ['dia'] . '"';
+            $return[$values['dia']] = array($mostrar, '', $values['nome']);
         }
 
         return $return;

@@ -1,32 +1,80 @@
 
 <script type="text/javascript">
-    $(function () {
-        $.fn.mostrarFeriado = function () {
-            $.ajax({
-                url: '<?= HTTP . '/Horarios/mostrarFeriados'; ?>',
-                type: 'POST',
-                success: function (html) {
-                    $("#calendario").empty();
-                    $("#calendario").html(html);
-                }
-            });
-        }
 
-        $.fn.mostrarCalendario = function () {
+    var Calendario = function () {
+
+        var array_date = [];
+        var mostrar = false;
+
+        this.mostrarCalendario = function () {
             $.ajax({
                 url: '<?= HTTP . '/Horarios/mostrarCalendario'; ?>',
+                dataType: 'JSON',
                 type: 'POST',
-                success: function (html) {
-                    $("#calendario").empty();
-                    $("#calendario").html(html);
+                async: false,
+                success: function (json) {
+                    array_date = json;
                 }
             });
-        }
-    });
+
+            mostrar = true;
+
+            geraDatepicker();
+        };
+
+        this.mostrarFeriados = function () {
+            $.ajax({
+                url: '<?= HTTP . '/Horarios/mostrarFeriados'; ?>',
+                dataType: 'JSON',
+                type: 'POST',
+                async: false,
+                success: function (json) {
+                    array_date = json;
+                }
+            });
+
+            mostrar = false;
+
+            geraDatepicker();
+        };
+
+        var geraDatepicker = function () {
+            $("#calendario").datepicker({
+                buttonImageOnly: true,
+                dateFormat: 'yy-mm-dd',
+                dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+                dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'],
+                dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+                monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                numberOfMonths: [3, 4],
+                onSelect: function (date, inst) {
+                    if ($("#mostrar-feriados").attr('disabled')) {
+                        $("#opcao-feriados-dialog").dialog('open');
+                    } else {
+                        $("#feriados-dialog").dialog('open');
+                    }
+
+                    $("input[name='data-feriado']").val(date);
+                },
+                beforeShowDay: function (date) {
+                    var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+                    return (typeof array_date[string] === 'undefined' ? [mostrar] : array_date[string]);
+                }
+            });
+        };
+    };
+
+    var calendario = new Calendario();
+
 </script>
 
 <script type="text/javascript">
     $(document).ready(function () {
+
+        calendario.mostrarCalendario();
 
         $('#feriados-dialog').dialog({
             autoOpen: false,
@@ -123,7 +171,7 @@
             $("#mostrar-feriados").button({disabled: true});
             $("#mostrar-calendario").button({disabled: false});
             $('#inputDataFixa').attr('disabled', true);
-            $().mostrarFeriado();
+            calendario.mostrarFeriados();
         });
 
         $("#mostrar-calendario").button().on('click', function () {
@@ -131,11 +179,8 @@
             $("#mostrar-calendario").button({disabled: true});
             $("#mostrar-feriados").button({disabled: false});
             $('#inputDataFixa').attr('disabled', false);
-            $().mostrarCalendario();
+            calendario.mostrarCalendario();
         });
-
-        $("#mostrar-calendario").click();
-
     });
 </script>
 
@@ -167,35 +212,28 @@
         <div id="calendario"></div>
     </div>
 
-    <div id="feriados-dialog" title="Feriados">
+</div>
 
+<div id="feriados-dialog" title="Feriados">
+    <input type="hidden" name="data-feriado" id="data-feriado" />
 
-        <input type="hidden" name="data-feriado" id="data-feriado" />
-
-        <div class="row">
-            <div class="twelve columns">
-                <label for="inputNome" class="four columns">Nome do feriado</label>
-                <input type="text" class="eight columns" id="inputNome" name="inputNome" placeholder="Nome do feriado" maxlength="50">
-            </div>
+    <div class="row">
+        <div class="twelve columns">
+            <label for="inputNome" class="four columns">Nome do feriado</label>
+            <input type="text" class="eight columns" id="inputNome" name="inputNome" placeholder="Nome do feriado" maxlength="50">
         </div>
-
-        <div class="row">
-            <div class="twelve columns">
-                <label for="inputDataFixa">
-                    <input type="checkbox" name="inputDataFixa" id="inputDataFixa" />
-                    Data fixa (este feriado será replicado nos anos seguintes)
-                </label>
-            </div>
-        </div>
-
     </div>
 
-    <div id="opcao-feriados-dialog" title="Feriados">
-        <p>Qual operação deseja realizar?</p>
+    <div class="row">
+        <div class="twelve columns">
+            <label for="inputDataFixa">
+                <input type="checkbox" name="inputDataFixa" id="inputDataFixa" />
+                Data fixa (este feriado será replicado nos anos seguintes)
+            </label>
+        </div>
     </div>
-
-</div>
-</div>
 </div>
 
+<div id="opcao-feriados-dialog" title="Feriados">
+    <p>Qual operação deseja realizar?</p>
 </div>

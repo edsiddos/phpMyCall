@@ -60,9 +60,7 @@ class Horarios extends Controller {
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
             $title = array("title" => "Feriados");
 
-            $this->loadView("default/header", $title);
-            $this->loadView("horarios/feriados");
-            $this->loadView("default/footer");
+            $this->loadView(array("horarios/feriados"), $title);
         } else {
             $this->redir('Main/index');
         }
@@ -76,9 +74,7 @@ class Horarios extends Controller {
 
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
 
-            $vars ['feriados'] = $this->model->getFeriados();
-            $vars ['calendario'] = true;
-            $this->loadView("horarios/calendario", $vars);
+            echo json_encode($this->model->getFeriados(false));
         }
     }
 
@@ -90,9 +86,7 @@ class Horarios extends Controller {
 
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
 
-            $vars ['feriados'] = $this->model->getFeriados();
-            $vars ['calendario'] = false;
-            $this->loadView("horarios/calendario", $vars);
+            echo json_encode($this->model->getFeriados(true));
         }
     }
 
@@ -186,13 +180,12 @@ class Horarios extends Controller {
     public function alterarExpediente() {
         $permissao = 'Horarios/manterFeriados';
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $title = array("title" => "Expediente");
+            $vars = array(
+                'title' => 'Expediente',
+                'expediente' => $this->model->getExpediente()
+            );
 
-            $vars ['expediente'] = $this->model->getExpediente();
-
-            $this->loadView("default/header", $title);
-            $this->loadView("horarios/expediente", $vars);
-            $this->loadView("default/footer");
+            $this->loadView(array("horarios/expediente"), $vars);
         } else {
             $this->redir('Main/index');
         }
