@@ -56,20 +56,15 @@ class Solicitacao extends Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $title = array(
-                'title' => 'Abrir Solicitação'
-            );
-
             $var = array(
+                'title' => 'Abrir Solicitação',
                 'link' => HTTP . '/Solicitacao/novaSolicitacao',
                 'projetos' => $this->model->getProjetos($_SESSION['id']),
                 'prioridade' => $this->model->getPrioridades(),
                 'solicitacaoOrigem' => (empty($dados[0]) ? 0 : $dados[0])
             );
 
-            $this->loadView('default/header', $title);
-            $this->loadView('solicitacao/index', $var);
-            $this->loadView('default/footer');
+            $this->loadView(array('solicitacao/index'), $var);
         }
     }
 
@@ -245,9 +240,7 @@ class Solicitacao extends Controller {
         $parametros = Cache::getCache(PARAMETROS);
         $var['prioridades'] = $parametros['CORES_SOLICITACOES'];
 
-        $this->loadView('default/header', $title);
-        $this->loadView('solicitacao/lista', $var);
-        $this->loadView('default/footer');
+        $this->loadView(array('solicitacao/lista'), $var);
     }
 
     /**
@@ -258,9 +251,7 @@ class Solicitacao extends Controller {
         $perfil = $_SESSION['perfil'];
         $usuario = $_SESSION['id'];
 
-        $title = array(
-            'title' => 'Solicitações em aberta'
-        );
+        $vars['title'] = 'Solicitações em aberta';
 
         /*
          * Paramentros necessarios para exibição das opções.
@@ -301,9 +292,7 @@ class Solicitacao extends Controller {
             $vars['tipos_feedback'] = $this->model->getTipoFeedback();
         }
 
-        $this->loadView('default/header', $title);
-        $this->loadView('solicitacao/visualizar', $vars);
-        $this->loadView('default/footer');
+        $this->loadView(array('solicitacao/visualizar'), $vars);
     }
 
     /**
@@ -367,13 +356,10 @@ class Solicitacao extends Controller {
                 'projetos' => $this->model->getProjetos($_SESSION['id']),
                 'prioridade' => $this->model->getPrioridades(),
                 'solicitacao' => json_encode($dados_solicitacao),
-                'participantes' => json_encode($this->model->getSolicitantes($dados_solicitacao['projeto']))
+                'participantes' => json_encode($this->model->getSolicitantes($dados_solicitacao['projeto_problema']))
             );
 
-            $this->loadView('default/header', $title);
-            $this->loadView('solicitacao/index', $var);
-            $this->loadView('solicitacao/editar', $var);
-            $this->loadView('default/footer');
+            $this->loadView(array('solicitacao/index', 'solicitacao/editar'), $var);
         }
     }
 

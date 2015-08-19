@@ -50,19 +50,14 @@ class SLA extends Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $title = array(
-                'title' => 'Abrir Solicitação'
-            );
-
             $vars = array(
+                'title' => 'Abrir Solicitação',
                 'projetos' => $this->model->getProjetos($_SESSION['id']),
                 'prioridade' => $this->model->getPrioridades(),
                 'link' => HTTP . '/SLA/gerar'
             );
 
-            $this->loadView('default/header', $title);
-            $this->loadView('sla/index', $vars);
-            $this->loadView('default/footer');
+            $this->loadView(array('sla/index'), $vars);
         }
     }
 
