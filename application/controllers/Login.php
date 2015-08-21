@@ -117,4 +117,54 @@ class Login extends \system\Controller {
         $this->redir("Login/index");
     }
 
+    /**
+     * Formulario de alteraçao de senha.
+     */
+    public function alterarSenha() {
+        if (Login::verificaLogin()) {
+            $this->loadView(array('login/alterar'), array('title' => 'Alterar senha'));
+        } else {
+            $this->redir("Login/index");
+        }
+    }
+
+    /**
+     * Realiza a alteraçao de senha
+     */
+    public function novaSenha() {
+        $nova_senha = filter_input(INPUT_POST, 'novaSenha');
+        $reedigite = filter_input(INPUT_POST, 'reedigite');
+
+        if (strlen($nova_senha) >= 5 && (strcmp($nova_senha, $reedigite) === 0)) {
+            session_start();
+
+            $model = new ModelLogin();
+
+            $result = $_SESSION;
+            $usuario = $_SESSION['id'];
+
+            /*
+             * Atualiza senha em caso de sucesso gera mensagem de sucesso
+             */
+            if ($model->atualizaSenha($_SESSION['id'], $nova_senha)) {
+                $result['situacao'] = 'Senha alterada com sucesso.';
+                $_SESSION['msg_sucesso'] = $result['situacao'];
+            } else {
+                $result['situacao'] = 'Erro ao alterar senha.';
+                $_SESSION['msg_erro'] = $result['situacao'];
+            }
+
+            /*
+             * Gera log da operaçao realizada
+             */
+            $result['status'] = 'Login/novaSenha';
+            Log::gravar($result, $result ['id']);
+        } else {
+            $_SESSION['msg_erro'] = 'Erro ao alterar senha. Digite uma senha com mais de 5 caracteres' .
+                    (strcmp($nova_senha, $reedigite) ? ', senhas digitadas não conferem.' : '');
+        }
+
+        $this->redir("Login/alterarSenha");
+    }
+
 }

@@ -1,0 +1,37 @@
+
+
+<div class="container">
+
+    <?php
+    if ((!empty($_SESSION ['msg_erro'])) || (!empty($_SESSION ['msg_sucesso']))) {
+        ?>
+        <div class="alert <?= empty($_SESSION['msg_erro']) ? 'alert-success' : 'alert-danger'; ?> text-center">
+            <?= empty($_SESSION['msg_erro']) ? $_SESSION['msg_sucesso'] : $_SESSION['msg_erro']; ?>
+        </div>
+        <?php
+        unset($_SESSION ['msg_erro']);
+        unset($_SESSION ['msg_sucesso']);
+    }
+    ?>
+
+    <form name="alterar" method="post" action="<?= HTTP . '/Login/novaSenha' ?>">
+
+        <fieldset>
+            <legend>Alterar Senha</legend>
+            <div class="row">
+                <label for="novaSenha" class="columns four">Nova Senha:</label>
+                <input type="password" pattern="([0-9]|[a-z]|[A-Z]){5,50}" class="columns eight" id="novaSenha" name="novaSenha" placeholder="Nova senha" required>
+            </div>
+
+            <div class="row">
+                <label for="reedigite" class="columns four">Redigite a nova senha:</label>
+                <input type="password" pattern="([0-9]|[a-z]|[A-Z]){5,50}" class="columns eight" id="reedigite" name="reedigite" placeholder="Digite novamente a nova senha" required>
+            </div>
+
+            <div class="row">
+                <button type="submit">Alterar</button>
+            </div>
+        </fieldset>
+
+    </form>
+</div>

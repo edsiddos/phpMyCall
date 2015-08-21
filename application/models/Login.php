@@ -47,4 +47,18 @@ class Login extends \system\Model {
         return $this->select($sql, $array, FALSE);
     }
 
+    /**
+     * Realiza alteração de senha.
+     * @param int $usuario ID do usuario
+     * @param string $senha Nova senha
+     * @return boolean Retorna <b>True</b> sucesso, <b>False</b> erro
+     */
+    public function atualizaSenha($usuario, $senha) {
+        $array = array(
+            'senha' => sha1(md5($senha))
+        );
+
+        return $this->update('phpmycall.usuario', $array, "id = {$usuario}");
+    }
+
 }
