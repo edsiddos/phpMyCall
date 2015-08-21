@@ -1,4 +1,4 @@
-CREATE SCHEMA phpmycall;
+﻿CREATE SCHEMA phpmycall;
 
 CREATE TABLE phpmycall.projeto(
 	id SMALLSERIAL,
@@ -50,9 +50,10 @@ INSERT INTO phpmycall.opcoes_menu (id, nome, link, interno, funcionalidade, menu
 (11, 'Projetos e Problemas', 'ProjetosProblemas/index', TRUE, TRUE, 6),
 (12, 'Relatórios', '', TRUE, FALSE, NULL),
 (13, 'SLA', 'SLA/index', TRUE, TRUE, 12),
-(14, 'Empresas', 'Empresas/index', TRUE, TRUE, 6);
+(14, 'Empresas', 'Empresas/index', TRUE, TRUE, 6),
+(15, 'Alterar Senha', 'Login/alterarSenha', TRUE, TRUE, 6); 
 
-SELECT SETVAL('phpmycall.opcoes_menu_id_seq', 15, TRUE);
+SELECT SETVAL('phpmycall.opcoes_menu_id_seq', 16, TRUE);
 
 
 CREATE TABLE phpmycall.perfil(
@@ -123,6 +124,13 @@ INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (13, 5);
 -- Inicio manter Empresas
 INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (14, 5); -- Cadastrar / Alterar / Excluir
 -- Final manter Empresas
+-- Inicio alterar Senha
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (15, 1);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (15, 2);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (15, 3);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (15, 4);
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (15, 5);
+-- Final alterar Senha
 
 --
 -- Tabela de empresas
