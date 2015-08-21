@@ -66,8 +66,11 @@ define('SYSTEM', PATH . '/system');
 define('CLASSES', PATH . '/class');
 
 ##################################################
+// Endereço HOME
+define('HOME', 'http://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT']);
+
 // Endereço do site
-define('HTTP', 'http://localhost/phpmycall');
+define('HTTP', HOME . '/phpmycall');
 
 // Pasta dos arquivos css
 define('HTTP_CSS', HTTP . '/static/css');
