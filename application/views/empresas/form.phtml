@@ -62,6 +62,9 @@
                     }
                 }
             ],
+            close: function () {
+                $('form[name=formulario] input[type=text]').val('');
+            },
             position: {my: 'center', at: 'center', of: window}
         });
 

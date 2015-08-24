@@ -55,18 +55,18 @@ header, footer{
 }
 
 #header_page {
-    margin: 15px 5%;
     height: 35px;
 }
 
 #nav_header {
     float: left;
-    width: 25%;
+    width: 16%;
 }
 
 #menus {
     float: right;
     width: 75%;
+    padding: 15px 0;
 }
 
 #header_page > #menus ul {
@@ -146,7 +146,7 @@ footer > p {
 }
 
 .account-wall {
-    margin-top: 15px;
+    margin-top: 15%;
     padding: 40px 0px 5px 0px;
     background-color: #f7f7f7;
     -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
@@ -181,8 +181,6 @@ footer > p {
 }
 
 .profile-img {
-    width: 70%;
-    height: 100%;
     margin: 0 auto 10px;
     display: block;
 }
@@ -203,7 +201,7 @@ footer > p {
 }
 
 .table-solicitacoes thead{
-    background-color: #AAAAAA;
+    background-color: #F1F1F1;
 }
 
 .table-solicitacoes tbody tr{

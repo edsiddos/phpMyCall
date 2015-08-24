@@ -39,9 +39,12 @@
         this.submitFormulario = function () {
             aguarde.mostrar();
 
+            var dados = $('form[name=formulario]').find('input:not(input[name=inputDescontar]), textarea').serialize();
+            dados += ($('form[name=formulario] input[name=inputDescontar]').prop('checked') ? '&inputDescontar[]=descontar' : '');
+
             $.ajax({
                 url: '<?= HTTP . '/Feedback/' ?>' + formulario,
-                data: $('form[name=formulario]').serialize(),
+                data: dados,
                 dataType: 'JSON',
                 type: 'POST',
                 async: false,
