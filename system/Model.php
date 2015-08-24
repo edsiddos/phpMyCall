@@ -94,8 +94,10 @@ class Model {
     public function select($sql, $array = array(), $fecthall = TRUE, $fecthmode = PDO::FETCH_ASSOC) {
         $this->statement = $this->conn->prepare($sql);
 
-        foreach ($array as $key => $value) {
-            $this->statement->bindValue("$key", $value, (is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR));
+        if (count($array) > 0) {
+            foreach ($array as $key => $value) {
+                $this->statement->bindValue("$key", $value, (is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR));
+            }
         }
 
         $this->statement->execute();
