@@ -138,10 +138,10 @@ class Horarios extends Model {
     public function getExpediente() {
         $sql = "SELECT id,
                     dia_semana,
-                    TO_CHAR(entrada_manha, 'HH24:MM') AS entrada_manha,
-                    TO_CHAR(saida_manha, 'HH24:MM') AS saida_manha,
-                    TO_CHAR(entrada_tarde, 'HH24:MM') AS entrada_tarde,
-                    TO_CHAR(saida_tarde, 'HH24:MM') AS saida_tarde
+                    TO_CHAR(entrada_manha, 'HH24:MI') AS entrada_manha,
+                    TO_CHAR(saida_manha, 'HH24:MI') AS saida_manha,
+                    TO_CHAR(entrada_tarde, 'HH24:MI') AS entrada_tarde,
+                    TO_CHAR(saida_tarde, 'HH24:MI') AS saida_tarde
                 FROM phpmycall.expediente ORDER BY id;";
 
         $result = $this->select($sql);
@@ -160,9 +160,9 @@ class Horarios extends Model {
     /**
      * Altera horário de entrada ou saida de determinado dia.
      *
-     * @param unknown $id ID do dia da semana
-     * @param unknown $value Novo horário
-     * @param unknown $coluna Qual periodo será alterado
+     * @param int $id ID do dia da semana
+     * @param string $value Novo horário
+     * @param string $coluna Qual periodo será alterado
      * @return boolean <b>TRUE</b> sucesso, <b>FALSE</b> falha.
      */
     public function setExpediente($id, $value, $coluna) {

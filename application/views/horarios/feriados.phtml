@@ -89,12 +89,12 @@
                             url: url,
                             type: 'POST',
                             data: 'data=' + $('#data-feriado').val() + '&nome=' + $('#inputNome').val() +
-                                    '&replicar=' + $('#inputDataFixa:checked').length,
+                                    '&replicar=' + ($('#inputDataFixa:checked').length > 0 ? 'true' : 'false'),
                             success: function (html) {
                                 if ($("#mostrar-feriados").attr('disabled')) {
-                                    $("#mostrar-feriados").click();
+                                    calendario.mostrarFeriados();
                                 } else {
-                                    $("#mostrar-calendario").click();
+                                    calendario.mostrarCalendario();
                                 }
                                 $("#feriados-dialog").dialog('close');
                                 $('#inputNome').val('');
@@ -174,7 +174,9 @@
             calendario.mostrarFeriados();
         });
 
-        $("#mostrar-calendario").button().on('click', function () {
+        $("#mostrar-calendario").button({
+            disabled: true
+        }).on('click', function () {
             $("#calendario").datepicker("destroy");
             $("#mostrar-calendario").button({disabled: true});
             $("#mostrar-feriados").button({disabled: false});

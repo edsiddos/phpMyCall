@@ -97,9 +97,9 @@ class Horarios extends Controller {
         $permissao = 'Horarios/manterFeriados';
 
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $data = empty($_POST ['data']) ? NULL : $_POST ['data'];
-            $nome = empty($_POST ['nome']) ? NULL : $_POST ['nome'];
-            $replicar = empty($_POST ['replicar']) ? FALSE : TRUE;
+            $data = filter_input(INPUT_POST, 'data', FILTER_SANITIZE_STRING);
+            $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
+            $replicar = filter_input(INPUT_POST, 'replicar', FILTER_VALIDATE_BOOLEAN);
 
             $result = $this->model->addFeriados($data, $nome, $replicar);
 
@@ -131,8 +131,8 @@ class Horarios extends Controller {
         $permissao = 'Horarios/manterFeriados';
 
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $data = empty($_POST ['data']) ? NULL : $_POST ['data'];
-            $nome = empty($_POST ['nome']) ? NULL : $_POST ['nome'];
+            $data = filter_input(INPUT_POST, 'data', FILTER_SANITIZE_STRING);
+            $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
 
             $result = $this->model->updateFeriados($data, $nome);
 
@@ -157,7 +157,7 @@ class Horarios extends Controller {
         $permissao = 'Horarios/manterFeriados';
 
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $data = empty($_POST ['data']) ? NULL : $_POST ['data'];
+            $data = filter_input(INPUT_POST, 'data', FILTER_SANITIZE_STRING);
 
             $result = $this->model->deleteFeriados($data);
 
@@ -197,9 +197,9 @@ class Horarios extends Controller {
     public function setExpediente() {
         $permissao = 'Horarios/manterFeriados';
         if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
-            $id = empty($_POST ['id']) ? NULL : $_POST ['id'];
-            $value = empty($_POST ['value']) ? NULL : $_POST ['value'];
-            $coluna = empty($_POST ['coluna']) ? NULL : $_POST ['coluna'];
+            $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+            $value = filter_input(INPUT_POST, 'value', FILTER_SANITIZE_STRING);
+            $coluna = filter_input(INPUT_POST, 'coluna', FILTER_SANITIZE_STRING);
 
             if ($this->model->setExpediente($id, $value, $coluna)) {
                 $result = array(
