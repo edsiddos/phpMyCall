@@ -188,7 +188,7 @@ class ProjetosProblemas extends \system\Controller {
                         'nome_tipo_problema' => $problema,
                         'tempo_resposta' => $resposta,
                         'tempo_solucao' => $solucao,
-                        'novos_usuarios' => implode(',', $participantes)
+                        'novos_usuarios' => (empty($participantes) ? array() : implode(',', $participantes))
                     )
                 );
             } else {
@@ -248,7 +248,7 @@ class ProjetosProblemas extends \system\Controller {
 
             if ($this->model->alteraProjeto($update_projeto, $id_projeto)) {
                 $participantes_old = $this->model->getRelacaoParticipantes($id_projeto);
-                $insert = $participantes;
+                $insert = empty($participantes) ? array() : $participantes;
                 $delete = array();
 
                 foreach ($participantes_old as $value) {

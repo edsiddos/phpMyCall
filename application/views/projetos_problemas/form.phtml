@@ -79,12 +79,6 @@
                     $('textarea[name=textProjeto]').val(data.descricao_projeto);
                     multi.setOrigin(data.usuarios);
                     multi.setDestiny(data.participantes);
-
-                    if (data.participantes.length > 0) {
-                        $('#multi-select-transfer button').prop('disabled', true);
-                    } else {
-                        $('#multi-select-transfer button').prop('disabled', false);
-                    }
                 }
             });
         });

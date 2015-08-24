@@ -169,8 +169,6 @@ class ProjetosProblemas extends \system\Model {
             'nome' => $nome
         );
 
-        var_dump($array);
-
         if ($this->insert('phpmycall.tipo_problema', $array)) {
             return $id ['id'];
         } else {
@@ -186,8 +184,10 @@ class ProjetosProblemas extends \system\Model {
      */
     public function adicionaPartcipantesProjeto($participantes, $projeto) {
 
-        foreach ($participantes as $values) {
-            $this->insert('phpmycall.projeto_responsaveis', array('usuario' => $values, 'projeto' => $projeto));
+        if (count($participantes) > 0) {
+            foreach ($participantes as $values) {
+                $this->insert('phpmycall.projeto_responsaveis', array('usuario' => $values, 'projeto' => $projeto));
+            }
         }
     }
 
