@@ -28,7 +28,11 @@ use \application\controllers\Login,
         <header class="block">
             <nav id="header_page">
 
-                <div id="nav_header">PhpMyCall</div>
+                <div id="nav_header">
+                    <a href="<?= HTTP ?>">
+                        <img src="<?= HTTP_IMG . '/logo.png' ?>" alt="phpMyCall">
+                    </a>
+                </div>
 
                 <div id="menus">
                     <?php if (Login::verificaLogin()) { ?>
@@ -109,7 +113,7 @@ use \application\controllers\Login,
             </div>
         </div>
         <footer class="block">
-            <p>PhpMyCall - Licença GPLv3</p>
+            <p>phpMyCall - Licença GPLv3</p>
         </footer>
     </body>
 </html>
