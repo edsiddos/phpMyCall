@@ -20,8 +20,7 @@ require_once 'system/config.php';
 
 /**
  *
- * @param string $class
- *        	Classe a ser carregado
+ * @param string $class Classe a ser carregado
  */
 function __autoload($class) {
     $file = str_replace('\\', DIRECTORY_SEPARATOR, $class . '.php');
@@ -31,6 +30,8 @@ function __autoload($class) {
      */
     if (file_exists($file)) {
         require_once ($file);
+    } else if (DEBUG) {
+        echo "$file não encontrado.";
     }
 }
 

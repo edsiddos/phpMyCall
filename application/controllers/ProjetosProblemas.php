@@ -43,6 +43,7 @@ class ProjetosProblemas extends \system\Controller {
      * Construtor
      */
     public function __construct() {
+        parent::__construct();
         if (!Login::verificaLogin()) {
             $this->redir("Login/index");
         }
