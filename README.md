@@ -1,12 +1,12 @@
 Item               | Descrição
 ------------------ | ------------
 Licença            | GPLv3
-Versão atual       | 0.1.2015.08.20
+Versão atual       | 0.1.2015.08.26
 
 ## Requisitos: ##
 1. Apache 2;
 2. Módulo rewrite habilitado;
-3. PHP 5;
+3. PHP 5.6;
 4. PHP-APC;
 5. Banco de Dados Postgresql 9.2
 
@@ -136,4 +136,43 @@ Após a criação da base dados phpmycall importe o script postgres.sql que se e
 ```shell
 exemplo@exemplo:~ $ sudo su postgres
 postgres@exemplo:~ $ psql -U dev -h localhost -f postgre.sql phpmycall
+```
+
+## Configuração do arquivo config.php ##
+
+Após a configuração do banco de dados postgresql, apache 2 e php 5, e necessário cria o arquivo ***config.php*** dentro da pasta ***system***. Para facilitar este processo, dentro da pasta system existe o arquivo ***config-example.php***.
+
+* Renomeie o arquivo config-example.php para config.php;
+* Altere as constantes de acesso ao banco e de endereço da aplicação.
+
+```php
+<?php
+
+// Endereço do banco de dados - Linha 32
+define('DB_HOST', 'localhost');
+
+// Nome do banco de dados - Linha 35
+define('DB_NOME', 'phpmycall');
+
+// Usuário do banco de dados - Linha 38
+define('DB_USER', 'dev');
+
+// Senha do usuário do banco de dados - Linha 41
+define('DB_PASS', 'dev');
+
+// Caminho absoluto para pasta que armazena os arquivos anexos as solicitações - Linha 45
+define('FILES', '/var/files');
+
+// caminho relativo para a pasta do projeto - Linha 48
+define('PATH', '/var/www/html/phpmycall');
+
+?>
+```
+
+* Crie a pasta dos arquivos anexos (***/var/files***) e altere as permições e usuário da pasta.
+
+```shell
+exemplo@exemplo:~ $ sudo mkdir /var/files
+exemplo@exemplo:~ $ sudo chown -R www-data.www-data /var/files
+exemplo@exemplo:~ $ sudo chmod -R 774 /var/files
 ```
