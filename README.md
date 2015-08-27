@@ -1,7 +1,7 @@
 Item               | Descrição
 ------------------ | ------------
 Licença            | GPLv3
-Versão atual       | 0.1.2015.08.20
+Versão atual       | 0.1.2015.08.26
 
 ## Requisitos: ##
 1. Apache 2;
