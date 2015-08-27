@@ -52,7 +52,7 @@ class SLA extends Controller {
 
         if (Menu::possuePermissao($perfil, $permissao)) {
             $vars = array(
-                'title' => 'Abrir Solicitação',
+                'title' => 'Relatório SLA',
                 'projetos' => $this->model->getProjetos($_SESSION['id']),
                 'prioridade' => $this->model->getPrioridades(),
                 'link' => HTTP . '/SLA/gerar'
