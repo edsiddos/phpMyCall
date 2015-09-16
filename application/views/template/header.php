@@ -57,7 +57,13 @@
 
 
                         <?php
-                        $result = Menu::geraMenuPorPerfil();
+                        $result = $this->cache->apc->get('menu');
+
+                        if ($result === false) {
+                            $result = Menu::geraMenuPorPerfil();
+                            $this->cache->apc->save('menu', $result);
+                        }
+
                         foreach ($result [$_SESSION ['perfil']] as $nome_menu => $menu) {
                             if (is_array($menu)) {
                                 ?>

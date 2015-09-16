@@ -9,7 +9,7 @@ $autoload['packages'] = array();
 $autoload['libraries'] = array('autenticacao', 'logs', 'menu', 'session');
 
 /* Auto-load Drivers */
-$autoload['drivers'] = array();
+$autoload['drivers'] = array('cache');
 
 /* Auto-load Helper Files */
 $autoload['helper'] = array('url');

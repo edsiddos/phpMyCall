@@ -95,9 +95,9 @@ class Menu {
         $CI = &get_instance();
         $query = $CI->db->query($sql, array($perfil, $link));
 
-        $result = $query->result_array();
+        $result = $query->row_array();
 
-        return $result[0]['permissao'];
+        return $result['permissao'];
     }
 
 }
