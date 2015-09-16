@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (C) 2015 ednei
+ * Copyright (C) 2015 - Ednei Leite da Silva
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -10,17 +10,17 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
- * Description of Login_model
+ * Manipula dados referentes a login dos usuários
  *
- * @author ednei
+ * @author Ednei Leite da Silva
  */
 class Login_model extends CI_Model {
 
@@ -48,6 +48,21 @@ class Login_model extends CI_Model {
         $query = $this->db->where($array)->get();
 
         return $query->row_array();
+    }
+
+    /**
+     * Realiza alteração de senha.
+     * @param int $usuario ID do usuario
+     * @param string $senha Nova senha
+     * @return boolean Retorna <b>True</b> sucesso, <b>False</b> erro
+     */
+    public function atualizaSenha($usuario, $senha) {
+        $array = array(
+            'senha' => sha1(md5($senha))
+        );
+
+        $this->db->where('id', $usuario);
+        return $this->db->update('phpmycall.usuario', $array);
     }
 
 }
