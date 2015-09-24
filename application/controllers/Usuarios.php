@@ -151,12 +151,12 @@ class Usuarios extends CI_Controller {
      * @return Array Retorna um array com os dados do usuário.
      */
     private function getDadosPostUsuario() {
-        $nome = filter_input(INPUT_POST, 'inputNome', FILTER_SANITIZE_STRING);
-        $usuario = filter_input(INPUT_POST, 'inputUsuario', FILTER_SANITIZE_STRING);
-        $senha = filter_input(INPUT_POST, 'inputSenha', FILTER_SANITIZE_STRING);
-        $changeme = filter_input(INPUT_POST, 'inputChangeme', FILTER_SANITIZE_STRING) === 'changeme' ? TRUE : FALSE;
-        $email = filter_input(INPUT_POST, 'inputEMail', FILTER_SANITIZE_STRING);
-        $telefone = filter_input(INPUT_POST, 'inputTelefone', FILTER_SANITIZE_STRING);
+        $nome = filter_input(INPUT_POST, 'inputNome', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
+        $usuario = filter_input(INPUT_POST, 'inputUsuario', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
+        $senha = filter_input(INPUT_POST, 'inputSenha', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
+        $changeme = filter_input(INPUT_POST, 'inputChangeme', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL) === 'changeme' ? TRUE : FALSE;
+        $email = filter_input(INPUT_POST, 'inputEMail', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
+        $telefone = filter_input(INPUT_POST, 'inputTelefone', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
         $perfil = filter_input(INPUT_POST, 'selectPerfil', FILTER_SANITIZE_NUMBER_INT);
         $empresa = filter_input(INPUT_POST, 'selectEmpresa', FILTER_SANITIZE_NUMBER_INT);
         $projeto = filter_input(INPUT_POST, 'inputProjetos', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
@@ -200,7 +200,7 @@ class Usuarios extends CI_Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $user = filter_input(INPUT_POST, 'user', FILTER_SANITIZE_STRING);
+            $user = filter_input(INPUT_POST, 'user', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
             echo json_encode($this->usuarios_model->validaUsuario($user, $id));
@@ -216,7 +216,7 @@ class Usuarios extends CI_Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possuePermissao($perfil, $permissao)) {
-            $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+            $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
             if (preg_match("/^[a-zA-Z0-9\._-]+@[a-zA-Z0-9\._-]+\.([a-zA-Z]{2,4})$/", $email)) {
