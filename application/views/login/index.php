@@ -8,7 +8,6 @@
 
         <!-- BOOTSTRAP STYLES-->
         <link href="<?= site_url() . 'static/css/bootstrap.min.css' ?>" rel="stylesheet" />
-        <link href="<?= site_url() . 'static/css/bootstrap-theme.min.css' ?>" rel="stylesheet" />
         <!-- FONTAWESOME STYLES-->
         <link href="<?= site_url() . 'static/css/font-awesome.min.css' ?>" rel="stylesheet" />
         <!-- CUSTOM STYLES-->
