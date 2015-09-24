@@ -36,7 +36,7 @@ class Login_model extends CI_Model {
      * @return Array Retorna array com <b>nome</b>, <b>usuario</b>, <b>email</b>, <b>perfil</b>.
      */
     public function getDadosLogin($usuario, $senha) {
-        $select = "usuario.id, usuario.nome, usuario.usuario, usuario.email, perfil.perfil";
+        $select = "usuario.id, usuario.nome, usuario.usuario, usuario.email, perfil.perfil, perfil.nivel";
 
         $array = array(
             'usuario.senha' => sha1(md5($senha)),

@@ -90,6 +90,7 @@ class Login extends CI_Controller {
         unset($_SESSION ['name']);
         unset($_SESSION ['email']);
         unset($_SESSION ['perfil']);
+        unset($_SESSION ['nivel']);
 
         redirect('login/index');
     }
