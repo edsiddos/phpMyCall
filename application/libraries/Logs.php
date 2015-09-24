@@ -34,7 +34,7 @@ class Logs {
         $CI = &get_instance();
         $CI->load->database();
 
-        $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR', FILTER_FLAG_IPV4);
+        $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
 
         $hoje = new DateTime ();
 
