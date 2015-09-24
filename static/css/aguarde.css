@@ -5,6 +5,7 @@
     height: 100%;
     top: 0px;
     background-color: rgba(50, 50, 50, 0.15);
+    z-index: 5;
 }
 
 #aguarde > img {
