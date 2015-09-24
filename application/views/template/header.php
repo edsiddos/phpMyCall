@@ -56,7 +56,7 @@
                         $result = $this->cache->apc->get('menu');
 
                         if ($result === false) {
-                            $result = Menu::geraMenuPorPerfil();
+                            $result = Menu::gera_menu_por_perfil();
                             $this->cache->apc->save('menu', $result);
                         }
 

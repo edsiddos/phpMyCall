@@ -29,7 +29,7 @@ class Menu {
      *
      * @return Array Retorna os menus e links por perfil
      */
-    private static function consultaMenuPerfil() {
+    private static function consulta_menu_perfil() {
         $CI = &get_instance();
         $CI->load->database();
 
@@ -59,8 +59,8 @@ class Menu {
      *
      * @return Array Menus em uma array separados por perfil.
      */
-    public static function geraMenuPorPerfil() {
-        $dados = Menu::consultaMenuPerfil();
+    public static function gera_menu_por_perfil() {
+        $dados = Menu::consulta_menu_perfil();
 
         $menu = array();
 
@@ -84,7 +84,7 @@ class Menu {
      * @param string $link Link cadastrado no banco de dados
      * @return boolean
      */
-    public static function possuePermissao($perfil, $link) {
+    public static function possue_permissao($perfil, $link) {
         $sql = "SELECT EXISTS(
           SELECT * FROM phpmycall.opcoes_menu
           INNER JOIN phpmycall.permissao_perfil ON opcoes_menu.id = permissao_perfil.menu

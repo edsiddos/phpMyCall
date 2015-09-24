@@ -34,7 +34,7 @@ class Login extends CI_Controller {
      * Exibe tela de login.
      */
     public function index() {
-        if (Autenticacao::verificaLogin()) {
+        if (Autenticacao::verifica_login()) {
             redirect('main/index');
         } else {
             $vars = array('title' => 'Efetuar Login');
@@ -48,7 +48,7 @@ class Login extends CI_Controller {
      * cria sessão e redireciona a página inicial
      */
     public function autenticar() {
-        if (Autenticacao::verificaLogin()) {
+        if (Autenticacao::verifica_login()) {
             redirect('main/index');
         } else {
             $usuario = filter_input(INPUT_POST, 'usuario', FILTER_SANITIZE_STRING);
@@ -99,7 +99,7 @@ class Login extends CI_Controller {
      * Formulario de alteraçao de senha.
      */
     public function alterarSenha() {
-        if (Autenticacao::verificaLogin()) {
+        if (Autenticacao::verifica_login()) {
             $this->load->helper('form');
             $this->load->library('form_validation');
 

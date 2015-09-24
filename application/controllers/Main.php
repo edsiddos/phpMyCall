@@ -29,7 +29,7 @@ class Main extends CI_Controller {
     public function __construct() {
         parent::__construct();
 
-        if (!Autenticacao::verificaLogin()) {
+        if (!Autenticacao::verifica_login()) {
             redirect('login/index');
         }
     }

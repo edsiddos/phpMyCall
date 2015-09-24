@@ -24,7 +24,7 @@ class Autenticacao {
      *
      * @return boolean Retorna <b>TRUE</b> se usuário devidamente logado, <b>FALSE</b> caso contrário.
      */
-    public static function verificaLogin() {
+    public static function verifica_login() {
 
         if (isset($_SESSION['usuario']) && isset($_SESSION['nome']) && isset($_SESSION['perfil']) && isset($_SESSION['email'])) {
             return true;

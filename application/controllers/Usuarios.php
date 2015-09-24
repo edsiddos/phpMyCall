@@ -29,7 +29,7 @@ class Usuarios extends CI_Controller {
      */
     public function __construct() {
         parent::__construct();
-        if (!Autenticacao::verificaLogin()) {
+        if (!Autenticacao::verifica_login()) {
             redirect('Login/index');
         } else {
             $this->load->model('usuarios_model');
@@ -40,7 +40,7 @@ class Usuarios extends CI_Controller {
         $permissao = 'Usuarios/index';
         $perfil = $_SESSION['perfil'];
 
-        if (Menu::possuePermissao($perfil, $permissao)) {
+        if (Menu::possue_permissao($perfil, $permissao)) {
             $nivel = $_SESSION['nivel'];
 
             $vars = array(
@@ -65,7 +65,7 @@ class Usuarios extends CI_Controller {
         $permissao = "Usuarios/index";
         $perfil = $_SESSION ['perfil'];
 
-        if (Menu::possuePermissao($perfil, $permissao)) {
+        if (Menu::possue_permissao($perfil, $permissao)) {
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
             echo json_encode($this->usuarios_model->relacaoProjetos($id));
@@ -76,7 +76,7 @@ class Usuarios extends CI_Controller {
         $permissao = 'Usuarios/index';
         $perfil = $_SESSION ['perfil'];
 
-        if (Menu::possuePermissao($perfil, $permissao)) {
+        if (Menu::possue_permissao($perfil, $permissao)) {
             $columns = filter_input(INPUT_POST, 'columns', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
             $draw = filter_input(INPUT_POST, 'draw', FILTER_SANITIZE_NUMBER_INT);
             $limit = filter_input(INPUT_POST, 'length', FILTER_SANITIZE_NUMBER_INT);
@@ -107,7 +107,7 @@ class Usuarios extends CI_Controller {
         $permissao = 'Usuarios/index';
         $perfil = $_SESSION ['perfil'];
 
-        if (Menu::possuePermissao($perfil, $permissao)) {
+        if (Menu::possue_permissao($perfil, $permissao)) {
             $usuario = filter_input(INPUT_POST, 'usuario', FILTER_SANITIZE_NUMBER_INT);
 
             $dados_usuario = $this->usuarios_model->getDadosUsuarios($usuario);
@@ -123,7 +123,7 @@ class Usuarios extends CI_Controller {
     public function novoUsuario() {
         $permissao = 'Usuarios/index';
 
-        if (Menu::possuePermissao($_SESSION['perfil'], $permissao)) {
+        if (Menu::possue_permissao($_SESSION['perfil'], $permissao)) {
             $dados = $this->getDadosPostUsuario();
 
             if ($this->usuarios_model->inserirUsuario($dados ['usuario'])) {
@@ -199,7 +199,7 @@ class Usuarios extends CI_Controller {
         $permissao = 'Usuarios/index';
         $perfil = $_SESSION ['perfil'];
 
-        if (Menu::possuePermissao($perfil, $permissao)) {
+        if (Menu::possue_permissao($perfil, $permissao)) {
             $user = filter_input(INPUT_POST, 'user', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
@@ -215,7 +215,7 @@ class Usuarios extends CI_Controller {
         $permissao = 'Usuarios/index';
         $perfil = $_SESSION ['perfil'];
 
-        if (Menu::possuePermissao($perfil, $permissao)) {
+        if (Menu::possue_permissao($perfil, $permissao)) {
             $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
@@ -233,7 +233,7 @@ class Usuarios extends CI_Controller {
     public function atualizaUsuario() {
         $permissao = 'Usuarios/index';
 
-        if (Menu::possuePermissao($_SESSION['perfil'], $permissao)) {
+        if (Menu::possue_permissao($_SESSION['perfil'], $permissao)) {
             $dados = $this->getDadosPostUsuario();
 
             $id = filter_input(INPUT_POST, 'inputID', FILTER_SANITIZE_NUMBER_INT);
@@ -263,7 +263,7 @@ class Usuarios extends CI_Controller {
         $permissao = 'Usuarios/index';
         $perfil = $_SESSION['perfil'];
 
-        if (Menu::possuePermissao($perfil, $permissao)) {
+        if (Menu::possue_permissao($perfil, $permissao)) {
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
             $nivel = $_SESSION['nivel'];
 

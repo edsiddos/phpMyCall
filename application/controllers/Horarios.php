@@ -30,7 +30,7 @@ class Horarios extends CI_Controller {
      */
     public function __construct() {
         parent::__construct();
-        if (!Autenticacao::verificaLogin()) {
+        if (!Autenticacao::verifica_login()) {
             $this->redir('Login/index');
         } else {
             $this->load->model('horarios_model');
@@ -43,7 +43,7 @@ class Horarios extends CI_Controller {
     public function manterFeriados() {
         $permissao = 'Horarios/manterFeriados';
 
-        if (Menu::possuePermissao($_SESSION['perfil'], $permissao)) {
+        if (Menu::possue_permissao($_SESSION['perfil'], $permissao)) {
             $title = array("title" => "Feriados");
 
             $this->load->view("template/header", $title);
@@ -60,7 +60,7 @@ class Horarios extends CI_Controller {
     public function mostrarCalendario() {
         $permissao = 'Horarios/manterFeriados';
 
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
+        if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
 
             echo json_encode($this->horarios_model->getFeriados(false));
         }
@@ -72,7 +72,7 @@ class Horarios extends CI_Controller {
     public function mostrarFeriados() {
         $permissao = 'Horarios/manterFeriados';
 
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
+        if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
 
             echo json_encode($this->horarios_model->getFeriados(true));
         }
@@ -84,7 +84,7 @@ class Horarios extends CI_Controller {
     public function cadastraFeriados() {
         $permissao = 'Horarios/manterFeriados';
 
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
+        if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $data = filter_input(INPUT_POST, 'data', FILTER_SANITIZE_STRING);
             $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
             $replicar = filter_input(INPUT_POST, 'replicar', FILTER_VALIDATE_BOOLEAN);
@@ -105,7 +105,7 @@ class Horarios extends CI_Controller {
     public function getFeriadoByDia() {
         $permissao = 'Horarios/manterFeriados';
 
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
+        if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $dia = empty($_POST ['dia']) ? NULL : $_POST ['dia'];
 
             echo json_encode($this->horarios_model->getFeriadoByDia($dia));
@@ -118,7 +118,7 @@ class Horarios extends CI_Controller {
     public function alteraFeriados() {
         $permissao = 'Horarios/manterFeriados';
 
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
+        if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $data = filter_input(INPUT_POST, 'data', FILTER_SANITIZE_STRING);
             $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
 
@@ -144,7 +144,7 @@ class Horarios extends CI_Controller {
     public function deleteFeriado() {
         $permissao = 'Horarios/manterFeriados';
 
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
+        if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $data = filter_input(INPUT_POST, 'data', FILTER_SANITIZE_STRING);
 
             $result = $this->horarios_model->deleteFeriados($data);
@@ -168,7 +168,7 @@ class Horarios extends CI_Controller {
     public function alterarExpediente() {
         $permissao = 'Horarios/manterFeriados';
 
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
+        if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $this->load->helper('form');
 
             $title = array(
@@ -192,7 +192,7 @@ class Horarios extends CI_Controller {
      */
     public function setExpediente() {
         $permissao = 'Horarios/manterFeriados';
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
+        if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
             $value = filter_input(INPUT_POST, 'value', FILTER_SANITIZE_STRING);
             $coluna = filter_input(INPUT_POST, 'coluna', FILTER_SANITIZE_STRING);
