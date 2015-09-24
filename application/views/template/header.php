@@ -8,53 +8,49 @@
 
         <!-- BOOTSTRAP STYLES-->
         <link href="<?= site_url() . 'static/css/bootstrap.min.css' ?>" rel="stylesheet" />
-        <link href="<?= site_url() . 'static/css/bootstrap-theme.min.css' ?>" rel="stylesheet" />
+        <link href="<?= site_url() . 'static/css/bootstrap-select/bootstrap-select.min.css' ?>" rel="stylesheet" />
         <!-- FONTAWESOME STYLES-->
         <link href="<?= site_url() . 'static/css/font-awesome.min.css' ?>" rel="stylesheet" />
-        <!-- MORRIS CHART STYLES-->
-        <link href="<?= site_url() . 'static/css/metisMenu.min.css' ?>" rel="stylesheet" />
         <!-- JQuery UI -->
         <link href="<?= site_url() . 'static/css/jquery-ui.min.css' ?>" rel="stylesheet" />
         <!-- CUSTOM STYLES-->
         <link href="<?= site_url() . 'static/css/custom.css' ?>" rel="stylesheet" />
+        <link href="<?= site_url() . 'static/css/aguarde.css' ?>" rel="stylesheet" />
 
         <!-- JQUERY SCRIPTS -->
         <script src="<?= site_url() . 'static/js/jquery.min.js' ?>"></script>
         <!-- BOOTSTRAP SCRIPTS -->
         <script src="<?= site_url() . 'static/js/bootstrap.min.js' ?>"></script>
-        <!-- METISMENU SCRIPTS -->
-        <script src="<?= site_url() . 'static/js/metisMenu.min.js' ?>"></script>
+        <script src="<?= site_url() . 'static/js/bootstrap-select/bootstrap-select.min.js' ?>"></script>
+        <script src="<?= site_url() . 'static/js/bootstrap-select/defaults-pt_BR.min.js' ?>"></script>
         <!-- JQUERY UI -->
         <script src="<?= site_url() . 'static/js/jquery-ui.min.js' ?>"></script>
         <!-- CUSTOM SCRIPTS -->
-        <script src="<?= site_url() . 'static/js/custom.js' ?>"></script>
+        <script src="<?= site_url() . 'static/js/aguarde.js' ?>"></script>
 
     </head>
     <body>
-        <div id="wrapper">
-            <nav class="navbar navbar-default navbar-cls-top " role="navigation" style="margin-bottom: 0">
+
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">phpMyCall</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
+                    <a class="navbar-brand" href="<?= base_url() . 'main/index' ?>">
+                        phpMyCall
+                    </a>
                 </div>
-                <div style="color: white; padding: 15px 50px 5px 50px; float: right; font-size: 16px;">
-                    <a href="<?= site_url() . 'login/logout' ?>" class="btn btn-default square-btn-adjust">Logout</a>
-                </div>
-            </nav>
-            <!-- /. NAV TOP  -->
+                <div id="navbar" class="collapse navbar-collapse">
 
-            <nav class="navbar-default navbar-side" role="navigation">
-                <div class="sidebar-collapse">
-                    <ul class="nav" id="main-menu">
-                        <li class="text-center">
-                            <img src="<?= site_url() . 'static/img/logo.png' ?>" class="user-image img-responsive"/>
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="<?= base_url() . 'main/index' ?>">Home</a>
                         </li>
-
-
 
                         <?php
                         $result = $this->cache->apc->get('menu');
@@ -67,22 +63,22 @@
                         foreach ($result [$_SESSION ['perfil']] as $nome_menu => $menu) {
                             if (is_array($menu)) {
                                 ?>
-                                <li>
-                                    <a href="#">
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                         <?= $nome_menu ?>
                                         <span class="fa arrow"></span>
                                     </a>
-                                    <ul class="nav nav-second-level">
+                                    <ul class="dropdown-menu">
                                         <?php
                                         foreach ($menu as $nome_submenu => $submenu) {
                                             if (is_array($submenu)) {
                                                 ?>
-                                                <li>
-                                                    <a href="#">
+                                                <li class="dropdown">
+                                                    <a href="#"class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                                         <?= $nome_submenu ?> <span class="caret-right"></span>
                                                         <span class="fa arrow"></span>
                                                     </a>
-                                                    <ul class="nav nav-third-level">
+                                                    <ul class="dropdown-menu">
                                                         <?php
                                                         foreach ($submenu as $nome_opcao => $opcao) {
                                                             ?>
@@ -116,12 +112,15 @@
                             }
                         }
                         ?>
+
+                        <li>
+                            <a href="<?= base_url() . 'login/logout' ?>">Logout</a>
+                        </li>
                     </ul>
 
-                </div>
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
 
-            </nav>
-            <!-- /. NAV SIDE  -->
-
-            <div id="page-wrapper" >
-                <div id="page-inner">
+        <!-- Begin page content -->
+        <div class="container">
