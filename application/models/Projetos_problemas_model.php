@@ -132,17 +132,15 @@ class Projetos_problemas extends CI_Model {
      * @return mixed Retorna <b>id</b> (int) do projeto ou <b>false</b> caso de erro.
      */
     public function insert_projeto($nome, $descricao) {
-        $sql = "SELECT NEXTVAL('{$this->sequences['projeto']}') as id";
-        $return = $this->select($sql, NULL, false);
-
         $array = array(
-            'id' => $return['id'],
             'nome' => $nome,
             'descricao' => $descricao
         );
 
-        if ($this->insert('phpmycall.projeto', $array)) {
-            return $return ['id'];
+        if ($this->db->insert('phpmycall.projeto', $array)) {
+            if ($this->db->dbdriver == 'pdo' && $this->db->subdriver === 'pgsql') {
+                $this->db->insert_id('phpmycall.projeto_id_seq');
+            }
         } else {
             return FALSE;
         }
