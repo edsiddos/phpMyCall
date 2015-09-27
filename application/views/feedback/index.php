@@ -1,0 +1,337 @@
+
+<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/jquery.dataTables.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.jqueryui.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.responsive.min.js' ?>"></script>
+
+<link href="<?= base_url() . 'static/css/datatable/dataTables.jqueryui.min.css' ?>" rel="stylesheet">
+<link href="<?= base_url() . 'static/css/datatable/responsive.jqueryui.min.css' ?>" rel="stylesheet">
+
+<script type="text/javascript">
+
+    /*
+     * Instancia objeto para exiber mensagem de aguarde.
+     */
+    var aguarde = new Aguarde('<?= base_url() . 'static/img/change.gif' ?>');
+
+    var Feedback = function () {
+
+        var formulario = ''; // cadastrar ou alterar
+        var feedback = 0;
+
+        /**
+         * Seta formulario para cadastro
+         */
+        this.setCadastrar = function () {
+            formulario = 'cadastrar';
+        };
+
+        /**
+         * Seta formulario de alteração
+         */
+        this.setAlterar = function () {
+            formulario = 'alterar';
+        };
+
+        /**
+         * Seta dados para solicitar posterior exclusão
+         * @param {int} id_feedback Código do feedback
+         */
+        this.setExcluir = function (id_feedback) {
+            feedback = id_feedback;
+        };
+
+        /**
+         * Envia formulario para cadastro ou alteração
+         */
+        this.submitFormulario = function () {
+            aguarde.mostrar();
+
+            var dados = $('form[name=formulario]').find('input:not(input[name=inputDescontar]), textarea').serialize();
+            dados += ($('form[name=formulario] input[name=inputDescontar]').prop('checked') ? '&inputDescontar[]=descontar' : '');
+
+            $.ajax({
+                url: '<?= base_url() . 'feedback/' ?>' + formulario,
+                data: dados,
+                dataType: 'JSON',
+                type: 'POST',
+                async: false,
+                success: function (data) {
+
+                    if (data.status) {
+                        $('#msg_status').removeClass('hide alert-danger').addClass('alert-success');
+                        $('#msg_status').html(data.msg);
+                    } else {
+                        $('#msg_status').removeClass('hide alert-success').addClass('alert-danger');
+                        $('#msg_status').html(data.msg);
+                    }
+                }
+            });
+
+            aguarde.ocultar();
+        };
+
+        /*
+         * Solicita a exclusão do projeto
+         */
+        this.excluir = function () {
+            aguarde.mostrar();
+
+            $.ajax({
+                url: '<?= base_url() . 'feedback/excluir' ?>',
+                data: 'id=' + feedback,
+                dataType: 'json',
+                type: 'post',
+                async: false,
+                success: function (data) {
+
+                    if (data.status) {
+                        $('#msg_status').removeClass('hide alert-danger').addClass('alert-success');
+                        $('#msg_status').html(data.msg);
+                    } else {
+                        $('#msg_status').removeClass('hide alert-success').addClass('alert-danger');
+                        $('#msg_status').html(data.msg);
+                    }
+                }
+            });
+
+            aguarde.ocultar();
+        };
+    };
+
+    feedback = new Feedback();
+
+
+    $(document).ready(function () {
+
+        var datatable = $('#feedback').DataTable({
+            ordering: true,
+            processing: true,
+            serverSide: true,
+            responsive: true,
+            ajax: {
+                url: "<?= base_url() . 'feedback/get_dados_tipo_feedback' ?>",
+                type: "POST"
+            },
+            language: {
+                url: "<?= base_url() . 'static/js/datatable/pt_br.json' ?>"
+            },
+            columns: [
+                {"data": "id"},
+                {"data": "nome"},
+                {"data": "abreviatura"},
+                {"data": "descontar"},
+                {"data": "descricao"}
+            ]
+        }).on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                datatable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+
+        /*
+         * Gera botão de cadastrar usuário e ação de clica-lo
+         */
+        $('button[type=button][name=cadastrar]').button({
+            icons: {
+                primary: 'ui-icon-circle-plus'
+            }
+        }).on('click', function () {
+            aguarde.mostrar();
+            feedback.setCadastrar();
+
+            $('input, textarea').val('');
+            $('input[type=hidden]').val(0);
+
+            $('#dialog_feedback').dialog('option', 'title', 'Cadastrar tipo de feedback');
+            $('#dialog_feedback + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Cadastrar');
+            $('#dialog_feedback').dialog('open');
+
+            aguarde.ocultar();
+        });
+
+        /*
+         * Gera botão para edição de feedback
+         */
+        $('button[name=editar]').button({
+            icons: {
+                primary: 'ui-icon-pencil'
+            }
+        }).on('click', function () {
+            aguarde.mostrar();
+
+            feedback.setAlterar();
+
+            var dados = datatable.row('.selected').data();
+
+            if (typeof dados === 'object' && dados.id !== null) {
+                $.ajax({
+                    url: '<?= base_url() . 'feedback/get_feedback' ?>',
+                    data: 'feedback=' + dados.id,
+                    dataType: 'json',
+                    type: 'post',
+                    async: false,
+                    success: function (data) {
+                        $('input[name=input_id]').val(data.id);
+                        $('input[name=input_nome]').val(data.nome);
+                        $('input[name=input_abreviatura]').val(data.abreviatura);
+                        $('input[name=input_descontar]').prop('checked', data.descontar === true);
+                        $('textarea[name=text_descricao]').val(data.descricao);
+                    }
+                });
+
+                $('#dialog_feedback').dialog('option', 'title', 'Alterar tipo de feedback');
+                $('#dialog_feedback + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
+                $('#dialog_feedback').dialog('open');
+            } else {
+                $('#msg').html('Selecione um tipo de feedback e tente novamente.');
+                $('#alert').dialog('open');
+            }
+
+            aguarde.ocultar();
+        });
+
+        /*
+         * Cria botão de exclusão e adiciona evento ao clica-lo
+         */
+
+        $('button[name=excluir]').button({
+            icons: {
+                primary: 'ui-icon-close'
+            }
+        }).on('click', function () {
+            $('#alerta_exclusao').dialog('open');
+
+            var dados = datatable.row('.selected').data();
+
+            feedback.setExcluir(dados.id);
+        });
+
+        /*
+         * Abre dialog para cadastro e alteraçao de feedback
+         */
+        $('#dialog_feedback').dialog({
+            autoOpen: false,
+            closeOnEscape: false,
+            modal: true,
+            width: '90%',
+            height: $(window).height() * 0.95,
+            buttons: [
+                {
+                    text: 'Salvar',
+                    icons: {
+                        primary: 'ui-icon-disk'
+                    },
+                    click: function () {
+                        feedback.submitFormulario();
+                        datatable.ajax.reload();
+                        $(this).dialog('close');
+                    }
+                },
+                {
+                    text: 'Cancelar',
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            ],
+            position: {my: 'center', at: 'center', of: window}
+        });
+
+        /*
+         * dialog solicitando confirmação para exclusão.
+         */
+        $('#alerta_exclusao').dialog({
+            autoOpen: false,
+            modal: true,
+            closeOnEscape: false,
+            buttons: [
+                {
+                    text: 'Excluir',
+                    icons: {
+                        primary: 'ui-icon-trash'
+                    },
+                    click: function () {
+                        feedback.excluir();
+                        datatable.ajax.reload();
+                        $(this).dialog('close');
+                    }
+                },
+                {
+                    text: 'Cancelar',
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            ]
+        });
+
+        /*
+         * Cria dialog para exibir mensagens
+         */
+        $('#alert').dialog({
+            autoOpen: false,
+            modal: true,
+            buttons: [
+                {
+                    text: 'OK',
+                    icons: {
+                        primary: 'ui-icon-check'
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            ]
+        }).removeClass('hidden');
+
+    });
+
+</script>
+
+<div class="container">
+
+    <div class="row">
+        <div id="msg_status" class="alert hide text-center"></div>
+    </div>
+
+    <div class="row">
+        <button type="button" name="cadastrar" id="cadastrar">Cadastrar</button>
+        <button type="button" name="editar" id="editar">Editar</button>
+        <button type="button" name="excluir" id="excluir">Excluir</button>
+    </div>
+
+    <div class="row">
+
+        <table id="feedback" class="display responsive nowrap" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Abreviatura</th>
+                    <th>Descontar tempo total</th>
+                    <th>Descrição</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<div id="alerta_exclusao" title="Alerta de remoção">
+    <p class="text-danger">
+        Deseja realmente remover este tipo de feedback?
+    </p>
+</div>
+
+<div id="alert" class="hidden" title="Atenção">
+    <p id="msg"></p>
+</div>
