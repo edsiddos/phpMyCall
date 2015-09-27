@@ -8,27 +8,27 @@
          *      Caso exista a borda do input ficará vermelha
          *      Caso não exista a borda ficará verde
          */
-        $('#inputUsuario').on('focusout', function () {
+        $('input[name=input_usuario]').on('focusout', function () {
             if ($(this).val() != '') {
                 $.ajax({
-                    url: '<?= base_url() . '/Usuarios/validaUsuario' ?>',
-                    data: 'user=' + $(this).val() + '&id=' + $('#inputID').val(),
+                    url: '<?= base_url() . 'usuarios/valida_usuario' ?>',
+                    data: 'user=' + $(this).val() + '&id=' + $('input[name=input_id]').val(),
                     dataType: 'json',
                     type: 'POST',
                     success: function (values) {
 
                         if (values == true) {
-                            $("#divUsuario").removeClass('has-success');
-                            $("#divUsuario").addClass('has-error');
+                            $("#div_usuario").removeClass('has-success');
+                            $("#div_usuario").addClass('has-error');
                         } else {
-                            $("#divUsuario").removeClass('has-error');
-                            $("#divUsuario").addClass('has-success');
+                            $("#div_usuario").removeClass('has-error');
+                            $("#div_usuario").addClass('has-success');
                         }
                     }
                 });
             } else {
-                $("#divtUsuario").removeClass('has-success');
-                $("#divUsuario").addClass('has-error');
+                $("#div_usuario").removeClass('has-success');
+                $("#div_usuario").addClass('has-error');
             }
         });
 
@@ -37,27 +37,27 @@
          * existe ou é inválido neste caso o input ficará vermelho.
          * Caso sejá valido ou inexistente ficará verde.
          */
-        $('#inputEMail').on('focusout', function () {
+        $('input[name=input_email]').on('focusout', function () {
             if ($(this).val() != '') {
                 $.ajax({
-                    url: '<?= base_url() . '/Usuarios/validaEmail' ?>',
-                    data: 'email=' + $(this).val() + '&id=' + $('#inputID').val(),
+                    url: '<?= base_url() . 'usuarios/valida_email' ?>',
+                    data: 'email=' + $(this).val() + '&id=' + $('input[name=input_id]').val(),
                     dataType: 'json',
                     type: 'POST',
                     success: function (values) {
 
                         if (values == true) {
-                            $("#divEMail").removeClass('has-success');
-                            $("#divEMail").addClass('has-error');
+                            $("#div_email").removeClass('has-success');
+                            $("#div_email").addClass('has-error');
                         } else {
-                            $("#divEMail").removeClass('has-error');
-                            $("#divEMail").addClass('has-success');
+                            $("#div_email").removeClass('has-error');
+                            $("#div_email").addClass('has-success');
                         }
                     }
                 });
             } else {
-                $("#divEMail").removeClass('has-success');
-                $("#divEMail").addClass('has-error');
+                $("#div_email").removeClass('has-success');
+                $("#div_email").addClass('has-error');
             }
         });
 
@@ -74,7 +74,7 @@
             }
         };
 
-        $('#inputTelefone').mask(MascaraNonoDigito, NonoDigitoOpcoes);
+        $('input[name=input_telefone]').mask(MascaraNonoDigito, NonoDigitoOpcoes);
 
         /*
          * Oculta o select com as empresas
@@ -86,7 +86,7 @@
          * Ao selecionar o perfil cliente mostra as empresas cadastradas
          */
 
-        $('#selectPerfil').on('change', function () {
+        $('select[name=select_perfil]').on('change', function () {
             if ($(this).val() == 1) {
                 $('#empresa').show();
             } else {
@@ -94,67 +94,67 @@
             }
         });
 
-        $('#formUsuario').tabs();
+        $('#form_usuario').tabs();
 
     });
 
 </script>
 
 <div id="formulario_cadastro" class="hidden" title="">
-    <form method="post" name="formUsuario" id="formUsuario" class="form-horizontal">
+    <form method="post" name="form_usuario" id="form_usuario" class="form-horizontal">
 
         <ul>
-            <li><a href="#dadosUsuario">Dados Usuário</a></li>
+            <li><a href="#dados_usuario">Dados Usuário</a></li>
             <li><a href="#projetos">Projetos</a></li>
         </ul>
 
-        <div id="dadosUsuario">
-            <input type="hidden" name="inputID" id="inputID" value="0" />
+        <div id="dados_usuario">
+            <input type="hidden" name="input_id" id="input_id" value="0" />
 
             <div class="form-group">
-                <label class="col-md-4 control-label" for="inputNome">Nome</label>  
+                <label class="col-md-4 control-label" for="input_nome">Nome</label>  
                 <div class="col-md-8">
-                    <input id="inputNome" name="inputNome" placeholder="Nome" class="form-control input-md" type="text">    
+                    <input id="input_nome" name="input_nome" placeholder="Nome" class="form-control input-md" type="text">    
                 </div>
             </div>
 
-            <div class="form-group" id="divUsuario">
-                <label for="inputUsuario" class="col-md-4 control-label">Usuário</label>
+            <div class="form-group" id="div_usuario">
+                <label for="input_usuario" class="col-md-4 control-label">Usuário</label>
                 <div class="col-md-8">
-                    <input type="text" class="form-control input-md" id="inputUsuario" name="inputUsuario" placeholder="Usuário">
+                    <input type="text" class="form-control input-md" id="input_usuario" name="input_usuario" placeholder="Usuário">
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="inputSenha" class="col-md-4 control-label">Senha</label>
+                <label for="input_senha" class="col-md-4 control-label">Senha</label>
                 <div class="col-md-4">
-                    <input type="password" class="form-control input-md" id="inputSenha" required name="inputSenha" placeholder="Senha">
+                    <input type="password" class="form-control input-md" id="input_senha" required name="input_senha" placeholder="Senha">
                 </div>
                 <div class="col-md-4">
-                    <label class="checkbox-inline" for="inputChangeme">
-                        <input name="inputChangeme" id="inputChangeme" value="changeme" type="checkbox"> Senha temporária
+                    <label class="checkbox-inline" for="input_changeme">
+                        <input name="input_changeme" id="input_changeme" value="changeme" type="checkbox"> Senha temporária
                     </label>
                 </div>
             </div>
 
-            <div class="form-group" id="divEMail">
-                <label for="inputEMail" class="col-md-4 control-label">E-Mail</label>
+            <div class="form-group" id="div_email">
+                <label for="input_email" class="col-md-4 control-label">E-Mail</label>
                 <div class="col-md-8">
-                    <input type="text" class="form-control input-md" id="inputEMail" name="inputEMail" placeholder="E-Mail">
+                    <input type="text" class="form-control input-md" id="input_email" name="input_email" placeholder="E-Mail">
                 </div>
             </div>
 
-            <div class="form-group" id="divTelefone">
-                <label for="inputTelefone" class="col-md-4 control-label">Telefone</label>
+            <div class="form-group" id="div_telefone">
+                <label for="input_telefone" class="col-md-4 control-label">Telefone</label>
                 <div class="col-md-8">
-                    <input type="text" class="form-control input-md" id="inputTelefone" name="inputTelefone" placeholder="Telefone">
+                    <input type="text" class="form-control input-md" id="input_telefone" name="input_telefone" placeholder="Telefone">
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="col-md-4 control-label" for="selectPerfil">Perfil</label>
+                <label class="col-md-4 control-label" for="select_perfil">Perfil</label>
                 <div class="col-md-4">
-                    <select id="selectPerfil" name="selectPerfil" class="selectpicker">
+                    <select id="select_perfil" name="select_perfil" class="selectpicker">
                         <option disabled selected>Selecione um perfil</option>
                         <?php
                         foreach ($perfil as $values) {
@@ -168,9 +168,9 @@
             </div>
 
             <div class="form-group" id="empresa">
-                <label class="col-md-4 control-label" for="selectEmpresa">Empresa</label>
+                <label class="col-md-4 control-label" for="select_empresa">Empresa</label>
                 <div class="col-md-4">
-                    <select id="selectEmpresa" name="selectEmpresa" class="selectpicker">
+                    <select id="select_empresa" name="select_empresa" class="selectpicker">
                         <option disabled selected>Selecione uma empresa</option>
                         <?php
                         foreach ($empresas as $values) {
@@ -186,7 +186,7 @@
         </div>
 
         <div id="projetos">
-            <div id="selectProjeto"></div>
+            <div id="select_projeto"></div>
         </div>
 
     </form>

@@ -36,21 +36,20 @@
         this.getDadosUsuario = function (id) {
 
             $.ajax({
-                url: '<?= base_url() . '/Usuarios/getDadosUsuarios' ?>',
+                url: '<?= base_url() . 'usuarios/get_dados_usuarios' ?>',
                 data: 'usuario=' + id,
                 dataType: 'JSON',
                 type: 'POST',
                 async: false,
                 success: function (json) {
-                    $('#inputID').val(json.id);
-                    $('#inputNome').val(json.nome);
-                    $('#inputUsuario').val(json.usuario);
-                    $('#inputSenha').val('');
-                    $('#inputEMail').val(json.email);
-                    $('#inputTelefone').val(json.telefone);
-                    $('#selectPerfil').val(json.perfil);
-                    $('#selectEmpresa').val(json.empresa);
-                    $('#selectPerfil').change();
+                    $('input[name=input_id]').val(json.id);
+                    $('input[name=input_nome]').val(json.nome);
+                    $('input[name=input_usuario]').val(json.usuario);
+                    $('input[name=input_senha]').val('');
+                    $('input[name=input_email]').val(json.email);
+                    $('input[name=input_telefone]').val(json.telefone);
+                    $('select[name=select_perfil]').val(json.perfil).change();
+                    $('select[name=select_empresa]').val(json.empresa);
 
                     multi.setOrigin(json.projeto.projeto);
                     multi.setDestiny(json.projeto.participa);
@@ -95,18 +94,18 @@
             aguarde.mostrar();
 
             $.ajax({
-                url: '<?= base_url() . '/Usuarios/removeUsuario' ?>',
+                url: '<?= base_url() . 'usuarios/remove_usuario' ?>',
                 data: 'id=' + id_usuario,
                 dataType: 'JSON',
                 type: 'POST',
                 async: false,
                 success: function (data) {
                     if (data.status) {
-                        $('#msg-status').removeClass('hidden alert-danger').addClass('alert-success');
-                        $('#msg-status').html(data.msg);
+                        $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
+                        $('#msg_status').html(data.msg);
                     } else {
-                        $('#msg-status').removeClass('hidden alert-success').addClass('alert-danger');
-                        $('#msg-status').html(data.msg);
+                        $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
+                        $('#msg_status').html(data.msg);
                     }
                 }
             });
@@ -124,18 +123,18 @@
             multi.destinySelect();
 
             $.ajax({
-                url: '<?= base_url() . '/Usuarios/novoUsuario' ?>',
-                data: $('#formUsuario').serialize(),
+                url: '<?= base_url() . 'usuarios/novo_usuario' ?>',
+                data: $('#form_usuario').serialize(),
                 dataType: 'JSON',
                 type: 'POST',
                 async: false,
                 success: function (data) {
                     if (data.status) {
-                        $('#msg-status').removeClass('hidden alert-danger').addClass('alert-success');
-                        $('#msg-status').html(data.msg);
+                        $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
+                        $('#msg_status').html(data.msg);
                     } else {
-                        $('#msg-status').removeClass('hidden alert-success').addClass('alert-danger');
-                        $('#msg-status').html(data.msg);
+                        $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
+                        $('#msg_status').html(data.msg);
                     }
                 }
             });
@@ -151,18 +150,18 @@
             multi.destinySelect();
 
             $.ajax({
-                url: '<?= base_url() . '/Usuarios/atualizaUsuario' ?>',
-                data: $('#formUsuario').serialize(),
+                url: '<?= base_url() . 'usuarios/atualiza_usuario' ?>',
+                data: $('#form_usuario').serialize(),
                 dataType: 'JSON',
                 type: 'POST',
                 async: false,
                 success: function (data) {
                     if (data.status) {
-                        $('#msg-status').removeClass('hidden alert-danger').addClass('alert-success');
-                        $('#msg-status').html(data.msg);
+                        $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
+                        $('#msg_status').html(data.msg);
                     } else {
-                        $('#msg-status').removeClass('hidden alert-success').addClass('alert-danger');
-                        $('#msg-status').html(data.msg);
+                        $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
+                        $('#msg_status').html(data.msg);
                     }
                 }
             });
@@ -181,7 +180,7 @@
             serverSide: true,
             responsive: true,
             ajax: {
-                url: "<?= base_url() . 'usuarios/getUsuarios' ?>",
+                url: "<?= base_url() . 'usuarios/get_usuarios' ?>",
                 type: "POST"
             },
             language: {
@@ -204,7 +203,7 @@
             }
         });
 
-        multi = new MultiSelectTransfer('#selectProjeto', {name_select_destiny: 'inputProjetos'});
+        multi = new MultiSelectTransfer('#select_projeto', {name_select_destiny: 'input_projetos'});
         multi.init();
 
         /*
@@ -219,7 +218,7 @@
             usuario.setFormularioCadastro();
 
             $.ajax({
-                url: '<?= base_url() . '/Usuarios/getProjetos' ?>',
+                url: '<?= base_url() . 'usuarios/get_projetos' ?>',
                 dataType: 'JSON',
                 async: false,
                 success: function (data) {
@@ -228,15 +227,14 @@
                 }
             });
 
-            $('#inputID').val(0);
-            $('#inputNome').val('');
-            $('#inputUsuario').val('');
-            $('#inputSenha').val('');
-            $('#inputEMail').val('');
-            $('#inputTelefone').val('');
-            $('#selectPerfil').val('');
-            $('#selectEmpresa').val('');
-            $('#selectPerfil').change();
+            $('input[name=input_id]').val(0);
+            $('input[name=input_nome]').val('');
+            $('input[name=input_usuario]').val('');
+            $('input[name=input_senha]').val('');
+            $('input[name=input_email]').val('');
+            $('input[name=input_telefone]').val('');
+            $('select[name=select_perfil]').val('').change();
+            $('select[name=select_empresa]').val('');
 
             $('#formulario_cadastro').dialog('option', 'title', 'Cadastrar usuário');
             $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Cadastrar');
@@ -258,12 +256,17 @@
 
             var dados = datatable.row('.selected').data();
 
-            usuario.getDadosUsuario(dados.id);
-            usuario.setFormularioAlteracao();
+            if (typeof dados === 'object' && dados.id !== null) {
+                usuario.getDadosUsuario(dados.id);
+                usuario.setFormularioAlteracao();
 
-            $('#formulario_cadastro').dialog('option', 'title', 'Alterar usuário');
-            $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
-            $('#formulario_cadastro').dialog('open');
+                $('#formulario_cadastro').dialog('option', 'title', 'Alterar usuário');
+                $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
+                $('#formulario_cadastro').dialog('open');
+            } else {
+                $('#msg').html('Selecione um usuário e tente novamente.');
+                $('#alert').dialog('open');
+            }
 
             aguarde.ocultar();
         });
@@ -281,7 +284,7 @@
             var dados = datatable.row('.selected').data();
 
             usuario.setIDUsuario(dados.id);
-            $('#alertaExclusao').dialog('open');
+            $('#alerta_exclusao').dialog('open');
         });
 
         /*
@@ -323,7 +326,7 @@
          * Cria dialog solicitação de confirmação
          * para exclusão de usuário
          */
-        $('#alertaExclusao').dialog({
+        $('#alerta_exclusao').dialog({
             autoOpen: false,
             modal: true,
             closeOnEscape: false,
@@ -351,6 +354,25 @@
             ]
         }).removeClass('hidden');
 
+        /*
+         * Cria dialog para exibir mensagens
+         */
+        $('#alert').dialog({
+            autoOpen: false,
+            modal: true,
+            buttons: [
+                {
+                    text: 'OK',
+                    icons: {
+                        primary: 'ui-icon-check'
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            ]
+        }).removeClass('hidden');
+
     });
 
 </script>
@@ -358,7 +380,7 @@
 <div class="container">
 
     <div class="row">
-        <div id="msg-status" class="alert hidden text-center"></div>
+        <div id="msg_status" class="alert hidden text-center"></div>
     </div>
 
     <div class="row">
@@ -384,6 +406,10 @@
 
 </div>
 
-<div id="alertaExclusao" class="hidden" title="Aviso de exclusão">
+<div id="alerta_exclusao" class="hidden" title="Aviso de exclusão">
     <p>Deseja remover este usuário?</p>
+</div>
+
+<div id="alert" class="hidden" title="Atenção">
+    <p id="msg"></p>
 </div>

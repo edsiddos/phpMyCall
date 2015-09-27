@@ -51,7 +51,7 @@ class Usuarios_model extends CI_Model {
      * @param string $nivel Nivel do perfil.
      * @return Array Array com os perfils disponiveis.
      */
-    public function getPerfil($nivel) {
+    public function get_perfil($nivel) {
         $sql = "SELECT id, perfil FROM phpmycall.perfil WHERE nivel < {$nivel}";
 
         $return = $this->db->query($sql);
@@ -65,7 +65,7 @@ class Usuarios_model extends CI_Model {
      * @param Array $dados Array com os dados necessários para criação de novo usuário.
      * @return boolean TRUE se inserido.
      */
-    public function inserirUsuario($dados) {
+    public function inserir_usuario($dados) {
         $result = $this->db->insert('phpmycall.usuario', $dados);
 
         return $result;
@@ -77,7 +77,7 @@ class Usuarios_model extends CI_Model {
      * @param string $nivel Nivel do perfil.
      * @return Array Retorna Array relação de usuários.
      */
-    public function getUsuarios($nivel, $where, $order, $limit, $offset) {
+    public function get_usuarios($nivel, $where, $order, $limit, $offset) {
         $str_where = "perfil.nivel < {$nivel}";
 
         if (!empty($where)) {
@@ -94,7 +94,7 @@ class Usuarios_model extends CI_Model {
         return $query->result_array();
     }
 
-    public function getQuantidadesUsuarios($nivel, $where) {
+    public function get_quantidades_usuarios($nivel, $where) {
         $str_where = "perfil.nivel < {$nivel}";
 
         $this->db->select('COUNT(usuario.id) AS quant');
@@ -130,7 +130,7 @@ class Usuarios_model extends CI_Model {
      * @param int $id Código do usuário que esta acessando a página
      * @return Array
      */
-    public function validaUsuario($user, $id) {
+    public function valida_usuario($user, $id) {
         $this->db->select('id')->from('phpmycall.usuario')->where("usuario = '{$user}' AND id <> '{$id}'");
         $query = $this->db->get();
 
@@ -146,7 +146,7 @@ class Usuarios_model extends CI_Model {
      * @param int $id ID que não será verificado
      * @return Boolean True se existe email
      */
-    public function getEmail($email, $id) {
+    public function get_email($email, $id) {
         $this->db->select('email')->from('phpmycall.usuario')->where("email = '{$email}' AND id <> {$id}");
         $query = $this->db->get();
 
@@ -161,7 +161,7 @@ class Usuarios_model extends CI_Model {
      * @param int $id ID do usuário
      * @return Array Retorna array com os dados do usuário
      */
-    public function getDadosUsuarios($id) {
+    public function get_dados_usuarios($id) {
         $this->db->select("id, usuario, nome, email, telefone, perfil, empresa")->from('phpmycall.usuario');
         $query = $this->db->where("id = {$id}")->get();
 
@@ -175,7 +175,7 @@ class Usuarios_model extends CI_Model {
      * @param int $id Id do usuário.
      * @return boolean True alteração com sucesso.
      */
-    public function atualizaUsuario($dados, $id) {
+    public function atualiza_usuario($dados, $id) {
         $this->db->where("id = {$id}");
         $result = $this->db->update('phpmycall.usuario', $dados);
 
@@ -189,7 +189,7 @@ class Usuarios_model extends CI_Model {
      * @param string $nivel Nivel de permissão do usuário solicitante da exclusão.
      * @return boolean True se excluido com sucesso, False se falha.
      */
-    public function excluirUsuario($id, $nivel) {
+    public function excluir_usuario($id, $nivel) {
         $delete = "(SELECT usuario.id FROM phpmycall.usuario";
         $delete .= " INNER JOIN phpmycall.perfil ON usuario.perfil = perfil.id";
         $delete .= " WHERE usuario.id = {$id} AND perfil.nivel < {$nivel})";
@@ -210,7 +210,7 @@ class Usuarios_model extends CI_Model {
      *
      * @return Array
      */
-    public function relacaoProjetos($id_usuario) {
+    public function relacao_projetos($id_usuario) {
         $this->db->select("projeto.id AS value, nome AS name")->from('phpmycall.projeto');
         $this->db->join('phpmycall.projeto_responsaveis', 'projeto.id = projeto_responsaveis.projeto', 'inner');
         $query = $this->db->where("usuario = {$id_usuario}")->get();
@@ -242,7 +242,7 @@ class Usuarios_model extends CI_Model {
      * @param array $projetos Array com os códigos do projetos.
      * @return Array Retorna dois <b>arrays</b> relação de projetos inseridos e excluidos.
      */
-    public function ligaUsuarioProjeto($usuario, $projetos) {
+    public function liga_usuario_projeto($usuario, $projetos) {
         $query = $this->db->select('id')->from('phpmycall.usuario')->where('usuario', $usuario)->get();
 
         $id = $query->row_array();
@@ -287,7 +287,7 @@ class Usuarios_model extends CI_Model {
      * Busca empresas cadastradas.
      * @return Array Retorna empresas cadastradas.
      */
-    public function getEmpresas() {
+    public function get_empresas() {
         $query = $this->db->select('empresas.id, empresas.empresa')->from('phpmycall.empresas')->get();
 
         return $query->result_array();
