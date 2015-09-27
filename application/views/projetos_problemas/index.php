@@ -179,28 +179,35 @@
 
             var dados = datatable.row('.selected').data();
 
-            $.ajax({
-                url: '<?= base_url() . 'projetos_problemas/get_dados_projeto_problemas' ?>',
-                data: 'id=' + dados.id,
-                dataType: 'json',
-                type: 'post',
-                async: false,
-                success: function (data) {
-                    $('input[name=input_projeto]').val(data.id_projeto);
-                    $('input[name=input_problema]').val(data.id_problema);
-                    $('input[name=input_projeto_problema]').val(dados.id);
-                    $('input[name=input_nome_projeto]').val(data.nome_projeto).focusout();
-                    $('textarea[name=text_projeto]').val(data.descricao_projeto);
-                    $('input[name=input_nome_problema]').val(data.nome_problema);
-                    $('textarea[name=text_descricao]').val(data.descricao);
-                    $('input[name=input_resposta]').val(data.resposta);
-                    $('input[name=input_solucao]').val(data.solucao);
-                }
-            });
+            var dados = datatable.row('.selected').data();
 
-            $('#dialog_projetos_problemas').dialog('option', 'title', 'Alterar projeto tipo de problema');
-            $('#dialog_projetos_problemas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
-            $('#dialog_projetos_problemas').dialog('open');
+            if (typeof dados === 'object' && dados.id !== null) {
+                $.ajax({
+                    url: '<?= base_url() . 'projetos_problemas/get_dados_projeto_problemas' ?>',
+                    data: 'id=' + dados.id,
+                    dataType: 'json',
+                    type: 'post',
+                    async: false,
+                    success: function (data) {
+                        $('input[name=input_projeto]').val(data.id_projeto);
+                        $('input[name=input_problema]').val(data.id_problema);
+                        $('input[name=input_projeto_problema]').val(dados.id);
+                        $('input[name=input_nome_projeto]').val(data.nome_projeto).focusout();
+                        $('textarea[name=text_projeto]').val(data.descricao_projeto);
+                        $('input[name=input_nome_problema]').val(data.nome_problema);
+                        $('textarea[name=text_descricao]').val(data.descricao);
+                        $('input[name=input_resposta]').val(data.resposta);
+                        $('input[name=input_solucao]').val(data.solucao);
+                    }
+                });
+
+                $('#dialog_projetos_problemas').dialog('option', 'title', 'Alterar projeto tipo de problema');
+                $('#dialog_projetos_problemas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
+                $('#dialog_projetos_problemas').dialog('open');
+            } else {
+                $('#msg').html('Selecione um projeto tipo de problema e tente novamente.');
+                $('#alert').dialog('open');
+            }
 
             aguarde.ocultar();
         });
@@ -285,6 +292,25 @@
             position: {my: 'center', at: 'center', of: window}
         }).removeClass('hidden');
 
+        /*
+         * Cria dialog para exibir mensagens
+         */
+        $('#alert').dialog({
+            autoOpen: false,
+            modal: true,
+            buttons: [
+                {
+                    text: 'OK',
+                    icons: {
+                        primary: 'ui-icon-check'
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            ]
+        }).removeClass('hidden');
+
     });
 </script>
 
@@ -322,4 +348,8 @@
     <p class="ui-state-error-text">
         Deseja realmente remover o projeto / tipo de problema?
     </p>
+</div>
+
+<div id="alert" class="hidden" title="Atenção">
+    <p id="msg"></p>
 </div>

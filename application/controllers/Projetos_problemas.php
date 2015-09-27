@@ -72,7 +72,7 @@ class Projetos_problemas extends CI_Controller {
                 0 => 'projeto_tipo_problema.id',
                 1 => 'projeto.id',
                 2 => 'projeto.nome',
-                3 => 'ipo_problema.nome'
+                3 => 'tipo_problema.nome'
             );
 
             $order_by = "{$columns[$order[0]['column']]} {$order[0]['dir']}";
