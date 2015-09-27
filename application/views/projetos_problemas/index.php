@@ -1,14 +1,22 @@
 
-<link href="<?= HTTP_CSS . '/multi-select-transfer.css' ?>" rel="stylesheet" />
-<script type="text/javascript" src="<?= HTTP_JS . '/multi-select-transfer.js' ?>"></script>
-<script type="text/javascript" src="<?= HTTP_JS . '/jquery.mask.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/jquery.dataTables.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.jqueryui.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.responsive.min.js' ?>"></script>
+
+<script type="text/javascript" src="<?= base_url() . 'static/js/multi-select-transfer.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url() . 'static/js/jquery.mask.min.js' ?>"></script>
+
+
+<link href="<?= base_url() . 'static/css/multi-select-transfer.css' ?>" rel="stylesheet" />
+<link href="<?= base_url() . 'static/css/datatable/dataTables.jqueryui.min.css' ?>" rel="stylesheet">
+<link href="<?= base_url() . 'static/css/datatable/responsive.jqueryui.min.css' ?>" rel="stylesheet">
 
 <script type="text/javascript">
 
     /*
      * Instancia objeto para exiber mensagem de aguarde.
      */
-    var aguarde = new Aguarde('<?= HTTP_IMG . '/change.gif' ?>');
+    var aguarde = new Aguarde('<?= base_url() . 'static/img/change.gif' ?>');
 
 
     var ProjetoProblemas = function () {
@@ -49,20 +57,19 @@
             multi.destinySelect();
 
             $.ajax({
-                url: '<?= HTTP . '/ProjetosProblemas/' ?>' + formulario,
-                data: $('form[name=projetoProblemas]').serialize(),
+                url: '<?= base_url() . 'projetos_problemas/' ?>' + formulario,
+                data: $('form[name=projetos_problemas]').serialize(),
                 dataType: 'JSON',
                 type: 'POST',
                 async: false,
                 success: function (data) {
-                    GeraTabelaProjetoProblemas(data.listaProjetoProblemas);
 
                     if (data.status) {
-                        $('#msg-status').removeClass('hide alert-danger').addClass('alert-success');
-                        $('#msg-status').html(data.msg);
+                        $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
+                        $('#msg_status').html(data.msg);
                     } else {
-                        $('#msg-status').removeClass('hide alert-success').addClass('alert-danger');
-                        $('#msg-status').html(data.msg);
+                        $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
+                        $('#msg_status').html(data.msg);
                     }
                 }
             });
@@ -77,20 +84,19 @@
             aguarde.mostrar();
 
             $.ajax({
-                url: '<?= HTTP . '/ProjetosProblemas/excluir' ?>',
-                data: 'projetoProblema=' + projeto_problema + '&projeto=' + projeto,
+                url: '<?= base_url() . 'projetos_problemas/excluir' ?>',
+                data: 'projeto_problema=' + projeto_problema + '&projeto=' + projeto,
                 dataType: 'json',
                 type: 'post',
                 async: false,
                 success: function (data) {
-                    GeraTabelaProjetoProblemas(data.listaProjetoProblemas);
 
                     if (data.status) {
-                        $('#msg-status').removeClass('hide alert-danger').addClass('alert-success');
-                        $('#msg-status').html(data.msg);
+                        $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
+                        $('#msg_status').html(data.msg);
                     } else {
-                        $('#msg-status').removeClass('hide alert-success').addClass('alert-danger');
-                        $('#msg-status').html(data.msg);
+                        $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
+                        $('#msg_status').html(data.msg);
                     }
                 }
             });
@@ -99,116 +105,40 @@
         };
     };
 
-    projeto = new ProjetoProblemas();
-
-    /*
-     * Função que gera uma tabela de projetos e tipos de problemas
-     * @param {JSON} listaProjetoProblemas Objeto JSON com os dados
-     */
-    var GeraTabelaProjetoProblemas = function (listaProjetoProblemas) {
-
-        var table = '<table class="u-full-width">';
-        table += '<thead>';
-        table += '<tr>';
-        table += '<th class="col4">Projeto</th><th class="col8">Tipos de Problema</th>';
-        table += '</tr>';
-        table += '</thead>';
-        table += '<tbody>';
-
-        $.each(listaProjetoProblemas, function (nome_projeto, projeto) {
-            table += '<tr>';
-            table += '<td rowspan="' + Object.keys(projeto.projeto_tipo_problema).length + '">';
-            table += nome_projeto;
-            table += '</td>';
-
-            var count = 0;
-            $.each(projeto.projeto_tipo_problema, function (key, values) {
-                table += count++ > 0 ? '</tr><tr>' : '';
-                table += '<td>';
-                table += values;
-                table += '<button type="button" name="editar" projeto_tipo_problema="' + key + '" projeto="' + projeto.id_projeto + '">Editar</button>';
-                table += '<button type="button" name="excluir" projeto_tipo_problema="' + key + '" projeto="' + projeto.id_projeto + '">Excluir</button>';
-                table += '</td>';
-            });
-        });
-
-        table += '</tr>';
-        table += '</tbody>';
-        table += '</table>';
-
-        $('#relacaoProjetoProblemas').html(table);
-        ButtonEditar();
-        ButtonExcluir();
-    };
-
-    /*
-     * Gera botão para edição de projeto tipo problema 
-     */
-    var ButtonEditar = function () {
-
-        $('button[name=editar]').button({
-            text: false,
-            icons: {
-                primary: 'ui-icon-pencil'
-            }
-        }).on('click', function () {
-            aguarde.mostrar();
-
-            projeto.setAlterar();
-
-            var id = $(this).attr('projeto_tipo_problema');
-
-            $.ajax({
-                url: '<?= HTTP . '/ProjetosProblemas/getDadosProjetosProblemas' ?>',
-                data: 'id=' + id,
-                dataType: 'json',
-                type: 'post',
-                async: false,
-                success: function (data) {
-                    $('#inputProjeto').val(data.id_projeto);
-                    $('#inputProblema').val(data.id_problema);
-                    $('#inputProjetoProblema').val(id);
-                    $('#inputNomeProjeto').val(data.nome_projeto);
-                    $('#textProjeto').val(data.descricao_projeto);
-                    $('#inputNomeProblema').val(data.nome_problema);
-                    $('#textDescricao').val(data.descricao);
-                    $('#inputResposta').val(data.resposta);
-                    $('#inputSolucao').val(data.solucao);
-                    $('#inputNomeProjeto').focusout();
-                }
-            });
-
-            $('#dialogProjetosProblemas').dialog('option', 'title', 'Alterar projeto tipo de problema');
-            $('#dialogProjetosProblemas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
-            $('#dialogProjetosProblemas').dialog('open');
-
-            aguarde.ocultar();
-        });
-
-    };
-
-    var ButtonExcluir = function () {
-
-        $('button[name=excluir]').button({
-            text: false,
-            icons: {
-                primary: 'ui-icon-close'
-            }
-        }).on('click', function () {
-            $('#alertaExclusao').dialog('open');
-            projeto.setProjetoProblemaExcluir($(this).attr('projeto_tipo_problema'), $(this).attr('projeto'));
-        });
-
-    };
-
+    var projeto = new ProjetoProblemas();
 
     $(document).ready(function () {
 
-        multi = new MultiSelectTransfer('#relacaoUsuarios', {name_select_destiny: 'participantes'});
+        multi = new MultiSelectTransfer('#relacao_usuarios', {name_select_destiny: 'participantes'});
         multi.init();
 
-        ButtonEditar();
-        ButtonExcluir();
+        var datatable = $('#relacao_projeto_problemas').DataTable({
+            ordering: true,
+            processing: true,
+            serverSide: true,
+            responsive: true,
+            ajax: {
+                url: "<?= base_url() . 'projetos_problemas/lista_projeto_problemas' ?>",
+                type: "POST"
+            },
+            language: {
+                url: "<?= base_url() . 'static/js/datatable/pt_br.json' ?>"
+            },
+            columns: [
+                {"data": "id"},
+                {"data": "id_projeto"},
+                {"data": "projeto"},
+                {"data": "problema"}
+            ]
+        }).on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                datatable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
 
         /*
          * Gera botão de cadastrar usuário e ação de clica-lo
@@ -227,17 +157,106 @@
             $('input, textarea').val('');
             $('input[type=hidden]').val(0);
 
-            $('#dialogProjetosProblemas').dialog('option', 'title', 'Cadastrar projeto tipo de problema');
-            $('#dialogProjetosProblemas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Cadastrar');
-            $('#dialogProjetosProblemas').dialog('open');
+            $('#dialog_projetos_problemas').dialog('option', 'title', 'Cadastrar projeto tipo de problema');
+            $('#dialog_projetos_problemas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Cadastrar');
+            $('#dialog_projetos_problemas').dialog('open');
 
             aguarde.ocultar();
         });
 
         /*
+         * Gera botão para edição de projeto tipo problema 
+         */
+
+        $('button[type=button][name=editar]').button({
+            icons: {
+                primary: 'ui-icon-pencil'
+            }
+        }).on('click', function () {
+            aguarde.mostrar();
+
+            projeto.setAlterar();
+
+            var dados = datatable.row('.selected').data();
+
+            $.ajax({
+                url: '<?= base_url() . 'projetos_problemas/get_dados_projeto_problemas' ?>',
+                data: 'id=' + dados.id,
+                dataType: 'json',
+                type: 'post',
+                async: false,
+                success: function (data) {
+                    $('input[name=input_projeto]').val(data.id_projeto);
+                    $('input[name=input_problema]').val(data.id_problema);
+                    $('input[name=input_projeto_problema]').val(dados.id);
+                    $('input[name=input_nome_projeto]').val(data.nome_projeto).focusout();
+                    $('textarea[name=text_projeto]').val(data.descricao_projeto);
+                    $('input[name=input_nome_problema]').val(data.nome_problema);
+                    $('textarea[name=text_descricao]').val(data.descricao);
+                    $('input[name=input_resposta]').val(data.resposta);
+                    $('input[name=input_solucao]').val(data.solucao);
+                }
+            });
+
+            $('#dialog_projetos_problemas').dialog('option', 'title', 'Alterar projeto tipo de problema');
+            $('#dialog_projetos_problemas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
+            $('#dialog_projetos_problemas').dialog('open');
+
+            aguarde.ocultar();
+        });
+
+        $('button[type=button][name=excluir]').button({
+            icons: {
+                primary: 'ui-icon-close'
+            }
+        }).on('click', function () {
+            $('#alerta_exclusao').dialog('open');
+
+            var dados = datatable.row('.selected').data();
+
+            projeto.setProjetoProblemaExcluir(dados.id, dados.id_projeto);
+        });
+
+
+        /*
+         * Gera dialog para inserção dos dados do projeto
+         * e participantes do projeto
+         */
+        $('#dialog_projetos_problemas').dialog({
+            autoOpen: false,
+            closeOnEscape: false,
+            modal: true,
+            width: '80%',
+            height: $(window).height() * 0.95,
+            buttons: [
+                {
+                    text: 'Salvar',
+                    icons: {
+                        primary: 'ui-icon-disk'
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                        projeto.submitFormulario();
+                        datatable.ajax.reload();
+                    }
+                },
+                {
+                    text: 'Cancelar',
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            ],
+            position: {my: 'center', at: 'center', of: window}
+        }).removeClass('hidden');
+
+        /*
          * Gera dialog para confirmação de exclusão
          */
-        $('#alertaExclusao').dialog({
+        $('#alerta_exclusao').dialog({
             autoOpen: false,
             modal: true,
             closeOnEscape: false,
@@ -248,8 +267,9 @@
                         primary: 'ui-icon-trash'
                     },
                     click: function () {
-                        $('#alertaExclusao').dialog('close');
+                        $(this).dialog('close');
                         projeto.excluirProjetoProblema();
+                        datatable.ajax.reload();
                     }
                 },
                 {
@@ -258,69 +278,47 @@
                         primary: 'ui-icon-close'
                     },
                     click: function () {
-                        $('#alertaExclusao').dialog('close');
+                        $(this).dialog('close');
                     }
                 }
             ],
             position: {my: 'center', at: 'center', of: window}
-        });
+        }).removeClass('hidden');
 
     });
 </script>
 
-<style type="text/css">
-
-    #relacaoProjetoProblemas td > button{
-        float: right;
-        margin: 0 5px;
-    }
-
-</style>
-
 <div class="container">
 
     <div class="row">
-        <div id="msg-status" class="alert hide text-center"></div>
+        <div id="msg_status" class="alert hidden text-center"></div>
     </div>
 
     <div class="row">
         <button type="button" name="cadastrar" id="cadastrar">Cadastrar</button>
+        <button type="button" name="editar" id="editar">Editar</button>
+        <button type="button" name="excluir" id="excluir">Excluir</button>
     </div>
 
-    <div id="relacaoProjetoProblemas">
-        <table class="u-full-width">
+    <div class="row">
+
+        <table id="relacao_projeto_problemas" class="display responsive nowrap" width="100%" cellspacing="0">
             <thead>
                 <tr>
-                    <th class="col4">Projeto</th>
-                    <th class="col8">Tipos de Problema</th>
+                    <th>ID</th>
+                    <th>ID Projeto</th>
+                    <th>Projeto</th>
+                    <th>Problema</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php foreach ($listaProjeto as $nome_projeto => $projeto) { ?>
-                    <tr>
-                        <td rowspan="<?= count($projeto['projeto_tipo_problema']) ?>">
-                            <?= $nome_projeto ?>
-                        </td>
-                        <?php
-                        $count = 0;
-                        foreach ($projeto['projeto_tipo_problema'] as $key => $values) {
-                            echo $count++ > 0 ? '</tr><tr>' : '';
-                            echo "<td>";
-                            echo "{$values}";
-                            echo "<button type=\"button\" name=\"editar\" projeto_tipo_problema=\"{$key}\" projeto=\"{$projeto['id_projeto']}\">Editar</button>";
-                            echo "<button type=\"button\" name=\"excluir\" projeto_tipo_problema=\"{$key}\" projeto=\"{$projeto['id_projeto']}\">Excluir</button>";
-                            echo "</td>";
-                        }
-                        ?>
-                    </tr>
-                <?php } ?>
-            </tbody>
+
         </table>
+
     </div>
 
 </div>
 
-<div id="alertaExclusao" title="Alerta de remoção">
+<div id="alerta_exclusao" class="hidden" title="Alerta de remoção">
     <p class="ui-state-error-text">
         Deseja realmente remover o projeto / tipo de problema?
     </p>

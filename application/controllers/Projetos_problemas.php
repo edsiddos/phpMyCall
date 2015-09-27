@@ -41,10 +41,11 @@ class Projetos_problemas extends CI_Controller {
      * Gera tela para manutenção de projetos e problemas
      */
     public function index() {
-        $permissao = "Projeto_problemas/index";
+        $permissao = "projetos_problemas/index";
         $perfil = $_SESSION['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
+            $this->load->helper('form');
 
             $title['title'] = 'Projetos tipo de problema.';
 
@@ -53,7 +54,33 @@ class Projetos_problemas extends CI_Controller {
             $this->load->view('projetos_problemas/form');
             $this->load->view('template/footer');
         } else {
-            $this->redir('Main/index');
+            redirect('main');
+        }
+    }
+
+    public function lista_projeto_problemas() {
+        $permissao = 'projetos_problemas/index';
+        $perfil = $_SESSION['perfil'];
+
+        if (Menu::possue_permissao($perfil, $permissao)) {
+            $draw = filter_input(INPUT_POST, 'draw', FILTER_SANITIZE_NUMBER_INT);
+            $limit = filter_input(INPUT_POST, 'length', FILTER_SANITIZE_NUMBER_INT);
+            $offset = filter_input(INPUT_POST, 'start', FILTER_SANITIZE_NUMBER_INT);
+            $order = filter_input(INPUT_POST, 'order', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+            $search = filter_input(INPUT_POST, 'search', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+            $columns = array(
+                0 => 'projeto_tipo_problema.id',
+                1 => 'projeto.id',
+                2 => 'projeto.nome',
+                3 => 'ipo_problema.nome'
+            );
+
+            $order_by = "{$columns[$order[0]['column']]} {$order[0]['dir']}";
+
+            $return = $this->model->lista_projeto_problemas($search['value'], $order_by, $limit, $offset);
+            $return["draw"] = empty($draw) ? 0 : $draw;
+
+            echo json_encode($return);
         }
     }
 
@@ -61,8 +88,8 @@ class Projetos_problemas extends CI_Controller {
      * Busca os tipos de projetos
      */
     public function get_projetos() {
-        $permissao = "Projetos_problemas/index";
-        $perfil = $_SESSION ['perfil'];
+        $permissao = "projetos_problemas/index";
+        $perfil = $_SESSION['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
             $nome = filter_input(INPUT_POST, 'term', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
@@ -75,7 +102,7 @@ class Projetos_problemas extends CI_Controller {
      * Busca os tipos de problemas existentes
      */
     public function get_problemas() {
-        $permissao = "Projeto_problemas/index";
+        $permissao = "projetos_problemas/index";
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
@@ -89,14 +116,16 @@ class Projetos_problemas extends CI_Controller {
      * Busca ID de um projeto
      */
     public function get_dados_projeto() {
-        $permissao = "Projeto_problemas/index";
+        $permissao = "projetos_problemas/index";
         $perfil = $_SESSION['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
             $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
+            $nivel = $_SESSION['nivel'];
+
             $id = $this->model->get_id_projeto($nome);
 
-            $usuarios = $this->model->relacao_usuarios($perfil);
+            $usuarios = $this->model->relacao_usuarios($nivel);
             $participantes = $this->model->get_relacao_participantes($id);
             $vars = $this->model->get_descricao_projeto($id);
 
@@ -119,12 +148,13 @@ class Projetos_problemas extends CI_Controller {
      * Insere um novo projeto com os respectivos participantes
      */
     public function cadastrar() {
-        $permissao = '_projeto_problemas/index';
+        $permissao = 'projetos_problemas/index';
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
-            $utils = new Utils();
-            $valida_hora = array('options' => array($utils, 'validaFormatoHora'));
+            $this->load->library('utils');
+
+            $valida_hora = array('options' => array('Utils', 'valida_formato_hora'));
 
             $participantes = filter_input(INPUT_POST, 'participantes', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
             $projeto = filter_input(INPUT_POST, 'input_nome_projeto', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
@@ -132,7 +162,7 @@ class Projetos_problemas extends CI_Controller {
             $resposta = filter_input(INPUT_POST, 'input_resposta', FILTER_CALLBACK, $valida_hora);
             $solucao = filter_input(INPUT_POST, 'input_solucao', FILTER_CALLBACK, $valida_hora);
             $descricao_projeto = filter_input(INPUT_POST, 'text_projeto', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
-            $descricao = filter_input(INPUT_POST, 'textDescricao', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
+            $descricao = filter_input(INPUT_POST, 'text_descricao', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
 
             if (!$this->model->existe_projeto_problema($projeto, $problema)) {
                 $id_projeto = $this->model->get_id_projeto($projeto);
@@ -185,9 +215,7 @@ class Projetos_problemas extends CI_Controller {
             $dados_log ['msg'] = $dados['msg'];
             $dados_log ['aplicacao'] = $permissao;
 
-            Log::gravar($dados_log, $_SESSION ['id']);
-
-            $dados['lista_projeto_problemas'] = $this->model->lista_projeto_problemas();
+            Logs::gravar($dados_log, $_SESSION ['id']);
 
             echo json_encode($dados);
         }
@@ -198,7 +226,7 @@ class Projetos_problemas extends CI_Controller {
      */
     public function get_dados_projeto_problemas() {
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-        $permissao = "Projeto_problemas/index";
+        $permissao = "projetos_problemas/index";
         $perfil = $_SESSION['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
@@ -210,11 +238,13 @@ class Projetos_problemas extends CI_Controller {
      * Realiza a operação de atualização do projeto (alterar)
      */
     public function alterar() {
-        $permissao = 'Projeto_problemas/index';
+        $permissao = 'projetos_problemas/index';
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
-            $valida_hora = array('options' => array('Utils', 'validaFormatoHora'));
+            $this->load->library('utils');
+
+            $valida_hora = array('options' => array('Utils', 'valida_formato_hora'));
 
             $id_projeto = filter_input(INPUT_POST, 'input_projeto', FILTER_SANITIZE_NUMBER_INT);
             $id_problema = filter_input(INPUT_POST, 'input_problema', FILTER_SANITIZE_NUMBER_INT);
@@ -290,9 +320,7 @@ class Projetos_problemas extends CI_Controller {
                     'aplicacao' => $permissao
                 );
 
-                Log::gravar($dados, $_SESSION ['id']);
-
-                $dados['lista_projeto_problemas'] = $this->model->lista_projeto_problemas();
+                Logs::gravar($dados, $_SESSION ['id']);
 
                 echo json_encode($dados);
             }
@@ -303,7 +331,7 @@ class Projetos_problemas extends CI_Controller {
      * Realiza a exclusão do projeto tipo de problema selecionado
      */
     public function excluir() {
-        $permissao = "Projeto_problemas/index";
+        $permissao = "projetos_problemas/index";
 
         if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $id_projeto = filter_input(INPUT_POST, 'projeto', FILTER_SANITIZE_NUMBER_INT);
@@ -324,9 +352,7 @@ class Projetos_problemas extends CI_Controller {
                 'msg' => $dados['msg']
             );
 
-            Log::gravar($log, $_SESSION ['id']);
-
-            $dados['lista_projeto_problemas'] = $this->model->lista_projeto_problemas();
+            Logs::gravar($log, $_SESSION ['id']);
 
             echo json_encode($dados);
         }
