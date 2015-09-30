@@ -15,7 +15,7 @@
     ?>
 
     <?php
-    echo form_open('login/novaSenha', array('method' => 'post', 'name' => 'alterar'));
+    echo form_open('login/nova_senha', array('method' => 'post', 'name' => 'alterar'));
     echo form_fieldset('Alterar Senha');
 
     $label_attr = array('class' => 'control-label col-md-4');
@@ -24,11 +24,11 @@
 
     <div class="row">
         <div class="form-group col-md-12">
-            <?= form_label('Nova Senha:', 'novaSenha', $label_attr) ?>
+            <?= form_label('Nova Senha:', 'nova_senha', $label_attr) ?>
 
             <div class="col-md-8">
                 <?php
-                $field_senha = array('id' => 'novaSenha', 'name' => 'novaSenha', 'placeholder' => 'Nova Senha');
+                $field_senha = array('id' => 'nova_senha', 'name' => 'nova_senha', 'placeholder' => 'Nova Senha');
                 echo form_password($field_senha, '', $input_attr);
                 ?>
             </div>

@@ -36,7 +36,7 @@
             if (value !== anterior && (valida.valida(value) || value.length === 0)) {
 
                 $.ajax({
-                    url: '<?= site_url() . '/Horarios/setExpediente' ?>',
+                    url: '<?= site_url() . 'horarios/set_expediente' ?>',
                     type: 'POST',
                     data: 'id=' + $(this).attr('idHorario') + '&value=' + value +
                             '&coluna=' + $(this).attr('coluna'),

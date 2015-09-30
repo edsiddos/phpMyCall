@@ -35,7 +35,7 @@ class Horarios_model extends CI_Model {
      * @param boolean $mostrar Sinaliza se determinada data será exibida
      * @return array
      */
-    public function getFeriados($mostrar) {
+    public function get_feriados($mostrar) {
         $this->db->select("dia, '', nome");
         $query = $this->db->from('phpmycall.feriado')->get();
 
@@ -58,7 +58,7 @@ class Horarios_model extends CI_Model {
      * @param boolean $replicar Replicar o feriado nos próximos 15 anos se valor igual a TRUE
      * @return Array Retorna dados para gravação de log
      */
-    public function addFeriados($data, $nome, $replicar) {
+    public function add_feriados($data, $nome, $replicar) {
         $return = array();
 
         /*
@@ -104,7 +104,7 @@ class Horarios_model extends CI_Model {
      * @param string $dia Data do feriado
      * @return array Retorna array com o nome do feriado
      */
-    public function getFeriadoByDia($dia) {
+    public function get_feriado_dia($dia) {
         $query = $this->db->select('nome')->from('phpmycall.feriado')->where('dia', $dia)->get();
 
         return $query->row_array();
@@ -117,7 +117,7 @@ class Horarios_model extends CI_Model {
      * @param string $nome Nome do feriado.
      * @return boolean Retorna <b>TRUE</b> em caso de sucesso.
      */
-    public function updateFeriados($data, $nome) {
+    public function update_feriados($data, $nome) {
         $this->db->where('dia', $data);
         return $this->db->update('phpmycall.feriado', array('nome' => $nome));
     }
@@ -128,7 +128,7 @@ class Horarios_model extends CI_Model {
      * @param string $data Dia do feriado.
      * @return boolean <b>TRUE</b> sucesso, <b>FALSE</b> falha.
      */
-    public function deleteFeriados($data) {
+    public function delete_feriados($data) {
         $this->db->where('dia', $data);
         return $this->db->delete('phpmycall.feriado');
     }
@@ -138,7 +138,7 @@ class Horarios_model extends CI_Model {
      *
      * @return Array Retorna array com os dia da semana e horários de entrada e saída do 1º e 2º periodo.
      */
-    public function getExpediente() {
+    public function get_expediente() {
         $sql = "SELECT id,
                     dia_semana,
                     TO_CHAR(entrada_manha, 'HH24:MI') AS entrada_manha,
@@ -168,7 +168,7 @@ class Horarios_model extends CI_Model {
      * @param string $coluna Qual periodo será alterado
      * @return boolean <b>TRUE</b> sucesso, <b>FALSE</b> falha.
      */
-    public function setExpediente($id, $value, $coluna) {
+    public function set_expediente($id, $value, $coluna) {
         $dados = array(
             $coluna => empty($value) ? NULL : $value
         );

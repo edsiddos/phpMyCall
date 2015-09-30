@@ -35,7 +35,7 @@ class Login_model extends CI_Model {
      * @param string $senha
      * @return Array Retorna array com <b>nome</b>, <b>usuario</b>, <b>email</b>, <b>perfil</b>.
      */
-    public function getDadosLogin($usuario, $senha) {
+    public function get_dados_login($usuario, $senha) {
         $select = "usuario.id, usuario.nome, usuario.usuario, usuario.email, perfil.perfil, perfil.nivel";
 
         $array = array(
@@ -56,7 +56,7 @@ class Login_model extends CI_Model {
      * @param string $senha Nova senha
      * @return boolean Retorna <b>True</b> sucesso, <b>False</b> erro
      */
-    public function atualizaSenha($usuario, $senha) {
+    public function atualiza_senha($usuario, $senha) {
         $array = array(
             'senha' => sha1(md5($senha))
         );

@@ -56,7 +56,7 @@ class Login extends CI_Controller {
 
             if ((!empty($usuario)) && (!empty($senha))) {
 
-                $result = $this->login_model->getDadosLogin($usuario, $senha);
+                $result = $this->login_model->get_dados_login($usuario, $senha);
 
                 if (count($result) > 0) {
                     $this->session->set_userdata($result);
@@ -98,7 +98,7 @@ class Login extends CI_Controller {
     /**
      * Formulario de alteraçao de senha.
      */
-    public function alterarSenha() {
+    public function alterar_senha() {
         if (Autenticacao::verifica_login()) {
             $this->load->helper('form');
             $this->load->library('form_validation');
@@ -116,8 +116,8 @@ class Login extends CI_Controller {
     /**
      * Realiza a alteraçao de senha
      */
-    public function novaSenha() {
-        $nova_senha = filter_input(INPUT_POST, 'novaSenha');
+    public function nova_senha() {
+        $nova_senha = filter_input(INPUT_POST, 'nova_senha');
         $redigite = filter_input(INPUT_POST, 'redigite');
 
         if (strlen($nova_senha) >= 5 && (strcmp($nova_senha, $redigite) === 0)) {
@@ -127,7 +127,7 @@ class Login extends CI_Controller {
             /*
              * Atualiza senha em caso de sucesso gera mensagem de sucesso
              */
-            if ($this->login_model->atualizaSenha($usuario, $nova_senha)) {
+            if ($this->login_model->atualiza_senha($usuario, $nova_senha)) {
                 $result['situacao'] = 'Senha alterada com sucesso.';
                 $_SESSION['msg_sucesso'] = $result['situacao'];
             } else {
@@ -145,7 +145,7 @@ class Login extends CI_Controller {
                     (strcmp($nova_senha, $redigite) ? ', senhas digitadas não conferem.' : '');
         }
 
-        redirect("login/alterarSenha");
+        redirect("login/alterar_senha");
     }
 
 }
