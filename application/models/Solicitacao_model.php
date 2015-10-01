@@ -17,46 +17,58 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace application\models;
-
-use system\Model,
-    libs\Cache;
-
 /**
  * Manipula inserção, atualização e consultas de solicitações.
  *
  * @author Ednei Leite da Silva
  */
-class Solicitacao extends Model {
+class Solicitacao_model extends CI_Model {
+
+    /**
+     * Metodo construtor utilizado para inicializar transaction
+     */
+    public function __construct() {
+        parent::__construct();
+        $this->load->database();
+        $this->db->trans_begin();
+    }
+
+    /**
+     * Metodo destrutor utilizado para dar commit ou rollback
+     */
+    public function __destruct() {
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+        } else {
+            $this->db->trans_commit();
+        }
+    }
 
     /**
      * Retorna os projetos na qual o usuário é participantes.
      * @param int $usuario Código do usuário.
      * @return Array Retorna informação dos projetos e dos tipos de problemas
      */
-    public function getProjetos($usuario) {
-        $sql = "SELECT projeto_tipo_problema.id,
-                    projeto.id AS id_projeto,
-                    projeto.nome AS projeto,
-                    tipo_problema.nome AS problema
-                FROM phpmycall.projeto
-                INNER JOIN phpmycall.projeto_tipo_problema ON projeto.id = projeto_tipo_problema.projeto
-                INNER JOIN phpmycall.tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id
-                INNER JOIN phpmycall.projeto_responsaveis ON projeto.id = projeto_responsaveis.projeto
-                WHERE projeto_responsaveis.usuario = :usuario
-                ORDER BY projeto.nome, tipo_problema.nome";
+    public function get_projetos($usuario) {
+        $this->db->select('projeto_tipo_problema.id, projeto.id AS id_projeto, projeto.nome AS projeto, tipo_problema.nome AS problema');
+        $this->db->from('phpmycall.projeto');
+        $this->db->join('phpmycall.projeto_tipo_problema', 'projeto.id = projeto_tipo_problema.projeto', 'inner');
+        $this->db->join('phpmycall.tipo_problema', 'projeto_tipo_problema.problema = tipo_problema.id', 'inner');
+        $this->db->join('phpmycall.projeto_responsaveis', 'projeto.id = projeto_responsaveis.projeto', 'inner');
+        $this->db->where(array('projeto_responsaveis.usuario' => $usuario))->order_by('projeto.nome, tipo_problema.nome');
+        $query = $this->db->get();
 
-        return $this->select($sql, array("usuario" => $usuario));
+        return $query->result_array();
     }
 
     /**
      * Busca todas prioridades cadastradas.
      * @return Array Retorna relação de prioridades.
      */
-    public function getPrioridades() {
-        $sql = "SELECT id, nome, padrao FROM phpmycall.prioridade";
+    public function get_prioridades() {
+        $query = $this->db->select('id, nome, padrao')->from('phpmycall.prioridade')->get();
 
-        return $this->select($sql);
+        return $query->result_array();
     }
 
     /**
@@ -64,22 +76,20 @@ class Solicitacao extends Model {
      * @param int $projeto Código do projeto.
      * @return Array Retorna todos os usuários participantes de um projeto.
      */
-    public function getSolicitantes($projeto) {
-        $parametros = $this->getParametros();
+    public function get_solicitantes($projeto) {
+        $parametros = $this->get_parametros();
 
         $tecnicos = "'" . implode("', '", $parametros['ATENDER_SOLICITACAO']) . "'";
 
-        $sql = "SELECT usuario.id,
-                    usuario.nome,
-                    perfil.perfil IN ({$tecnicos})::int AS tecnico
-                FROM phpmycall.usuario
-                INNER JOIN phpmycall.projeto_responsaveis ON usuario.id = projeto_responsaveis.usuario
-                INNER JOIN phpmycall.projeto_tipo_problema ON projeto_responsaveis.projeto = projeto_tipo_problema.projeto
-                INNER JOIN phpmycall.perfil ON usuario.perfil = perfil.id
-                WHERE projeto_tipo_problema.id = :projeto
-                ORDER BY usuario.nome";
+        $this->db->select("usuario.id, usuario.nome, perfil.perfil IN ({$tecnicos})::int AS tecnico");
+        $this->db->from('phpmycall.usuario');
+        $this->db->join('phpmycall.projeto_responsaveis', 'usuario.id = projeto_responsaveis.usuario', 'inner');
+        $this->db->join('phpmycall.projeto_tipo_problema', 'projeto_responsaveis.projeto = projeto_tipo_problema.projeto', 'inner');
+        $this->db->join('phpmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
+        $this->db->where(array('projeto_tipo_problema.id' => $projeto))->order_by('usuario.nome');
+        $query = $this->db->get();
 
-        return $this->select($sql, array('projeto' => $projeto));
+        return $query->result_array();
     }
 
     /**
@@ -87,23 +97,21 @@ class Solicitacao extends Model {
      * @param int $solicitacao Código da solicitação.
      * @return Array Retorna um array.
      */
-    public function getSolicitantesBySolicitacao($solicitacao) {
-        $parametros = $this->getParametros();
+    public function get_solicitantes_solicitacao($solicitacao) {
+        $parametros = $this->get_parametros();
 
         $tecnicos = "'" . implode("', '", $parametros['ATENDER_SOLICITACAO']) . "'";
 
-        $sql = "SELECT usuario.id,
-                    usuario.nome,
-                    perfil.perfil IN ({$tecnicos})::int AS tecnico
-                FROM phpmycall.usuario
-                INNER JOIN phpmycall.projeto_responsaveis ON usuario.id = projeto_responsaveis.usuario
-                INNER JOIN phpmycall.projeto_tipo_problema ON projeto_responsaveis.projeto = projeto_tipo_problema.projeto
-                INNER JOIN phpmycall.perfil ON usuario.perfil = perfil.id
-                INNER JOIN phpmycall.solicitacao ON projeto_tipo_problema.id = solicitacao.projeto_problema
-                WHERE solicitacao.id = :solicitacao
-                ORDER BY usuario.nome";
+        $this->db->select("usuario.id, usuario.nome, perfil.perfil IN ({$tecnicos})::int AS tecnico");
+        $this->db->from('phpmycall.usuario');
+        $this->db->join('phpmycall.projeto_responsaveis', 'usuario.id = projeto_responsaveis.usuario', 'inner');
+        $this->db->join('phpmycall.projeto_tipo_problema', 'projeto_responsaveis.projeto = projeto_tipo_problema.projeto', 'inner');
+        $this->db->join('phpmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
+        $this->db->join('phpmycall.solicitacao', 'projeto_tipo_problema.id = solicitacao.projeto_problema', 'inner');
+        $this->db->where(array('solicitacao.id' => $solicitacao))->order_by('usuario.nome');
+        $query = $this->db->get();
 
-        return $this->select($sql, array('solicitacao' => $solicitacao));
+        return $query->result_array();
     }
 
     /**
@@ -111,25 +119,11 @@ class Solicitacao extends Model {
      * @param int $dados Array com dados da solicitação.
      * @return Mixed Retorna <b>Array</b> com id da solicitação, retorna <b>FALSE</b> se ocorrer ao gravar solicitação.
      */
-    public function gravaSolicitacao($dados) {
-        if ($this->insert('phpmycall.solicitacao', $dados)) {
-            $sql = "SELECT solicitacao.id
-                    FROM phpmycall.solicitacao
-                    WHERE projeto_problema = :projeto_problema
-                        AND descricao = :descricao
-                        AND solicitante = :solicitante
-                        AND prioridade = :prioridade
-                        AND atendente = :atendente
-                        AND abertura = :abertura
-                        AND atendimento = :atendimento
-                        AND encerramento = :encerramento
-                        AND avaliacao IS NULL
-                        AND justificativa_avaliacao IS NULL";
-
-            $sql .= empty($dados['solicitacao_origem']) ? " AND solicitacao_origem IS NULL" : " AND solicitacao_origem = :solicitacao_origem";
-            $sql .= empty($dados['tecnico']) ? " AND tecnico IS NULL" : " AND tecnico = :tecnico";
-
-            return $this->select($sql, $dados, FALSE);
+    public function grava_solicitacao($dados) {
+        if ($this->db->insert('phpmycall.solicitacao', $dados)) {
+            if ($this->db->dbdriver == 'pdo' && $this->db->subdriver === 'pgsql') {
+                return $this->db->insert_id('phpmycall.solicitacao_id_seq');
+            }
         } else {
             return FALSE;
         }
@@ -140,8 +134,8 @@ class Solicitacao extends Model {
      * @param Array $dados Array com ID da solicitação, nome do arquivo, tipo de arquivo e caminho do arquivo.
      * @return boolean Retorna <b>TRUE</b> se sucesso, <b>FALSE</b> se falha
      */
-    public function gravaArquivoSolicitacao($dados) {
-        return $this->insert('phpmycall.arquivos', $dados);
+    public function grava_arquivo_solicitacao($dados) {
+        return $this->db->insert('phpmycall.arquivos', $dados);
     }
 
     /**
@@ -151,8 +145,8 @@ class Solicitacao extends Model {
      * @param int $situacao Status da solicitação 1 - <b>aberta</b>, 2 - <b>atendimento</b>, 3 - <b>encerrada</b>.
      * @return Array Retorna um array com todas as solicitações de um determinada situação
      */
-    public function getSolicitacoes($usuario, $perfil, $situacao = 1) {
-        $config = $this->getParametros();
+    public function get_solicitacoes($usuario, $perfil, $situacao = 1) {
+        $config = $this->get_parametros();
 
         $sql = "SELECT projeto.nome AS projeto,
                     tipo_problema.nome AS problema,

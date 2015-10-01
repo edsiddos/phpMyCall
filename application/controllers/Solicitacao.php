@@ -166,7 +166,7 @@ class Solicitacao extends CI_Controller {
             Logs::gravar($log, $_SESSION ['id']);
             redirect('solicitacao/aberta');
         } else {
-            redirect('Main/index');
+            redirect('main/index');
         }
     }
 
@@ -448,7 +448,7 @@ class Solicitacao extends CI_Controller {
             Logs::gravar($log, $_SESSION ['id']);
             redirect("solicitacao/visualizar/{$solicitacao}");
         } else {
-            redirect('Main/index');
+            redirect('main/index');
         }
     }
 
@@ -666,17 +666,17 @@ class Solicitacao extends CI_Controller {
     /**
      * Método que busca dados sobre o feedback a partir do <b>ID</b> do feedback
      */
-    public function getPerguntaRespostaFeedback() {
+    public function get_pergunta_resposta_feedback() {
         $id_feedback = $_POST['feedback_id'];
         $usuario = $_SESSION['id'];
 
-        echo json_encode($this->model->getPerguntaRespostaFeedback($id_feedback, $usuario));
+        echo json_encode($this->model->get_pergunta_resposta_feedback($id_feedback, $usuario));
     }
 
     /**
      * Grava resposta de um feedback.
      */
-    public function responderFeedback() {
+    public function responder_feedback() {
         $id_feedback = $_POST['feedback_id'];
         $id_solicitacao = $_POST['solicitacao'];
 
@@ -695,7 +695,7 @@ class Solicitacao extends CI_Controller {
                 'fim' => $hoje
             );
 
-            if ($this->model->responderFeedback($dados, $id_feedback)) {
+            if ($this->model->responder_feedback($dados, $id_feedback)) {
                 $_SESSION['msg_sucesso'] = "Feedback respondido com sucesso.";
             } else {
                 $_SESSION['msg_erro'] = "Falha ao responder feedback.";
