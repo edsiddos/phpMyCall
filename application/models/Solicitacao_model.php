@@ -148,34 +148,31 @@ class Solicitacao_model extends CI_Model {
     public function get_solicitacoes($usuario, $perfil, $situacao = 1) {
         $config = $this->get_parametros();
 
-        $sql = "SELECT projeto.nome AS projeto,
-                    tipo_problema.nome AS problema,
-                    prioridade.nome AS prioridade,
-                    solicitante.nome AS solicitante,
-                    atendente.nome AS atendente,
-                    TO_CHAR(solicitacao.abertura, 'FMDD/MM/YYYY  HH24:MI:SS') AS abertura,
-                    solicitacao.id AS solicitacao,
-                    COUNT(arquivos.id) AS arquivos
-                FROM phpmycall.solicitacao
-                INNER JOIN phpmycall.usuario AS solicitante ON solicitante.id = solicitacao.solicitante
-                INNER JOIN phpmycall.usuario AS atendente ON atendente.id = solicitacao.atendente
-                INNER JOIN phpmycall.projeto_tipo_problema ON solicitacao.projeto_problema = projeto_tipo_problema.id
-                INNER JOIN phpmycall.projeto ON projeto_tipo_problema.projeto = projeto.id
-                INNER JOIN phpmycall.tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id
-                INNER JOIN phpmycall.prioridade ON solicitacao.prioridade = prioridade.id
-                INNER JOIN phpmycall.projeto_responsaveis ON projeto.id = projeto_responsaveis.projeto
-                LEFT JOIN phpmycall.arquivos ON solicitacao.id = arquivos.solicitacao
-                WHERE projeto_responsaveis.usuario = :usuario ";
+        $select = "projeto.nome AS projeto, tipo_problema.nome AS problema, prioridade.nome AS prioridade, ";
+        $select .= "solicitante.nome AS solicitante, atendente.nome AS atendente, TO_CHAR(solicitacao.abertura, 'FMDD/MM/YYYY  HH24:MI:SS') AS abertura, ";
+        $select .= "solicitacao.id AS solicitacao, COUNT(arquivos.id) AS arquivos";
+
+        $this->db->select($select);
+        $this->db->from('');
+        $this->db->join('phpmycall.usuario AS solicitante', 'solicitante.id = solicitacao.solicitante', 'inner');
+        $this->db->join('phpmycall.usuario AS atendente', 'atendente.id = solicitacao.atendente', 'inner');
+        $this->db->join('phpmycall.projeto_tipo_problema', 'solicitacao.projeto_problema = projeto_tipo_problema.id', 'inner');
+        $this->db->join('phpmycall.projeto', 'projeto_tipo_problema.projeto = projeto.id', 'inner');
+        $this->db->join('phpmycall.tipo_problema', 'projeto_tipo_problema.problema = tipo_problema.id', 'inner');
+        $this->db->join('phpmycall.prioridade', 'solicitacao.prioridade = prioridade.id', 'inner');
+        $this->db->join('phpmycall.projeto_responsaveis', 'projeto.id = projeto_responsaveis.projeto', 'inner');
+        $this->db->join('phpmycall.arquivos', 'solicitacao.id = arquivos.solicitacao', 'left');
+        $where = "projeto_responsaveis.usuario = {$usuario} ";
 
         /*
          * Conforme o status da solicitação muda na montagem da sql.
          */
         if ($situacao == 1) {
-            $sql .= " AND solicitacao.abertura = solicitacao.atendimento AND solicitacao.encerramento = solicitacao.atendimento";
+            $where .= "AND solicitacao.abertura = solicitacao.atendimento AND solicitacao.encerramento = solicitacao.atendimento ";
         } else if ($situacao == 2) {
-            $sql .= " AND solicitacao.abertura < solicitacao.atendimento AND solicitacao.encerramento = solicitacao.atendimento";
+            $where .= "AND solicitacao.abertura < solicitacao.atendimento AND solicitacao.encerramento = solicitacao.atendimento ";
         } else {
-            $sql .= " AND solicitacao.abertura < solicitacao.atendimento AND solicitacao.atendimento < solicitacao.encerramento";
+            $where .= "AND solicitacao.abertura < solicitacao.atendimento AND solicitacao.atendimento < solicitacao.encerramento ";
         }
 
         /*
@@ -183,18 +180,12 @@ class Solicitacao_model extends CI_Model {
          * dentro do projeto que o mesmo esteja vinculado
          */
         if (array_search($perfil, $config['VISUALIZAR_SOLICITACAO']) === FALSE) {
-            $sql .= " AND (solicitacao.solicitante = :usuario OR solicitacao.atendente = :usuario OR solicitacao.tecnico = :usuario)";
+            $where .= " AND (solicitacao.solicitante = {$usuario} OR solicitacao.atendente = {$usuario} OR solicitacao.tecnico = {$usuario})";
         }
 
-        $sql .= " GROUP BY projeto.nome,
-                    tipo_problema.nome,
-                    prioridade.nome,
-                    solicitante.nome,
-                    atendente.nome,
-                    solicitacao.abertura,
-                    solicitacao.id,
-                    prioridade.nivel
-                ORDER BY prioridade.nivel, solicitacao.abertura";
+        $this->db->where($where);
+        $this->db->group_by('projeto.nome, tipo_problema.nome, prioridade.nome, solicitante.nome, atendente.nome, solicitacao.abertura, solicitacao.id, prioridade.nivel');
+        $this->db->order_by('prioridade.nivel, solicitacao.abertura');
 
         return $this->select($sql, array('usuario' => $usuario));
     }
@@ -203,7 +194,7 @@ class Solicitacao_model extends CI_Model {
      * Método que busca todos os parametros referente a solicitações.
      * @return Array Retorna todos os parametros referente a solicitações.
      */
-    public function getParametros() {
+    public function get_parametros() {
         $parametros = Cache::getCache(PARAMETROS);
 
         if (empty($parametros['VISUALIZAR_SOLICITACAO']) || empty($parametros['CORES_SOLICITACOES']) ||
@@ -221,17 +212,19 @@ class Solicitacao_model extends CI_Model {
             unset($parametros['ENCERRAR_SOLICITACAO']);
             unset($parametros['EXCLUIR_SOLICITACAO']);
 
-            $parametros['VISUALIZAR_SOLICITACAO'] = $this->getDadosParametros('VISUALIZAR_SOLICITACAO');
-            $parametros['CORES_SOLICITACOES'] = $this->getDadosParametros('CORES_SOLICITACOES');
-            $parametros['DIRECIONAR_CHAMADO'] = $this->getDadosParametros('DIRECIONAR_CHAMADO');
-            $parametros['REDIRECIONAR_CHAMADO'] = $this->getDadosParametros('REDIRECIONAR_CHAMADO');
-            $parametros['EDITAR_SOLICITACAO'] = $this->getDadosParametros('EDITAR_SOLICITACAO');
-            $parametros['ATENDER_SOLICITACAO'] = $this->getDadosParametros('ATENDER_SOLICITACAO');
-            $parametros['ENCERRAR_SOLICITACAO'] = $this->getDadosParametros('ENCERRAR_SOLICITACAO');
-            $parametros['EXCLUIR_SOLICITACAO'] = $this->getDadosParametros('EXCLUIR_SOLICITACAO');
+            $parametros['VISUALIZAR_SOLICITACAO'] = $this->get_dados_parametros('VISUALIZAR_SOLICITACAO');
+            $parametros['CORES_SOLICITACOES'] = $this->get_dados_parametros('CORES_SOLICITACOES');
+            $parametros['DIRECIONAR_CHAMADO'] = $this->get_dados_parametros('DIRECIONAR_CHAMADO');
+            $parametros['REDIRECIONAR_CHAMADO'] = $this->get_dados_parametros('REDIRECIONAR_CHAMADO');
+            $parametros['EDITAR_SOLICITACAO'] = $this->get_dados_parametros('EDITAR_SOLICITACAO');
+            $parametros['ATENDER_SOLICITACAO'] = $this->get_dados_parametros('ATENDER_SOLICITACAO');
+            $parametros['ENCERRAR_SOLICITACAO'] = $this->get_dados_parametros('ENCERRAR_SOLICITACAO');
+            $parametros['EXCLUIR_SOLICITACAO'] = $this->get_dados_parametros('EXCLUIR_SOLICITACAO');
 
-            $sql = "SELECT prioridade.nome, prioridade.cor FROM phpmycall.prioridade ORDER BY prioridade.id";
-            $result = $this->select($sql, array());
+
+            $query = $this->db->select('prioridade.nome, prioridade.cor')->from('phpmycall.prioridade')->order_by('prioridade.id')->get();
+            $result = $query->result_array();
+
             foreach ($result as $values) {
                 $parametros['CORES_SOLICITACOES'][$values['nome']] = $values['cor'];
             }
@@ -247,12 +240,10 @@ class Solicitacao_model extends CI_Model {
      * @param string $parametro Nome do parametro
      * @return Array Retorna um <b>Array</b> com os perfil.
      */
-    private function getDadosParametros($parametro) {
-        $sql = "SELECT config.texto FROM phpmycall.config WHERE config.parametro = :parametro";
-        $perfil = $this->select($sql, array('parametro' => $parametro), FALSE);
+    private function get_dados_parametros($parametro) {
+        $perfil = $this->db->select('texto')->from('phpmycall.config')->where(array('parametro' => $parametro))->get()->row_array();
 
-        $sql = "SELECT perfil.perfil FROM phpmycall.perfil WHERE perfil.id IN ({$perfil['texto']})";
-        $result = $this->select($sql);
+        $result = $this->db->select('perfil.perfil')->from('phpmycall.perfil')->where("perfil.nivel IN ({$perfil['texto']})");
         foreach ($result as $values) {
             $return[] = $values['perfil'];
         }
@@ -267,8 +258,8 @@ class Solicitacao_model extends CI_Model {
      * @param int $usuario Código do Usuário.
      * @return Array Retorna <b>Array</b> com dados de uma determinada solicitação
      */
-    public function getDadosSolicitacao($solicitacao, $perfil, $usuario) {
-        $config = $this->getParametros();
+    public function get_dados_solicitacao($solicitacao, $perfil, $usuario) {
+        $config = $this->get_parametros();
 
         $sql = "SELECT projeto_tipo_problema.id AS projeto_problema,
                     projeto.nome AS projeto,
