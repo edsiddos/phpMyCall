@@ -10,11 +10,11 @@
                 type: 'POST',
                 success: function (dados) {
                     if (dados.status == 1) {
-                        $("input[name=input_empresa]").removeClass('has-success');
-                        $("input[name=input_empresa]").addClass('has-error');
+                        $("#nome_empresa").removeClass('has-success');
+                        $("#nome_empresa").addClass('has-error');
                     } else {
-                        $("input[name=input_empresa]").removeClass('has-error');
-                        $("input[name=input_empresa]").addClass('has-success');
+                        $("#nome_empresa").removeClass('has-error');
+                        $("#nome_empresa").addClass('has-success');
                     }
                 }
             });
@@ -35,64 +35,48 @@
 
         $('input[name=input_telefone_fixo], input[name=input_telefone_celular]').mask(MascaraNonoDigito, NonoDigitoOpcoes);
 
-        $('#dialog_empresas').dialog({
-            autoOpen: false,
-            modal: true,
-            closeOnEscape: false,
-            width: '80%',
-            height: $(window).height() * 0.95,
-            buttons: [
-                {
-                    text: 'Cadastrar',
-                    icons: {
-                        primary: 'ui-icon-disk',
-                    },
-                    click: function () {
-                        empresa.submitFormulario();
-                        $(this).dialog('close');
-                    }
-                },
-                {
-                    text: 'Cancelar',
-                    icons: {
-                        primary: 'ui-icon-close',
-                    },
-                    click: function () {
-                        $(this).dialog('close');
-                    }
-                }
-            ],
-            close: function () {
-                $('form[name=formulario] input[type=text]').val('');
-            },
-            position: {my: 'center', at: 'center', of: window}
-        });
-
     });
 </script>
 
-<div id="dialog_empresas">
-    <form name="formulario">
-        <input type="hidden" name="inputID" id="inputID" value="0" />
+<div id="dialog_empresas" class="hidden">
 
-        <div class="row" id="divEmpresa">
-            <label for="inputEmpresa" class="two columns">Empresa</label>
-            <input type="text" class="ten columns" id="inputEmpresa" required name="inputEmpresa" placeholder="Empresa">
-        </div>
+    <?php
+    $hidden = array('input_id' => '0');
+    $attr_from = array('class' => 'form-horizontal', 'name' => 'formulario', 'id' => 'formulario');
 
-        <div class="row">
-            <label for="inputEndereco" class="two columns">Endereço</label>
-            <input type="text" class="ten columns" id="inputEndereco" name="inputEndereco" placeholder="Endereço">
-        </div>
+    echo form_open(array(), $attr_from, $hidden);
 
-        <div class="row">
-            <label for="inputTelefoneFixo" class="two columns">Telefone Fixo</label>
-            <input type="text" class="ten columns" id="inputTelefoneFixo" name="inputTelefoneFixo" required placeholder="Telefone Fixo">
-        </div>
+    $class_label = array('class' => 'col-md-4 control-label');
+    $class_input = array('class' => 'form-control input-md');
+    ?>
 
-        <div class="row">
-            <label for="inputTelefoneCelular" class="two columns">Telefone Celular</label>
-            <input type="text" class="ten columns" id="inputTelefoneCelular" name="inputTelefoneCelular" placeholder="Telefone Celular">
+    <div class="form-group" id="nome_empresa">
+        <?= form_label('Empresa:', 'input_empresa', $class_label); ?>
+        <div class="col-md-8">
+            <?= form_input(array('name' => 'input_empresa', 'id' => 'input_empresa', 'placeholder' => 'Empresa'), '', $class_input) ?>
         </div>
-    </form>
+    </div>
+
+    <div class="form-group">
+        <?= form_label('Endereço:', 'input_endereco', $class_label); ?>
+        <div class="col-md-8">
+            <?= form_input(array('name' => 'input_endereco', 'id' => 'input_endereco', 'placeholder' => 'Endereço'), '', $class_input) ?>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <?= form_label('Telefone Fixo:', 'input_telefone_fixo', $class_label); ?>
+        <div class="col-md-8">
+            <?= form_input(array('name' => 'input_telefone_fixo', 'id' => 'input_telefone_fixo', 'placeholder' => 'Telefone Fixo'), '', $class_input) ?>
+        </div>
+    </div>
+    <div class="form-group">
+        <?= form_label('Telefone Celular:', 'input_telefone_celular', $class_label); ?>
+        <div class="col-md-8">
+            <?= form_input(array('name' => 'input_telefone_celular', 'id' => 'input_telefone_celular', 'placeholder' => 'Telefone Celular'), '', $class_input) ?>
+        </div>
+    </div>
+
+    <?= form_close(); ?>
 </div>

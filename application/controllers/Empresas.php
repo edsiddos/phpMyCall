@@ -42,7 +42,9 @@ class Empresas extends CI_Controller {
     public function index() {
         $permissao = 'empresas/index';
 
-        if (Menu::possuePermissao($_SESSION ['perfil'], $permissao)) {
+        if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
+            $this->load->helper('form');
+
             $vars = array(
                 "title" => "Empresa",
             );
@@ -121,7 +123,18 @@ class Empresas extends CI_Controller {
         $perfil = $_SESSION['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
-            echo json_encode($this->model->get_empresas());
+            $columns = filter_input(INPUT_POST, 'columns', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+            $draw = filter_input(INPUT_POST, 'draw', FILTER_SANITIZE_NUMBER_INT);
+            $limit = filter_input(INPUT_POST, 'length', FILTER_SANITIZE_NUMBER_INT);
+            $offset = filter_input(INPUT_POST, 'start', FILTER_SANITIZE_NUMBER_INT);
+            $order = filter_input(INPUT_POST, 'order', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+            $search = filter_input(INPUT_POST, 'search', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+
+            $order_by = "{$columns[$order[0]['column']]['data']} {$order[0]['dir']}";
+
+            $array['draw'] = (empty($draw) ? 1 : $draw);
+            $array = $this->model->get_empresas($search['value'], $order_by, $limit, $offset);
+            echo json_encode($array);
         }
     }
 
@@ -156,7 +169,7 @@ class Empresas extends CI_Controller {
 
             $id = filter_input(INPUT_POST, 'input_id', FILTER_SANITIZE_NUMBER_INT);
 
-            if ($this->model->atualizaEmpresa($id, $dados)) {
+            if ($this->model->atualiza_empresa($id, $dados)) {
                 $status = array(
                     'status' => true,
                     'msg' => 'Sucesso ao alterar dados da empresa'
@@ -167,8 +180,6 @@ class Empresas extends CI_Controller {
                     'msg' => 'Erro ao alterar dados da empresa'
                 );
             }
-
-            $status['empresas'] = $this->model->get_empresas();
 
             $dados['id'] = $id;
 
@@ -208,8 +219,6 @@ class Empresas extends CI_Controller {
                     'msg' => 'Erro ao excluir empresa'
                 );
             }
-
-            $status['empresas'] = $this->model->get_empresas();
 
             $log = array(
                 'dados' => $dados,

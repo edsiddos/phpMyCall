@@ -1,7 +1,11 @@
 
-
 <script type="text/javascript" src="<?= base_url() . 'static/js/jquery.mask.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/jquery.dataTables.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.jqueryui.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.responsive.min.js' ?>"></script>
 
+<link href="<?= base_url() . 'static/css/datatable/dataTables.jqueryui.min.css' ?>" rel="stylesheet">
+<link href="<?= base_url() . 'static/css/datatable/responsive.jqueryui.min.css' ?>" rel="stylesheet">
 
 <script type="text/javascript">
 
@@ -97,6 +101,35 @@
 
     $(document).ready(function () {
 
+        var datatable = $('#empresa').DataTable({
+            ordering: true,
+            processing: true,
+            serverSide: true,
+            responsive: true,
+            ajax: {
+                url: "<?= base_url() . 'empresas/get_empresas' ?>",
+                type: "POST"
+            },
+            language: {
+                url: "<?= base_url() . 'static/js/datatable/pt_br.json' ?>"
+            },
+            columns: [
+                {"data": "id"},
+                {"data": "empresa"},
+                {"data": "endereco"},
+                {"data": "telefone_fixo"},
+                {"data": "telefone_celular"}
+            ]
+        }).on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                datatable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+
         /*
          * Gera botão de cadastrar usuário e ação de clica-lo
          */
@@ -128,11 +161,11 @@
 
             empresa.setAlterar();
 
-            var id = $(this).attr('empresa');
+            var dados = datatable.row('.selected').data();
 
             $.ajax({
                 url: '<?= base_url() . '/empresas/get_dados_empresa' ?>',
-                data: 'empresa=' + id,
+                data: 'empresa=' + dados.id,
                 dataType: 'json',
                 type: 'post',
                 async: false,
@@ -162,8 +195,48 @@
             }
         }).on('click', function () {
             $('#alerta_exclusao').dialog('open');
-            empresa.setExcluir($(this).attr('empresa'));
+
+            var dados = datatable.row('.selected').data();
+
+            empresa.setExcluir(dados.id);
         });
+
+        /*
+         * Dialog para cadastro e ediçao de dados da empresa
+         */
+        $('#dialog_empresas').dialog({
+            autoOpen: false,
+            modal: true,
+            closeOnEscape: false,
+            width: '80%',
+            height: $(window).height() * 0.75,
+            buttons: [
+                {
+                    text: 'Cadastrar',
+                    icons: {
+                        primary: 'ui-icon-disk',
+                    },
+                    click: function () {
+                        empresa.submitFormulario();
+                        datatable.ajax.reload();
+                        $(this).dialog('close');
+                    }
+                },
+                {
+                    text: 'Cancelar',
+                    icons: {
+                        primary: 'ui-icon-close',
+                    },
+                    click: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            ],
+            close: function () {
+                $('form[name=formulario] input[type=text]').val('');
+            },
+            position: {my: 'center', at: 'center', of: window}
+        }).removeClass('hidden');
 
         /*
          * dialog solicitando confirmação para exclusão.
@@ -180,6 +253,7 @@
                     },
                     click: function () {
                         empresa.excluir();
+                        datatable.ajax.reload();
                         $(this).dialog('close');
                     }
                 },
@@ -203,23 +277,25 @@
 <div class="container">
 
     <div class="row">
-        <div id="msg_status" class="alert hide text-center"></div>
+        <div id="msg_status" class="alert hidden text-center"></div>
     </div>
 
     <div class="row">
         <button type="button" name="cadastrar" id="cadastrar">Cadastrar</button>
+        <button type="button" name="editar" id="editar">Editar</button>
+        <button type="button" name="excluir" id="excluir">Excluir</button>
     </div>
 
     <div class="row">
 
-        <table id='tabela_empresas'>
+        <table id="empresa" class="display responsive nowrap" width="100%" cellspacing="0">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Nome</th>
                     <th>Endereço</th>
                     <th>Telefone Fixo</th>
                     <th>Telefone Celular</th>
-                    <th></th>
                 </tr>
             </thead>
         </table>

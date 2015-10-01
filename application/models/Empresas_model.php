@@ -22,7 +22,27 @@
  *
  * @author Ednei Leite da Silva
  */
-class Empresas extends CI_Model {
+class Empresas_model extends CI_Model {
+
+    /**
+     * Metodo construtor utilizado para inicializar transaction
+     */
+    public function __construct() {
+        parent::__construct();
+        $this->load->database();
+        $this->db->trans_begin();
+    }
+
+    /**
+     * Metodo destrutor utilizado para dar commit ou rollback
+     */
+    public function __destruct() {
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+        } else {
+            $this->db->trans_commit();
+        }
+    }
 
     /**
      * Cadastra uma nova empresa
@@ -40,17 +60,47 @@ class Empresas extends CI_Model {
      */
     public function existe_empresa($empresa) {
         $this->db->select('COUNT(empresas.empresa) AS status');
-        $query = $this->db->from('phpmycall.empresas')->where(array('empresa' => "$empresa"))->get();
+        $query = $this->db->from('phpmycall.empresas')->where("empresa ILIKE '{$empresa}'")->get();
 
         return $query->row_array();
     }
 
     /**
+     * 
      * Busca as empresas cadastradas.
+     * @param string $search String com trecho que será procurado
+     * @param string $order_by Coluna que será ordenada
+     * @param int $limit Limite de registros retornados
+     * @param int $offset A partir de que linha
      * @return Array Retorna array com dados das empresas
      */
-    public function get_empresas() {
-        return $this->db->from('phpmycall.empresas')->get()->result_array();
+    public function get_empresas($search, $order_by, $limit, $offset) {
+        $where = "empresa ILIKE '%{$search}%' OR endereco ILIKE '%{$search}%' ";
+        $where .= " OR telefone_fixo ILIKE '%{$search}%' OR telefone_celular ILIKE '%{$search}%'";
+
+        $this->db->select('COUNT(id) AS count');
+        $this->db->from('phpmycall.empresas');
+
+        if (!empty($search)) {
+            $this->db->where($where);
+        }
+
+        $query = $this->db->get();
+        $aux = $query->row_array();
+
+        $result['recordsFiltered'] = $aux['count'];
+        $result['recordsTotal'] = $this->db->count_all_results('phpmycall.empresas');
+
+        $this->db->select("id, empresa, endereco, telefone_fixo, telefone_celular");
+        $this->db->from('phpmycall.empresas');
+
+        if (!empty($search)) {
+            $this->db->where($where);
+        }
+
+        $result['data'] = $this->db->order_by($order_by)->limit($limit, $offset)->get()->result_array();
+
+        return $result;
     }
 
     /**
@@ -59,7 +109,7 @@ class Empresas extends CI_Model {
      * @return Array Retorna dados da empresa.
      */
     public function get_dados_empresa($empresa) {
-        return $this->db->form('phpmycall.empresas')->where(array('id' => "$empresa"))->get()->row_array();
+        return $this->db->from('phpmycall.empresas')->where(array('id' => "$empresa"))->get()->row_array();
     }
 
     /**
