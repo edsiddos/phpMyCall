@@ -261,7 +261,7 @@ class Solicitacao_model extends CI_Model {
     public function get_dados_solicitacao($solicitacao, $perfil, $usuario) {
         $config = $this->get_parametros();
 
-        $sql = "SELECT projeto_tipo_problema.id AS projeto_problema,
+        $select = "projeto_tipo_problema.id AS projeto_problema,
                     projeto.nome AS projeto,
                     tipo_problema.nome AS problema,
                     prioridade.nome AS prioridade,
@@ -276,34 +276,34 @@ class Solicitacao_model extends CI_Model {
                     CASE WHEN solicitacao.abertura = solicitacao.atendimento THEN NULL
                     ELSE TO_CHAR(solicitacao.atendimento, 'FMDD/MM/YYYY  HH24:MI:SS') END AS atendimento,
                     CASE WHEN solicitacao.atendimento = solicitacao.encerramento THEN NULL
-                    ELSE TO_CHAR(solicitacao.encerramento, 'FMDD/MM/YYYY  HH24:MI:SS') END AS encerramento
-                FROM phpmycall.solicitacao
-                INNER JOIN phpmycall.usuario AS solicitante ON solicitante.id = solicitacao.solicitante
-                INNER JOIN phpmycall.usuario AS atendente ON atendente.id = solicitacao.atendente
-                LEFT JOIN phpmycall.usuario AS tecnico ON tecnico.id = solicitacao.tecnico
-                INNER JOIN phpmycall.projeto_tipo_problema ON solicitacao.projeto_problema = projeto_tipo_problema.id
-                INNER JOIN phpmycall.projeto ON projeto_tipo_problema.projeto = projeto.id
-                INNER JOIN phpmycall.tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id
-                INNER JOIN phpmycall.prioridade ON solicitacao.prioridade = prioridade.id
-                INNER JOIN phpmycall.projeto_responsaveis ON projeto.id = projeto_responsaveis.projeto
-                WHERE solicitacao.id = :solicitacao AND projeto_responsaveis.usuario = :usuario";
+                    ELSE TO_CHAR(solicitacao.encerramento, 'FMDD/MM/YYYY  HH24:MI:SS') END AS encerramento";
+
+        $this->db->select($select);
+        $this->db->from('phpmycall.solicitacao');
+        $this->db->join('phpmycall.usuario AS solicitante', 'solicitante.id = solicitacao.solicitante', 'inner');
+        $this->db->join('phpmycall.usuario AS atendente', 'atendente.id = solicitacao.atendente', 'inner');
+        $this->db->join('phpmycall.usuario AS tecnico', 'tecnico.id = solicitacao.tecnico', 'left');
+        $this->db->join('phpmycall.projeto_tipo_problema', 'solicitacao.projeto_problema = projeto_tipo_problema.id', 'inner');
+        $this->db->join('phpmycall.projeto', 'projeto_tipo_problema.projeto = projeto.id', 'inner');
+        $this->db->join('phpmycall.tipo_problema', 'projeto_tipo_problema.problema = tipo_problema.id', 'inner');
+        $this->db->join('phpmycall.prioridade', 'solicitacao.prioridade = prioridade.id', 'inner');
+        $this->db->join('phpmycall.projeto_responsaveis', 'projeto.id = projeto_responsaveis.projeto', 'inner');
+
+        $where = "solicitacao.id = {$solicitacao} AND projeto_responsaveis.usuario = {$usuario}";
 
         if (array_search($perfil, $config['VISUALIZAR_SOLICITACAO']) === FALSE) {
-            $sql .= " AND (solicitacao.solicitante = :usuario OR solicitacao.atendente = :usuario OR solicitacao.tecnico = :usuario)";
+            $where .= " AND (solicitacao.solicitante = {$usuario} OR solicitacao.atendente = {$usuario} OR solicitacao.tecnico = {$usuario})";
         }
 
-        $result = $this->select($sql, array('solicitacao' => $solicitacao, 'usuario' => $usuario), FALSE);
+        $result = $this->db->where($where)->get()->row_array();
 
-        $sql = "SELECT arquivos.id,
-                    arquivos.nome
-                FROM phpmycall.arquivos
-                INNER JOIN phpmycall.solicitacao ON arquivos.solicitacao = solicitacao.id
-                INNER JOIN phpmycall.projeto_tipo_problema ON solicitacao.projeto_problema = projeto_tipo_problema.id
-                INNER JOIN phpmycall.projeto_responsaveis ON projeto_tipo_problema.projeto = projeto_responsaveis.projeto
-                WHERE arquivos.solicitacao = :solicitacao
-                    AND projeto_responsaveis.usuario = :usuario";
+        $this->db->select('arquivos.id, arquivos.nome')->from('phpmycall.arquivos');
+        $this->db->join('phpmycall.solicitacao', 'arquivos.solicitacao = solicitacao.id', 'inner');
+        $this->db->join('phpmycall.projeto_tipo_problema', 'solicitacao.projeto_problema = projeto_tipo_problema.id', 'inner');
+        $this->db->join('phpmycall.projeto_responsaveis', 'projeto_tipo_problema.projeto = projeto_responsaveis.projeto', 'inner');
+        $this->db->where(array('arquivos.solicitacao' => $solicitacao, 'projeto_responsaveis.usuario' => $usuario));
 
-        $result['arquivos'] = $this->select($sql, array('solicitacao' => $solicitacao, 'usuario' => $usuario));
+        $result['arquivos'] = $this->db->get()->result_array();
 
         return $result;
     }
@@ -315,10 +315,10 @@ class Solicitacao_model extends CI_Model {
      * @param string $perfil <b>perfil</b> do usuário.
      * @return Array Retorna um <b>Array</b> com dados referentes a solicitação.
      */
-    public function getSolicitacao($solicitacao, $usuario, $perfil) {
-        $config = $this->getParametros();
+    public function get_solicitacao($solicitacao, $usuario, $perfil) {
+        $config = $this->get_parametros();
 
-        $sql = "SELECT projeto_tipo_problema.id AS projeto_problema,
+        $select = "projeto_tipo_problema.id AS projeto_problema,
                     projeto.id AS projeto,
                     tipo_problema.id AS problema,
                     solicitacao.id AS solicitacao,
@@ -327,31 +327,30 @@ class Solicitacao_model extends CI_Model {
                     solicitacao.atendente AS atendente,
                     solicitacao.tecnico AS tecnico,
                     solicitacao.solicitacao_origem AS solicitacao_origem,
-                    solicitacao.descricao AS descricao
-                FROM phpmycall.solicitacao
-                INNER JOIN phpmycall.projeto_tipo_problema ON solicitacao.projeto_problema = projeto_tipo_problema.id
-                INNER JOIN phpmycall.projeto ON projeto_tipo_problema.projeto = projeto.id
-                INNER JOIN phpmycall.tipo_problema ON projeto_tipo_problema.problema = tipo_problema.id
-                INNER JOIN phpmycall.projeto_responsaveis ON projeto.id = projeto_responsaveis.projeto
-                WHERE solicitacao.id = :solicitacao AND projeto_responsaveis.usuario = :usuario";
+                    solicitacao.descricao AS descricao";
+
+        $this->db->select($select);
+        $this->db->from('phpmycall.solicitacao');
+        $this->db->join('phpmycall.projeto_tipo_problema', 'solicitacao.projeto_problema = projeto_tipo_problema.id', 'inner');
+        $this->db->join('phpmycall.projeto', 'projeto_tipo_problema.projeto = projeto.id', 'inner');
+        $this->db->join('phpmycall.tipo_problema', 'projeto_tipo_problema.problema = tipo_problema.id', 'inner');
+        $this->db->join('phpmycall.projeto_responsaveis', 'projeto.id = projeto_responsaveis.projeto', 'inner');
+
+        $where = "solicitacao.id = {$solicitacao} AND projeto_responsaveis.usuario = {$usuario}";
 
         if (array_search($perfil, $config['VISUALIZAR_SOLICITACAO']) === FALSE) {
-            $sql .= " AND (solicitacao.solicitante = :usuario OR solicitacao.atendente = :usuario OR solicitacao.tecnico = :usuario)";
+            $where .= " AND (solicitacao.solicitante = {$usuario} OR solicitacao.atendente = {$usuario} OR solicitacao.tecnico = {$usuario})";
         }
 
         /*
          * Dados referente a solicitação
          */
-        $result = $this->select($sql, array('solicitacao' => $solicitacao, 'usuario' => $usuario), FALSE);
-
-        $sql = "SELECT arquivos.id,
-                    arquivos.nome
-                FROM phpmycall.arquivos WHERE arquivos.solicitacao = :solicitacao";
+        $result = $this->db->get()->row_array();
 
         /*
          * Dados referentes aos arquivos anexos
          */
-        $result['arquivos'] = $this->select($sql, array('solicitacao' => $solicitacao));
+        $result['arquivos'] = $this->db->select('id, nome')->from('phpmycall.arquivos')->where(array('solicitacao' => $solicitacao));
 
         return $result;
     }
@@ -363,22 +362,17 @@ class Solicitacao_model extends CI_Model {
      * @param int $usuario <b>ID</b> do usuário.
      * @return boolean Retorna <b>TRUE</b> se sucesso, <b>FALSE</b> falha.
      */
-    public function removerArquivo($arquivo, $projeto_tipo_problema, $usuario) {
-        $sql = "SELECT EXISTS(SELECT projeto_responsaveis.usuario
-                    FROM phpmycall.projeto_responsaveis
-                    INNER JOIN phpmycall.projeto_tipo_problema ON projeto_responsaveis.projeto = projeto_tipo_problema.projeto
-                    WHERE projeto_tipo_problema.id = :projeto_tipo_problema
-                        AND projeto_responsaveis.usuario = :usuario
-                ) AS result";
+    public function remover_arquivo($arquivo, $projeto_tipo_problema, $usuario) {
+        $this->db->select('projeto_responsaveis.usuario')->from('phpmycall.projeto_responsaveis');
+        $this->db->join('phpmycall.projeto_tipo_problema', 'projeto_responsaveis.projeto = projeto_tipo_problema.projeto', 'inner');
+        $this->db->where(array('projeto_responsaveis.usuario' => $usuario, 'projeto_tipo_problema.id' => $projeto_tipo_problema));
+        $result = $this->db->get()->row_array();
 
-        $result = $this->select($sql, array('usuario' => $usuario, 'projeto_tipo_problema' => $projeto_tipo_problema), FALSE);
+        $caminho = $this->select('caminho')->from('phpmycall.arquivos')->where(array('id' => $arquivo))->get()->row_array();
 
-        $sql = "SELECT caminho FROM phpmycall.arquivos WHERE id = :id";
-        $caminho = $this->select($sql, array('id' => $arquivo), FALSE);
-
-        if ($result['result'] && unlink($caminho['caminho'])) {
-
-            $result = $this->delete("phpmycall.arquivos", "id = {$arquivo}");
+        if (isset($result['usuario']) && unlink($caminho['caminho'])) {
+            $this->db->where(array('id' => $arquivo));
+            $result = $this->db->delete("phpmycall.arquivos");
         } else {
             $result = FALSE;
         }
@@ -392,22 +386,21 @@ class Solicitacao_model extends CI_Model {
      * @param int $solicitacao <b>ID</b> da solicitação a ser alterada.
      * @return boolean Retorna <b>TRUE</b> se sucesso, <b>FALSE</b> falha.
      */
-    public function atualizaSolicitacao($dados, $solicitacao) {
+    public function atualiza_solicitacao($dados, $solicitacao) {
         /*
          * Atualiza apenas se a solicitação não esta
          * sendo atendida por um técnico.
          */
-        return $this->update('phpmycall.solicitacao', $dados, "id = {$solicitacao} AND abertura = atendimento");
+        $this->db->where("id = {$solicitacao} AND abertura = atendimento");
+        return $this->db->update('phpmycall.solicitacao', $dados);
     }
 
     /**
      * Busca lista de tipo de feedback.
      * @return Array Retorno array com código e tipo de feedback.
      */
-    public function getTipoFeedback() {
-        $sql = "SELECT id, nome FROM phpmycall.tipo_feedback";
-
-        return $this->select($sql);
+    public function get_tipo_feedback() {
+        return $this->db->select('id, nome')->from('phpmycall.tipo_feedback')->get()->result_array();
     }
 
     /**
@@ -415,8 +408,8 @@ class Solicitacao_model extends CI_Model {
      * @param int $solicitacao Código da solicitação.
      * @return Array Dados referentes aos feedback da solicitação.
      */
-    public function feedbackPendentesAtendidos($solicitacao) {
-        $sql = "SELECT feedback.id,
+    public function feedback_pendentes_atendidos($solicitacao) {
+        $select = "feedback.id,
                     substring(pergunta from 0 for 30) || '...' AS pergunta,
                     substring(resposta from 0 for 30) || '...' AS resposta,
                     TO_CHAR(inicio, 'FMDD/MM/YYYY  HH24:MI:SS') AS inicio,
@@ -425,13 +418,13 @@ class Solicitacao_model extends CI_Model {
                     CASE WHEN fim = inicio THEN TRUE
                     ELSE FALSE END AS aberta,
                     usuario.nome AS nome_responsavel,
-                    responsavel
-                FROM phpmycall.feedback
-                INNER JOIN phpmycall.usuario ON feedback.responsavel = usuario.id
-                WHERE solicitacao = :solicitacao
-                ORDER BY feedback.inicio DESC";
+                    responsavel";
 
-        return $this->select($sql, array('solicitacao' => $solicitacao));
+        $this->db->select($select)->from('phpmycall.feedback');
+        $this->db->join('phpmycall.usuario', 'feedback.responsavel = usuario.id', 'inner');
+        $this->db->where(array('solicitacao' => $solicitacao))->order_by('feedback.inicio DESC');
+
+        return $this->db->get()->result_array();
     }
 
     /**
@@ -441,30 +434,25 @@ class Solicitacao_model extends CI_Model {
      * @param int $usuario <b>ID</b> do usuário.
      * @return Array Retorna array com mensagem da operação, e <b>TRUE</b> se sucesso ou <b>FALSE</b> se erro.
      */
-    public function atenderSolicitacao($hoje, $solicitacao, $usuario) {
-        $sql = "SELECT EXISTS(
-                    SELECT solicitacao.id
-                    FROM phpmycall.solicitacao
-                    INNER JOIN phpmycall.projeto_tipo_problema ON solicitacao.projeto_problema = projeto_tipo_problema.id
-                    INNER JOIN phpmycall.projeto_responsaveis ON projeto_tipo_problema.projeto = projeto_responsaveis.projeto
-                    WHERE (solicitacao.tecnico IS NULL OR solicitacao.tecnico = :usuario)
-                        AND projeto_responsaveis.usuario = :usuario
-                        AND solicitacao.id = :solicitacao
-                        AND solicitacao.abertura = solicitacao.atendimento
-                ) AS autorizado";
+    public function atender_solicitacao($hoje, $solicitacao, $usuario) {
+        $where = "(solicitacao.tecnico IS NULL OR solicitacao.tecnico = {$usuario}) AND projeto_responsaveis.usuario = {$usuario}
+                    AND solicitacao.id = {$solicitacao} AND solicitacao.abertura = solicitacao.atendimento";
 
-        $result = $this->select($sql, array('usuario' => $usuario, 'solicitacao' => $solicitacao), FALSE);
+        $this->db->select('solicitacao.id')->from('phpmycall.solicitacao');
+        $this->db->join('phpmycall.projeto_tipo_problema ON solicitacao.projeto_problema = projeto_tipo_problema.id', 'inner');
+        $this->db->join('phpmycall.projeto_responsaveis ON projeto_tipo_problema.projeto = projeto_responsaveis.projeto', 'inner');
+        $result = $this->db->where($where)->get()->row_array();
 
-        if ($result['autorizado'] == TRUE) {
+        if (isset($result['id'])) {
             $dados = array(
                 'atendimento' => $hoje,
                 'encerramento' => $hoje,
                 'tecnico' => $usuario
             );
 
-            $where = "id = {$solicitacao}";
+            $this->db->where(array('id' => $solicitacao));
 
-            if ($this->update('phpmycall.solicitacao', $dados, $where)) {
+            if ($this->db->update('phpmycall.solicitacao', $dados)) {
                 $result['msg'] = "Solicitação em atendimento.";
                 $result['status'] = TRUE;
             } else {
@@ -484,14 +472,12 @@ class Solicitacao_model extends CI_Model {
      * @param int $solicitacao
      * @return string Retorna o status da solicitação <b>aberta</b>, <b>atendimento</b> e <b>encerrada</b>.
      */
-    public function statusSolicitacao($solicitacao) {
-        $sql = "SELECT CASE WHEN abertura = atendimento THEN 'aberta'
+    public function status_solicitacao($solicitacao) {
+        $select = "CASE WHEN abertura = atendimento THEN 'aberta'
                     WHEN abertura < atendimento AND atendimento = encerramento THEN 'atendimento'
-                    ELSE 'encerrada' END AS status
-                FROM phpmycall.solicitacao
-                WHERE solicitacao.id = :solicitacao";
+                    ELSE 'encerrada' END AS status";
 
-        $result = $this->select($sql, array('solicitacao' => $solicitacao), FALSE);
+        $result = $this->db->select($select)->from('phpmycall.solicitacao')->where(array('id' => $solicitacao))->get()->row_array();
 
         return $result['status'];
     }
