@@ -1,38 +1,40 @@
 
-<script type="text/javascript" src="<?= HTTP_JS . '/tinymce/tinymce.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url() . 'static/js/tinymce/tinymce.min.js' ?>"></script>
 
 <script type="text/javascript">
 
     tinymce.init({
-        selector: '#textareaDescricao',
+        selector: '#textarea_descricao',
         language: 'pt_BR'
     });
 
     $(document).ready(function () {
 
-        $("select[name='selectProjeto']").change(function () {
+        $("select[name='select_projeto']").change(function () {
             if ($(this).val() !== 0) {
                 $.ajax({
-                    url: "<?= HTTP . '/Solicitacao/getSolicitantes' ?>",
+                    url: "<?= base_url() . 'solicitacao/get_solicitantes' ?>",
                     data: "projeto=" + $(this).val(),
                     dataType: "json",
                     type: "post",
                     success: function (data) {
-                        var cliente = $("select[name='selectSolicitante'] option:selected").val();
-                        var tecnico = $("select[name='selectTecnico'] option:selected").val();
+                        var cliente = $("select[name='select_solicitante'] option:selected").val();
+                        var tecnico = $("select[name='select_tecnico'] option:selected").val();
 
-                        $("select[name='selectSolicitante'] > option").remove();
-                        $("select[name='selectTecnico'] > option").remove();
-                        $("select[name='selectSolicitante']").append('<option value="0" disabled selected>Solicitante</option>');
-                        $("select[name='selectTecnico']").append('<option value="0" disabled selected>Técnico</option>');
+                        $("select[name='select_solicitante'] > option").remove();
+                        $("select[name='select_tecnico'] > option").remove();
+                        $("select[name='select_solicitante']").append('<option value="0" disabled selected>Solicitante</option>');
+                        $("select[name='select_tecnico']").append('<option value="0" disabled selected>Técnico</option>');
 
                         $.each(data, function (key, value) {
-                            $("select[name='selectSolicitante']").append('<option value="' + value.id + '" ' + (cliente == value.id ? "selected" : "") + '>' + value.nome + '</option>');
+                            $("select[name='select_solicitante']").append('<option value="' + value.id + '" ' + (cliente == value.id ? "selected" : "") + '>' + value.nome + '</option>');
 
                             if (value.tecnico) {
-                                $("select[name='selectTecnico']").append('<option value="' + value.id + '" ' + (tecnico == value.id ? "selected" : "") + '>' + value.nome + '</option>');
+                                $("select[name='select_tecnico']").append('<option value="' + value.id + '" ' + (tecnico == value.id ? "selected" : "") + '>' + value.nome + '</option>');
                             }
                         });
+
+                        $('select').selectpicker('refresh');
                     }
                 });
             }
@@ -42,7 +44,7 @@
          * Exibe informa dos arquivos selecionados que serão
          * anexado a solicitação
          */
-        $('#inputArquivos').change(function () {
+        $('#input_arquivos').change(function () {
             var dados = '';
             var tamanho = '';
             $.each(this.files, function (key, file) {
@@ -66,20 +68,14 @@
                 dados += "Nome: " + file.name + " - Tamanho: " + tamanho + "<br/>";
             });
 
-            $("#arquivos-novos").html(dados);
-        });
-
-        $('button[name=submit-dados]').button({
-            icons: {
-                primary: 'ui-icon-circle-check'
-            }
+            $("#arquivos_novos").html(dados);
         });
 
     });
 </script>
 
 <style type="text/css">
-    div.browse-wrap {
+    div.browse_wrap {
         top:0;
         left:0;
         margin:20px;
@@ -112,17 +108,13 @@
         font-size:1000px !important;
     }
 
-    span.upload-path {
+    span.upload_path {
         text-align: center;
         margin:20px;
         display:block;
         font-size: 80%;
         color:#3b5998;
         font-weight:bold;
-    }
-
-    button[type='submit']{
-        margin: auto 45%;
     }
 </style>
 
@@ -140,99 +132,109 @@
     }
     ?>
 
-    <form action="<?= $link ?>"  method="post" enctype="multipart/form-data">
-        <input type="hidden" name="inputID" id="inputID" value="0" />
-        <input type="hidden" name="solicitacaoOrigem" id="solicitacaoOrigem" value="<?= $solicitacaoOrigem; ?>" />
+    <form action="<?= $link ?>" class="form-horizontal"  method="post" enctype="multipart/form-data">
+        <input type="hidden" name="input_id" id="input_id" value="0" />
+        <input type="hidden" name="solicitacao_origem" id="solicitacao_origem" value="<?= $solicitacao_origem; ?>" />
 
         <div class="row">
-            <div class="six columns">
-                <label for="selectProjeto" class="four columns">
+            <div class="col-xs-6 form-group">
+                <label for="select_projeto" class="col-md-4 control-label">
                     Projeto:
                 </label>
-                <select name="selectProjeto" required class="eight columns" id="selectProjeto">
-                    <option value="0" disabled selected>Projeto</option>
-                    <?php
-                    $id = 0;
-                    foreach ($projetos as $values) {
-                        if ($id !== $values['id_projeto']) {
-                            if ($id !== 0) {
-                                echo '</optgroup>';
-                            }
-                            echo '<optgroup label="' . $values['projeto'] . '">';
-                            $id = $values['id_projeto'];
-                        }
-                        ?>
-                        <option value="<?= $values['id'] ?>">
-                            <?= $values['problema'] ?>
-                        </option>
+                <div class="col-md-8">
+                    <select name="select_projeto" required class="selectpicker" id="select_projeto">
+                        <option value="0" disabled selected>Projeto</option>
                         <?php
-                    }
-                    echo '</optgroup>';
-                    ?>
-                </select>
+                        $id = 0;
+                        foreach ($projetos as $values) {
+                            if ($id !== $values['id_projeto']) {
+                                if ($id !== 0) {
+                                    echo '</optgroup>';
+                                }
+                                echo '<optgroup label="' . $values['projeto'] . '">';
+                                $id = $values['id_projeto'];
+                            }
+                            ?>
+                            <option value="<?= $values['id'] ?>">
+                                <?= $values['problema'] ?>
+                            </option>
+                            <?php
+                        }
+                        echo '</optgroup>';
+                        ?>
+                    </select>
+                </div>
             </div>
-            <div class="six columns">
-                <label for="selectSolicitante" class="four columns">
+            <div class="col-xs-6 form-group">
+                <label for="select_solicitante" class="col-md-4 control-label">
                     Solicitante:
                 </label>
-                <select name="selectSolicitante" required class="eight columns" id="selectSolicitante">
-                    <option value="0" disabled selected>Solicitante</option>
-                </select>
+                <div class="col-md-8">
+                    <select name="select_solicitante" required class="selectpicker" id="select_solicitante">
+                        <option value="0" disabled selected>Solicitante</option>
+                    </select>
+                </div>
             </div>
         </div>
 
         <div class="row">
-            <div class="six columns">
-                <label for="selectPrioridade" class="four columns">
+            <div class="col-xs-6 form-group">
+                <label for="select_prioridade" class="col-md-4 control-label">
                     Prioridade: <span class="text-danger">*</span>
                 </label>
-                <select name="selectPrioridade" required id="selectPrioridade" class="eight columns">
-                    <option value="0"></option>
-                    <?php
-                    foreach ($prioridade as $values) {
-                        ?>
-                        <option value="<?= $values['id'] ?>" <?= $values['padrao'] ? "selected" : ""; ?>>
-                            <?= $values['nome'] ?>
-                        </option>
+                <div class="col-md-8">
+                    <select name="select_prioridade" required id="select_prioridade" class="selectpicker">
+                        <option value="0"></option>
                         <?php
-                    }
-                    ?>
-                </select>
+                        foreach ($prioridade as $values) {
+                            ?>
+                            <option value="<?= $values['id'] ?>" <?= $values['padrao'] ? "selected" : ""; ?>>
+                                <?= $values['nome'] ?>
+                            </option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
             </div>
-            <div class="six columns">
-                <label for="selectTecnico" class="four columns">Técnico:</label>
-                <select name="selectTecnico" class="eight columns" id="selectTecnico">
-                    <option value="0" disabled selected>Técnico</option>
-                </select>
+            <div class="col-xs-6 form-group">
+                <label for="select_tecnico" class="col-md-4 control-label">Técnico:</label>
+                <div class="col-md-8">
+                    <select name="select_tecnico" class="selectpicker" id="select_tecnico">
+                        <option value="0" disabled selected>Técnico</option>
+                    </select>
+                </div>
             </div>
         </div>
 
         <div class="row">
-            <label for="textareaDescricao" class="twelve columns">Descrição:</label>
-            <div class="twelve columns">
-                <textarea name="textareaDescricao" id="textareaDescricao"></textarea>
+            <div class="form-group">
+                <label for="textarea_descricao" class="col-md-12 text-left">Descrição:</label>
+                <div class="col-md-12">
+                    <textarea name="textarea_descricao" id="textarea_descricao"></textarea>
+                </div>
             </div>
         </div>
 
         <div class="row">
-            <div class="twelve columns">
-                <div class="browse-wrap">
+            <div class="form-group">
+                <div class="browse_wrap">
                     <div class="title">Anexar arquivos a esta solicitação</div>
-                    <input type="file" name="inputArquivos[]" class="upload form-control" id="inputArquivos"
+                    <input type="file" name="input_arquivos[]" class="upload form-control" id="input_arquivos"
                            title="Anexar arquivos a esta solicitação" multiple>
                 </div>
-                <span id="arquivos-novos" class="upload-path"></span>
+                <span id="arquivos_novos" class="upload_path"></span>
             </div>
         </div>
 
         <div class="row">
-            <div class="twelve columns" id="arquivos-antigos">
-            </div>
+            <div class="col-md-12" id="arquivos_antigos"></div>
         </div>
 
         <div class="row">
-            <div class="twelve columns">
-                <button type="submit" name="submit-dados">
+            <div class="col-md-offset-4 col-md-4">
+                <button type="submit" class="col-md-12 btn btn-default" name="submit_dados">
+                    <samp class="fa fa-check"></samp>
                     Salvar
                 </button>
             </div>

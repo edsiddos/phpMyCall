@@ -6,13 +6,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $autoload['packages'] = array();
 
 /* Auto-load Libraries */
-$autoload['libraries'] = array('autenticacao', 'logs', 'menu', 'session');
+$autoload['libraries'] = array('autenticacao', 'logs', 'menu', 'session', 'utils');
 
 /* Auto-load Drivers */
 $autoload['drivers'] = array('cache');
 
 /* Auto-load Helper Files */
-$autoload['helper'] = array('url');
+$autoload['helper'] = array('form', 'url');
 
 /* Auto-load Config files */
 $autoload['config'] = array();

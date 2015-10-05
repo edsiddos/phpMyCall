@@ -32,3 +32,8 @@ define('EXIT_USER_INPUT', 7); // invalid user input
 define('EXIT_DATABASE', 8); // database error
 define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+
+/* Constantes utilizadas no phpmycall */
+define('TTL_CACHE', 60 * 30); // Define o tempo de vida do cache como 30 minutos
+define('PARAMETROS', 'parametros'); // Nome da variavel que armazena o cache do parametros das solicitações
+define('FILES', '/var/files'); // Caminho para pasta dos arquivos anexos

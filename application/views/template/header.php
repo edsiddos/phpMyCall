@@ -57,7 +57,7 @@
 
                         if ($result === false) {
                             $result = Menu::gera_menu_por_perfil();
-                            $this->cache->apc->save('menu', $result);
+                            $this->cache->apc->save('menu', $result, TTL_CACHE);
                         }
 
                         foreach ($result [$_SESSION ['perfil']] as $nome_menu => $menu) {

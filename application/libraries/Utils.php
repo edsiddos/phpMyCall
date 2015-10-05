@@ -48,4 +48,17 @@ final class Utils {
         }
     }
 
+    /**
+     * Valida valor e se possivel retorna numero inteiro
+     * @param mixed $int Valor a ser verificado e retornado
+     * @return mixed Retorna um numero inteiro se sucesso, NULL em caso de falha
+     */
+    public static function valida_inteiro_chave($int) {
+        if (empty($int) || $int <= 0) {
+            return NULL;
+        } else {
+            return intval($int);
+        }
+    }
+
 }

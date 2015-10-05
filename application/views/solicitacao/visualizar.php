@@ -1,16 +1,16 @@
 
-<script type="text/javascript" src="<?= HTTP_JS . '/tinymce/tinymce.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url() . 'static/js/tinymce/tinymce.min.js' ?>"></script>
 
 <script type="text/javascript">
 
     tinymce.init({
-        selector: '#perguntaFeedback, #respostaFeedback',
+        selector: '#pergunta_feedback, #resposta_feedback',
         language: 'pt_BR'
     });
 
     $(document).ready(function () {
 
-        var excluir_solicitacao = $('#excluir-solicitacao').dialog({
+        var excluir_solicitacao = $('#excluir_solicitacao').dialog({
             autoOpen: false,
             modal: true,
             buttons: [
@@ -20,7 +20,7 @@
                         primary: 'ui-icon-closethick'
                     },
                     click: function () {
-                        $(location).attr('href', '<?= HTTP . "/Solicitacao/excluir/{$id_solicitacao}" ?>');
+                        $(location).attr('href', '<?= base_url() . "solicitacao/excluir/{$id_solicitacao}" ?>');
                         excluir_solicitacao.dialog('close');
                     }
                 },
@@ -37,7 +37,7 @@
             position: {my: "center center-150", of: window}
         });
 
-        var redirecionar_solicitacao = $('#redirecionar-solicitacao').dialog({
+        var redirecionar_solicitacao = $('#redirecionar_solicitacao').dialog({
             autoOpen: false,
             modal: true,
             width: 450,
@@ -48,8 +48,8 @@
                         primary: 'ui-icon-transferthick-e-w'
                     },
                     click: function () {
-                        var tecnico = $('select[name=selectTecnico]').val();
-                        $(location).attr('href', '<?= HTTP . "/Solicitacao/redirecionar/{$id_solicitacao}" ?>/' + tecnico);
+                        var tecnico = $('select[name=select_tecnico]').val();
+                        $(location).attr('href', '<?= base_url() . "solicitacao/redirecionar/{$id_solicitacao}" ?>/' + tecnico);
                         redirecionar_solicitacao.dialog('close');
                     }
                 },
@@ -66,7 +66,7 @@
             position: {my: "center center-150", of: window}
         });
 
-        var feedback_solicitacao = $('#feedback-solicitacao').dialog({
+        var feedback_solicitacao = $('#feedback_solicitacao').dialog({
             autoOpen: false,
             modal: true,
             width: 920,
@@ -78,7 +78,7 @@
                     },
                     click: function () {
                         feedback_solicitacao.dialog('close');
-                        $('form[name=solicitar-feedback]').submit();
+                        $('form[name=solicitar_feedback]').submit();
                     }
                 },
                 {
@@ -94,7 +94,7 @@
             position: {my: "center center-150", of: window}
         });
 
-        var responder_feedback = $('#responderFeedback').dialog({
+        var responder_feedback = $('#responder_feedback').dialog({
             autoOpen: false,
             modal: true,
             width: 850,
@@ -106,7 +106,7 @@
                     },
                     click: function () {
                         responder_feedback.dialog('close');
-                        $('form[name=respostaFeedback]').submit();
+                        $('form[name=resposta_feedback]').submit();
                     }
                 },
                 {
@@ -122,9 +122,9 @@
             position: {my: "center center-150", of: window}
         });
 
-        $("#responderFeedback > div").accordion();
+        $("#responder_feedback > div").accordion();
 
-        var visualizar_feedback = $('#visualizarFeedback').dialog({
+        var visualizar_feedback = $('#visualizar_feedback').dialog({
             autoOpen: false,
             modal: true,
             width: 850,
@@ -142,9 +142,11 @@
             position: {my: "center center-150", of: window}
         });
 
-        $("#visualizarFeedback > div").accordion();
+        $("#visualizar_feedback > div").accordion();
 
-        $("button[class=feedback-aberto]").button({
+        /*******************************************************/
+
+        $("button[class=feedback_aberto]").button({
             icons: {
                 primary: 'ui-icon-comment'
             }
@@ -153,19 +155,19 @@
             $("input[type=hidden][name=feedback_id]").val(id_feedback);
 
             $.ajax({
-                url: '<?= HTTP . '/Solicitacao/getPerguntaRespostaFeedback' ?>',
+                url: '<?= base_url() . 'solicitacao/get_pergunta_resposta_feedback' ?>',
                 data: 'feedback_id=' + id_feedback,
                 type: 'POST',
                 dataType: 'json',
                 success: function (data) {
-                    $('#feedbackRespostaPergunta').html(data.pergunta);
+                    $('#feedback_resposta_pergunta').html(data.pergunta);
                 }
             });
 
             responder_feedback.dialog('open');
         });
 
-        $("button[class=feedback-atendida]").button({
+        $("button[class=feedback_atendida]").button({
             icons: {
                 primary: 'ui-icon-check'
             }
@@ -173,13 +175,13 @@
             var id_feedback = $(this).attr("feedback");
 
             $.ajax({
-                url: '<?= HTTP . '/Solicitacao/getPerguntaRespostaFeedback' ?>',
+                url: '<?= base_url() . 'solicitacao/get_pergunta_resposta_feedback' ?>',
                 data: 'feedback_id=' + id_feedback,
                 type: 'POST',
                 dataType: 'json',
                 success: function (data) {
-                    $('#visualizarFeedbackPergunta').html(data.pergunta);
-                    $('#visualizarFeedbackResposta').html(data.resposta);
+                    $('#visualizar_feedback_pergunta').html(data.pergunta);
+                    $('#visualizar_feedback_resposta').html(data.resposta);
                 }
             });
 
@@ -192,7 +194,7 @@
                 primary: 'ui-icon-pencil'
             }
         }).on('click', function () {
-            $(location).attr('href', '<?= HTTP . "/Solicitacao/editar/{$id_solicitacao}" ?>');
+            $(location).attr('href', '<?= base_url() . "solicitacao/editar/{$id_solicitacao}" ?>');
         });
 
         $('#atender').button({
@@ -201,16 +203,16 @@
                 primary: 'ui-icon-wrench'
             }
         }).on('click', function () {
-            $(location).attr('href', '<?= HTTP . "/Solicitacao/atender/{$id_solicitacao}" ?>');
+            $(location).attr('href', '<?= base_url() . "solicitacao/atender/{$id_solicitacao}" ?>');
         });
 
-        $('#sub-chamado').button({
+        $('#sub_chamado').button({
             disabled: <?= ($sub_chamado) ? 'false' : 'true'; ?>,
             icons: {
                 primary: 'ui-icon-circle-plus'
             }
         }).on('click', function () {
-            $(location).attr('href', '<?= HTTP . "/Solicitacao/subChamado/{$id_solicitacao}" ?>');
+            $(location).attr('href', '<?= base_url() . "solicitacao/sub_chamado/{$id_solicitacao}" ?>');
         });
 
         $('#excluir').button({
@@ -246,7 +248,7 @@
                 primary: 'ui-icon-check'
             }
         }).on('click', function () {
-            $(location).attr('href', '<?= HTTP . "/Solicitacao/encerrar/{$id_solicitacao}" ?>');
+            $(location).attr('href', '<?= base_url() . "solicitacao/encerrar/{$id_solicitacao}" ?>');
         });
     });
 
@@ -254,12 +256,12 @@
 
 <style type="text/css">
 
-    #visualizarFeedbackPergunta, #visualizarFeedbackResposta {
+    #visualizar_feedback_pergunta, #visualizar_feedback_resposta {
         overflow: auto;
         height: 250px;
     }
 
-    #feedbackRespostaPergunta, #feedbackResposta{
+    #feedback_resposta_pergunta, #feedback_resposta{
         height: 250px;
     }
 
@@ -287,7 +289,7 @@
             <button id="atender">
                 Atender
             </button>
-            <button id="sub-chamado">
+            <button id="sub_chamado">
                 Sub-Chamado
             </button>
             <button id="excluir">
@@ -306,72 +308,90 @@
     </div>
 
     <div class="row">
-        <div class="six columns">
-            <label class="four columns">
+        <div class="form-group col-md-6">
+            <label class="col-md-4 control-label">
                 Projeto:
             </label>
-            <input type="text" value="<?= $solicitacao['projeto'] ?>" disabled class="eight columns" />
+            <div class="col-md-8">
+                <input type="text" value="<?= $solicitacao['projeto'] ?>" disabled class="form-control" />
+            </div>
         </div>
-        <div class="six columns">
-            <label class="four columns">
+        <div class="form-group col-md-6">
+            <label class="col-md-4 control-label">
                 Problema:
             </label>
-            <input type="text" value="<?= $solicitacao['problema'] ?>" disabled class="eight columns" />
+            <div class="col-md-8">
+                <input type="text" value="<?= $solicitacao['problema'] ?>" disabled class="form-control" />
+            </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="six columns">
-            <label class="four columns">
+        <div class="form-group col-md-6">
+            <label class="col-md-4 control-label">
                 Prioridade:
             </label>
-            <input type="text" value="<?= $solicitacao['prioridade'] ?>" disabled class="eight columns" />
+            <div class="col-md-8">
+                <input type="text" value="<?= $solicitacao['prioridade'] ?>" disabled class="form-control" />
+            </div>
         </div>
-        <div class="six columns">
-            <label class="four columns">
+        <div class="form-group col-md-6">
+            <label class="col-md-4 control-label">
                 Solicitante:
             </label>
-            <input type="text" value="<?= $solicitacao['solicitante'] ?>" disabled class="eight columns" />
+            <div class="col-md-8">
+                <input type="text" value="<?= $solicitacao['solicitante'] ?>" disabled class="form-control" />
+            </div>
         </div>
     </div>
 
 
     <div class="row">
-        <div class="six columns">
-            <label class="four columns">
+        <div class="form-group col-md-6">
+            <label class="col-md-4 control-label">
                 Atendente:
             </label>
-            <input type="text" value="<?= $solicitacao['atendente'] ?>" disabled class="eight columns" />
+            <div class="col-md-8">
+                <input type="text" value="<?= $solicitacao['atendente'] ?>" disabled class="form-control" />
+            </div>
         </div>
-        <div class="six columns">
-            <label class="four columns">
+        <div class="form-group col-md-6">
+            <label class="col-md-4 control-label">
                 Técnico:
             </label>
-            <input type="text" value="<?= $solicitacao['tecnico'] ?>" disabled class="eight columns" />
+            <div class="col-md-8">
+                <input type="text" value="<?= $solicitacao['tecnico'] ?>" disabled class="form-control" />
+            </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="six columns">
-            <label class="four columns">
+        <div class="form-group col-md-6">
+            <label class="col-md-4 control-label">
                 Abertura:
             </label>
-            <input type="text" value="<?= $solicitacao['abertura'] ?>" disabled class="eight columns" />
+            <div class="col-md-8">
+                <input type="text" value="<?= $solicitacao['abertura'] ?>" disabled class="form-control" />
+            </div>
         </div>
-        <div class="six columns">
-            <label class="four columns">
+        <div class="form-group col-md-6">
+            <label class="col-md-4 control-label">
                 Atendimento:
             </label>
-            <input type="text" value="<?= $solicitacao['atendimento'] ?>" disabled class="eight columns" />
+            <div class="col-md-8">
+                <input type="text" value="<?= $solicitacao['atendimento'] ?>" disabled class="form-control" />
+            </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="six columns">
-            <label class="four columns">
+        <div class="form-group col-md-6">
+            <label class="col-md-4 control-label">
                 Encerramento:
             </label>
-            <input type="text" value="<?= $solicitacao['encerramento'] ?>" disabled class="eight columns" />
+            <div class="col-md-8">
+                <input type="text" value="<?= $solicitacao['encerramento'] ?>" disabled class="form-control" />
+            </div>
         </div>
     </div>
 
@@ -412,20 +432,20 @@
                                     <td><?= $values['inicio'] ?></td>
                                     <td><?= $values['fim'] ?></td>
                                     <td class="row">
-                                        <div class="six columns">
+                                        <div class="col-md-6">
                                             <?php echo $values['nome_responsavel']; ?>
                                         </div>
-                                        <div class="six columns text-center" style="float: right;">
+                                        <div class="col-md-6 text-center" style="float: right;">
                                             <?php
                                             if ($values['aberta'] && $values['responsavel'] === $_SESSION['id']) {
                                                 ?>
-                                                <button type="button" class="feedback-aberto" feedback="<?= $values['id'] ?>">
+                                                <button type="button" class="feedback_aberto" feedback="<?= $values['id'] ?>">
                                                     Responder
                                                 </button>
                                                 <?php
                                             } else {
                                                 ?>
-                                                <button type="button" class="feedback-atendida" feedback="<?= $values['id'] ?>">
+                                                <button type="button" class="feedback_atendida" feedback="<?= $values['id'] ?>">
                                                     Visualizar
                                                 </button>
                                                 <?php
@@ -448,9 +468,11 @@
     ?>
 
     <div class="row">
-        <div class="panel panel-info">
+        <div class="panel panel-default">
             <div class="panel-heading">
-                Descrição:
+                <h3 class="panel-title">
+                    Descrição:
+                </h3>
             </div>
             <div class="panel-body">
                 <?= $solicitacao['descricao'] ?>
@@ -458,10 +480,12 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <div class="panel panel-info">
+    <div class="row">
+        <div class="panel panel-default">
             <div class="panel-heading">
-                Arquivos anexos:
+                <h3 class="panel-title">
+                    Arquivos anexos:
+                </h3>
             </div>
             <div class="panel-body text-center">
                 <?php
@@ -470,7 +494,7 @@
                 } else {
                     foreach ($solicitacao['arquivos'] as $values) {
                         ?>
-                        <a href="<?= HTTP . "/Solicitacao/downloadArquivo/{$values['id']}" ?>" target="_blank">
+                        <a href="<?= base_url() . "solicitacao/download_arquivo/{$values['id']}" ?>" target="_blank">
                             <?= $values['nome'] ?>
                         </a><br>
                         <?php
@@ -483,101 +507,107 @@
 </div>
 
 
-<div id="excluir-solicitacao" title="Atenção">
+<div id="excluir_solicitacao" title="Atenção">
     <p>Deseja excluir está solicitação?</p>
 </div>
 
-<div id="redirecionar-solicitacao" title="Redirecionamento de chamado a outro técnico.">
-    <div class="twelve columns">
-        <label class="four columns">
+<div id="redirecionar_solicitacao" title="Redirecionamento de chamado a outro técnico.">
+    <div class="form-group col-md-12">
+        <label class="col-md-4 control-label">
             Técnico:
         </label>
-        <select name="selectTecnico" id="selectTecnico" class="eight columns">
-            <option value=""></option>
-            <?php
-            foreach ($tecnicos as $values) {
-                if ($values['tecnico'] == 1) {
-                    ?>
-                    <option value="<?= $values['id'] ?>"><?= $values['nome']; ?></option>
-                    <?php
-                }
-            }
-            ?>
-        </select>
-    </div>
-</div>
-
-<div id="feedback-solicitacao" title="Solicitação de feedback">
-    <form action="<?= HTTP . "/Solicitacao/feedback" ?>" name="solicitar-feedback" method="POST">
-        <input type="hidden" name="solicitacao" value="<?= "{$id_solicitacao}" ?>" />
-
-        <div class="row">
-            <div class="twelve columns">
-                <label class="four columns">Tipo de feedback:</label>
-                <select name="selectFeedback" id="selectFeedback" class="eight columns">
-                    <option value=""></option>
-                    <?php
-                    foreach ($tipos_feedback AS $values) {
-                        ?>
-                        <option value="<?= $values['id'] ?>">
-                            <?= $values['nome'] ?>
-                        </option>
-                        <?php
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="twelve columns">
-                <label class="four columns">Destinátario:</label>
-                <select name="selectDestinatario" id="selectDestinatario" class="eight columns">
-                    <option value=""></option>
-                    <?php
-                    foreach ($tecnicos as $values) {
+        <div class="col-md-8">
+            <select name="select_tecnico" id="select_tecnico" class="selectpicker">
+                <option value=""></option>
+                <?php
+                foreach ($tecnicos as $values) {
+                    if ($values['tecnico'] == 1) {
                         ?>
                         <option value="<?= $values['id'] ?>"><?= $values['nome']; ?></option>
                         <?php
                     }
-                    ?>
-                </select>
+                }
+                ?>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div id="feedback_solicitacao" title="Solicitação de feedback">
+    <form action="<?= base_url() . "solicitacao/feedback" ?>" name="solicitar_feedback" method="POST">
+        <input type="hidden" name="solicitacao" value="<?= "{$id_solicitacao}" ?>" />
+
+        <div class="row">
+            <div class="form-group col-md-12">
+                <label class="col-md-4 control-label">Tipo de feedback:</label>
+                <div class="col-md-8">
+                    <select name="select_feedback" id="select_feedback" class="selectpicker">
+                        <option value=""></option>
+                        <?php
+                        foreach ($tipos_feedback AS $values) {
+                            ?>
+                            <option value="<?= $values['id'] ?>">
+                                <?= $values['nome'] ?>
+                            </option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
             </div>
         </div>
 
         <div class="row">
-            <label for="perguntaFeedback" class="twelve columns">Descrição:</label>
+            <div class="form-group col-md-12">
+                <label class="col-md-4 control-label">Destinátario:</label>
+                <div class="col-md-8">
+                    <select name="select_destinatario" id="select_destinatario" class="selectpicker">
+                        <option value=""></option>
+                        <?php
+                        foreach ($tecnicos as $values) {
+                            ?>
+                            <option value="<?= $values['id'] ?>"><?= $values['nome']; ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <label for="pergunta_feedback" class="twelve columns">Descrição:</label>
             <div class="twelve columns">
-                <textarea name="perguntaFeedback" id="perguntaFeedback"></textarea>
+                <textarea name="pergunta_feedback" id="pergunta_feedback"></textarea>
             </div>
         </div>
     </form>
 </div>
 
 
-<div id="responderFeedback" title="Responder Feedback">
+<div id="responder_feedback" title="Responder Feedback">
     <div>
         <h3>Pergunta</h3>
-        <div id="feedbackRespostaPergunta"></div>
+        <div id="feedback_resposta_pergunta"></div>
 
         <h3>Resposta</h3>
-        <div id="feedbackResposta">
-            <form method="post" name="respostaFeedback" action="<?= HTTP . "/Solicitacao/responderFeedback" ?>">
+        <div id="feedback_resposta">
+            <form method="post" name="resposta_feedback" action="<?= base_url() . "solicitacao/responder_feedback" ?>">
                 <input type="hidden" name="feedback_id" id="feedback_id" />
                 <input type="hidden" name="solicitacao" value="<?= "{$id_solicitacao}" ?>" />
-                <textarea name="respostaFeedback" id="respostaFeedback"></textarea>
+                <textarea name="resposta_feedback" id="resposta_feedback"></textarea>
             </form>
         </div>
     </div>
 </div>
 
 
-<div id="visualizarFeedback" title="Visualização de Feedback">
+<div id="visualizar_feedback" title="Visualização de Feedback">
     <div>
         <h3>Pergunta</h3>
-        <div id="visualizarFeedbackPergunta"></div>
+        <div id="visualizar_feedback_pergunta"></div>
 
         <h3>Resposta</h3>
-        <div id="visualizarFeedbackResposta"></div>
+        <div id="visualizar_feedback_resposta"></div>
     </div>
 </div>
