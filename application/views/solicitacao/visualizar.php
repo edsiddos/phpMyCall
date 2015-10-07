@@ -40,7 +40,8 @@
         var redirecionar_solicitacao = $('#redirecionar_solicitacao').dialog({
             autoOpen: false,
             modal: true,
-            width: 450,
+            width: '35%',
+            height: $(window).height() * 0.5,
             buttons: [
                 {
                     text: "Redirecionar",
@@ -400,24 +401,26 @@
         ?>
 
         <div class="row">
-            <div class="panel panel-info">
+            <div class="panel panel-default">
                 <div class="panel-heading">
-                    Feedback
+                    <h3 class="panel-title">
+                        Feedback
+                    </h3>
                 </div>
-                <div class="panel-body text-center">
-                    <table class="u-full-width">
+                <div class="panel-body">
+                    <table class="table">
                         <thead>
                             <tr>
-                                <th rowspan="2" class="col2">Pergunta</th>
-                                <th rowspan="2" class="col2">Resposta</th>
-                                <th colspan="2" class="col4">Data feedback</th>
-                                <th rowspan="2" class="col4">Responsável pelo feedback</th>
+                                <th rowspan="2" class="col-md-2 text-center">Pergunta</th>
+                                <th rowspan="2" class="col-md-2 text-center">Resposta</th>
+                                <th colspan="2" class="col-md-4 text-center">Data feedback</th>
+                                <th rowspan="2" class="col-md-4 text-center">Responsável pelo feedback</th>
                             </tr>
                             <tr>
-                                <th class="col2">
+                                <th class="col-md-2 text-center">
                                     Pegunta
                                 </th>
-                                <th class="col2">
+                                <th class="col-md-2 text-center">
                                     Resposta
                                 </th>
                             </tr>
@@ -517,7 +520,7 @@
             Técnico:
         </label>
         <div class="col-md-8">
-            <select name="select_tecnico" id="select_tecnico" class="selectpicker">
+            <select name="select_tecnico" id="select_tecnico" class="selectpicker" data-size="5" data-live-search="true">
                 <option value=""></option>
                 <?php
                 foreach ($tecnicos as $values) {
@@ -534,14 +537,14 @@
 </div>
 
 <div id="feedback_solicitacao" title="Solicitação de feedback">
-    <form action="<?= base_url() . "solicitacao/feedback" ?>" name="solicitar_feedback" method="POST">
+    <form action="<?= base_url() . "solicitacao/feedback" ?>" class="form-horizontal" name="solicitar_feedback" method="POST">
         <input type="hidden" name="solicitacao" value="<?= "{$id_solicitacao}" ?>" />
 
         <div class="row">
             <div class="form-group col-md-12">
                 <label class="col-md-4 control-label">Tipo de feedback:</label>
                 <div class="col-md-8">
-                    <select name="select_feedback" id="select_feedback" class="selectpicker">
+                    <select name="select_feedback" id="select_feedback" class="selectpicker" data-size="5" data-live-search="true">
                         <option value=""></option>
                         <?php
                         foreach ($tipos_feedback AS $values) {
@@ -561,7 +564,7 @@
             <div class="form-group col-md-12">
                 <label class="col-md-4 control-label">Destinátario:</label>
                 <div class="col-md-8">
-                    <select name="select_destinatario" id="select_destinatario" class="selectpicker">
+                    <select name="select_destinatario" id="select_destinatario" class="selectpicker" data-size="5" data-live-search="true">
                         <option value=""></option>
                         <?php
                         foreach ($tecnicos as $values) {
@@ -576,8 +579,8 @@
         </div>
 
         <div class="row">
-            <label for="pergunta_feedback" class="twelve columns">Descrição:</label>
-            <div class="twelve columns">
+            <label for="pergunta_feedback" class="col-md-12">Descrição:</label>
+            <div class="col-md-12">
                 <textarea name="pergunta_feedback" id="pergunta_feedback"></textarea>
             </div>
         </div>
@@ -592,7 +595,7 @@
 
         <h3>Resposta</h3>
         <div id="feedback_resposta">
-            <form method="post" name="resposta_feedback" action="<?= base_url() . "solicitacao/responder_feedback" ?>">
+            <form method="post" name="resposta_feedback" class="form-horizontal" action="<?= base_url() . "solicitacao/responder_feedback" ?>">
                 <input type="hidden" name="feedback_id" id="feedback_id" />
                 <input type="hidden" name="solicitacao" value="<?= "{$id_solicitacao}" ?>" />
                 <textarea name="resposta_feedback" id="resposta_feedback"></textarea>

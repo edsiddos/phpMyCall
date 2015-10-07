@@ -31,6 +31,7 @@ class Solicitacao extends CI_Controller {
 
         if (Autenticacao::verifica_login()) {
             $this->load->model('solicitacao_model', 'model');
+            $this->load->library('parametros_solicitacoes');
         } else {
             redirect("login/index");
         }
@@ -38,9 +39,9 @@ class Solicitacao extends CI_Controller {
 
     /**
      * Tela de abertura de chamados
-     * @param Array $dados Dados necessários para abrir um solicitação
+     * @param int $cod_solicitacao Código da solicitação para abrir sub chamado
      */
-    public function abrir($dados = array()) {
+    public function abrir($cod_solicitacao) {
         $permissao = "solicitacao/abrir";
         $perfil = $_SESSION ['perfil'];
 
@@ -53,7 +54,7 @@ class Solicitacao extends CI_Controller {
                 'link' => base_url() . '/solicitacao/nova_solicitacao',
                 'projetos' => $this->model->get_projetos($_SESSION['id']),
                 'prioridade' => $this->model->get_prioridades(),
-                'solicitacao_origem' => (empty($dados[0]) ? 0 : $dados[0])
+                'solicitacao_origem' => (empty($cod_solicitacao) ? 0 : $cod_solicitacao)
             );
 
             $this->load->view('template/header', $title);
@@ -62,19 +63,23 @@ class Solicitacao extends CI_Controller {
         }
     }
 
-    public function sub_chamado($dados = array()) {
+    /**
+     * Abre um sub chamado
+     * @param int $cod_solicitacao Codigo da solicitaçao
+     */
+    public function sub_chamado($cod_solicitacao) {
         $perfil = $_SESSION['perfil'];
-        $solicitacao = $this->model->get_dados_solicitacao($dados[0], $perfil, $_SESSION['id']);
-        $parametros = $this->cache->apc->get(PARAMETROS);
+        $solicitacao = $this->model->get_dados_solicitacao($cod_solicitacao, $perfil, $_SESSION['id']);
+        $parametros = Parametros_solicitacoes::get_parametros();
 
         $sub_chamado = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE);
         $sub_chamado &= (empty($solicitacao['atendimento']) || ((!empty($solicitacao['atendimento'])) && ($solicitacao['id_tecnico'] == $_SESSION['id']) && empty($solicitacao['encerramento'])));
-        $sub_chamado &= $this->model->usuario_participante($_SESSION['id'], $dados[0]);
+        $sub_chamado &= $this->model->usuario_participante($_SESSION['id'], $cod_solicitacao);
 
-        if (empty($dados[0]) || (!$sub_chamado)) {
+        if (empty($cod_solicitacao) || (!$sub_chamado)) {
             redirect('main/index');
         } else {
-            $this->abrir($dados);
+            $this->abrir($cod_solicitacao);
         }
     }
 
@@ -236,7 +241,7 @@ class Solicitacao extends CI_Controller {
 
     /**
      * Visualiza dados da solicitação.
-     * @param Array $id_solicitacao <b>Array</b> com o código da solicitação.
+     * @param int $id_solicitacao Código da solicitação.
      */
     public function visualizar($id_solicitacao) {
         $perfil = $_SESSION['perfil'];
@@ -247,14 +252,14 @@ class Solicitacao extends CI_Controller {
         /*
          * Paramentros necessarios para exibição das opções.
          */
-        $parametros = $this->cache->apc->get(PARAMETROS);
+        $parametros = Parametros_solicitacoes::get_parametros();
 
         /*
          * Busca dados da solicitação.
          */
-        $solicitacao = $this->model->get_dados_solicitacao($id_solicitacao[0], $perfil, $usuario);
+        $solicitacao = $this->model->get_dados_solicitacao($id_solicitacao, $perfil, $usuario);
         $vars['solicitacao'] = $solicitacao;
-        $vars['id_solicitacao'] = $id_solicitacao[0];
+        $vars['id_solicitacao'] = $id_solicitacao;
 
         /*
          * Habilita as opções de editar, atender, sub-chamado, excluir, redimencionar, feedback e encerrar
@@ -273,10 +278,10 @@ class Solicitacao extends CI_Controller {
         $vars['feedback'] = (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
         $vars['encerrar'] = (array_search($perfil, $parametros['ENCERRAR_SOLICITACAO']) !== FALSE) && ($solicitacao['id_tecnico'] == $usuario) && (!empty($solicitacao['atendimento'])) && empty($solicitacao['encerramento']);
 
-        $vars['feedback_solicitado'] = $this->model->feedback_pendentes_atendidos($id_solicitacao[0]);
+        $vars['feedback_solicitado'] = $this->model->feedback_pendentes_atendidos($id_solicitacao);
 
         if ($vars['redirecionar'] || $vars['feedback']) {
-            $vars['tecnicos'] = $this->model->get_solicitantes_solicitacao($id_solicitacao[0]);
+            $vars['tecnicos'] = $this->model->get_solicitantes_solicitacao($id_solicitacao);
         }
 
         if ((array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) && (!empty($solicitacao['atendimento']))) {
@@ -290,10 +295,10 @@ class Solicitacao extends CI_Controller {
 
     /**
      * Método que realiza download dos arquivos anexos a uma solicitação
-     * @param Array $arquivo Array com código do anexo.
+     * @param int $arquivo Código do anexo.
      */
     public function download_arquivo($arquivo) {
-        $dados_arquivos = $this->model->get_content_arquivo($arquivo[0], $_SESSION['id']);
+        $dados_arquivos = $this->model->get_content_arquivo($arquivo, $_SESSION['id']);
 
         header('Cache-control: private');
         header('Content-Type: ' . $dados_arquivos['tipo']);
@@ -314,13 +319,13 @@ class Solicitacao extends CI_Controller {
 
     /**
      * Abre tela para edição de uma solicitação
-     * @param Array $id_solicitacao Array com id da solicitação
+     * @param int $id_solicitacao Código da solicitação
      */
     public function editar($id_solicitacao) {
         $perfil = $_SESSION['perfil'];
-        $parametros = $this->cache->apc->get(PARAMETROS);
+        $parametros = Parametros_solicitacoes::get_parametros();
 
-        $status = $this->model->status_solicitacao($id_solicitacao[0]);
+        $status = $this->model->status_solicitacao($id_solicitacao);
 
         /*
          * Verifica status da solicitação
@@ -331,7 +336,7 @@ class Solicitacao extends CI_Controller {
             $_SESSION['msg_erro'] = "Operação ilegal. Esta solicitação está ";
             $_SESSION['msg_erro'] .= $status === 'encerrada' ? $status : "em {$status}.";
 
-            redirect("solicitacao/visualizar/{$id_solicitacao[0]}");
+            redirect("solicitacao/visualizar/{$id_solicitacao}");
         } else if (array_search($perfil, $parametros['EDITAR_SOLICITACAO']) !== FALSE) {
 
             /* Caso solicitação esteja aberta busca dados para alteração */
@@ -339,21 +344,22 @@ class Solicitacao extends CI_Controller {
                 'title' => 'Editar Solicitação'
             );
 
-            $dados_solicitacao = $this->model->get_solicitacao($id_solicitacao[0], $_SESSION['id'], $perfil);
+            $dados_solicitacao = $this->model->get_solicitacao($id_solicitacao, $_SESSION['id'], $perfil);
 
             /*
              * Dados necessarios para alteração
              */
             $var = array(
-                'link' => HTTP . '/solicitacao/atualizarSolicitacao',
+                'link' => base_url() . '/solicitacao/atualizar_solicitacao',
                 'projetos' => $this->model->get_projetos($_SESSION['id']),
                 'prioridade' => $this->model->get_prioridades(),
                 'solicitacao' => json_encode($dados_solicitacao),
-                'participantes' => json_encode($this->model->get_solicitantes($dados_solicitacao['projeto_problema']))
+                'participantes' => json_encode($this->model->get_solicitantes($dados_solicitacao['projeto_problema'])),
+                'solicitacao_origem' => 0
             );
 
             $this->load->view('template/header', $title);
-            $this->load->view('solicitacao/editar', $var);
+            $this->load->view('solicitacao/index', $var);
             $this->load->view('solicitacao/editar', $var);
             $this->load->view('template/footer');
         }
@@ -364,7 +370,7 @@ class Solicitacao extends CI_Controller {
      */
     public function remover_arquivo() {
         $perfil = $_SESSION['perfil'];
-        $parametros = $this->cache->apc->get(PARAMETROS);
+        $parametros = Parametros_solicitacoes::get_parametros();
 
         /* Verifica se perfil do usuário tem a permissão de editar solicitação */
         if (array_search($perfil, $parametros['EDITAR_SOLICITACAO']) !== FALSE) {
@@ -386,7 +392,7 @@ class Solicitacao extends CI_Controller {
      */
     public function atualizar_solicitacao() {
         $perfil = $_SESSION['perfil'];
-        $parametros = $this->cache->apc->get(PARAMETROS);
+        $parametros = Parametros_solicitacoes::get_parametros();
 
         if (array_search($perfil, $parametros['EDITAR_SOLICITACAO']) !== FALSE) {
             /*
@@ -443,11 +449,11 @@ class Solicitacao extends CI_Controller {
 
     /**
      * Atribui um atendente a uma solicitação e inicia atendimento
-     * @param Array $solicitacao Array contendo o <b>ID</b> da solicitação.
+     * @param int $solicitacao <b>ID</b> da solicitação.
      */
     public function atender($solicitacao) {
         $perfil = $_SESSION['perfil'];
-        $parametros = $this->cache->apc->get(PARAMETROS);
+        $parametros = Parametros_solicitacoes::get_parametros();
 
         /* Verifica se usuário tem permissão de atender um solicitação */
         if (array_search($perfil, $parametros['ATENDER_SOLICITACAO']) !== FALSE) {
@@ -458,10 +464,10 @@ class Solicitacao extends CI_Controller {
              * Realiza atendimento de uma solicitação e retorna
              * informações de erro ou de sucesso.
              */
-            $result = $this->model->atender_solicitacao($hoje, $solicitacao[0], $_SESSION['id']);
+            $result = $this->model->atender_solicitacao($hoje, $solicitacao, $_SESSION['id']);
 
             $dados = array(
-                'id' => $solicitacao[0],
+                'id' => $solicitacao,
                 'atendimento' => $hoje,
                 'encerramento' => $hoje,
                 'tecnico' => $_SESSION['id']
@@ -486,10 +492,10 @@ class Solicitacao extends CI_Controller {
              * Grava dados da operação realizada
              */
             Logs::gravar($log, $_SESSION ['id']);
-            redirect("solicitacao/visualizar/{$solicitacao[0]}");
+            redirect("solicitacao/visualizar/{$solicitacao}");
         } else {
             $_SESSION['msg_erro'] = "Perfil não possui permissão para atender uma solicitação.";
-            redirect("solicitacao/visualizar/{$solicitacao[0]}");
+            redirect("solicitacao/visualizar/{$solicitacao}");
         }
     }
 
@@ -499,7 +505,7 @@ class Solicitacao extends CI_Controller {
      */
     public function excluir($dados = array()) {
         $perfil = $_SESSION['perfil'];
-        $parametros = $this->cache->apc->get(PARAMETROS);
+        $parametros = Parametros_solicitacoes::get_parametros();
         $solicitacao = $this->model->get_dados_solicitacao($dados[0], $perfil, $_SESSION['id']);
 
         /* Verifica se usuário tem permissão de excluir um solicitação */
@@ -538,26 +544,27 @@ class Solicitacao extends CI_Controller {
 
     /**
      * Implementa opção de redirecionamento a outro técnico.
-     * @param Array $dados Array com código da solicitação e técnico.
+     * @param int $id_solicitacao Código da solicitação.
+     * @param int $id_tecnico Codigo do tecnico.
      */
-    public function redirecionar($dados) {
+    public function redirecionar($id_solicitacao, $id_tecnico) {
         $perfil = $_SESSION['perfil'];
-        $parametros = $this->cache->apc->get(PARAMETROS);
-        $solicitacao = $this->model->get_dados_solicitacao($dados[0], $perfil, $_SESSION['id']);
+        $parametros = Parametros_solicitacoes::get_parametros();
+        $solicitacao = $this->model->get_dados_solicitacao($id_solicitacao, $perfil, $_SESSION['id']);
 
         /*
          * Verifica se o perfil do usuário tem autorização para
          * realizar o redirecionamento da solicitação.
          */
         if ((array_search($perfil, $parametros['REDIRECIONAR_CHAMADO']) !== FALSE) && empty($solicitacao['encerramento'])) {
-            $result = $this->model->redirecionar_solicitacao($_SESSION['id'], $dados[0], $dados[1]);
+            $result = $this->model->redirecionar_solicitacao($_SESSION['id'], $id_solicitacao, $id_tecnico);
 
             /*
              * Prepara dados para gravação de log da operação realizada.
              */
             $dados = array(
-                'id' => $dados[0],
-                'tecnico' => $dados[1]
+                'id' => $id_solicitacao,
+                'tecnico' => $id_tecnico
             );
 
             if ($result['status']) {
@@ -596,7 +603,7 @@ class Solicitacao extends CI_Controller {
         $pergunta = filter_input(INPUT_POST, 'pergunta_feedback', FILTER_DEFAULT, FILTER_FLAG_EMPTY_STRING_NULL);
 
         $perfil = $_SESSION['perfil'];
-        $parametros = $this->cache->apc->get(PARAMETROS);
+        $parametros = Parametros_solicitacoes::get_parametros();
         $solicitacao = $this->model->get_dados_solicitacao($id_solicitacao, $perfil, $_SESSION['id']);
 
         /*
@@ -713,14 +720,13 @@ class Solicitacao extends CI_Controller {
 
     /**
      * Finaliza um solicitação que esta em atendimento.
-     * @param Array $dados Array com o código da solicitação a ser finalizada
+     * @param int $id_solicitacao Código da solicitação a ser finalizada
      */
-    public function encerrar($dados) {
-        $id_solicitacao = $dados[0];
+    public function encerrar($id_solicitacao) {
         $perfil = $_SESSION['perfil'];
         $usuario = $_SESSION['id'];
 
-        $parametros = $this->cache->apc->get(PARAMETROS);
+        $parametros = Parametros_solicitacoes::get_parametros();
         $solicitacao = $this->model->get_dados_solicitacao($id_solicitacao, $perfil, $usuario);
 
         /*

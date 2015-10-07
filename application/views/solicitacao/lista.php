@@ -102,12 +102,12 @@
         <table id="table_solicitacoes" class="display responsive nowrap" width="100%" cellspacing="0">
             <thead>
                 <tr>
+                    <th>Abertura</th>
                     <th>Projeto</th>
                     <th>Problema</th>
                     <th>Prioridade</th>
                     <th>Solicitante</th>
                     <th>Atendente</th>
-                    <th>Abertura</th>
                     <th>Q. Arquivos</th>
                 </tr>
             </thead>

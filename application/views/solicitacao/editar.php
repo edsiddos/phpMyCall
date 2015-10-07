@@ -12,43 +12,43 @@
         /*
          * Gera caixa se seleção de solicitantes e técnicos
          */
-        $("select[name='selectSolicitante'] > option").remove();
-        $("select[name='selectTecnico'] > option").remove();
-        $("select[name='selectSolicitante']").append('<option value="0" disabled selected>Solicitante</option>');
-        $("select[name='selectTecnico']").append('<option value="0" disabled selected>Técnico</option>');
+        $("select[name='select_solicitante'] > option").remove();
+        $("select[name='select_tecnico'] > option").remove();
+        $("select[name='select_solicitante']").append('<option value="0" disabled selected>Solicitante</option>');
+        $("select[name='select_tecnico']").append('<option value="0" disabled selected>Técnico</option>');
 
         $.each(participantes, function (key, value) {
-            $("select[name='selectSolicitante']").append('<option value="' + value.id + '">' + value.nome + '</option>');
+            $("select[name='select_solicitante']").append('<option value="' + value.id + '">' + value.nome + '</option>');
 
             if (value.tecnico) {
-                $("select[name='selectTecnico']").append('<option value="' + value.id + '">' + value.nome + '</option>');
+                $("select[name='select_tecnico']").append('<option value="' + value.id + '">' + value.nome + '</option>');
             }
         });
 
         /*
          * Preenche campos com dados da solicitação.
          */
-        $("input[name='inputID']").val(solicitacao.solicitacao);
-        $("input[name='solicitacaoOrigem']").val(solicitacao.solicitacao_origem);
-        $("select[name='selectProjeto']").val(solicitacao.projeto_problema);
-        $("select[name='selectPrioridade']").val(solicitacao.prioridade);
-        $("select[name='selectSolicitante']").val(solicitacao.solicitante);
-        $("select[name='selectTecnico']").val(solicitacao.tecnico);
-        $("textarea[name='textareaDescricao']").val(solicitacao.descricao);
+        $("input[name='input_id']").val(solicitacao.solicitacao);
+        $("input[name='solicitacao_origem']").val(solicitacao.solicitacao_origem);
+        $("select[name='select_projeto']").val(solicitacao.projeto_problema);
+        $("select[name='select_prioridade']").val(solicitacao.prioridade);
+        $("select[name='select_solicitante']").val(solicitacao.solicitante);
+        $("select[name='select_tecnico']").val(solicitacao.tecnico);
+        $("textarea[name='textarea_descricao']").val(solicitacao.descricao);
 
         /*
          * Monta tabela com relação dos arquivos anexos
          */
 
         if (solicitacao.arquivos.length > 0) {
-            $('#arquivos-antigos').addClass('well well-sm');
+            $('#arquivos_antigos').addClass('well well-sm');
 
-            var table = '<table class="u-full-width" id="table-arquivos">' +
+            var table = '<table class="table" id="table_arquivos">' +
                     '<thead><tr><th colspan="2" class="text-center">Arquivos anexos na solicitação</th></tr></thead>' +
                     '<tbody></tbody>' +
                     '</table>';
 
-            $('#arquivos-antigos').html(table);
+            $('#arquivos_antigos').html(table);
 
             var table = '';
 
@@ -57,7 +57,7 @@
                         '<td><button class="excluir" data-id="' + value.id + '" type="button">Excluir</button></td></tr>';
             });
 
-            $('#table-arquivos > tbody').html(table);
+            $('#table_arquivos > tbody').html(table);
         }
 
         /*
@@ -77,21 +77,21 @@
          * Dialog de confirmação antes da remoção do anexo.
          */
 
-        var delete_file = $('#confirm-delete-file').dialog({
+        var delete_file = $('#confirm_delete_file').dialog({
             autoOpen: false,
             modal: true,
             buttons: {
                 "Remover": function () {
 
                     $.ajax({
-                        url: "<?= HTTP . '/Solicitacao/removerArquivo' ?>",
+                        url: "<?= base_url() . 'solicitacao/remover_arquivo' ?>",
                         data: 'id=' + $("input[type='hidden'][name='id_arquivo']").val() +
                                 '&projeto_tipo_problema=' + $("select[name='selectProjeto']").val(),
                         type: 'POST',
                         dataType: 'json',
                         success: function (data) {
                             $("#status").prop('title', 'Atenção');
-                            $("#msg-status").html(data.status ? "Arquivo removido com sucesso." : "Falha ao remover arquivo. Caso persista o erro contate administrador.");
+                            $("#msg_status").html(data.status ? "Arquivo removido com sucesso." : "Falha ao remover arquivo. Caso persista o erro contate administrador.");
 
                             status_msg.dialog("open");
 
@@ -99,8 +99,8 @@
                                 var id = $("input[type='hidden'][name='id_arquivo']").val();
                                 $("#arquivos" + id).remove();
 
-                                if ($("#table-arquivos > tbody > tr").length == 0) {
-                                    $("#arquivos-antigos").hide();
+                                if ($("#table_arquivos > tbody > tr").length == 0) {
+                                    $("#arquivos_antigos").hide();
                                 }
                             }
                         }
@@ -135,10 +135,10 @@
 
 <input type="hidden" name="id_arquivo" />
 
-<div id="confirm-delete-file" title="Atenção">
+<div id="confirm_delete_file" title="Atenção">
     <p>Deseja excluir este arquivo?</p>
 </div>
 
 <div id="status" title="Atenção">
-    <p id="msg-status"></p>
+    <p id="msg_status"></p>
 </div>
