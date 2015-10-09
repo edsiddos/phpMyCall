@@ -720,11 +720,13 @@ class Solicitacao extends CI_Controller {
 
     /**
      * Finaliza um solicitação que esta em atendimento.
-     * @param int $id_solicitacao Código da solicitação a ser finalizada
      */
-    public function encerrar($id_solicitacao) {
+    public function encerrar() {
         $perfil = $_SESSION['perfil'];
         $usuario = $_SESSION['id'];
+
+        $id_solicitacao = filter_input(INPUT_POST, 'solicitacao', FILTER_SANITIZE_NUMBER_INT);
+        $resolucao = filter_input(INPUT_POST, 'resolucao_solicitacao', FILTER_DEFAULT, FILTER_FLAG_EMPTY_STRING_NULL);
 
         $parametros = Parametros_solicitacoes::get_parametros();
         $solicitacao = $this->model->get_dados_solicitacao($id_solicitacao, $perfil, $usuario);
@@ -741,7 +743,8 @@ class Solicitacao extends CI_Controller {
              * Passa os dados referente ao encerramento da solicitação
              */
             $dados = array(
-                'encerramento' => $hoje
+                'encerramento' => $hoje,
+                'resolucao' => $resolucao
             );
 
             /*

@@ -4,11 +4,15 @@
 <script type="text/javascript">
 
     tinymce.init({
-        selector: '#pergunta_feedback, #resposta_feedback',
+        selector: '#pergunta_feedback, #resposta_feedback, #resolucao_solicitacao',
         language: 'pt_BR'
     });
 
     $(document).ready(function () {
+
+        /******************************************************************/
+        /*                  Dialog Excluir Solicitações                   */
+        /******************************************************************/
 
         var excluir_solicitacao = $('#excluir_solicitacao').dialog({
             autoOpen: false,
@@ -36,6 +40,10 @@
             ],
             position: {my: "center center-150", of: window}
         });
+
+        /******************************************************************/
+        /*            Dialog redirecionamento de solicitações             */
+        /******************************************************************/
 
         var redirecionar_solicitacao = $('#redirecionar_solicitacao').dialog({
             autoOpen: false,
@@ -67,6 +75,10 @@
             position: {my: "center center-150", of: window}
         });
 
+        /******************************************************************/
+        /*                Dialog feedback de solicitações                 */
+        /******************************************************************/
+
         var feedback_solicitacao = $('#feedback_solicitacao').dialog({
             autoOpen: false,
             modal: true,
@@ -94,6 +106,10 @@
             ],
             position: {my: "center center-150", of: window}
         });
+
+        /******************************************************************/
+        /*                   Dialog responder feedback                    */
+        /******************************************************************/
 
         var responder_feedback = $('#responder_feedback').dialog({
             autoOpen: false,
@@ -125,6 +141,10 @@
 
         $("#responder_feedback > div").accordion();
 
+        /******************************************************************/
+        /*               Dialog visualizaçao de feedbacks                 */
+        /******************************************************************/
+
         var visualizar_feedback = $('#visualizar_feedback').dialog({
             autoOpen: false,
             modal: true,
@@ -143,9 +163,47 @@
             position: {my: "center center-150", of: window}
         });
 
+        /******************************************************************/
+        /*               Dialog visualizaçao de feedbacks                 */
+        /******************************************************************/
+
+        var encerrar_dialog = $('#encerramento_solicitacao').dialog({
+            autoOpen: false,
+            modal: true,
+            width: 850,
+            buttons: [
+                {
+                    text: "Encerrar",
+                    icons: {
+                        primary: 'ui-icon-check'
+                    },
+                    click: function () {
+                        $('form[name=encerrar_solicitacao]').submit();
+                        encerrar_dialog.dialog('close');
+                    }
+                },
+                {
+                    text: "Cancelar",
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
+                    click: function () {
+                        encerrar_dialog.dialog('close');
+                    }
+                }
+            ],
+            position: {my: "center center-150", of: window}
+        });
+
+        /******************************************************************/
+        /*        Acordion para exibiçao das perguntas e resposta         */
+        /******************************************************************/
+
         $("#visualizar_feedback > div").accordion();
 
-        /*******************************************************/
+        /******************************************************************/
+        /*           Cria botoes e adiciona eventos ao clica-los          */
+        /******************************************************************/
 
         $("button[class=feedback_aberto]").button({
             icons: {
@@ -249,7 +307,7 @@
                 primary: 'ui-icon-check'
             }
         }).on('click', function () {
-            $(location).attr('href', '<?= base_url() . "solicitacao/encerrar/{$id_solicitacao}" ?>');
+            encerrar_dialog.dialog('open');
         });
     });
 
@@ -612,5 +670,15 @@
 
         <h3>Resposta</h3>
         <div id="visualizar_feedback_resposta"></div>
+    </div>
+</div>
+
+
+<div id="encerramento_solicitacao" title="Encerramento de solicitação">
+    <div>
+        <form method="post" name="encerrar_solicitacao" class="form-horizontal" action="<?= base_url() . "solicitacao/encerrar" ?>">
+            <input type="hidden" name="solicitacao" value="<?= "{$id_solicitacao}" ?>" />
+            <textarea name="resolucao_solicitacao" id="resolucao_solicitacao"></textarea>
+        </form>
     </div>
 </div>
