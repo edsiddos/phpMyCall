@@ -103,7 +103,7 @@ class Projetos_problemas_model extends CI_Model {
     public function relacao_usuarios($nivel) {
         $this->db->select("usuario.id AS value, usuario.nome || ' - ' || perfil.perfil AS name")->from('phpmycall.usuario');
         $this->db->join('phpmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
-        $result = $this->db->where("perfil.nivel < {$nivel}")->get()->result_array();
+        $result = $this->db->where("perfil.nivel <= {$nivel}")->get()->result_array();
 
         return (empty($result) ? array() : $result);
     }
