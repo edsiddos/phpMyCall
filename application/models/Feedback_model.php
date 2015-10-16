@@ -70,7 +70,7 @@ class Feedback_model extends CI_Model {
      * @return array Retorna Array com dados do tipo de Feedback
      */
     public function get_dados_tipo_feedback($search, $order_by, $limit, $offset) {
-        $where = "nome ILIKE '%{$search}%' OR abreviatura ILIKE '%{$search}%' OR descricao ILIKE '%{$search}%'";
+        $where = "LOWER(nome) LIKE LOWER('%{$search}%') OR LOWER(abreviatura) LIKE LOWER('%{$search}%') OR LOWER(descricao) LIKE LOWER('%{$search}%')";
 
         $this->db->select('COUNT(id) AS count');
         $this->db->from('phpmycall.tipo_feedback');

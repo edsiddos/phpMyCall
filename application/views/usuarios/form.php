@@ -131,9 +131,12 @@
                     <input type="password" class="form-control input-md" id="input_senha" required name="input_senha" placeholder="Senha">
                 </div>
                 <div class="col-md-4">
-                    <label class="checkbox-inline" for="input_changeme">
-                        <input name="input_changeme" id="input_changeme" value="changeme" type="checkbox"> Senha temporária
-                    </label>
+                    <div class="checkbox checkbox-primary">
+                        <input type="checkbox" id="input_changeme" name="input_changeme" value="changeme">
+                        <label for="input_changeme">
+                            Senha temporária
+                        </label>
+                    </div>
                 </div>
             </div>
 

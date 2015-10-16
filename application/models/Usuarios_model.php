@@ -81,8 +81,8 @@ class Usuarios_model extends CI_Model {
         $str_where = "perfil.nivel < {$nivel}";
 
         if (!empty($where)) {
-            $str_where .= " AND (usuario ILIKE '%{$where}%' OR nome ILIKE '%{$where}%'"
-                    . " OR perfil.perfil ILIKE '%{$where}%' OR email ILIKE '%{$where}%')";
+            $str_where .= " AND (LOWER(usuario) LIKE LOWER('%{$where}%') OR LOWER(nome) LIKE LOWER('%{$where}%')"
+                    . " OR LOWER(perfil.perfil) LIKE LOWER('%{$where}%') OR LOWER(email) LIKE LOWER('%{$where}%'))";
         }
 
         $this->db->select('usuario.id, usuario.usuario, usuario.nome, perfil.perfil, usuario.email');
@@ -107,8 +107,8 @@ class Usuarios_model extends CI_Model {
         $return['recordsTotal'] = $result['quant'];
 
         if (!empty($where)) {
-            $str_where .= " AND (usuario ILIKE '%{$where}%' OR nome ILIKE '%{$where}%'"
-                    . " OR perfil.perfil ILIKE '%{$where}%' OR email ILIKE '%{$where}%')";
+            $str_where .= " AND (LOWER(usuario) LIKE LOWER('%{$where}%') OR LOWER(nome) LIKE LOWER('%{$where}%')"
+                    . " OR LOWER(perfil.perfil) LIKE LOWER('%{$where}%') OR LOWER(email) LIKE LOWER('%{$where}%'))";
         }
 
         $this->db->select('COUNT(usuario.id) AS quant');
@@ -190,15 +190,14 @@ class Usuarios_model extends CI_Model {
      * @return boolean True se excluido com sucesso, False se falha.
      */
     public function excluir_usuario($id, $nivel) {
-        $delete = "(SELECT usuario.id FROM phpmycall.usuario";
-        $delete .= " INNER JOIN phpmycall.perfil ON usuario.perfil = perfil.id";
-        $delete .= " WHERE usuario.id = {$id} AND perfil.nivel < {$nivel})";
+        $this->db->select('usuario.id')->from('phpmycall.usuario');
+        $this->db->join('phpmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
+        $result = $this->db->where(array('usuario.id' => $id, 'perfil.nivel <' => $nivel))->get()->row_array();
 
-        $this->db->where("usuario = {$delete}");
+        $this->db->where(array('usuario' => $result['id']));
         $status = $this->db->delete('phpmycall.projeto_responsaveis');
 
-        $del_usuario = "id = {$delete}";
-        $this->db->where($del_usuario);
+        $this->db->where(array('id' => $result['id']));
         $status = $this->db->delete('phpmycall.usuario');
 
         return $status;

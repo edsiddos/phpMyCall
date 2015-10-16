@@ -41,7 +41,7 @@ class Solicitacao extends CI_Controller {
      * Tela de abertura de chamados
      * @param int $cod_solicitacao Código da solicitação para abrir sub chamado
      */
-    public function abrir($cod_solicitacao) {
+    public function abrir($cod_solicitacao = NULL) {
         $permissao = "solicitacao/abrir";
         $perfil = $_SESSION ['perfil'];
 

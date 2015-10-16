@@ -139,22 +139,14 @@ class Horarios_model extends CI_Model {
      * @return Array Retorna array com os dia da semana e horários de entrada e saída do 1º e 2º periodo.
      */
     public function get_expediente() {
-        $sql = "SELECT id,
-                    dia_semana,
-                    TO_CHAR(entrada_manha, 'HH24:MI') AS entrada_manha,
-                    TO_CHAR(saida_manha, 'HH24:MI') AS saida_manha,
-                    TO_CHAR(entrada_tarde, 'HH24:MI') AS entrada_tarde,
-                    TO_CHAR(saida_tarde, 'HH24:MI') AS saida_tarde
-                FROM phpmycall.expediente ORDER BY id;";
-
-        $result = $this->db->query($sql);
+        $result = $this->db->select('*')->from('phpmycall.expediente')->order_by('id')->get();
 
         foreach ($result->result_array() as $values) {
-            $return ['dia_semana'] [$values ['id']] = $values ['dia_semana'];
-            $return ['entrada_manha'] [$values ['id']] = $values ['entrada_manha'];
-            $return ['saida_manha'] [$values ['id']] = $values ['saida_manha'];
-            $return ['entrada_tarde'] [$values ['id']] = $values ['entrada_tarde'];
-            $return ['saida_tarde'] [$values ['id']] = $values ['saida_tarde'];
+            $return['dia_semana'][$values['id']] = $values['dia_semana'];
+            $return['entrada_manha'][$values['id']] = $values['entrada_manha'];
+            $return['saida_manha'][$values['id']] = $values['saida_manha'];
+            $return['entrada_tarde'][$values['id']] = $values['entrada_tarde'];
+            $return['saida_tarde'][$values['id']] = $values['saida_tarde'];
         }
 
         return $return;

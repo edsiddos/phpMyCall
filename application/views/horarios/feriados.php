@@ -232,12 +232,14 @@
 
         <div class="form-group">
             <div class="col-md-12">
-                <div class="checkbox-inline">
+
+                <div class="checkbox checkbox-primary">
+                    <input type="checkbox" id="input_data_fixa" name="input_data_fixa">
                     <label for="input_data_fixa">
-                        <input name="input_data_fixa" id="input_data_fixa" type="checkbox">
                         Data fixa (este feriado será replicado nos anos seguintes)
                     </label>
                 </div>
+
             </div>
         </div>
 

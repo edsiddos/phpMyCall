@@ -52,7 +52,7 @@ class Projetos_problemas_model extends CI_Model {
      */
     public function get_projetos($nome) {
         $this->db->select('nome')->from('phpmycall.projeto');
-        $result = $this->db->where("nome ILIKE '%{$nome}%'")->get()->result_array();
+        $result = $this->db->where("LOWER(nome) LIKE LOWER('%{$nome}%')")->get()->result_array();
 
         $return = array();
         foreach ($result as $key => $value) {
@@ -71,7 +71,7 @@ class Projetos_problemas_model extends CI_Model {
      */
     public function get_problemas($nome) {
         $this->db->select('nome')->from('phpmycall.tipo_problema');
-        $result = $this->db->where("nome ILIKE '%{$nome}%'")->get()->result_array();
+        $result = $this->db->where("LOWER(nome) LIKE LOWER('%{$nome}%')")->get()->result_array();
 
         $return = array();
         foreach ($result as $key => $value) {
@@ -101,7 +101,7 @@ class Projetos_problemas_model extends CI_Model {
      * @param int $nivel Nivel de permissão do perfil
      */
     public function relacao_usuarios($nivel) {
-        $this->db->select("usuario.id AS value, usuario.nome || ' - ' || perfil.perfil AS name")->from('phpmycall.usuario');
+        $this->db->select("usuario.id AS value, CONCAT(usuario.nome, ' - ', perfil.perfil) AS name")->from('phpmycall.usuario');
         $this->db->join('phpmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
         $result = $this->db->where("perfil.nivel <= {$nivel}")->get()->result_array();
 
@@ -140,6 +140,8 @@ class Projetos_problemas_model extends CI_Model {
         if ($this->db->insert('phpmycall.projeto', $array)) {
             if ($this->db->dbdriver == 'pdo' && $this->db->subdriver === 'pgsql') {
                 return $this->db->insert_id('phpmycall.projeto_id_seq');
+            } else {
+                return $this->db->insert_id();
             }
         } else {
             return FALSE;
@@ -173,6 +175,8 @@ class Projetos_problemas_model extends CI_Model {
         if ($this->db->insert('phpmycall.tipo_problema', $array)) {
             if ($this->db->dbdriver == 'pdo' && $this->db->subdriver === 'pgsql') {
                 return $this->db->insert_id('phpmycall.tipo_problema_id_seq');
+            } else {
+                return $this->db->insert_id();
             }
         } else {
             return FALSE;
@@ -225,8 +229,8 @@ class Projetos_problemas_model extends CI_Model {
         $this->db->from('phpmycall.projeto_tipo_problema');
 
         if (!empty($where)) {
-            $this->db->where("projeto IN (SELECT id FROM phpmycall.projeto WHERE nome ILIKE '%{$where}%')"
-                    . " OR problema IN (SELECT id FROM phpmycall.tipo_problema WHERE nome ILIKE '%{$where}%')");
+            $this->db->where("projeto IN (SELECT id FROM phpmycall.projeto WHERE LOWER(nome) LIKE LOWER('%{$where}%'))"
+                    . " OR problema IN (SELECT id FROM phpmycall.tipo_problema WHERE LOWER(nome) LIKE LOWER('%{$where}%'))");
         }
 
         $query = $this->db->get();
@@ -241,7 +245,7 @@ class Projetos_problemas_model extends CI_Model {
         $this->db->join('phpmycall.tipo_problema', 'projeto_tipo_problema.problema = tipo_problema.id', 'inner');
 
         if (!empty($where)) {
-            $str_where = "projeto.nome ILIKE '%{$where}%' OR tipo_problema.nome ILIKE '%{$where}%'";
+            $str_where = "LOWER(projeto.nome) LIKE LOWER('%{$where}%') OR LOWER(tipo_problema.nome) LIKE LOWER('%{$where}%')";
 
             $this->db->where($str_where);
         }

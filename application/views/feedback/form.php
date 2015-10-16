@@ -21,16 +21,17 @@
 
     <div class="form-group">
         <?= form_label('Abreviatura:', 'input_abreviatura', $class_label); ?>
-        <div class="col-md-8">
+        <div class="col-md-4">
             <?= form_input(array('name' => 'input_abreviatura', 'id' => 'input_abreviatura', 'placeholder' => 'Abreviatura', 'maxlenght' => '10'), '', $class_input) ?>
         </div>
-    </div>
 
-    <div class="form-group">
-        <?= form_label('Descontar do tempo total de solução?', 'input_descontar', $class_label); ?>
-        <div class="col-md-8">
-            <?= form_checkbox(array('name' => 'input_descontar', 'id' => 'input_descontar', 'placeholder' => 'Tempo para solução', 'value' => 'descontar')) ?>
+        <div class="col-md-4">
+            <div class="checkbox checkbox-primary">
+                <?= form_checkbox(array('name' => 'input_descontar', 'id' => 'input_descontar'), 'descontar') ?>
+                <?= form_label('Descontar do tempo total de solução?', 'input_descontar'); ?>
+            </div>
         </div>
+
     </div>
 
     <div class="form-group">

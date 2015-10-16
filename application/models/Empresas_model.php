@@ -60,7 +60,7 @@ class Empresas_model extends CI_Model {
      */
     public function existe_empresa($empresa) {
         $this->db->select('COUNT(empresas.empresa) AS status');
-        $query = $this->db->from('phpmycall.empresas')->where("empresa ILIKE '{$empresa}'")->get();
+        $query = $this->db->from('phpmycall.empresas')->where("LOWER(empresa) LIKE LOWER('{$empresa}')")->get();
 
         return $query->row_array();
     }
@@ -75,8 +75,8 @@ class Empresas_model extends CI_Model {
      * @return Array Retorna array com dados das empresas
      */
     public function get_empresas($search, $order_by, $limit, $offset) {
-        $where = "empresa ILIKE '%{$search}%' OR endereco ILIKE '%{$search}%' ";
-        $where .= " OR telefone_fixo ILIKE '%{$search}%' OR telefone_celular ILIKE '%{$search}%'";
+        $where = "LOWER(empresa) LIKE LOWER('%{$search}%') OR LOWER(endereco) LIKE LOWER('%{$search}%') ";
+        $where .= " OR LOWER(telefone_fixo) LIKE LOWER('%{$search}%') OR LOWER(telefone_celular) LIKE LOWER('%{$search}%')";
 
         $this->db->select('COUNT(id) AS count');
         $this->db->from('phpmycall.empresas');

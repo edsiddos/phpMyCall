@@ -81,7 +81,7 @@ class Solicitacao_model extends CI_Model {
 
         $tecnicos = "'" . implode("', '", $parametros['ATENDER_SOLICITACAO']) . "'";
 
-        $this->db->select("usuario.id, usuario.nome, perfil.perfil IN ({$tecnicos})::int AS tecnico");
+        $this->db->select("usuario.id, usuario.nome, perfil.perfil IN ({$tecnicos}) AS tecnico");
         $this->db->from('phpmycall.usuario');
         $this->db->join('phpmycall.projeto_responsaveis', 'usuario.id = projeto_responsaveis.usuario', 'inner');
         $this->db->join('phpmycall.projeto_tipo_problema', 'projeto_responsaveis.projeto = projeto_tipo_problema.projeto', 'inner');
@@ -102,7 +102,7 @@ class Solicitacao_model extends CI_Model {
 
         $tecnicos = "'" . implode("', '", $parametros['ATENDER_SOLICITACAO']) . "'";
 
-        $this->db->select("usuario.id, usuario.nome, perfil.perfil IN ({$tecnicos})::int AS tecnico");
+        $this->db->select("usuario.id, usuario.nome, perfil.perfil IN ({$tecnicos}) AS tecnico");
         $this->db->from('phpmycall.usuario');
         $this->db->join('phpmycall.projeto_responsaveis', 'usuario.id = projeto_responsaveis.usuario', 'inner');
         $this->db->join('phpmycall.projeto_tipo_problema', 'projeto_responsaveis.projeto = projeto_tipo_problema.projeto', 'inner');
@@ -123,6 +123,8 @@ class Solicitacao_model extends CI_Model {
         if ($this->db->insert('phpmycall.solicitacao', $dados)) {
             if ($this->db->dbdriver == 'pdo' && $this->db->subdriver === 'pgsql') {
                 return $this->db->insert_id('phpmycall.solicitacao_id_seq');
+            } else {
+                return $this->db->insert_id();
             }
         } else {
             return FALSE;
@@ -151,7 +153,7 @@ class Solicitacao_model extends CI_Model {
         $result = $this->count_solicitacoes($usuario, $perfil, $situacao, $prioridade, $search);
 
         $select = "projeto.nome AS projeto, tipo_problema.nome AS problema, prioridade.nome AS prioridade, ";
-        $select .= "solicitante.nome AS solicitante, atendente.nome AS atendente, TO_CHAR(solicitacao.abertura, 'FMDD/MM/YYYY  HH24:MI:SS') AS abertura, ";
+        $select .= "solicitante.nome AS solicitante, atendente.nome AS atendente, solicitacao.abertura, ";
         $select .= "solicitacao.id AS solicitacao, COUNT(arquivos.id) AS num_arquivos";
 
         $this->db->select($select);
@@ -183,9 +185,9 @@ class Solicitacao_model extends CI_Model {
 
         if (!empty($search)) {
             $this->db->group_start();
-            $this->db->or_where("projeto.nome ILIKE '%$search%'")->or_where("tipo_problema.nome ILIKE '%$search%'");
-            $this->db->or_where("prioridade.nome ILIKE '%$search%'")->or_where("solicitante.nome ILIKE '%$search%'");
-            $this->db->or_where("atendente.nome ILIKE '%$search%'");
+            $this->db->or_where("LOWER(projeto.nome) LIKE LOWER('%$search%')")->or_where("LOWER(tipo_problema.nome) LIKE LOWER('%$search%')");
+            $this->db->or_where("LOWER(prioridade.nome) LIKE LOWER('%$search%')")->or_where("LOWER(solicitante.nome) LIKE LOWER('%$search%')");
+            $this->db->or_where("LOWER(atendente.nome) LIKE LOWER('%$search%')");
             $this->db->group_end();
         }
 
@@ -205,6 +207,11 @@ class Solicitacao_model extends CI_Model {
         $this->db->limit($limit, $offset);
 
         $result['data'] = $this->db->get()->result_array();
+
+        foreach ($result['data'] as $key => $values) {
+            $data = new DateTime($values['abertura']);
+            $result['data'][$key]['abertura'] = $data->format('d/m/Y H:i:s');
+        }
 
         return $result;
     }
@@ -246,9 +253,9 @@ class Solicitacao_model extends CI_Model {
 
         if (!empty($search)) {
             $this->db->group_start();
-            $this->db->or_where("projeto.nome ILIKE '%$search%'")->or_where("tipo_problema.nome ILIKE '%$search%'");
-            $this->db->or_where("prioridade.nome ILIKE '%$search%'")->or_where("solicitante.nome ILIKE '%$search%'");
-            $this->db->or_where("atendente.nome ILIKE '%$search%'");
+            $this->db->or_where("LOWER(projeto.nome) LIKE LOWER('%$search%')")->or_where("LOWER(tipo_problema.nome) LIKE LOWER('%$search%')");
+            $this->db->or_where("LOWER(prioridade.nome) LIKE LOWER('%$search%')")->or_where("LOWER(solicitante.nome) LIKE LOWER('%$search%')");
+            $this->db->or_where("LOWER(atendente.nome) LIKE LOWER('%$search%')");
             $this->db->group_end();
         }
 
@@ -289,13 +296,13 @@ class Solicitacao_model extends CI_Model {
                     solicitacao.atendente AS id_atendente,
                     solicitacao.solicitante AS id_solicitante,
                     solicitacao.tecnico AS id_tecnico,
-                    TO_CHAR(solicitacao.abertura, 'FMDD/MM/YYYY  HH24:MI:SS') AS abertura,
+                    solicitacao.abertura,
                     CASE WHEN solicitacao.abertura = solicitacao.atendimento THEN NULL
-                    ELSE TO_CHAR(solicitacao.atendimento, 'FMDD/MM/YYYY  HH24:MI:SS') END AS atendimento,
+                    ELSE solicitacao.atendimento END AS atendimento,
                     CASE WHEN solicitacao.atendimento = solicitacao.encerramento THEN NULL
-                    ELSE TO_CHAR(solicitacao.encerramento, 'FMDD/MM/YYYY  HH24:MI:SS') END AS encerramento";
+                    ELSE solicitacao.encerramento END AS encerramento";
 
-        $this->db->select($select);
+        $this->db->select($select, false);
         $this->db->from('phpmycall.solicitacao');
         $this->db->join('phpmycall.usuario AS solicitante', 'solicitante.id = solicitacao.solicitante', 'inner');
         $this->db->join('phpmycall.usuario AS atendente', 'atendente.id = solicitacao.atendente', 'inner');
@@ -312,7 +319,22 @@ class Solicitacao_model extends CI_Model {
             $where .= " AND (solicitacao.solicitante = {$usuario} OR solicitacao.atendente = {$usuario} OR solicitacao.tecnico = {$usuario})";
         }
 
-        $result = $this->db->where($where)->get()->row_array();
+        $query = $this->db->where($where)->get();
+
+        $result = $query->row_array();
+
+        $data = new DateTime($result['abertura']);
+        $result['abertura'] = $data->format('d/m/Y H:i:s');
+
+        if ($result['atendimento'] !== NULL) {
+            $data = new DateTime($result['atendimento']);
+            $result['atendimento'] = $data->format('d/m/Y H:i:s');
+        }
+
+        if ($result['encerramento'] !== NULL) {
+            $data = new DateTime($result['encerramento']);
+            $result['encerramento'] = $data->format('d/m/Y H:i:s');
+        }
 
         $this->db->select('arquivos.id, arquivos.nome')->from('phpmycall.arquivos');
         $this->db->join('phpmycall.solicitacao', 'arquivos.solicitacao = solicitacao.id', 'inner');
@@ -429,11 +451,11 @@ class Solicitacao_model extends CI_Model {
      */
     public function feedback_pendentes_atendidos($solicitacao) {
         $sql = "SELECT feedback.id,
-                    substring(pergunta from 0 for 40) || '...' AS pergunta,
-                    substring(resposta from 0 for 40) || '...' AS resposta,
-                    TO_CHAR(inicio, 'FMDD/MM/YYYY  HH24:MI:SS') AS inicio,
+                    CONCAT(SUBSTRING(pergunta from 0 for 40), '...') AS pergunta,
+                    CONCAT(SUBSTRING(resposta from 0 for 40), '...') AS resposta,
+                    inicio,
                     CASE WHEN fim = inicio THEN NULL
-                    ELSE TO_CHAR(fim, 'FMDD/MM/YYYY  HH24:MI:SS') END AS fim,
+                    ELSE fim END AS fim,
                     CASE WHEN fim = inicio THEN TRUE
                     ELSE FALSE END AS aberta,
                     usuario.nome AS nome_responsavel,
@@ -443,7 +465,17 @@ class Solicitacao_model extends CI_Model {
                 WHERE solicitacao = ?
                 ORDER BY feedback.inicio DESC";
 
-        return $this->db->query($sql, array($solicitacao))->result_array();
+        $result = $this->db->query($sql, array($solicitacao))->result_array();
+
+        foreach ($result as $key => $values) {
+            $data = new DateTime($values['inicio']);
+            $result[$key]['inicio'] = $data->format('d/m/Y H:i:s');
+
+            $data = new DateTime($values['fim']);
+            $result[$key]['fim'] = $data->format('d/m/Y H:i:s');
+        }
+
+        return $result;
     }
 
     /**
@@ -454,7 +486,7 @@ class Solicitacao_model extends CI_Model {
      * @return Array Retorna array com mensagem da operação, e <b>TRUE</b> se sucesso ou <b>FALSE</b> se erro.
      */
     public function atender_solicitacao($hoje, $solicitacao, $usuario) {
-        $this->db->select('solicitacao.id')->from('phpmycall.solicitacao');
+        $this->db->select('solicitacao.id, solicitacao.abertura')->from('phpmycall.solicitacao');
         $this->db->join('phpmycall.projeto_tipo_problema', 'solicitacao.projeto_problema = projeto_tipo_problema.id', 'inner');
         $this->db->join('phpmycall.projeto_responsaveis', 'projeto_tipo_problema.projeto = projeto_responsaveis.projeto', 'inner');
         $this->db->group_start()->or_where(array('solicitacao.tecnico' => NULL))->or_where(array('solicitacao.tecnico' => $usuario))->group_end();
@@ -464,12 +496,13 @@ class Solicitacao_model extends CI_Model {
 
         if (isset($result['id'])) {
             $dados = array(
+                'abertura' => $result['abertura'],
                 'atendimento' => $hoje,
                 'encerramento' => $hoje,
                 'tecnico' => $usuario
             );
 
-            $this->db->where(array('id' => $solicitacao));
+            $this->db->where('id', $solicitacao);
 
             if ($this->db->update('phpmycall.solicitacao', $dados)) {
                 $result['msg'] = "Solicitação em atendimento.";
@@ -659,6 +692,12 @@ class Solicitacao_model extends CI_Model {
      * @return boolean Retorna <b>TRUE</b> se sucesso, <b>FALSE</b> se erro.
      */
     public function encerrar($solicitacao, $dados) {
+        $this->db->select('abertura, atendimento')->from('phpmycall.solicitacao');
+        $result = $this->db->where(array('id' => $solicitacao))->get()->row_array();
+
+        $dados['abertura'] = $result['abertura'];
+        $dados['atendimento'] = $result['atendimento'];
+
         $this->db->where(array('id' => $solicitacao));
         return $this->db->update('phpmycall.solicitacao', $dados);
     }

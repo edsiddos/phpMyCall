@@ -9,6 +9,7 @@
         <!-- BOOTSTRAP STYLES-->
         <link href="<?= site_url() . 'static/css/bootstrap.min.css' ?>" rel="stylesheet" />
         <link href="<?= site_url() . 'static/css/bootstrap-select/bootstrap-select.min.css' ?>" rel="stylesheet" />
+        <link href="<?= site_url() . 'static/css/awesome-bootstrap-checkbox.css' ?>" rel="stylesheet" />
         <!-- FONTAWESOME STYLES-->
         <link href="<?= site_url() . 'static/css/font-awesome.min.css' ?>" rel="stylesheet" />
         <!-- JQuery UI -->

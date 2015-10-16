@@ -234,7 +234,7 @@ class Usuarios extends CI_Controller {
         $permissao = 'usuarios/index';
 
         if (Menu::possue_permissao($_SESSION['perfil'], $permissao)) {
-            $dados = $this->getDadosPostUsuario();
+            $dados = $this->get_dados_post_usuario();
 
             $id = filter_input(INPUT_POST, 'input_id', FILTER_SANITIZE_NUMBER_INT);
 
