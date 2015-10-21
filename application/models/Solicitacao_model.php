@@ -692,12 +692,6 @@ class Solicitacao_model extends CI_Model {
      * @return boolean Retorna <b>TRUE</b> se sucesso, <b>FALSE</b> se erro.
      */
     public function encerrar($solicitacao, $dados) {
-        $this->db->select('abertura, atendimento')->from('phpmycall.solicitacao');
-        $result = $this->db->where(array('id' => $solicitacao))->get()->row_array();
-
-        $dados['abertura'] = $result['abertura'];
-        $dados['atendimento'] = $result['atendimento'];
-
         $this->db->where(array('id' => $solicitacao));
         return $this->db->update('phpmycall.solicitacao', $dados);
     }
