@@ -12,6 +12,6 @@ Desenvolvido para ser utilizado em plataforma web e distribuído com a licença 
 2. Módulo rewrite habilitado;
 3. PHP 5.6;
 4. PHP-APC;
-5. Banco de Dados Postgresql 9.2
+5. Banco de Dados **Postgresql 9.2** ou **MySQL 5.6**
 
 **Instruções para instalação e arquivos para criação das tabelas do banco de dados, estão presente na wiki deste projeto**
