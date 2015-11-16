@@ -24,6 +24,8 @@
  */
 class Usuarios extends CI_Controller {
 
+    private $translate = array();
+
     /**
      * Verifica se usuários esta logado antes de executar operação
      */
@@ -32,6 +34,7 @@ class Usuarios extends CI_Controller {
         if (!Autenticacao::verifica_login()) {
             redirect('Login/index');
         } else {
+            $this->translate = $this->lang->load('usuario', 'portuguese-brazilian', TRUE);
             $this->load->model('usuarios_model');
         }
     }
@@ -48,7 +51,14 @@ class Usuarios extends CI_Controller {
                 'empresas' => $this->usuarios_model->get_empresas()
             );
 
-            $this->load->view("template/header", array("title" => "Usuário"));
+            $vars = array_merge($vars, $this->translate);
+
+            $var_header = array(
+                'title' => $this->translate['titulo_janela'],
+                'js_path_translation_bootstrap_select' => $this->translate['js_path_translation_bootstrap_select']
+            );
+
+            $this->load->view("template/header", $var_header);
             $this->load->view("usuarios/index", $vars);
             $this->load->view("usuarios/form");
             $this->load->view("template/footer");
@@ -85,7 +95,12 @@ class Usuarios extends CI_Controller {
             $search = filter_input(INPUT_POST, 'search', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 
             $nivel = $_SESSION['nivel'];
-            $order_by = "{$columns[$order[0]['column']]['data']} {$order[0]['dir']}";
+
+            if (!empty($columns[$order[0]['column']]['data'])) {
+                $order_by = "{$columns[$order[0]['column']]['data']} {$order[0]['dir']}";
+            } else {
+                $order_by = "id asc";
+            }
 
             $records = $this->usuarios_model->get_quantidades_usuarios($nivel, $search['value']);
 
@@ -129,11 +144,11 @@ class Usuarios extends CI_Controller {
             if ($this->usuarios_model->inserir_usuario($dados ['usuario'])) {
                 $return = $this->usuarios_model->liga_usuario_projeto($dados['usuario']['usuario'], $dados['projeto']);
                 $msg['status'] = true;
-                $msg['msg'] = "Usuário inserido com sucesso.";
+                $msg['msg'] = $this->translate['inserido_com_sucesso'];
                 $dados['dados'] = $return;
             } else {
                 $msg['status'] = false;
-                $msg['msg'] = "Erro ao inserir novo usuário. Verifique dados e tente novamente.";
+                $msg['msg'] = $this->translate['erro_ao_inserir'];
             }
 
             $dados['aplicacao'] = $permissao;
@@ -241,11 +256,11 @@ class Usuarios extends CI_Controller {
             if ($this->usuarios_model->atualiza_usuario($dados['usuario'], $id)) {
                 $return = $this->usuarios_model->liga_usuario_projeto($dados['usuario']['usuario'], $dados['projeto']);
                 $msg['status'] = true;
-                $msg['msg'] = "Usuário alterado com sucesso.";
+                $msg['msg'] = $this->translate['alterado_com_sucesso'];
                 $dados['dados'] = $return;
             } else {
                 $msg['status'] = false;
-                $msg['msg'] = "Erro ao alterar usuário. Verifique dados e tente novamente.";
+                $msg['msg'] = $this->translate['erro_ao_alterar'];
             }
 
             $dados['aplicacao'] = $permissao;
@@ -276,10 +291,10 @@ class Usuarios extends CI_Controller {
 
             if ($this->usuarios_model->excluir_usuario($id, $nivel)) {
                 $msg['status'] = true;
-                $msg['msg'] = "Usuário excluido com sucesso.";
+                $msg['msg'] = $this->translate['excluido_com_sucesso'];
             } else {
                 $msg['status'] = false;
-                $msg['msg'] = "Erro ao excluir usuário. Verifique dados e tente novamente.";
+                $msg['msg'] = $this->translate['erro_ao_excluir'];
             }
 
             $dados['msg'] = $msg['msg'];

@@ -104,61 +104,81 @@
     <form method="post" name="form_usuario" id="form_usuario" class="form-horizontal">
 
         <ul>
-            <li><a href="#dados_usuario">Dados Usuário</a></li>
-            <li><a href="#projetos">Projetos</a></li>
+            <li>
+                <a href="#dados_usuario">
+                    <?= $titulo_aba_usuario ?>
+                </a>
+            </li>
+            <li>
+                <a href="#projetos">
+                    <?= $titulo_aba_projetos ?>
+                </a>
+            </li>
         </ul>
 
         <div id="dados_usuario">
             <input type="hidden" name="input_id" id="input_id" value="0" />
 
             <div class="form-group">
-                <label class="col-md-4 control-label" for="input_nome">Nome</label>  
+                <label class="col-md-4 control-label" for="input_nome">
+                    <?= $nome_label ?>
+                </label>  
                 <div class="col-md-8">
-                    <input id="input_nome" name="input_nome" placeholder="Nome" class="form-control input-md" type="text">    
+                    <input id="input_nome" name="input_nome" placeholder="<?= $nome_label ?>" class="form-control input-md" type="text">    
                 </div>
             </div>
 
             <div class="form-group" id="div_usuario">
-                <label for="input_usuario" class="col-md-4 control-label">Usuário</label>
+                <label for="input_usuario" class="col-md-4 control-label">
+                    <?= $usuario_label ?>
+                </label>
                 <div class="col-md-8">
-                    <input type="text" class="form-control input-md" id="input_usuario" name="input_usuario" placeholder="Usuário">
+                    <input type="text" class="form-control input-md" id="input_usuario" name="input_usuario" placeholder="<?= $usuario_label ?>">
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="input_senha" class="col-md-4 control-label">Senha</label>
+                <label for="input_senha" class="col-md-4 control-label">
+                    <?= $senha_label ?>
+                </label>
                 <div class="col-md-4">
-                    <input type="password" class="form-control input-md" id="input_senha" required name="input_senha" placeholder="Senha">
+                    <input type="password" class="form-control input-md" id="input_senha" required name="input_senha" placeholder="<?= $usuario_label ?>">
                 </div>
                 <div class="col-md-4">
                     <div class="checkbox checkbox-primary">
                         <input type="checkbox" id="input_changeme" name="input_changeme" value="changeme">
                         <label for="input_changeme">
-                            Senha temporária
+                            <?= $senha_temporaria_label ?>
                         </label>
                     </div>
                 </div>
             </div>
 
             <div class="form-group" id="div_email">
-                <label for="input_email" class="col-md-4 control-label">E-Mail</label>
+                <label for="input_email" class="col-md-4 control-label">
+                    <?= $email_label ?>
+                </label>
                 <div class="col-md-8">
-                    <input type="text" class="form-control input-md" id="input_email" name="input_email" placeholder="E-Mail">
+                    <input type="text" class="form-control input-md" id="input_email" name="input_email" placeholder="<?= $email_label ?>">
                 </div>
             </div>
 
             <div class="form-group" id="div_telefone">
-                <label for="input_telefone" class="col-md-4 control-label">Telefone</label>
+                <label for="input_telefone" class="col-md-4 control-label">
+                    <?= $telefone_label ?>
+                </label>
                 <div class="col-md-8">
-                    <input type="text" class="form-control input-md" id="input_telefone" name="input_telefone" placeholder="Telefone">
+                    <input type="text" class="form-control input-md" id="input_telefone" name="input_telefone" placeholder="<?= $telefone_label ?>">
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="col-md-4 control-label" for="select_perfil">Perfil</label>
+                <label class="col-md-4 control-label" for="select_perfil">
+                    <?= $perfil_label ?>
+                </label>
                 <div class="col-md-4">
                     <select id="select_perfil" name="select_perfil" class="selectpicker">
-                        <option disabled selected>Selecione um perfil</option>
+                        <option disabled selected><?= $perfil_option_label ?></option>
                         <?php
                         foreach ($perfil as $values) {
                             ?>
@@ -171,10 +191,12 @@
             </div>
 
             <div class="form-group" id="empresa">
-                <label class="col-md-4 control-label" for="select_empresa">Empresa</label>
+                <label class="col-md-4 control-label" for="select_empresa">
+                    <?= $empresa_label ?>
+                </label>
                 <div class="col-md-4">
                     <select id="select_empresa" name="select_empresa" class="selectpicker">
-                        <option disabled selected>Selecione uma empresa</option>
+                        <option disabled selected><?= $empresa_option_label ?></option>
                         <?php
                         foreach ($empresas as $values) {
                             ?>
@@ -189,7 +211,7 @@
         </div>
 
         <div id="projetos">
-            <div id="select_projeto"></div>
+            <div id="select_projeto" style="height: 300px"></div>
         </div>
 
     </form>

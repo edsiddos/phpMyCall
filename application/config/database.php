@@ -6,7 +6,7 @@ $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-    'dsn' => 'mysql:host=localhost;port=3306;dbname=phpmycall;user=dev;password=dev',
+    'dsn' => 'pgsql:host=localhost;port=5432;dbname=phpmycall;user=dev;password=dev',
     'hostname' => 'localhost',
     'username' => 'dev',
     'password' => 'dev',

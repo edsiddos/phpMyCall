@@ -3,11 +3,11 @@
 <script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.jqueryui.min.js' ?>"></script>
 <script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.responsive.min.js' ?>"></script>
 
-<script type="text/javascript" src="<?= base_url() . 'static/js/multi-select-transfer.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url() . 'static/js/simple-multi-select.js' ?>"></script>
 <script type="text/javascript" src="<?= base_url() . 'static/js/jquery.mask.min.js' ?>"></script>
 
 
-<link href="<?= base_url() . 'static/css/multi-select-transfer.css' ?>" rel="stylesheet" />
+<link href="<?= base_url() . 'static/css/simple-multi-select.css' ?>" rel="stylesheet" />
 <link href="<?= base_url() . 'static/css/datatable/dataTables.jqueryui.min.css' ?>" rel="stylesheet">
 <link href="<?= base_url() . 'static/css/datatable/responsive.jqueryui.min.css' ?>" rel="stylesheet">
 
@@ -184,26 +184,71 @@
                 type: "POST"
             },
             language: {
-                url: "<?= base_url() . 'static/js/datatable/pt_br.json' ?>"
+                url: "<?= $js_path_translation_datatable ?>"
             },
             columns: [
                 {"data": "id"},
                 {"data": "nome"},
                 {"data": "usuario"},
                 {"data": "perfil"},
-                {"data": "email"}
+                {"data": "email"},
+                {
+                    data: null,
+                    ordering: false,
+                    render: function (data) {
+                        var html = '<button type="button" name="editar" usuario_id="' + data.id + '"><?= $editar_usuario ?></button>';
+                        html += '<button type="button" name="excluir" usuario_id="' + data.id + '"><?= $excluir_usuario ?></button>';
+
+                        return html;
+                    }
+                }
             ]
-        }).on('click', 'tr', function () {
-            if ($(this).hasClass('selected')) {
-                $(this).removeClass('selected');
-            }
-            else {
-                datatable.$('tr.selected').removeClass('selected');
-                $(this).addClass('selected');
-            }
         });
 
-        multi = new MultiSelectTransfer('#select_projeto', {name_select_destiny: 'input_projetos'});
+        datatable.on('draw', function () {
+            /*
+             * Função chamada para gerar botões de editar usuário
+             * e ação ao clicar
+             */
+            $("button[name=editar]").button({
+                text: false,
+                icons: {
+                    primary: 'fa fa-pencil'
+                }
+            }).on('click', function () {
+                aguarde.mostrar();
+                var id = $(this).attr('usuario_id');
+
+                usuario.getDadosUsuario(id);
+                usuario.setFormularioAlteracao();
+
+                $('#formulario_cadastro').dialog('option', 'title', '<?= $titulo_alterar_usuario ?>');
+                $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $titulo_button_alterar_usuario ?>');
+                $('#formulario_cadastro').dialog('open');
+
+                aguarde.ocultar();
+            });
+
+            /*
+             * Função que gera botões de excluir usuários
+             * e aplica ação a clica-lo.
+             */
+
+            $("button[name=excluir]").button({
+                text: false,
+                icons: {
+                    primary: 'fa fa-trash'
+                }
+            }).on('click', function () {
+                var id = $(this).attr('usuario_id');
+
+                usuario.setIDUsuario(id);
+                $('#alerta_exclusao').dialog('open');
+            });
+        });
+
+
+        multi = new MultiSelect('#select_projeto', {name_select_destiny: 'input_projetos'});
         multi.init();
 
         /*
@@ -211,7 +256,7 @@
          */
         $('button[name=cadastrar]').button({
             icons: {
-                primary: 'ui-icon-circle-plus'
+                primary: 'fa fa-plus-circle'
             }
         }).on('click', function () {
             aguarde.mostrar();
@@ -236,55 +281,10 @@
             $('select[name=select_perfil]').val('').change();
             $('select[name=select_empresa]').val('');
 
-            $('#formulario_cadastro').dialog('option', 'title', 'Cadastrar usuário');
-            $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Cadastrar');
+            $('#formulario_cadastro').dialog('option', 'title', '<?= $titulo_cadastrar_usuario ?>');
+            $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $titulo_button_cadastrar_usuario ?>');
             $('#formulario_cadastro').dialog('open');
             aguarde.ocultar();
-        });
-
-        /*
-         * Função chamada para gerar botões de editar usuário
-         * e ação ao clicar
-         */
-
-        $("button[name=editar]").button({
-            icons: {
-                primary: 'ui-icon-pencil'
-            }
-        }).on('click', function () {
-            aguarde.mostrar();
-
-            var dados = datatable.row('.selected').data();
-
-            if (typeof dados === 'object' && dados.id !== null) {
-                usuario.getDadosUsuario(dados.id);
-                usuario.setFormularioAlteracao();
-
-                $('#formulario_cadastro').dialog('option', 'title', 'Alterar usuário');
-                $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
-                $('#formulario_cadastro').dialog('open');
-            } else {
-                $('#msg').html('Selecione um usuário e tente novamente.');
-                $('#alert').dialog('open');
-            }
-
-            aguarde.ocultar();
-        });
-
-        /*
-         * Função que gera botões de excluir usuários
-         * e aplica ação a clica-lo.
-         */
-
-        $("button[name=excluir]").button({
-            icons: {
-                primary: 'ui-icon-close'
-            }
-        }).on('click', function () {
-            var dados = datatable.row('.selected').data();
-
-            usuario.setIDUsuario(dados.id);
-            $('#alerta_exclusao').dialog('open');
         });
 
         /*
@@ -299,9 +299,9 @@
             height: 600,
             buttons: [
                 {
-                    text: 'Cadastrar',
+                    text: '<?= $titulo_button_cadastrar_usuario ?>',
                     icons: {
-                        primary: 'ui-icon-disk'
+                        primary: 'fa fa-save'
                     },
                     click: function () {
                         $(this).dialog('close');
@@ -310,9 +310,9 @@
                     }
                 },
                 {
-                    text: 'Cancelar',
+                    text: '<?= $titulo_button_cancelar_usuario ?>',
                     icons: {
-                        primary: 'ui-icon-close'
+                        primary: 'fa fa-close'
                     },
                     click: function () {
                         $(this).dialog('close');
@@ -332,9 +332,9 @@
             closeOnEscape: false,
             buttons: [
                 {
-                    text: 'Excluir',
+                    text: '<?= $titulo_button_excluir_usuario ?>',
                     icons: {
-                        primary: 'ui-icon-trash'
+                        primary: 'fa fa-trash'
                     },
                     click: function () {
                         usuario.excluirUsuario();
@@ -343,9 +343,9 @@
                     }
                 },
                 {
-                    text: 'Cancelar',
+                    text: '<?= $titulo_button_cancelar_usuario ?>',
                     icons: {
-                        primary: 'ui-icon-close'
+                        primary: 'fa fa-close'
                     },
                     click: function () {
                         $(this).dialog('close');
@@ -362,9 +362,9 @@
             modal: true,
             buttons: [
                 {
-                    text: 'OK',
+                    text: '<?= $titulo_button_ok ?>',
                     icons: {
-                        primary: 'ui-icon-check'
+                        primary: 'fa fa-check'
                     },
                     click: function () {
                         $(this).dialog('close');
@@ -384,20 +384,31 @@
     </div>
 
     <div class="row">
-        <button type="button" name="cadastrar" id="cadastrar">Cadastrar</button>
-        <button type="button" name="editar" id="editar">Editar</button>
-        <button type="button" name="excluir" id="excluir">Excluir</button>
+        <button type="button" name="cadastrar" id="cadastrar">
+            <?= $cadastrar_usuario ?>
+        </button>
     </div>
 
     <div class="row">
         <table id="usuarios" class="display responsive nowrap" width="100%" cellspacing="0">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Usuário</th>
-                    <th>Perfil</th>
-                    <th>E-Mail</th>
+                    <th>
+                        <?= $tabela_usuarios_id ?>
+                    </th>
+                    <th>
+                        <?= $tabela_usuarios_nome ?>
+                    </th>
+                    <th>
+                        <?= $tabela_usuarios_usuario ?>
+                    </th>
+                    <th>
+                        <?= $tabela_usuarios_perfil ?>
+                    </th>
+                    <th>
+                        <?= $tabela_usuarios_email ?>
+                    </th>
+                    <th></th>
                 </tr>
             </thead>
 
@@ -406,10 +417,12 @@
 
 </div>
 
-<div id="alerta_exclusao" class="hidden" title="Aviso de exclusão">
-    <p>Deseja remover este usuário?</p>
+<div id="alerta_exclusao" class="hidden" title="<?= $aviso_exclusao ?>">
+    <p>
+        <?= $solicita_confirmacao_exclusao ?>
+    </p>
 </div>
 
-<div id="alert" class="hidden" title="Atenção">
+<div id="alert" class="hidden" title="<?= $atencao ?>">
     <p id="msg"></p>
 </div>

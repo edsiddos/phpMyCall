@@ -23,7 +23,7 @@
         <!-- BOOTSTRAP SCRIPTS -->
         <script src="<?= site_url() . 'static/js/bootstrap.min.js' ?>"></script>
         <script src="<?= site_url() . 'static/js/bootstrap-select/bootstrap-select.min.js' ?>"></script>
-        <script src="<?= site_url() . 'static/js/bootstrap-select/defaults-pt_BR.min.js' ?>"></script>
+        <script src="<?= $js_path_translation_bootstrap_select ?>"></script>
         <!-- JQUERY UI -->
         <script src="<?= site_url() . 'static/js/jquery-ui.min.js' ?>"></script>
         <!-- CUSTOM SCRIPTS -->
