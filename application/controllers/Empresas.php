@@ -24,12 +24,15 @@
  */
 class Empresas extends CI_Controller {
 
+    private $translate = array();
+
     /**
      * Verifica se usuários esta logado antes de executar operação
      */
     public function __construct() {
         parent::__construct();
         if (Autenticacao::verifica_login()) {
+            $this->translate = $this->lang->load('empresas', 'portuguese-brazilian', TRUE);
             $this->load->model('empresas_model', 'model');
         } else {
             redirect('login/index');
@@ -45,12 +48,15 @@ class Empresas extends CI_Controller {
         if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $this->load->helper('form');
 
-            $vars = array(
-                "title" => "Empresa",
+            $var_header = array(
+                'title' => $this->translate['titulo_janela'],
+                'js_path_translation_bootstrap_select' => $this->translate['js_path_translation_bootstrap_select']
             );
 
-            $this->load->view("template/header", $vars);
-            $this->load->view("empresas/index");
+            $vars = $this->translate;
+
+            $this->load->view("template/header", $var_header);
+            $this->load->view("empresas/index", $vars);
             $this->load->view("empresas/form");
             $this->load->view("template/footer");
         } else {
@@ -93,12 +99,12 @@ class Empresas extends CI_Controller {
             if ($this->model->cadastra_empresa($dados)) {
                 $status = array(
                     'status' => true,
-                    'msg' => 'Sucesso ao cadastrar empresa'
+                    'msg' => $this->translate['inserido_com_sucesso']
                 );
             } else {
                 $status = array(
                     'status' => false,
-                    'msg' => 'Erro ao cadastar empresa'
+                    'msg' => $this->translate['erro_ao_inserir']
                 );
             }
 
@@ -130,7 +136,11 @@ class Empresas extends CI_Controller {
             $order = filter_input(INPUT_POST, 'order', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
             $search = filter_input(INPUT_POST, 'search', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 
-            $order_by = "{$columns[$order[0]['column']]['data']} {$order[0]['dir']}";
+            if (empty($columns[$order[0]['column']]['data'])) {
+                $order_by = "id {$order[0]['dir']}";
+            } else {
+                $order_by = "{$columns[$order[0]['column']]['data']} {$order[0]['dir']}";
+            }
 
             $array['draw'] = (empty($draw) ? 1 : $draw);
             $array = $this->model->get_empresas($search['value'], $order_by, $limit, $offset);
@@ -172,12 +182,12 @@ class Empresas extends CI_Controller {
             if ($this->model->atualiza_empresa($id, $dados)) {
                 $status = array(
                     'status' => true,
-                    'msg' => 'Sucesso ao alterar dados da empresa'
+                    'msg' => $this->translate['alterado_com_sucesso']
                 );
             } else {
                 $status = array(
                     'status' => false,
-                    'msg' => 'Erro ao alterar dados da empresa'
+                    'msg' => $this->translate['erro_ao_alterar']
                 );
             }
 
@@ -211,12 +221,12 @@ class Empresas extends CI_Controller {
             if ($this->model->excluir_empresa($id)) {
                 $status = array(
                     'status' => true,
-                    'msg' => 'Empresa excluida com sucesso'
+                    'msg' => $this->translate['excluido_com_sucesso']
                 );
             } else {
                 $status = array(
                     'status' => false,
-                    'msg' => 'Erro ao excluir empresa'
+                    'msg' => $this->translate['erro_ao_excluir']
                 );
             }
 

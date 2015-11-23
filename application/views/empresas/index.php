@@ -111,23 +111,87 @@
                 type: "POST"
             },
             language: {
-                url: "<?= base_url() . 'static/js/datatable/pt_br.json' ?>"
+                url: "<?= $js_path_translation_datatable ?>"
             },
             columns: [
                 {"data": "id"},
                 {"data": "empresa"},
                 {"data": "endereco"},
                 {"data": "telefone_fixo"},
-                {"data": "telefone_celular"}
+                {"data": "telefone_celular"},
+                {
+                    "data": null,
+                    render: function (data) {
+                        var html = '<button name="editar" empresa="' + data.id + '"><?= $editar_empresas ?></button>';
+                        html += '<button name="excluir" empresa="' + data.id + '"><?= $excluir_empresas ?></button>';
+                        return html;
+                    }
+                }
             ]
         }).on('click', 'tr', function () {
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
-            }
-            else {
+            } else {
                 datatable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
+        });
+
+        datatable.on('draw', function () {
+            /*
+             * Gera botão para edição de feedback
+             */
+
+            $('button[name=editar]').button({
+                text: false,
+                icons: {
+                    primary: 'fa fa-pencil'
+                }
+            }).on('click', function () {
+                aguarde.mostrar();
+
+                empresa.setAlterar();
+
+                var id = $(this).attr('empresa');
+
+                $.ajax({
+                    url: '<?= base_url() . '/empresas/get_dados_empresa' ?>',
+                    data: 'empresa=' + id,
+                    dataType: 'json',
+                    type: 'post',
+                    async: false,
+                    success: function (data) {
+                        $('input[name=input_id]').val(data.id);
+                        $('input[name=input_empresa]').val(data.empresa);
+                        $('input[name=input_endereco]').val(data.endereco);
+                        $('input[name=input_telefone_fixo]').val(data.telefone_fixo);
+                        $('input[name=input_telefone_celular]').val(data.telefone_celular);
+                    }
+                });
+
+                $('#dialog_empresas').dialog('option', 'title', '<?= $titulo_alterar_empresas ?>');
+                $('#dialog_empresas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $titulo_button_alterar_empresas ?>');
+                $('#dialog_empresas').dialog('open');
+
+                aguarde.ocultar();
+            });
+
+            /*
+             * Cria botão de exclusão e adiciona evento ao clica-lo
+             */
+
+            $('button[name=excluir]').button({
+                text: false,
+                icons: {
+                    primary: 'fa fa-trash'
+                }
+            }).on('click', function () {
+                $('#alerta_exclusao').dialog('open');
+
+                var id = $(this).attr('empresa');
+
+                empresa.setExcluir(id);
+            });
         });
 
         /*
@@ -135,70 +199,17 @@
          */
         $('button[type=button][name=cadastrar]').button({
             icons: {
-                primary: 'ui-icon-circle-plus'
+                primary: 'fa fa-plus-circle'
             }
         }).on('click', function () {
             aguarde.mostrar();
             empresa.setCadastrar();
 
-            $('#dialog_empresas').dialog('option', 'title', 'Cadastrar empresa');
-            $('#dialog_empresas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Cadastrar');
+            $('#dialog_empresas').dialog('option', 'title', '<?= $titulo_cadastrar_empresas ?>');
+            $('#dialog_empresas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $titulo_button_cadastrar_empresas ?>');
             $('#dialog_empresas').dialog('open');
 
             aguarde.ocultar();
-        });
-
-        /*
-         * Gera botão para edição de feedback
-         */
-
-        $('button[name=editar]').button({
-            icons: {
-                primary: 'ui-icon-pencil'
-            }
-        }).on('click', function () {
-            aguarde.mostrar();
-
-            empresa.setAlterar();
-
-            var dados = datatable.row('.selected').data();
-
-            $.ajax({
-                url: '<?= base_url() . '/empresas/get_dados_empresa' ?>',
-                data: 'empresa=' + dados.id,
-                dataType: 'json',
-                type: 'post',
-                async: false,
-                success: function (data) {
-                    $('input[name=input_id]').val(data.id);
-                    $('input[name=input_empresa]').val(data.empresa);
-                    $('input[name=input_endereco]').val(data.endereco);
-                    $('input[name=input_telefone_fixo]').val(data.telefone_fixo);
-                    $('input[name=input_telefone_celular]').val(data.telefone_celular);
-                }
-            });
-
-            $('#dialog_empresas').dialog('option', 'title', 'Alterar empresa');
-            $('#dialog_empresas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
-            $('#dialog_empresas').dialog('open');
-
-            aguarde.ocultar();
-        });
-
-        /*
-         * Cria botão de exclusão e adiciona evento ao clica-lo
-         */
-
-        $('button[name=excluir]').button({
-            icons: {
-                primary: 'ui-icon-close'
-            }
-        }).on('click', function () {
-            $('#alerta_exclusao').dialog('open');
-
-            var dados = datatable.row('.selected').data();
-
-            empresa.setExcluir(dados.id);
         });
 
         /*
@@ -212,9 +223,9 @@
             height: $(window).height() * 0.75,
             buttons: [
                 {
-                    text: 'Cadastrar',
+                    text: '<?= $titulo_button_cadastrar_empresas ?>',
                     icons: {
-                        primary: 'ui-icon-disk',
+                        primary: 'fa fa-save',
                     },
                     click: function () {
                         empresa.submitFormulario();
@@ -223,9 +234,9 @@
                     }
                 },
                 {
-                    text: 'Cancelar',
+                    text: '<?= $titulo_button_cancelar_empresas ?>',
                     icons: {
-                        primary: 'ui-icon-close',
+                        primary: 'fa fa-close',
                     },
                     click: function () {
                         $(this).dialog('close');
@@ -247,9 +258,9 @@
             closeOnEscape: false,
             buttons: [
                 {
-                    text: 'Excluir',
+                    text: '<?= $titulo_button_excluir_empresas ?>',
                     icons: {
-                        primary: 'ui-icon-trash'
+                        primary: 'fa fa-trash'
                     },
                     click: function () {
                         empresa.excluir();
@@ -258,9 +269,9 @@
                     }
                 },
                 {
-                    text: 'Cancelar',
+                    text: '<?= $titulo_button_cancelar_empresas ?>',
                     icons: {
-                        primary: 'ui-icon-close'
+                        primary: 'fa fa-close'
                     },
                     click: function () {
                         $(this).dialog('close');
@@ -281,9 +292,7 @@
     </div>
 
     <div class="row">
-        <button type="button" name="cadastrar" id="cadastrar">Cadastrar</button>
-        <button type="button" name="editar" id="editar">Editar</button>
-        <button type="button" name="excluir" id="excluir">Excluir</button>
+        <button type="button" name="cadastrar" id="cadastrar"><?= $cadastrar_empresas ?></button>
     </div>
 
     <div class="row">
@@ -291,11 +300,12 @@
         <table id="empresa" class="display responsive nowrap" width="100%" cellspacing="0">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Endereço</th>
-                    <th>Telefone Fixo</th>
-                    <th>Telefone Celular</th>
+                    <th><?= $tabela_empresas_id ?></th>
+                    <th><?= $tabela_empresas_nome ?></th>
+                    <th><?= $tabela_empresas_endereco ?></th>
+                    <th><?= $tabela_empresas_telefone_fixo ?></th>
+                    <th><?= $tabela_empresas_telefone_celular ?></th>
+                    <th></th>
                 </tr>
             </thead>
         </table>
@@ -304,8 +314,8 @@
 
 </div>
 
-<div id="alerta_exclusao" title="Alerta de remoção">
+<div id="alerta_exclusao" title="<?= $aviso_exclusao ?>">
     <p class="ui-state-error-text">
-        Deseja realmente remover esta empresa?
+        <?= $solicita_confirmacao_exclusao ?>
     </p>
 </div>
