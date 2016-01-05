@@ -26,10 +26,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class Main extends CI_Controller {
 
+    private $translate = array();
+
+    /**
+     * Verifica se usuários esta logado antes de executar operação
+     */
     public function __construct() {
         parent::__construct();
-
-        if (!Autenticacao::verifica_login()) {
+        if (Autenticacao::verifica_login()) {
+            $this->translate = $this->lang->load('main', 'portuguese-brazilian', TRUE);
+        } else {
             redirect('login/index');
         }
     }
@@ -38,24 +44,16 @@ class Main extends CI_Controller {
      * Mostra os projetos em aberto e em andamento na tela inicial.
      */
     public function index() {
-        /*
-          $solicitacao = new Solicitacao();
+        $this->load->helper('form');
 
-          $usuario = $_SESSION['id'];
-          $perfil = $_SESSION['perfil'];
+        $var_header = array(
+            'title' => $this->translate['title_window']
+        );
 
-          $parametros = Cache::getCache(PARAMETROS);
+        $vars = $this->translate;
 
-          $var = array(
-          'aberta' => $solicitacao->getSolicitacoes($usuario, $perfil, 1),
-          'andamento' => $solicitacao->getSolicitacoes($usuario, $perfil, 2),
-          'prioridades' => $parametros['CORES_SOLICITACOES'],
-          'title' => 'PhpMyCall'
-          );
-         */
-
-        $this->load->view('template/header', array('title' => 'phpMyCall'));
-        $this->load->view('main/index');
+        $this->load->view("template/header", $var_header);
+        $this->load->view('main/index', $vars);
         $this->load->view('template/footer');
     }
 

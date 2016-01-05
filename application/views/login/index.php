@@ -7,11 +7,11 @@
         <title>Login</title>
 
         <!-- BOOTSTRAP STYLES-->
-        <link href="<?= site_url() . 'static/css/bootstrap.min.css' ?>" rel="stylesheet" />
+        <link href="<?= site_url('static/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet" />
         <!-- FONTAWESOME STYLES-->
-        <link href="<?= site_url() . 'static/css/font-awesome.min.css' ?>" rel="stylesheet" />
+        <link href="<?= site_url('static/font-awesome/css/font-awesome.min.css') ?>" rel="stylesheet" />
         <!-- CUSTOM STYLES-->
-        <link href="<?= site_url() . 'static/css/custom.css' ?>" rel="stylesheet" />
+        <link href="<?= site_url('static/custom.css') ?>" rel="stylesheet" />
 
     </head>
     <body>
@@ -57,9 +57,9 @@
 
 
         <!-- JQUERY SCRIPTS -->
-        <script src="<?= site_url() . 'static/js/jquery.min.js' ?>"></script>
+        <script src="<?= site_url('static/jquery/js/jquery.min.js') ?>"></script>
         <!-- BOOTSTRAP SCRIPTS -->
-        <script src="<?= site_url() . 'static/js/bootstrap.min.js' ?>"></script>
+        <script src="<?= site_url('static/bootstrap/js/bootstrap.min.js') ?>"></script>
 
     </body>
 </html>

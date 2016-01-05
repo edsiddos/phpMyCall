@@ -1,10 +1,11 @@
 
-<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/jquery.dataTables.min.js' ?>"></script>
-<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.jqueryui.min.js' ?>"></script>
-<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.responsive.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables/js/jquery.dataTables.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.bootstrap.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/dataTables.responsive.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/responsive.bootstrap.js') ?>"></script>
 
-<link href="<?= base_url() . 'static/css/datatable/dataTables.jqueryui.min.css' ?>" rel="stylesheet">
-<link href="<?= base_url() . 'static/css/datatable/responsive.jqueryui.min.css' ?>" rel="stylesheet">
+<link href="<?= base_url('static/datatables/css/dataTables.bootstrap.min.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/datatables-responsive/css/responsive.bootstrap.css') ?>" rel="stylesheet">
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -22,7 +23,7 @@
             serverSide: true,
             responsive: true,
             ajax: {
-                url: "<?= base_url() . 'solicitacao/lista_solicitacoes' ?>",
+                url: "<?= base_url('solicitacao/lista_solicitacoes') ?>",
                 type: "POST",
                 data: function (data) {
                     data.situacao = 1;
@@ -30,7 +31,7 @@
                 }
             },
             language: {
-                url: "<?= base_url() . 'static/js/datatable/pt_br.json' ?>"
+                url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
             },
             columns: [
                 {"data": "abertura"},
@@ -44,7 +45,7 @@
         }).on('click', 'tr', function () {
             var data = solicitacoes_abertas.row(this).data();
 
-            $(location).attr('href', '<?= base_url() . "solicitacao/visualizar" ?>/' + data.solicitacao);
+            $(location).attr('href', '<?= base_url('solicitacao/visualizar') ?>/' + data.solicitacao);
         });
 
         /****************************************************************/
@@ -56,7 +57,7 @@
             serverSide: true,
             responsive: true,
             ajax: {
-                url: "<?= base_url() . 'solicitacao/lista_solicitacoes' ?>",
+                url: "<?= base_url('solicitacao/lista_solicitacoes') ?>",
                 type: "POST",
                 data: function (data) {
                     data.situacao = 2;
@@ -64,7 +65,7 @@
                 }
             },
             language: {
-                url: "<?= base_url() . 'static/js/datatable/pt_br.json' ?>"
+                url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
             },
             columns: [
                 {"data": "abertura"},
@@ -78,7 +79,7 @@
         }).on('click', 'tr', function () {
             var data = solicitacoes_atendimentos.row(this).data();
 
-            $(location).attr('href', '<?= base_url() . "solicitacao/visualizar" ?>/' + data.solicitacao);
+            $(location).attr('href', '<?= base_url('solicitacao/visualizar') ?>/' + data.solicitacao);
         });
 
     });
@@ -89,20 +90,20 @@
 
     <div id="accordion">
         <h3>
-            Solicitações em aberto
+            <?= $open_requests ?>
         </h3>
         <div>
 
             <table id="solicitacoes_abertas" class="display responsive nowrap" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Abertura</th>
-                        <th>Projeto</th>
-                        <th>Problema</th>
-                        <th>Prioridade</th>
-                        <th>Solicitante</th>
-                        <th>Atendente</th>
-                        <th>Q. Arquivos</th>
+                        <th><?= $open ?></th>
+                        <th><?= $project ?></th>
+                        <th><?= $problem ?></th>
+                        <th><?= $priority ?></th>
+                        <th><?= $requester ?></th>
+                        <th><?= $attendant ?></th>
+                        <th><?= $n_files ?></th>
                     </tr>
                 </thead>
             </table>
@@ -110,7 +111,7 @@
         </div>
 
         <h3>
-            Solicitações em atendimento
+            <?= $request_for_service ?>
         </h3>
         <div>
 
@@ -118,13 +119,13 @@
                 <table id="solicitacoes_atendimentos" class="display responsive nowrap" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>Abertura</th>
-                            <th>Projeto</th>
-                            <th>Problema</th>
-                            <th>Prioridade</th>
-                            <th>Solicitante</th>
-                            <th>Atendente</th>
-                            <th>Q. Arquivos</th>
+                            <th><?= $open ?></th>
+                            <th><?= $project ?></th>
+                            <th><?= $problem ?></th>
+                            <th><?= $priority ?></th>
+                            <th><?= $requester ?></th>
+                            <th><?= $attendant ?></th>
+                            <th><?= $n_files ?></th>
                         </tr>
                     </thead>
                 </table>

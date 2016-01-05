@@ -7,27 +7,28 @@
         <title><?= $title ?></title>
 
         <!-- BOOTSTRAP STYLES-->
-        <link href="<?= site_url() . 'static/css/bootstrap.min.css' ?>" rel="stylesheet" />
-        <link href="<?= site_url() . 'static/css/bootstrap-select/bootstrap-select.min.css' ?>" rel="stylesheet" />
-        <link href="<?= site_url() . 'static/css/awesome-bootstrap-checkbox.css' ?>" rel="stylesheet" />
+        <link href="<?= base_url('static/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet" />
+        <link href="<?= base_url('static/bootstrap-select/css/bootstrap-select.min.css') ?>" rel="stylesheet" />
+        <link href="<?= base_url('static/awesome-bootstrap-checkbox/css/awesome-bootstrap-checkbox.css') ?>" rel="stylesheet" />
         <!-- FONTAWESOME STYLES-->
-        <link href="<?= site_url() . 'static/css/font-awesome.min.css' ?>" rel="stylesheet" />
+        <link href="<?= base_url('static/font-awesome/css/font-awesome.min.css') ?>" rel="stylesheet" />
         <!-- JQuery UI -->
-        <link href="<?= site_url() . 'static/css/jquery-ui.min.css' ?>" rel="stylesheet" />
+        <link href="<?= base_url('static/jquery-ui/css/jquery-ui.min.css') ?>" rel="stylesheet" />
         <!-- CUSTOM STYLES-->
-        <link href="<?= site_url() . 'static/css/custom.css' ?>" rel="stylesheet" />
-        <link href="<?= site_url() . 'static/css/aguarde.css' ?>" rel="stylesheet" />
+        <link href="<?= base_url('static/custom.css') ?>" rel="stylesheet" />
+        <link href="<?= base_url('static/mycallstyle/css/jquery.ui.icons.theme.css') ?>" rel="stylesheet" />
+        <link href="<?= base_url('static/aguarde/css/aguarde.css') ?>" rel="stylesheet" />
 
         <!-- JQUERY SCRIPTS -->
-        <script src="<?= site_url() . 'static/js/jquery.min.js' ?>"></script>
+        <script src="<?= base_url('static/jquery/js/jquery.js') ?>"></script>
         <!-- BOOTSTRAP SCRIPTS -->
-        <script src="<?= site_url() . 'static/js/bootstrap.min.js' ?>"></script>
-        <script src="<?= site_url() . 'static/js/bootstrap-select/bootstrap-select.min.js' ?>"></script>
-        <script src="<?= $js_path_translation_bootstrap_select ?>"></script>
+        <script src="<?= base_url('static/bootstrap/js/bootstrap.min.js') ?>"></script>
+        <script src="<?= base_url('static/bootstrap-select/js/bootstrap-select.min.js') ?>"></script>
+        <script src="<?= base_url('static/bootstrap-select/js/defaults-pt_BR.min.js') ?>"></script>
         <!-- JQUERY UI -->
-        <script src="<?= site_url() . 'static/js/jquery-ui.min.js' ?>"></script>
+        <script src="<?= base_url('static/jquery-ui/js/jquery-ui.min.js') ?>"></script>
         <!-- CUSTOM SCRIPTS -->
-        <script src="<?= site_url() . 'static/js/aguarde.js' ?>"></script>
+        <script src="<?= base_url('static/aguarde/js/aguarde.js') ?>"></script>
 
     </head>
     <body>
@@ -42,7 +43,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="<?= base_url() . 'main/index' ?>">
+                    <a class="navbar-brand" href="<?= base_url('main/index') ?>">
                         phpMyCall
                     </a>
                 </div>
@@ -50,7 +51,7 @@
 
                     <ul class="nav navbar-nav">
                         <li>
-                            <a href="<?= base_url() . 'main/index' ?>">Home</a>
+                            <a href="<?= base_url('main/index') ?>">Home</a>
                         </li>
 
                         <?php
@@ -84,7 +85,7 @@
                                                         foreach ($submenu as $nome_opcao => $opcao) {
                                                             ?>
                                                             <li>
-                                                                <a href="<?= site_url() . $opcao ?>"><?= $nome_opcao ?></a>
+                                                                <a href="<?= base_url($opcao) ?>"><?= $nome_opcao ?></a>
                                                             </li>
                                                             <?php
                                                         }
@@ -95,7 +96,7 @@
                                             } else {
                                                 ?>
                                                 <li>
-                                                    <a href="<?= site_url() . $submenu ?>"><?= $nome_submenu ?></a>
+                                                    <a href="<?= base_url($submenu) ?>"><?= $nome_submenu ?></a>
                                                 </li>
                                                 <?php
                                             }
@@ -107,7 +108,7 @@
                             } else {
                                 ?>
                                 <li>
-                                    <a href="<?= site_url() . $menu ?>"><?= $nome_menu ?></a>
+                                    <a href="<?= base_url($menu) ?>"><?= $nome_menu ?></a>
                                 </li>
                                 <?php
                             }
@@ -115,7 +116,7 @@
                         ?>
 
                         <li>
-                            <a href="<?= base_url() . 'login/logout' ?>">Logout</a>
+                            <a href="<?= base_url('login/logout') ?>">Logout</a>
                         </li>
                     </ul>
 

@@ -2,6 +2,7 @@
 # IGNORA PASTA DENTRO DO PROJETO
 #-------------------------------
 
+.sass-cache/*
 bower_components/*
 
 #-------------------------------
