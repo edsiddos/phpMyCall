@@ -17,6 +17,7 @@
         <!-- CUSTOM STYLES-->
         <link href="<?= base_url('static/custom.css') ?>" rel="stylesheet" />
         <link href="<?= base_url('static/mycallstyle/css/jquery.ui.icons.theme.css') ?>" rel="stylesheet" />
+        <link href="<?= base_url('static/mycallstyle/css/jquery.ui.theme.css') ?>" rel="stylesheet" />
         <link href="<?= base_url('static/aguarde/css/aguarde.css') ?>" rel="stylesheet" />
 
         <!-- JQUERY SCRIPTS -->

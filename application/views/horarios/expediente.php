@@ -1,5 +1,5 @@
 
-<script type="text/javascript" src="<?= site_url() . 'static/js/jquery.mask.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/jquery-mask-plugin/js/jquery.mask.min.js') ?>"></script>
 
 <script type="text/javascript">
 
@@ -36,22 +36,22 @@
             if (value !== anterior && (valida.valida(value) || value.length === 0)) {
 
                 $.ajax({
-                    url: '<?= site_url() . 'horarios/set_expediente' ?>',
+                    url: '<?= base_url('horarios/set_expediente') ?>',
                     type: 'POST',
                     data: 'id=' + $(this).attr('idHorario') + '&value=' + value +
                             '&coluna=' + $(this).attr('coluna'),
                     dataType: 'json',
                     success: function (json) {
                         if (json.status == 'OK') {
-                            $("#status").html('<div class="alert alert-success text-center">Horário alterado com sucesso.</div>');
+                            $("#status").html('<div class="alert alert-success text-center"><?= $update_hour_success ?></div>');
                         } else {
-                            $("#status").html('<div class="alert alert-danger text-center">Falha ao alterar horário.</div>');
+                            $("#status").html('<div class="alert alert-danger text-center"><?= $update_hour_fail ?></div>');
                         }
                     }
                 });
 
             } else if (valida.valida(value) === false && value.length !== 0) {
-                $("#status").html('<div class="alert alert-danger text-center">Formato ou Horário informado inválido.</div>');
+                $("#status").html('<div class="alert alert-danger text-center"><?= $invalid_hour_format ?></div>');
             }
         });
 
@@ -88,7 +88,7 @@
 
     <div id="status">
         <div class="alert alert-info text-center">
-            Alteração de horários de expediente
+            <?= $info_update_hour ?>
         </div>
     </div>
 
@@ -107,10 +107,10 @@
             <tbody>
                 <tr>
                     <td rowspan="2">
-                        1º Período
+                        <?= $first_time ?>
                     </td>
                     <td>
-                        Entrada
+                        <?= $first_time_input ?>
                     </td>
                     <?php
                     foreach ($expediente['entrada_manha'] as $key => $values) {
@@ -129,7 +129,7 @@
                 </tr>
                 <tr>
                     <td>
-                        Saída
+                        <?= $first_time_output ?>
                     </td>
                     <?php
                     foreach ($expediente['saida_manha'] as $key => $values) {
@@ -148,10 +148,10 @@
                 </tr>
                 <tr>
                     <td rowspan="2">
-                        2º Período
+                        <?= $second_time ?>
                     </td>
                     <td>
-                        Entrada
+                        <?= $second_time_input ?>
                     </td>
                     <?php
                     foreach ($expediente['entrada_tarde'] as $key => $values) {
@@ -170,7 +170,7 @@
                 </tr>
                 <tr>
                     <td>
-                        Saída
+                        <?= $second_time_output ?>
                     </td>
                     <?php
                     foreach ($expediente['saida_tarde'] as $key => $values) {

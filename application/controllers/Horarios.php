@@ -24,6 +24,8 @@
  */
 class Horarios extends CI_Controller {
 
+    private $translate = array();
+
     /**
      * Método construtor verifica se usuário esta logado
      * e instancia objeto de conexão com banco de dados
@@ -33,6 +35,7 @@ class Horarios extends CI_Controller {
         if (!Autenticacao::verifica_login()) {
             $this->redir('Login/index');
         } else {
+            $this->translate = $this->lang->load('horarios', 'portuguese-brazilian', TRUE);
             $this->load->model('horarios_model');
         }
     }
@@ -44,10 +47,14 @@ class Horarios extends CI_Controller {
         $permissao = 'horarios/manter_feriados';
 
         if (Menu::possue_permissao($_SESSION['perfil'], $permissao)) {
-            $title = array("title" => "Feriados");
+            $title = array(
+                'title' => $this->translate['title_window_holiday']
+            );
+
+            $vars = $this->translate;
 
             $this->load->view("template/header", $title);
-            $this->load->view("horarios/feriados");
+            $this->load->view("horarios/feriados", $vars);
             $this->load->view("template/footer");
         } else {
             redirect('Main/index');
@@ -172,12 +179,12 @@ class Horarios extends CI_Controller {
             $this->load->helper('form');
 
             $title = array(
-                'title' => 'Expediente'
+                'title' => $this->translate['title_window']
             );
 
-            $vars = array(
-                'expediente' => $this->horarios_model->get_expediente()
-            );
+            $vars = $this->translate;
+
+            $vars['expediente'] = $this->horarios_model->get_expediente();
 
             $this->load->view("template/header", $title);
             $this->load->view("horarios/expediente", $vars);

@@ -1,0 +1,12 @@
+.ui-spinner-button {
+  width: 22px; }
+
+.ui-datepicker .ui-datepicker-title select {
+  font-size: 13px;
+  margin: auto; }
+
+.ui-datepicker .ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span {
+  margin: 0px 0px;
+  padding: 4px 5px;
+  left: auto;
+  top: auto; }

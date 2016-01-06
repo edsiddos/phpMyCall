@@ -8,7 +8,7 @@
 
         this.mostrarCalendario = function () {
             $.ajax({
-                url: '<?= site_url() . 'horarios/mostrar_calendario'; ?>',
+                url: '<?= base_url('horarios/mostrar_calendario'); ?>',
                 dataType: 'JSON',
                 type: 'POST',
                 async: false,
@@ -24,7 +24,7 @@
 
         this.mostrarFeriados = function () {
             $.ajax({
-                url: '<?= site_url() . 'horarios/mostrar_feriados'; ?>',
+                url: '<?= base_url('horarios/mostrar_feriados'); ?>',
                 dataType: 'JSON',
                 type: 'POST',
                 async: false,
@@ -84,9 +84,12 @@
             width: 500,
             buttons: [
                 {
-                    text: "Adicionar",
+                    text: "<?= $add_holiday ?>",
+                    icons: {
+                        primary: 'ui-icon-check'
+                    },
                     click: function () {
-                        var url = '<?= site_url() ?>' + ($("#mostrar_feriados").prop('disabled') ? 'horarios/altera_feriados' : 'horarios/cadastra_feriados');
+                        var url = '<?= base_url() ?>' + ($("#mostrar_feriados").prop('disabled') ? 'horarios/altera_feriados' : 'horarios/cadastra_feriados');
                         $.ajax({
                             url: url,
                             type: 'POST',
@@ -109,7 +112,10 @@
                     }
                 },
                 {
-                    text: "Cancelar",
+                    text: "<?= $cancel_holiday ?>",
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
                     click: function () {
                         $("#feriados_dialog").dialog('close');
                         $('#input_nome').val('');
@@ -125,12 +131,15 @@
             modal: true,
             buttons: [
                 {
-                    text: "Alterar",
+                    text: "<?= $option_holiday_edit ?>",
+                    icons: {
+                        primary: 'ui-icon-pencil'
+                    },
                     click: function () {
                         $("#opcao_feriados_dialog").dialog('close');
 
                         $.ajax({
-                            url: '<?= site_url() . 'horarios/get_feriado_dia' ?>',
+                            url: '<?= base_url('horarios/get_feriado_dia') ?>',
                             type: 'POST',
                             data: 'dia=' + $('#data_feriado').val(),
                             dataType: 'json',
@@ -143,12 +152,15 @@
                     }
                 },
                 {
-                    text: "Excluir",
+                    text: "<?= $option_holiday_remove ?>",
+                    icons: {
+                        primary: 'ui-icon-trash'
+                    },
                     click: function () {
                         $("#opcao_feriados_dialog").dialog('close');
 
                         $.ajax({
-                            url: '<?= site_url() . 'horarios/delete_feriado' ?>',
+                            url: '<?= base_url('horarios/delete_feriado') ?>',
                             type: 'POST',
                             data: 'data=' + $('#data_feriado').val(),
                             success: function () {
@@ -159,7 +171,10 @@
                     }
                 },
                 {
-                    text: "Cancelar",
+                    text: "<?= $option_holiday_close ?>",
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
                     click: function () {
                         $("#opcao_feriados_dialog").dialog('close');
                     }
@@ -206,10 +221,10 @@
     <div class="well">
         <div class="botoes_mostrar">
             <button id="mostrar_feriados" type="button">
-                Mostrar Feriados
+                <?= $show_holiday ?>
             </button>
             <button id="mostrar_calendario" type="button">
-                Mostrar Calendário
+                <?= $show_calendar ?>
             </button>
         </div>
 
@@ -218,15 +233,15 @@
 
 </div>
 
-<div id="feriados_dialog" title="Feriados">
+<div id="feriados_dialog" title="<?= $dialog_holiday ?>">
 
     <div class="form-horizontal">
         <input type="hidden" name="data_feriado" id="data_feriado" />
 
         <div class="form-group">
-            <label class="col-md-4 control-label" for="input_nome">Nome do Feriado</label>  
+            <label class="col-md-4 control-label" for="input_nome"><?= $holiday_name ?></label>  
             <div class="col-md-8">
-                <input id="input_nome" name="input_nome" placeholder="Nome do Feriado" class="form-control input-md" type="text" maxlength="50">
+                <input id="input_nome" name="input_nome" placeholder="<?= $holiday_name ?>" class="form-control input-md" type="text" maxlength="50">
             </div>
         </div>
 
@@ -236,7 +251,7 @@
                 <div class="checkbox checkbox-primary">
                     <input type="checkbox" id="input_data_fixa" name="input_data_fixa">
                     <label for="input_data_fixa">
-                        Data fixa (este feriado será replicado nos anos seguintes)
+                        <?= $holiday_replicate_next_years ?>
                     </label>
                 </div>
 
@@ -246,6 +261,6 @@
     </div>
 </div>
 
-<div id="opcao_feriados_dialog" title="Feriados">
-    <p>Qual operação deseja realizar?</p>
+<div id="opcao_feriados_dialog" title="<?= $dialog_option ?>">
+    <p><?= $option_text_dialog ?></p>
 </div>

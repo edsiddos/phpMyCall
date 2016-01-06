@@ -16,16 +16,14 @@
   background-position: 0% 0%;
   background-repeat: repeat;
   cursor: default;
-  width: 20px; }
+  width: 20px;
+  height: 20px; }
 
 li .ui-icon {
   float: left; }
 
 a .ui-icon {
   cursor: pointer; }
-
-.ui-spinner-button {
-  width: 22px; }
 
 .ui-icon:before {
   display: inline-block; }
