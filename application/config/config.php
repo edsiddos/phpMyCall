@@ -24,7 +24,7 @@ $config['charset'] = 'UTF-8';
 $config['enable_hooks'] = FALSE;
 
 /* Class Extension Prefix */
-$config['subclass_prefix'] = 'MY_';
+$config['subclass_prefix'] = 'PMC_';
 
 /* Composer auto-loading */
 $config['composer_autoload'] = FALSE;
