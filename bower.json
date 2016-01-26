@@ -27,7 +27,6 @@
         "font-awesome": "~4.5.0",
         "bootstrap-select": "~1.9.3",
         "awesome-bootstrap-checkbox": "~0.3.5",
-        "angular": "~1.4.8",
         "datatables": "~1.10.10",
         "datatables-responsive": "~2.0.0",
         "jquery-mask-plugin": "jQuery-Mask-Plugin#~1.13.4"
@@ -71,6 +70,9 @@
                 "bower_components/datatables-responsive/css/responsive.bootstrap.css",
                 "bower_components/datatables-responsive/js/dataTables.responsive.js",
                 "bower_components/datatables-responsive/js/responsive.bootstrap.js"
+            ],
+            "jquery": [
+                "bower_components/jquery/dist/jquery.min.js"
             ],
             "jquery-mask-plugin": [
                 "bower_components/jquery-mask-plugin/dist/jquery.mask.min.js"
