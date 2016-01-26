@@ -2,8 +2,8 @@
 # IGNORA PASTA DENTRO DO PROJETO
 #-------------------------------
 
-.sass-cache/*
-bower_components/*
+application/config/config.ini
+application/config/database.ini
 
 #-------------------------------
 

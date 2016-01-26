@@ -19,7 +19,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Login extends CI_Controller {
+class Login extends Admin_Controller {
 
     /**
      * Construtor
@@ -39,7 +39,7 @@ class Login extends CI_Controller {
         } else {
             $vars = array('title' => 'Efetuar Login');
 
-            $this->load->view('login/index', $vars);
+            $this->render('login/index', $vars);
         }
     }
 

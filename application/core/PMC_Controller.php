@@ -33,6 +33,15 @@ class PMC_Controller extends CI_Controller {
         }
     }
 
+    protected function response($data) {
+        if (is_array($data)) {
+            header('Content-Type: application/json');
+            echo json_encode($data);
+        } else {
+            echo $data;
+        }
+    }
+
 }
 
 /**
@@ -48,11 +57,10 @@ class Admin_Controller extends PMC_Controller {
 
     /**
      * Renderiza as views da Área Administrativa
-     * @param  string $the_view caminho da view
-     * @param  string $template nome do template
-     * @return view             
+     * @param  string   $view caminho da view
+     * @param  array    $data Dados a enviados para as views
      */
-    protected function render($the_view = NULL, $template = 'admin_master') {
+    protected function render($view, $data) {
         parent::render($the_view, $template);
     }
 

@@ -2,8 +2,10 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+$config = parse_ini_file('config.ini');
 
-$config['base_url'] = '';
+// Data in config.ini
+//$config['base_url'] = '';
 
 /* Index File */
 $config['index_page'] = '';
@@ -15,7 +17,8 @@ $config['uri_protocol'] = 'REQUEST_URI';
 $config['url_suffix'] = '';
 
 /* Default Language */
-$config['language'] = 'portuguese-brazilian';
+//Data in config.ini
+//$config['language'] = 'portuguese-brazilian';
 
 /* Default Character Set */
 $config['charset'] = 'UTF-8';
