@@ -49,7 +49,7 @@ INSERT INTO phpmycall.opcoes_menu (id, nome, link, interno, funcionalidade, menu
 (8, 'Tipos de Feedback', 'feedback/index', TRUE, TRUE, 4),
 (9, 'Projetos e Problemas', 'projetos_problemas/index', TRUE, TRUE, 4),
 (10, 'Empresas', 'empresas/index', TRUE, TRUE, 4),
-(11, 'Alterar Senha', 'login/alterar_senha', TRUE, TRUE, 4);
+(11, 'Alterar Senha', 'usuarios/alterar_senha', TRUE, TRUE, 4);
 
 
 CREATE TABLE phpmycall.perfil(

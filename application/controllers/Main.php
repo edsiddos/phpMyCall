@@ -24,20 +24,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *
  * @author Ednei Leite da Silva
  */
-class Main extends CI_Controller {
-
-    private $translate = array();
+class Main extends Admin_Controller {
 
     /**
      * Verifica se usuários esta logado antes de executar operação
      */
     public function __construct() {
-        parent::__construct();
-        if (Autenticacao::verifica_login()) {
-            $this->translate = $this->lang->load('main', 'portuguese-brazilian', TRUE);
-        } else {
-            redirect('login/index');
-        }
+        parent::__construct('main');
     }
 
     /**
@@ -45,16 +38,7 @@ class Main extends CI_Controller {
      */
     public function index() {
         $this->load->helper('form');
-
-        $var_header = array(
-            'title' => $this->translate['title_window']
-        );
-
-        $vars = $this->translate;
-
-        $this->load->view("template/header", $var_header);
-        $this->load->view('main/index', $vars);
-        $this->load->view('template/footer');
+        $this->render('main/index');
     }
 
 }
