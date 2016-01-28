@@ -51,30 +51,30 @@
     ?>
 
     <div class="form-group" id="nome_empresa">
-        <?= form_label($empresa_label, 'input_empresa', $class_label); ?>
+        <?= form_label($businesses_label, 'input_empresa', $class_label); ?>
         <div class="col-md-8">
-            <?= form_input(array('name' => 'input_empresa', 'id' => 'input_empresa', 'placeholder' => $empresa_label), '', $class_input) ?>
+            <?= form_input(array('name' => 'input_empresa', 'id' => 'input_empresa', 'placeholder' => $businesses_label), '', $class_input) ?>
         </div>
     </div>
 
     <div class="form-group">
-        <?= form_label($endereco_label, 'input_endereco', $class_label); ?>
+        <?= form_label($address_label, 'input_endereco', $class_label); ?>
         <div class="col-md-8">
-            <?= form_input(array('name' => 'input_endereco', 'id' => 'input_endereco', 'placeholder' => $endereco_label), '', $class_input) ?>
+            <?= form_input(array('name' => 'input_endereco', 'id' => 'input_endereco', 'placeholder' => $address_label), '', $class_input) ?>
         </div>
     </div>
 
 
     <div class="form-group">
-        <?= form_label($telefone_label, 'input_telefone_fixo', $class_label); ?>
+        <?= form_label($telephone_label, 'input_telefone_fixo', $class_label); ?>
         <div class="col-md-8">
-            <?= form_input(array('name' => 'input_telefone_fixo', 'id' => 'input_telefone_fixo', 'placeholder' => $telefone_label), '', $class_input) ?>
+            <?= form_input(array('name' => 'input_telefone_fixo', 'id' => 'input_telefone_fixo', 'placeholder' => $telephone_label), '', $class_input) ?>
         </div>
     </div>
     <div class="form-group">
-        <?= form_label($telefone_celular_label, 'input_telefone_celular', $class_label); ?>
+        <?= form_label($cell_label, 'input_telefone_celular', $class_label); ?>
         <div class="col-md-8">
-            <?= form_input(array('name' => 'input_telefone_celular', 'id' => 'input_telefone_celular', 'placeholder' => $telefone_celular_label), '', $class_input) ?>
+            <?= form_input(array('name' => 'input_telefone_celular', 'id' => 'input_telefone_celular', 'placeholder' => $cell_label), '', $class_input) ?>
         </div>
     </div>
 

@@ -2,6 +2,10 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$route['default_controller'] = 'login';
-$route['404_override'] = '';
-$route['translate_uri_dashes'] = FALSE;
+$route = array(
+    'default_controller' => 'login',
+    '404_override' => '',
+    'translate_uri_dashes' => TRUE,
+    'main' => 'admin/main/index',
+    'main/(.+)' => 'admin/main/$1'
+);

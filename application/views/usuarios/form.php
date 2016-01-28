@@ -121,10 +121,10 @@
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="input_nome">
-                    <?= $nome_label ?>
+                    <?= $name_label ?>
                 </label>  
                 <div class="col-md-8">
-                    <input id="input_nome" name="input_nome" placeholder="<?= $nome_label ?>" class="form-control input-md" type="text">    
+                    <input id="input_nome" name="input_nome" placeholder="<?= $name_label ?>" class="form-control input-md" type="text">    
                 </div>
             </div>
 
@@ -165,10 +165,10 @@
 
             <div class="form-group" id="div_telefone">
                 <label for="input_telefone" class="col-md-4 control-label">
-                    <?= $telefone_label ?>
+                    <?= $telephone_label ?>
                 </label>
                 <div class="col-md-8">
-                    <input type="text" class="form-control input-md" id="input_telefone" name="input_telefone" placeholder="<?= $telefone_label ?>">
+                    <input type="text" class="form-control input-md" id="input_telefone" name="input_telefone" placeholder="<?= $telephone_label ?>">
                 </div>
             </div>
 
@@ -192,7 +192,7 @@
 
             <div class="form-group" id="empresa">
                 <label class="col-md-4 control-label" for="select_empresa">
-                    <?= $empresa_label ?>
+                    <?= $businesses_label ?>
                 </label>
                 <div class="col-md-4">
                     <select id="select_empresa" name="select_empresa" class="selectpicker">

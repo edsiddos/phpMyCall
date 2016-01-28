@@ -122,8 +122,8 @@
                 {
                     "data": null,
                     render: function (data) {
-                        var html = '<button name="editar" empresa="' + data.id + '"><?= $editar_empresas ?></button>';
-                        html += '<button name="excluir" empresa="' + data.id + '"><?= $excluir_empresas ?></button>';
+                        var html = '<button name="editar" empresa="' + data.id + '"><?= $edit_businesses ?></button>';
+                        html += '<button name="excluir" empresa="' + data.id + '"><?= $del_businesses ?></button>';
                         return html;
                     }
                 }
@@ -169,8 +169,8 @@
                     }
                 });
 
-                $('#dialog_empresas').dialog('option', 'title', '<?= $titulo_alterar_empresas ?>');
-                $('#dialog_empresas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $titulo_button_alterar_empresas ?>');
+                $('#dialog_empresas').dialog('option', 'title', '<?= $update_title_businesses ?>');
+                $('#dialog_empresas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $title_button_update_businesses ?>');
                 $('#dialog_empresas').dialog('open');
 
                 aguarde.ocultar();
@@ -205,8 +205,8 @@
             aguarde.mostrar();
             empresa.setCadastrar();
 
-            $('#dialog_empresas').dialog('option', 'title', '<?= $titulo_cadastrar_empresas ?>');
-            $('#dialog_empresas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $titulo_button_cadastrar_empresas ?>');
+            $('#dialog_empresas').dialog('option', 'title', '<?= $title_add_businesses ?>');
+            $('#dialog_empresas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $title_button_add_businesses ?>');
             $('#dialog_empresas').dialog('open');
 
             aguarde.ocultar();
@@ -223,7 +223,7 @@
             height: $(window).height() * 0.75,
             buttons: [
                 {
-                    text: '<?= $titulo_button_cadastrar_empresas ?>',
+                    text: '<?= $title_button_add_businesses ?>',
                     icons: {
                         primary: 'fa fa-save',
                     },
@@ -234,7 +234,7 @@
                     }
                 },
                 {
-                    text: '<?= $titulo_button_cancelar_empresas ?>',
+                    text: '<?= $title_button_cancel_businesses ?>',
                     icons: {
                         primary: 'fa fa-close',
                     },
@@ -258,7 +258,7 @@
             closeOnEscape: false,
             buttons: [
                 {
-                    text: '<?= $titulo_button_excluir_empresas ?>',
+                    text: '<?= $title_button_remove_businesses ?>',
                     icons: {
                         primary: 'fa fa-trash'
                     },
@@ -269,7 +269,7 @@
                     }
                 },
                 {
-                    text: '<?= $titulo_button_cancelar_empresas ?>',
+                    text: '<?= $title_button_cancel_businesses ?>',
                     icons: {
                         primary: 'fa fa-close'
                     },
@@ -292,7 +292,7 @@
     </div>
 
     <div class="row">
-        <button type="button" name="cadastrar" id="cadastrar"><?= $cadastrar_empresas ?></button>
+        <button type="button" name="cadastrar" id="cadastrar"><?= $add_businesses ?></button>
     </div>
 
     <div class="row">
@@ -300,11 +300,11 @@
         <table id="empresa" class="display responsive nowrap" width="100%" cellspacing="0">
             <thead>
                 <tr>
-                    <th><?= $tabela_empresas_id ?></th>
-                    <th><?= $tabela_empresas_nome ?></th>
-                    <th><?= $tabela_empresas_endereco ?></th>
-                    <th><?= $tabela_empresas_telefone_fixo ?></th>
-                    <th><?= $tabela_empresas_telefone_celular ?></th>
+                    <th><?= $table_column_id_businesses ?></th>
+                    <th><?= $table_column_name_businesses ?></th>
+                    <th><?= $table_column_address_businesses ?></th>
+                    <th><?= $table_column_telephone_businesses ?></th>
+                    <th><?= $table_column_cell_businesses ?></th>
                     <th></th>
                 </tr>
             </thead>
@@ -314,8 +314,8 @@
 
 </div>
 
-<div id="alerta_exclusao" title="<?= $aviso_exclusao ?>">
+<div id="alerta_exclusao" title="<?= $alert_delete_businesses ?>">
     <p class="ui-state-error-text">
-        <?= $solicita_confirmacao_exclusao ?>
+        <?= $confirm_delete_businesses ?>
     </p>
 </div>

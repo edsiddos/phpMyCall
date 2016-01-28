@@ -43,15 +43,15 @@ $lang = array(
     'atencao' => 'Atenção',
     'titulo_aba_usuario' => 'Dados do usuário',
     'titulo_aba_projetos' => 'Projetos',
-    'nome_label' => 'Nome',
+    'name_label' => 'Nome',
     'usuario_label' => 'Usuário',
     'senha_label' => 'Senha',
     'senha_temporaria_label' => 'Senha temporária',
     'email_label' => 'E-Mail',
-    'telefone_label' => 'Telefone',
+    'telephone_label' => 'Telefone',
     'perfil_label' => 'Perfil',
     'perfil_option_label' => 'Selecione um perfil',
-    'empresa_label' => 'Empresa',
+    'businesses_label' => 'Empresa',
     'empresa_option_label' => 'Selecione uma empresa',
     /*
      * Mensagem enviadas pelo controlador
