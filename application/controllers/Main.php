@@ -27,18 +27,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Main extends Admin_Controller {
 
     /**
-     * Verifica se usuários esta logado antes de executar operação
-     */
-    public function __construct() {
-        parent::__construct('main');
-    }
-
-    /**
      * Mostra os projetos em aberto e em andamento na tela inicial.
      */
     public function index() {
         $this->load->helper('form');
-        $this->render('main/index');
+        $this->load_view('main/index', array(), 'main');
     }
 
 }

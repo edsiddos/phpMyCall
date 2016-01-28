@@ -22,28 +22,20 @@ class PMC_Controller extends CI_Controller {
      */
     protected $translate = array();
 
-    function __construct() {
-        parent::__construct();
-
-        $this->data['title'] = $this->translate['title_window'];
-        $this->views['head'] = '';
-        $this->views['footer'] = '';
-    }
-
     /**
      * Renderiza as views da aplicação
-     * @param  string   $view   caminho da view
-     * @return view     
      */
     protected function render() {
+        $this->data = array_merge($this->translate, $this->data);
+
         $this->load->view($this->views['head'], $this->data);
 
         if (is_array($this->views['content'])) {
             foreach ($this->views['content'] as $view) {
-                $this->load->view($view, $this->data);
+                $this->load->view($this->views['path_content'] . $view, $this->data);
             }
         } else {
-            $this->load->view($this->views['content'], $this->data);
+            $this->load->view($this->views['path_content'] . $this->views['content'], $this->data);
         }
 
         $this->load->view($this->views['footer'], $this->data);
@@ -67,44 +59,46 @@ class Admin_Controller extends PMC_Controller {
 
     /**
      * Contrutor do controller da área administrativa
-     * @param array/string  $translate_files        Array com nomes dos arquivos de trandução
-     * @param string        $translate_language     Idioma que sera exibido
+     * Verifica se usuários esta logado antes de executar operação
      */
-    function __construct($translate_files = NULL, $translate_language = 'portuguese-brazilian') {
-        if (Autenticacao::verifica_login()) {
-            if (empty($translate_files) === FALSE) {
-
-                /*
-                 * Caso exista mais de um arquivo de traduçao para a view
-                 * carrega todos e atribui a $this->translate
-                 */
-                if (is_array($translate_files)) {
-                    foreach ($translate_files as $values) {
-                        $this->translate += $this->lang->load($values, $translate_language, TRUE);
-                    }
-                } else {
-                    $this->translate += $this->lang->load($translate_files, $translate_language, TRUE);
-                }
-            } else {
-                $this->translate['title_window'] = 'phpMyCall - Área Administrativa';
-            }
-
-            $this->views['head'] = 'template/admin/header';
-            $this->views['footer'] = 'template/admin/footer';
-        } else {
-            redirect('login/index');
-        }
-
+    function __construct() {
         parent::__construct();
+
+        if (Autenticacao::verifica_login() === FALSE) {
+            redirect('login/index', 'location');
+        }
     }
 
     /**
      * Renderiza as views da Área Administrativa
-     * @param array/string      $views      Caminho das view
-     * @param array             $data       Dados a enviados para as views
+     * @param array/string  $views                  Caminho das view
+     * @param array         $data                   Dados a enviados para as views
+     * @param array/string  $translate_files        Array com nomes dos arquivos de trandução
+     * @param string        $translate_language     Idioma que sera exibido
      */
-    protected function render($views, $data) {
-        if (is_array($data)) {
+    protected function load_view($views, $data = array(), $translate_files = NULL, $translate_language = 'portuguese-brazilian') {
+
+        if (empty($translate_files) === FALSE) {
+            /*
+             * Caso exista mais de um arquivo de traduçao para a view
+             * carrega todos e atribui a $this->translate
+             */
+            if (is_array($translate_files)) {
+                foreach ($translate_files as $values) {
+                    $this->translate += $this->lang->load($values, $translate_language, TRUE);
+                }
+            } else {
+                $this->translate = $this->lang->load($translate_files, $translate_language, TRUE);
+            }
+        }
+
+        $this->data['title'] = isset($this->translate['title_window']) ? $this->translate['title_window'] : 'phpMyCall - Área Administrativa';
+
+        $this->views['head'] = 'template/admin/header';
+        $this->views['footer'] = 'template/admin/footer';
+        $this->views['path_content'] = 'admin/';
+
+        if (is_array($data) && count($data) > 0) {
             $this->data += $data;
         }
 
@@ -121,11 +115,13 @@ class Admin_Controller extends PMC_Controller {
 class Public_Controller extends PMC_Controller {
 
     /**
-     * Contrutor do controller da área administrativa
+     * Renderiza as views da Área publica da aplicaçao
+     * @param array/string      $views      Caminho das view
+     * @param array             $data       Dados a enviados para as views
      * @param array/string  $translate_files        Array com nomes dos arquivos de trandução
      * @param string        $translate_language     Idioma que sera exibido
      */
-    function __construct($translate_files = NULL, $translate_language = 'portuguese-brazilian') {
+    protected function load_view($views, $data, $translate_files = NULL, $translate_language = 'portuguese-brazilian') {
         if (empty($translate_files) === FALSE) {
 
             /*
@@ -137,25 +133,22 @@ class Public_Controller extends PMC_Controller {
                     $this->translate += $this->lang->load($values, $translate_language, TRUE);
                 }
             } else {
-                $this->translate += $this->lang->load($translate_files, $translate_language, TRUE);
+                $this->translate = $this->lang->load($translate_files, $translate_language, TRUE);
             }
-        } else {
-            $this->translate['title_window'] = 'phpMyCall';
         }
 
-        $this->views['head'] = 'template/admin/header';
-        $this->views['footer'] = 'template/admin/footer';
+        $this->data['title'] = isset($this->translate['title_window']) ? $this->translate['title_window'] : 'phpMyCall';
 
-        parent::__construct();
-    }
+        $this->views['head'] = 'template/public/header';
+        $this->views['footer'] = 'template/public/footer';
+        $this->views['path_content'] = 'public/';
 
-    /**
-     * Renderiza as views Publicas
-     * @param  string $the_view caminho da view
-     * @param  string $template nome do template
-     * @return view             
-     */
-    protected function render($the_view = NULL, $template = 'public_master') {
+        if (is_array($data)) {
+            $this->data += $data;
+        }
+
+        $this->views['content'] = $views;
+
         parent::render();
     }
 

@@ -98,8 +98,8 @@
                 <thead>
                     <tr>
                         <th><?= $open ?></th>
-                        <th><?= $project ?></th>
-                        <th><?= $problem ?></th>
+                        <th><?= $product ?></th>
+                        <th><?= $label ?></th>
                         <th><?= $priority ?></th>
                         <th><?= $requester ?></th>
                         <th><?= $attendant ?></th>
@@ -120,8 +120,8 @@
                     <thead>
                         <tr>
                             <th><?= $open ?></th>
-                            <th><?= $project ?></th>
-                            <th><?= $problem ?></th>
+                            <th><?= $product ?></th>
+                            <th><?= $label ?></th>
                             <th><?= $priority ?></th>
                             <th><?= $requester ?></th>
                             <th><?= $attendant ?></th>

@@ -19,7 +19,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Login extends Admin_Controller {
+class Login extends Public_Controller {
 
     /**
      * Construtor
@@ -37,9 +37,7 @@ class Login extends Admin_Controller {
         if (Autenticacao::verifica_login()) {
             redirect('main/index');
         } else {
-            $vars = array('title' => 'Efetuar Login');
-
-            $this->render('login/index', $vars);
+            $this->load_view('login/index', array(), 'login');
         }
     }
 

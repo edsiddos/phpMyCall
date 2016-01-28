@@ -21,7 +21,7 @@
         <link href="<?= base_url('static/aguarde/css/aguarde.css') ?>" rel="stylesheet" />
 
         <!-- JQUERY SCRIPTS -->
-        <script src="<?= base_url('static/jquery/js/jquery.js') ?>"></script>
+        <script src="<?= base_url('static/jquery/js/jquery.min.js') ?>"></script>
         <!-- BOOTSTRAP SCRIPTS -->
         <script src="<?= base_url('static/bootstrap/js/bootstrap.min.js') ?>"></script>
         <script src="<?= base_url('static/bootstrap-select/js/bootstrap-select.min.js') ?>"></script>

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (C) 2015 - Ednei Leite da Silva
+ * Copyright (C) 2016 - Ednei Leite da Silva
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +20,11 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 $lang = array(
-    'title_window' => 'phpMyCall',
-    'open_requests' => 'Solicitações em aberto',
-    'request_for_service' => 'Solicitações em atendimento',
-    'open' => 'Abertura',
-    'product' => 'Produto',
-    'label' => 'Classificação',
-    'priority' => 'Prioridade',
-    'requester' => 'Solicitante',
-    'attendant' => 'Atendente',
-    'n_files' => 'Q. Arquivos'
+    'title_window' => 'phpMyCall - Login',
+    'phpmycall_auth' => 'phpMyCall - Autenticação',
+    'help_view' => 'Informe usuário e senha',
+    'user' => 'Usuário',
+    'password' => 'Senha',
+    'sign_in' => 'Efetuar login'
 );
 
