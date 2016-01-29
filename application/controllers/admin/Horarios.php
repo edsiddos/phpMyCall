@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (C) 2015 - Ednei Leite da Silva
+ * Copyright (C) 2015 - 2016, Ednei Leite da Silva
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,22 +22,16 @@
  *
  * @author Ednei Leite da Silva
  */
-class Horarios extends CI_Controller {
-
-    private $translate = array();
+class Horarios extends Admin_Controller {
 
     /**
      * Método construtor verifica se usuário esta logado
      * e instancia objeto de conexão com banco de dados
      */
     public function __construct() {
-        parent::__construct();
-        if (!Autenticacao::verifica_login()) {
-            $this->redir('Login/index');
-        } else {
-            $this->translate = $this->lang->load('horarios', 'portuguese-brazilian', TRUE);
-            $this->load->model('horarios_model');
-        }
+        parent::__construct('horarios');
+
+        $this->load->model('horarios_model', 'model');
     }
 
     /**
@@ -47,15 +41,7 @@ class Horarios extends CI_Controller {
         $permissao = 'horarios/manter_feriados';
 
         if (Menu::possue_permissao($_SESSION['perfil'], $permissao)) {
-            $title = array(
-                'title' => $this->translate['title_window_holiday']
-            );
-
-            $vars = $this->translate;
-
-            $this->load->view("template/header", $title);
-            $this->load->view("horarios/feriados", $vars);
-            $this->load->view("template/footer");
+            $this->load_view("horarios/feriados");
         } else {
             redirect('Main/index');
         }
@@ -69,7 +55,7 @@ class Horarios extends CI_Controller {
 
         if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
 
-            echo json_encode($this->horarios_model->get_feriados(false));
+            $this->response($this->model->get_feriados(false));
         }
     }
 
@@ -81,7 +67,7 @@ class Horarios extends CI_Controller {
 
         if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
 
-            echo json_encode($this->horarios_model->get_feriados(true));
+            $this->response($this->model->get_feriados(true));
         }
     }
 
@@ -96,7 +82,7 @@ class Horarios extends CI_Controller {
             $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
             $replicar = filter_input(INPUT_POST, 'replicar', FILTER_VALIDATE_BOOLEAN);
 
-            $result = $this->horarios_model->add_feriados($data, $nome, $replicar);
+            $result = $this->model->add_feriados($data, $nome, $replicar);
 
             $dados_log ['dados'] = $result;
             $dados_log ['aplicacao'] = $permissao;
@@ -115,7 +101,7 @@ class Horarios extends CI_Controller {
         if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $dia = empty($_POST ['dia']) ? NULL : $_POST ['dia'];
 
-            echo json_encode($this->horarios_model->get_feriado_dia($dia));
+            echo json_encode($this->model->get_feriado_dia($dia));
         }
     }
 
@@ -129,7 +115,7 @@ class Horarios extends CI_Controller {
             $data = filter_input(INPUT_POST, 'data', FILTER_SANITIZE_STRING);
             $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING);
 
-            $result = $this->horarios_model->update_feriados($data, $nome);
+            $result = $this->model->update_feriados($data, $nome);
 
             $dados_log ['dados'] = array(
                 'dados' => array(
@@ -154,7 +140,7 @@ class Horarios extends CI_Controller {
         if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $data = filter_input(INPUT_POST, 'data', FILTER_SANITIZE_STRING);
 
-            $result = $this->horarios_model->delete_feriados($data);
+            $result = $this->model->delete_feriados($data);
 
             $dados_log ['dados'] = array(
                 'dados' => array(
@@ -178,17 +164,11 @@ class Horarios extends CI_Controller {
         if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $this->load->helper('form');
 
-            $title = array(
-                'title' => $this->translate['title_window']
+            $vars = array(
+                'expediente' => $this->model->get_expediente()
             );
 
-            $vars = $this->translate;
-
-            $vars['expediente'] = $this->horarios_model->get_expediente();
-
-            $this->load->view("template/header", $title);
-            $this->load->view("horarios/expediente", $vars);
-            $this->load->view("template/footer");
+            $this->load_view("horarios/expediente", $vars);
         } else {
             redirect('Main/index');
         }
@@ -204,7 +184,7 @@ class Horarios extends CI_Controller {
             $value = filter_input(INPUT_POST, 'value', FILTER_SANITIZE_STRING);
             $coluna = filter_input(INPUT_POST, 'coluna', FILTER_SANITIZE_STRING);
 
-            if ($this->horarios_model->set_expediente($id, $value, $coluna)) {
+            if ($this->model->set_expediente($id, $value, $coluna)) {
                 $result = array(
                     "status" => "OK"
                 );
@@ -214,7 +194,7 @@ class Horarios extends CI_Controller {
                 );
             }
 
-            echo json_encode($result);
+            $this->response($result);
 
             $dados['msg'] = $result ['status'];
             $dados['dados'] = array(

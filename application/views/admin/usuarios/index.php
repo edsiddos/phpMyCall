@@ -196,8 +196,8 @@
                     data: null,
                     ordering: false,
                     render: function (data) {
-                        var html = '<button type="button" name="editar" usuario_id="' + data.id + '"><?= $editar_usuario ?></button>';
-                        html += '<button type="button" name="excluir" usuario_id="' + data.id + '"><?= $excluir_usuario ?></button>';
+                        var html = '<button type="button" name="editar" usuario_id="' + data.id + '"><?= $edit_user ?></button>';
+                        html += '<button type="button" name="excluir" usuario_id="' + data.id + '"><?= $delete_user ?></button>';
 
                         return html;
                     }
@@ -222,8 +222,8 @@
                 usuario.getDadosUsuario(id);
                 usuario.setFormularioAlteracao();
 
-                $('#formulario_cadastro').dialog('option', 'title', '<?= $titulo_alterar_usuario ?>');
-                $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $titulo_button_alterar_usuario ?>');
+                $('#formulario_cadastro').dialog('option', 'title', '<?= $title_update_user ?>');
+                $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $title_button_update_user ?>');
                 $('#formulario_cadastro').dialog('open');
 
                 aguarde.ocultar();
@@ -281,8 +281,8 @@
             $('select[name=select_perfil]').val('').change();
             $('select[name=select_empresa]').val('');
 
-            $('#formulario_cadastro').dialog('option', 'title', '<?= $titulo_cadastrar_usuario ?>');
-            $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $titulo_button_cadastrar_usuario ?>');
+            $('#formulario_cadastro').dialog('option', 'title', '<?= $title_add_user ?>');
+            $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $title_button_add_user ?>');
             $('#formulario_cadastro').dialog('open');
             aguarde.ocultar();
         });
@@ -299,7 +299,7 @@
             height: 600,
             buttons: [
                 {
-                    text: '<?= $titulo_button_cadastrar_usuario ?>',
+                    text: '<?= $title_button_add_user ?>',
                     icons: {
                         primary: 'fa fa-save'
                     },
@@ -310,7 +310,7 @@
                     }
                 },
                 {
-                    text: '<?= $titulo_button_cancelar_usuario ?>',
+                    text: '<?= $title_button_cancel_user ?>',
                     icons: {
                         primary: 'fa fa-close'
                     },
@@ -332,7 +332,7 @@
             closeOnEscape: false,
             buttons: [
                 {
-                    text: '<?= $titulo_button_excluir_usuario ?>',
+                    text: '<?= $title_button_remove_user ?>',
                     icons: {
                         primary: 'fa fa-trash'
                     },
@@ -343,7 +343,7 @@
                     }
                 },
                 {
-                    text: '<?= $titulo_button_cancelar_usuario ?>',
+                    text: '<?= $title_button_cancel_user ?>',
                     icons: {
                         primary: 'fa fa-close'
                     },
@@ -362,7 +362,7 @@
             modal: true,
             buttons: [
                 {
-                    text: '<?= $titulo_button_ok ?>',
+                    text: '<?= $title_button_ok_user ?>',
                     icons: {
                         primary: 'fa fa-check'
                     },
@@ -385,7 +385,7 @@
 
     <div class="row">
         <button type="button" name="cadastrar" id="cadastrar">
-            <?= $cadastrar_usuario ?>
+            <?= $add_user ?>
         </button>
     </div>
 
@@ -394,19 +394,19 @@
             <thead>
                 <tr>
                     <th>
-                        <?= $tabela_usuarios_id ?>
+                        <?= $table_id_user ?>
                     </th>
                     <th>
-                        <?= $tabela_usuarios_nome ?>
+                        <?= $table_username_user ?>
                     </th>
                     <th>
-                        <?= $tabela_usuarios_usuario ?>
+                        <?= $table_user_user ?>
                     </th>
                     <th>
-                        <?= $tabela_usuarios_perfil ?>
+                        <?= $table_profile_user ?>
                     </th>
                     <th>
-                        <?= $tabela_usuarios_email ?>
+                        <?= $table_email_user ?>
                     </th>
                     <th></th>
                 </tr>
@@ -417,12 +417,12 @@
 
 </div>
 
-<div id="alerta_exclusao" class="hidden" title="<?= $aviso_exclusao ?>">
+<div id="alerta_exclusao" class="hidden" title="<?= $alert_delete_user ?>">
     <p>
-        <?= $solicita_confirmacao_exclusao ?>
+        <?= $message_alert_delete_user ?>
     </p>
 </div>
 
-<div id="alert" class="hidden" title="<?= $atencao ?>">
+<div id="alert" class="hidden" title="<?= $title_alert_user ?>">
     <p id="msg"></p>
 </div>

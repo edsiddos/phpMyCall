@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (C) 2015 - Ednei Leite da Silva
+ * Copyright (C) 2015 - 2016, Ednei Leite da Silva
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,21 +22,16 @@
  *
  * @author Ednei Leite da Silva
  */
-class Usuarios extends CI_Controller {
-
-    private $translate = array();
+class Usuarios extends Admin_Controller {
 
     /**
-     * Verifica se usuários esta logado antes de executar operação
+     * Método construtor verifica se usuário esta logado
+     * e instancia objeto de conexão com banco de dados
      */
     public function __construct() {
-        parent::__construct();
-        if (!Autenticacao::verifica_login()) {
-            redirect('Login/index');
-        } else {
-            $this->translate = $this->lang->load('usuario', 'portuguese-brazilian', TRUE);
-            $this->load->model('usuarios_model');
-        }
+        parent::__construct('usuario');
+
+        $this->load->model('usuarios_model', 'model');
     }
 
     public function index() {
@@ -47,21 +42,11 @@ class Usuarios extends CI_Controller {
             $nivel = $_SESSION['nivel'];
 
             $vars = array(
-                'perfil' => $this->usuarios_model->get_perfil($nivel),
-                'empresas' => $this->usuarios_model->get_empresas()
+                'perfil' => $this->model->get_perfil($nivel),
+                'empresas' => $this->model->get_empresas()
             );
 
-            $vars = array_merge($vars, $this->translate);
-
-            $var_header = array(
-                'title' => $this->translate['titulo_janela'],
-                'js_path_translation_bootstrap_select' => $this->translate['js_path_translation_bootstrap_select']
-            );
-
-            $this->load->view("template/header", $var_header);
-            $this->load->view("usuarios/index", $vars);
-            $this->load->view("usuarios/form");
-            $this->load->view("template/footer");
+            $this->load_view(array("usuarios/index", "usuarios/form"), $vars);
         } else {
             redirect('Main/index');
         }
@@ -78,7 +63,7 @@ class Usuarios extends CI_Controller {
         if (Menu::possue_permissao($perfil, $permissao)) {
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-            echo json_encode($this->usuarios_model->relacao_projetos($id));
+            $this->response($this->model->relacao_projetos($id));
         }
     }
 
@@ -102,16 +87,16 @@ class Usuarios extends CI_Controller {
                 $order_by = "id asc";
             }
 
-            $records = $this->usuarios_model->get_quantidades_usuarios($nivel, $search['value']);
+            $records = $this->model->get_quantidades_usuarios($nivel, $search['value']);
 
             $return = array(
                 "draw" => empty($draw) ? 0 : $draw,
                 "recordsTotal" => $records['recordsTotal'],
                 "recordsFiltered" => $records['recordsFiltered'],
-                "data" => $this->usuarios_model->get_usuarios($nivel, $search['value'], $order_by, $limit, $offset)
+                "data" => $this->model->get_usuarios($nivel, $search['value'], $order_by, $limit, $offset)
             );
 
-            echo json_encode($return);
+            $this->response($return);
         }
     }
 
@@ -125,10 +110,10 @@ class Usuarios extends CI_Controller {
         if (Menu::possue_permissao($perfil, $permissao)) {
             $usuario = filter_input(INPUT_POST, 'usuario', FILTER_SANITIZE_NUMBER_INT);
 
-            $dados_usuario = $this->usuarios_model->get_dados_usuarios($usuario);
-            $dados_usuario['projeto'] = $this->usuarios_model->relacao_projetos($usuario);
+            $dados_usuario = $this->model->get_dados_usuarios($usuario);
+            $dados_usuario['projeto'] = $this->model->relacao_projetos($usuario);
 
-            echo json_encode($dados_usuario);
+            $this->response($dados_usuario);
         }
     }
 
@@ -141,14 +126,14 @@ class Usuarios extends CI_Controller {
         if (Menu::possue_permissao($_SESSION['perfil'], $permissao)) {
             $dados = $this->get_dados_post_usuario();
 
-            if ($this->usuarios_model->inserir_usuario($dados ['usuario'])) {
-                $return = $this->usuarios_model->liga_usuario_projeto($dados['usuario']['usuario'], $dados['projeto']);
+            if ($this->model->inserir_usuario($dados ['usuario'])) {
+                $return = $this->model->liga_usuario_projeto($dados['usuario']['usuario'], $dados['projeto']);
                 $msg['status'] = true;
-                $msg['msg'] = $this->translate['inserido_com_sucesso'];
+                $msg['msg'] = $this->translate['insert_user_success'];
                 $dados['dados'] = $return;
             } else {
                 $msg['status'] = false;
-                $msg['msg'] = $this->translate['erro_ao_inserir'];
+                $msg['msg'] = $this->translate['insert_user_error'];
             }
 
             $dados['aplicacao'] = $permissao;
@@ -156,7 +141,7 @@ class Usuarios extends CI_Controller {
 
             Logs::gravar($dados, $_SESSION['id']);
 
-            echo json_encode($msg);
+            $this->response($msg);
         }
     }
 
@@ -218,7 +203,7 @@ class Usuarios extends CI_Controller {
             $user = filter_input(INPUT_POST, 'user', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-            echo json_encode($this->usuarios_model->valida_usuario($user, $id));
+            $this->response($this->model->valida_usuario($user, $id));
         }
     }
 
@@ -235,9 +220,9 @@ class Usuarios extends CI_Controller {
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
             if (preg_match("/^[a-zA-Z0-9\._-]+@[a-zA-Z0-9\._-]+\.([a-zA-Z]{2,4})$/", $email)) {
-                echo json_encode($this->usuarios_model->get_email($email, $id));
+                $this->response($this->model->get_email($email, $id));
             } else {
-                echo json_encode(TRUE);
+                $this->response(TRUE);
             }
         }
     }
@@ -253,21 +238,21 @@ class Usuarios extends CI_Controller {
 
             $id = filter_input(INPUT_POST, 'input_id', FILTER_SANITIZE_NUMBER_INT);
 
-            if ($this->usuarios_model->atualiza_usuario($dados['usuario'], $id)) {
-                $return = $this->usuarios_model->liga_usuario_projeto($dados['usuario']['usuario'], $dados['projeto']);
+            if ($this->model->atualiza_usuario($dados['usuario'], $id)) {
+                $return = $this->model->liga_usuario_projeto($dados['usuario']['usuario'], $dados['projeto']);
                 $msg['status'] = true;
-                $msg['msg'] = $this->translate['alterado_com_sucesso'];
+                $msg['msg'] = $this->translate['update_user_success'];
                 $dados['dados'] = $return;
             } else {
                 $msg['status'] = false;
-                $msg['msg'] = $this->translate['erro_ao_alterar'];
+                $msg['msg'] = $this->translate['update_user_error'];
             }
 
             $dados['aplicacao'] = $permissao;
             $dados['msg'] = $msg['msg'];
 
             Logs::gravar($dados, $_SESSION ['id']);
-            echo json_encode($msg);
+            $this->response($msg);
         }
     }
 
@@ -289,12 +274,12 @@ class Usuarios extends CI_Controller {
                 )
             );
 
-            if ($this->usuarios_model->excluir_usuario($id, $nivel)) {
+            if ($this->model->excluir_usuario($id, $nivel)) {
                 $msg['status'] = true;
-                $msg['msg'] = $this->translate['excluido_com_sucesso'];
+                $msg['msg'] = $this->translate['delete_user_success'];
             } else {
                 $msg['status'] = false;
-                $msg['msg'] = $this->translate['erro_ao_excluir'];
+                $msg['msg'] = $this->translate['delete_user_error'];
             }
 
             $dados['msg'] = $msg['msg'];
@@ -302,7 +287,7 @@ class Usuarios extends CI_Controller {
 
             Logs::gravar($dados, $_SESSION['id']);
 
-            echo json_encode($msg);
+            $this->response($msg);
         }
     }
 

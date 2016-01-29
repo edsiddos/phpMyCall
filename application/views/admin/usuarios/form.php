@@ -106,12 +106,12 @@
         <ul>
             <li>
                 <a href="#dados_usuario">
-                    <?= $titulo_aba_usuario ?>
+                    <?= $title_tab_user ?>
                 </a>
             </li>
             <li>
                 <a href="#projetos">
-                    <?= $titulo_aba_projetos ?>
+                    <?= $title_tab_project_user ?>
                 </a>
             </li>
         </ul>
@@ -121,34 +121,34 @@
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="input_nome">
-                    <?= $name_label ?>
+                    <?= $label_name_user ?>
                 </label>  
                 <div class="col-md-8">
-                    <input id="input_nome" name="input_nome" placeholder="<?= $name_label ?>" class="form-control input-md" type="text">    
+                    <input id="input_nome" name="input_nome" placeholder="<?= $label_name_user ?>" class="form-control input-md" type="text">    
                 </div>
             </div>
 
             <div class="form-group" id="div_usuario">
                 <label for="input_usuario" class="col-md-4 control-label">
-                    <?= $usuario_label ?>
+                    <?= $label_username_user ?>
                 </label>
                 <div class="col-md-8">
-                    <input type="text" class="form-control input-md" id="input_usuario" name="input_usuario" placeholder="<?= $usuario_label ?>">
+                    <input type="text" class="form-control input-md" id="input_usuario" name="input_usuario" placeholder="<?= $label_username_user ?>">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="input_senha" class="col-md-4 control-label">
-                    <?= $senha_label ?>
+                    <?= $label_password_user ?>
                 </label>
                 <div class="col-md-4">
-                    <input type="password" class="form-control input-md" id="input_senha" required name="input_senha" placeholder="<?= $usuario_label ?>">
+                    <input type="password" class="form-control input-md" id="input_senha" required name="input_senha" placeholder="<?= $label_username_user ?>">
                 </div>
                 <div class="col-md-4">
                     <div class="checkbox checkbox-primary">
                         <input type="checkbox" id="input_changeme" name="input_changeme" value="changeme">
                         <label for="input_changeme">
-                            <?= $senha_temporaria_label ?>
+                            <?= $label_password_temporary_user ?>
                         </label>
                     </div>
                 </div>
@@ -156,29 +156,29 @@
 
             <div class="form-group" id="div_email">
                 <label for="input_email" class="col-md-4 control-label">
-                    <?= $email_label ?>
+                    <?= $label_email_user ?>
                 </label>
                 <div class="col-md-8">
-                    <input type="text" class="form-control input-md" id="input_email" name="input_email" placeholder="<?= $email_label ?>">
+                    <input type="text" class="form-control input-md" id="input_email" name="input_email" placeholder="<?= $label_email_user ?>">
                 </div>
             </div>
 
             <div class="form-group" id="div_telefone">
                 <label for="input_telefone" class="col-md-4 control-label">
-                    <?= $telephone_label ?>
+                    <?= $label_telephone_user ?>
                 </label>
                 <div class="col-md-8">
-                    <input type="text" class="form-control input-md" id="input_telefone" name="input_telefone" placeholder="<?= $telephone_label ?>">
+                    <input type="text" class="form-control input-md" id="input_telefone" name="input_telefone" placeholder="<?= $label_telephone_user ?>">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-4 control-label" for="select_perfil">
-                    <?= $perfil_label ?>
+                    <?= $label_profile_user ?>
                 </label>
                 <div class="col-md-4">
                     <select id="select_perfil" name="select_perfil" class="selectpicker">
-                        <option disabled selected><?= $perfil_option_label ?></option>
+                        <option disabled selected><?= $label_profile_option_user ?></option>
                         <?php
                         foreach ($perfil as $values) {
                             ?>
@@ -196,7 +196,7 @@
                 </label>
                 <div class="col-md-4">
                     <select id="select_empresa" name="select_empresa" class="selectpicker">
-                        <option disabled selected><?= $empresa_option_label ?></option>
+                        <option disabled selected><?= $label_bussinesses_option_user ?></option>
                         <?php
                         foreach ($empresas as $values) {
                             ?>
