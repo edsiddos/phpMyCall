@@ -1,11 +1,12 @@
 
-<script type="text/javascript" src="<?= base_url() . 'static/js/jquery.mask.min.js' ?>"></script>
-<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/jquery.dataTables.min.js' ?>"></script>
-<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.jqueryui.min.js' ?>"></script>
-<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.responsive.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/jquery-mask-plugin/js/jquery.mask.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables/js/jquery.dataTables.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.bootstrap.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/dataTables.responsive.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/responsive.bootstrap.js') ?>"></script>
 
-<link href="<?= base_url() . 'static/css/datatable/dataTables.jqueryui.min.css' ?>" rel="stylesheet">
-<link href="<?= base_url() . 'static/css/datatable/responsive.jqueryui.min.css' ?>" rel="stylesheet">
+<link href="<?= base_url('static/datatables/css/dataTables.bootstrap.min.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/datatables-responsive/css/responsive.bootstrap.css') ?>" rel="stylesheet">
 
 <script type="text/javascript">
 
@@ -111,7 +112,7 @@
                 type: "POST"
             },
             language: {
-                url: "<?= $js_path_translation_datatable ?>"
+                url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
             },
             columns: [
                 {"data": "id"},
@@ -145,7 +146,7 @@
             $('button[name=editar]').button({
                 text: false,
                 icons: {
-                    primary: 'fa fa-pencil'
+                    primary: 'ui-icon-pencil'
                 }
             }).on('click', function () {
                 aguarde.mostrar();
@@ -183,7 +184,7 @@
             $('button[name=excluir]').button({
                 text: false,
                 icons: {
-                    primary: 'fa fa-trash'
+                    primary: 'ui-icon-trash'
                 }
             }).on('click', function () {
                 $('#alerta_exclusao').dialog('open');
@@ -199,7 +200,7 @@
          */
         $('button[type=button][name=cadastrar]').button({
             icons: {
-                primary: 'fa fa-plus-circle'
+                primary: 'ui-icon-circle-plus'
             }
         }).on('click', function () {
             aguarde.mostrar();
@@ -225,7 +226,7 @@
                 {
                     text: '<?= $title_button_add_businesses ?>',
                     icons: {
-                        primary: 'fa fa-save',
+                        primary: 'ui-icon-disk',
                     },
                     click: function () {
                         empresa.submitFormulario();
@@ -236,7 +237,7 @@
                 {
                     text: '<?= $title_button_cancel_businesses ?>',
                     icons: {
-                        primary: 'fa fa-close',
+                        primary: 'ui-icon-close',
                     },
                     click: function () {
                         $(this).dialog('close');
@@ -260,7 +261,7 @@
                 {
                     text: '<?= $title_button_remove_businesses ?>',
                     icons: {
-                        primary: 'fa fa-trash'
+                        primary: 'ui-icon-trash'
                     },
                     click: function () {
                         empresa.excluir();
@@ -271,7 +272,7 @@
                 {
                     text: '<?= $title_button_cancel_businesses ?>',
                     icons: {
-                        primary: 'fa fa-close'
+                        primary: 'ui-icon-close'
                     },
                     click: function () {
                         $(this).dialog('close');

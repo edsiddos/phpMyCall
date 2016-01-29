@@ -26,6 +26,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class Main extends Admin_Controller {
 
+    public function __construct() {
+        parent::__construct('main');
+    }
+
     /**
      * Mostra os projetos em aberto e em andamento na tela inicial.
      */

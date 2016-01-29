@@ -28,7 +28,7 @@ class Empresas extends Admin_Controller {
      * Verifica se usuários esta logado antes de executar operação
      */
     public function __construct() {
-        parent::__construct();
+        parent::__construct('empresas');
 
         $this->load->model('empresas_model', 'model');
     }
@@ -47,7 +47,7 @@ class Empresas extends Admin_Controller {
                 'empresas/form'
             );
 
-            $this->load_view($views, array(), 'empresas');
+            $this->load_view($views);
         } else {
             redirect('main/index');
         }
@@ -61,12 +61,13 @@ class Empresas extends Admin_Controller {
 
         if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $empresa = trim(filter_input(INPUT_POST, 'empresa', FILTER_SANITIZE_STRING));
+            $result = array('status' => 1);
 
-            if (empty($empresa)) {
-                echo json_encode(array('status' => 1));
-            } else {
-                echo json_encode($this->model->existe_empresa($empresa));
+            if (empty($empresa) === FALSE) {
+                $result = $this->model->existe_empresa($empresa);
             }
+
+            $this->response($result);
         }
     }
 
@@ -97,8 +98,6 @@ class Empresas extends Admin_Controller {
                 );
             }
 
-            $status['empresas'] = $this->model->get_empresas();
-
             $log = array(
                 'dados' => $dados,
                 'aplicacao' => $permissao,
@@ -106,7 +105,7 @@ class Empresas extends Admin_Controller {
             );
 
             Logs::gravar($log, $_SESSION ['id']);
-            echo json_encode($status);
+            $this->response($status);
         }
     }
 
@@ -133,7 +132,8 @@ class Empresas extends Admin_Controller {
 
             $array['draw'] = (empty($draw) ? 1 : $draw);
             $array = $this->model->get_empresas($search['value'], $order_by, $limit, $offset);
-            echo json_encode($array);
+
+            $this->response($array);
         }
     }
 
@@ -147,7 +147,7 @@ class Empresas extends Admin_Controller {
         if (Menu::possue_permissao($perfil, $permissao)) {
             $empresa = filter_input(INPUT_POST, 'empresa', FILTER_SANITIZE_NUMBER_INT);
 
-            echo json_encode($this->model->get_dados_empresa($empresa));
+            $this->response($this->model->get_dados_empresa($empresa));
         }
     }
 
@@ -190,7 +190,7 @@ class Empresas extends Admin_Controller {
 
             Logs::gravar($log, $_SESSION ['id']);
 
-            echo json_encode($status);
+            $this->response($status);
         }
     }
 
