@@ -349,6 +349,6 @@
     </p>
 </div>
 
-<div id="alert" class="hidden" title="<?= $title_dialog_atencao ?>">
+<div id="alert" class="hidden" title="<?= $title_dialog_attention ?>">
     <p id="msg"></p>
 </div>

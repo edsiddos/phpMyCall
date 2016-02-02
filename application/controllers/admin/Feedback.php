@@ -22,7 +22,7 @@
  *
  * @author Ednei Leite da Silva
  */
-class Feedback extends CI_Controller {
+class Feedback extends Admin_Controller {
 
     /**
      * Método construtor verifica se usuário
@@ -30,12 +30,8 @@ class Feedback extends CI_Controller {
      * de conexão com banco de dados
      */
     public function __construct() {
-        parent::__construct();
-        if (Autenticacao::verifica_login()) {
-            $this->load->model('feedback_model', 'model');
-        } else {
-            redirect("login/index");
-        }
+        parent::__construct('feedback');
+        redirect("login/index");
     }
 
     /**
@@ -47,14 +43,7 @@ class Feedback extends CI_Controller {
 
         if (Menu::possue_permissao($perfil, $permissao)) {
             $this->load->helper('form');
-            $vars = array(
-                "title" => "Feedback"
-            );
-
-            $this->load->view('template/header', $vars);
-            $this->load->view('feedback/index');
-            $this->load->view('feedback/form');
-            $this->load->view('template/footer');
+            $this->load_view(array('feedback/index', 'feedback/form'));
         } else {
             redirect('Main/index');
         }
@@ -76,10 +65,10 @@ class Feedback extends CI_Controller {
             if (!(empty($nome) || empty($abrev))) {
                 if ($this->model->cadastrar($nome, $abrev, $descontar, $descricao)) {
                     $dados['status'] = true;
-                    $dados['msg'] = 'Sucesso ao criar tipo de feedback';
+                    $dados['msg'] = $this->translate['response_success_create_feedback'];
                 } else {
                     $dados['status'] = false;
-                    $dados['msg'] = 'Erro ao criar tipo de feedback';
+                    $dados['msg'] = $this->translate['response_error_create_feedback'];
                 }
 
                 $log = array(
@@ -94,7 +83,7 @@ class Feedback extends CI_Controller {
                 );
 
                 Logs::gravar($log, $_SESSION ['id']);
-                echo json_encode($dados);
+                $this->response($dados);
             }
         }
     }
@@ -118,7 +107,7 @@ class Feedback extends CI_Controller {
 
             $array['draw'] = (empty($draw) ? 1 : $draw);
             $array = $this->model->get_dados_tipo_feedback($search['value'], $order_by, $limit, $offset);
-            echo json_encode($array);
+            $this->response($array);
         }
     }
 
@@ -131,7 +120,7 @@ class Feedback extends CI_Controller {
 
         if (Menu::possue_permissao($perfil, $permissao)) {
             $feedback = filter_input(INPUT_POST, 'feedback', FILTER_SANITIZE_NUMBER_INT);
-            echo json_encode($this->model->get_feedback($feedback));
+            $this->response($this->model->get_feedback($feedback));
         }
     }
 
@@ -152,10 +141,10 @@ class Feedback extends CI_Controller {
             if (!(empty($nome) || empty($abrev))) {
                 if ($this->model->alterar($id, $nome, $abrev, $descontar, $descricao)) {
                     $dados['status'] = true;
-                    $dados['msg'] = 'Sucesso ao alterar tipo de feedback';
+                    $dados['msg'] = $this->translate['response_success_update_feedback'];
                 } else {
                     $dados['status'] = false;
-                    $dados['msg'] = 'Erro ao alterar tipo de feedback';
+                    $dados['msg'] = $this->translate['response_error_update_feedback'];
                 }
 
                 $log = array(
@@ -172,7 +161,7 @@ class Feedback extends CI_Controller {
 
                 Logs::gravar($log, $_SESSION ['id']);
 
-                echo json_encode($dados);
+                $this->response($dados);
             }
         }
     }
@@ -190,12 +179,12 @@ class Feedback extends CI_Controller {
             if ($this->model->excluir($id)) {
                 $dados = array(
                     'status' => true,
-                    'msg' => 'Sucesso ao excluir tipo de feedback'
+                    'msg' => $this->translate['response_success_remove_feedback']
                 );
             } else {
                 $dados = array(
                     'status' => false,
-                    'msg' => 'Erro ao excluir tipo de feedback'
+                    'msg' => $this->translate['response_error_remove_feedback']
                 );
             }
 
@@ -207,7 +196,7 @@ class Feedback extends CI_Controller {
 
             Logs::gravar($log, $_SESSION ['id']);
 
-            echo json_encode($dados);
+            $this->response($dados);
         }
     }
 

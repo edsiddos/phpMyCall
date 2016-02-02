@@ -13,31 +13,31 @@
     ?>
 
     <div class="form-group">
-        <?= form_label('Nome:', 'input_nome', $class_label); ?>
+        <?= form_label($label_name_feedback . ':', 'input_nome', $class_label); ?>
         <div class="col-md-8">
-            <?= form_input(array('name' => 'input_nome', 'id' => 'input_nome', 'placeholder' => 'Nome', 'maxlength' => '50'), '', $class_input) ?>
+            <?= form_input(array('name' => 'input_nome', 'id' => 'input_nome', 'placeholder' => $label_name_feedback, 'maxlength' => '50'), '', $class_input) ?>
         </div>
     </div>
 
     <div class="form-group">
-        <?= form_label('Abreviatura:', 'input_abreviatura', $class_label); ?>
+        <?= form_label($label_abbreviation_feedback . ':', 'input_abreviatura', $class_label); ?>
         <div class="col-md-4">
-            <?= form_input(array('name' => 'input_abreviatura', 'id' => 'input_abreviatura', 'placeholder' => 'Abreviatura', 'maxlenght' => '10'), '', $class_input) ?>
+            <?= form_input(array('name' => 'input_abreviatura', 'id' => 'input_abreviatura', 'placeholder' => $label_abbreviation_feedback, 'maxlenght' => '10'), '', $class_input) ?>
         </div>
 
         <div class="col-md-4">
             <div class="checkbox checkbox-primary">
                 <?= form_checkbox(array('name' => 'input_descontar', 'id' => 'input_descontar'), 'descontar') ?>
-                <?= form_label('Descontar do tempo total de solução?', 'input_descontar'); ?>
+                <?= form_label($label_discount_total_time_feedback, 'input_descontar'); ?>
             </div>
         </div>
 
     </div>
 
     <div class="form-group">
-        <?= form_label('Descrição:', 'text_descricao', $class_label); ?>
+        <?= form_label($label_description_feedback . ':', 'text_descricao', $class_label); ?>
         <div class="col-md-8">
-            <?= form_textarea(array('name' => 'text_descricao', 'id' => 'text_descricao', 'placeholder' => 'Descrição do feedback', 'maxlength' => '1000'), '', $class_input) ?>
+            <?= form_textarea(array('name' => 'text_descricao', 'id' => 'text_descricao', 'placeholder' => $label_description_feedback, 'maxlength' => '1000'), '', $class_input) ?>
         </div>
     </div>
 

@@ -46,8 +46,8 @@
         this.submitFormulario = function () {
             aguarde.mostrar();
 
-            var dados = $('form[name=formulario]').find('input:not(input[name=inputDescontar]), textarea').serialize();
-            dados += ($('form[name=formulario] input[name=inputDescontar]').prop('checked') ? '&inputDescontar[]=descontar' : '');
+            var dados = $('form[name=formulario]').find('input:not(input[name=input_descontar]), textarea').serialize();
+            dados += ($('form[name=formulario] input[name=input_descontar]').prop('checked') ? '&input_descontar[]=descontar' : '');
 
             $.ajax({
                 url: '<?= base_url() . 'feedback/' ?>' + formulario,
@@ -77,7 +77,7 @@
             aguarde.mostrar();
 
             $.ajax({
-                url: '<?= base_url() . 'feedback/excluir' ?>',
+                url: '<?= base_url('feedback/excluir') ?>',
                 data: 'id=' + feedback,
                 dataType: 'json',
                 type: 'post',
@@ -109,7 +109,7 @@
             serverSide: true,
             responsive: true,
             ajax: {
-                url: "<?= base_url() . 'feedback/get_dados_tipo_feedback' ?>",
+                url: "<?= base_url('feedback/get_dados_tipo_feedback') ?>",
                 type: "POST"
             },
             language: {
@@ -125,8 +125,7 @@
         }).on('click', 'tr', function () {
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
-            }
-            else {
+            } else {
                 datatable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
@@ -146,8 +145,8 @@
             $('input, textarea').val('');
             $('input[type=hidden]').val(0);
 
-            $('#dialog_feedback').dialog('option', 'title', 'Cadastrar tipo de feedback');
-            $('#dialog_feedback + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Cadastrar');
+            $('#dialog_feedback').dialog('option', 'title', '<?= $title_dialog_add_feedback ?>');
+            $('#dialog_feedback + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $button_add_feedback ?>');
             $('#dialog_feedback').dialog('open');
 
             aguarde.ocultar();
@@ -169,7 +168,7 @@
 
             if (typeof dados === 'object' && dados.id !== null) {
                 $.ajax({
-                    url: '<?= base_url() . 'feedback/get_feedback' ?>',
+                    url: '<?= base_url('feedback/get_feedback') ?>',
                     data: 'feedback=' + dados.id,
                     dataType: 'json',
                     type: 'post',
@@ -183,12 +182,9 @@
                     }
                 });
 
-                $('#dialog_feedback').dialog('option', 'title', 'Alterar tipo de feedback');
-                $('#dialog_feedback + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
+                $('#dialog_feedback').dialog('option', 'title', '<?= $title_update_feedback ?>');
+                $('#dialog_feedback + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $button_update_feedback ?>');
                 $('#dialog_feedback').dialog('open');
-            } else {
-                $('#msg').html('Selecione um tipo de feedback e tente novamente.');
-                $('#alert').dialog('open');
             }
 
             aguarde.ocultar();
@@ -221,7 +217,7 @@
             height: $(window).height() * 0.95,
             buttons: [
                 {
-                    text: 'Salvar',
+                    text: '<?= $button_add_feedback ?>',
                     icons: {
                         primary: 'ui-icon-disk'
                     },
@@ -232,7 +228,7 @@
                     }
                 },
                 {
-                    text: 'Cancelar',
+                    text: '<?= $cancel_add_or_update_feedback ?>',
                     icons: {
                         primary: 'ui-icon-close'
                     },
@@ -253,7 +249,7 @@
             closeOnEscape: false,
             buttons: [
                 {
-                    text: 'Excluir',
+                    text: '<?= $button_confirm_delete_feedback ?>',
                     icons: {
                         primary: 'ui-icon-trash'
                     },
@@ -264,7 +260,7 @@
                     }
                 },
                 {
-                    text: 'Cancelar',
+                    text: '<?= $button_cancel_delete_feedback ?>',
                     icons: {
                         primary: 'ui-icon-close'
                     },
@@ -283,7 +279,7 @@
             modal: true,
             buttons: [
                 {
-                    text: 'OK',
+                    text: '<?= $confirm_alert_feedback ?>',
                     icons: {
                         primary: 'ui-icon-check'
                     },
@@ -326,12 +322,12 @@
     </div>
 </div>
 
-<div id="alerta_exclusao" title="Alerta de remoção">
+<div id="alerta_exclusao" title="<?= $title_dialog_confirm_remove_feedback ?>">
     <p class="text-danger">
-        Deseja realmente remover este tipo de feedback?
+        <?= $info_before_remove_feedback ?>
     </p>
 </div>
 
-<div id="alert" class="hidden" title="Atenção">
+<div id="alert" class="hidden" title="<?= $title_dialog_attention ?>">
     <p id="msg"></p>
 </div>

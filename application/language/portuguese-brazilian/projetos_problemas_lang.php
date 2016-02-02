@@ -33,7 +33,7 @@ $lang = array(
     'confirm_alert_project_problem' => 'OK',
     'title_dialog_confirm_remove_project_problem' => 'Alerta de remoção',
     'info_before_remove_project_problem' => 'Deseja realmente remover o projeto / tipo de problema?',
-    'title_dialog_atencao' => 'Atenção',
+    'title_dialog_attention' => 'Atenção',
     // form.php
     'title_tab_project_problem' => 'Projeto tipo problema',
     'title_tab_users' => 'Participantes',
