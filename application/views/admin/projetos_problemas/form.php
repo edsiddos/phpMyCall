@@ -26,7 +26,7 @@
         $("input[name=input_nome_projeto]").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '<?= base_url() . 'projetos_problemas/get_projetos' ?>',
+                    url: '<?= base_url('projetos_problemas/get_projetos') ?>',
                     data: request,
                     dataType: 'json',
                     type: 'POST',
@@ -37,7 +37,7 @@
             }
         }).on('focusout', function () {
             $.ajax({
-                url: '<?= base_url() . 'projetos_problemas/get_dados_projeto' ?>',
+                url: '<?= base_url('projetos_problemas/get_dados_projeto') ?>',
                 data: 'nome=' + $(this).val(),
                 dataType: 'json',
                 type: 'post',
@@ -55,7 +55,7 @@
         $("input[name='input_nome_problema']").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '<?= site_url() . 'projetos_problemas/get_problemas' ?>',
+                    url: '<?= site_url('projetos_problemas/get_problemas') ?>',
                     data: request,
                     dataType: 'json',
                     type: 'POST',
@@ -82,66 +82,74 @@
     ?>
 
     <ul>
-        <li><a href="#cadastro_projeto">Projeto tipo problema</a></li>
-        <li><a href="#usuarios_projeto">Participantes</a></li>
+        <li>
+            <a href="#cadastro_projeto">
+                <?= $title_tab_project_problem ?>
+            </a>
+        </li>
+        <li>
+            <a href="#usuarios_projeto">
+                <?= $title_tab_users ?>
+            </a>
+        </li>
     </ul>
 
     <div id="cadastro_projeto">
 
-        <?= form_fieldset('Projeto') ?>
+        <?= form_fieldset($title_fieldset_project) ?>
 
         <div class="form-group">
-            <?= form_label('Nome do Projeto:', 'input_nome_projeto', $class_label); ?>
+            <?= form_label($label_name_project . ':', 'input_nome_projeto', $class_label); ?>
             <div class="col-md-8">
-                <?= form_input(array('name' => 'input_nome_projeto', 'id' => 'input_nome_projeto', 'placeholder' => 'Projeto', 'maxlength' => '100'), '', $class_input) ?>
+                <?= form_input(array('name' => 'input_nome_projeto', 'id' => 'input_nome_projeto', 'placeholder' => $label_name_project, 'maxlength' => '100'), '', $class_input) ?>
             </div>
         </div>
 
         <div class="form-group">
-            <?= form_label('Descrição do projeto (Opcional):', 'text_projeto', $class_label); ?>
+            <?= form_label($label_description_project . ':', 'text_projeto', $class_label); ?>
             <div class="col-md-8">
-                <?= form_textarea(array('name' => 'text_projeto', 'id' => 'text_projeto', 'placeholder' => 'Descrição do projeto', 'maxlength' => '500'), '', $class_input) ?>
+                <?= form_textarea(array('name' => 'text_projeto', 'id' => 'text_projeto', 'placeholder' => $label_description_project, 'maxlength' => '500'), '', $class_input) ?>
             </div>
         </div>
 
         <?php
         echo form_fieldset_close();
 
-        echo form_fieldset('Problema');
+        echo form_fieldset($title_fieldset_problem);
         ?>
 
         <div class="form-group">
-            <?= form_label('Tipo de Problema:', 'input_nome_problema', $class_label); ?>
+            <?= form_label($label_type_problem . ':', 'input_nome_problema', $class_label); ?>
             <div class="col-md-8">
-                <?= form_input(array('name' => 'input_nome_problema', 'id' => 'input_nome_problema', 'placeholder' => 'Tipo de problema', 'maxlength' => '100'), '', $class_input) ?>
+                <?= form_input(array('name' => 'input_nome_problema', 'id' => 'input_nome_problema', 'placeholder' => $label_type_problem, 'maxlength' => '100'), '', $class_input) ?>
             </div>
         </div>
 
         <div class="form-group">
-            <?= form_label('Descrição do tipo de problemas:', 'text_descricao', $class_label); ?>
+            <?= form_label($label_description_problem . ':', 'text_descricao', $class_label); ?>
             <div class="col-md-8">
-                <?= form_textarea(array('name' => 'text_descricao', 'id' => 'text_descricao', 'placeholder' => 'Descrição do tipo de problema', 'maxlength' => '1000'), '', $class_input) ?>
+                <?= form_textarea(array('name' => 'text_descricao', 'id' => 'text_descricao', 'placeholder' => $label_description_problem, 'maxlength' => '1000'), '', $class_input) ?>
             </div>
         </div>
 
         <?php
         echo form_fieldset_close();
 
-        echo form_fieldset('Prazos');
+        echo form_fieldset($title_fieldset_time);
         ?>
 
 
         <div class="row">
             <div class="col-xs-6 form-group">
-                <?= form_label('Resposta:', 'input_resposta', $class_label); ?>
+                <?= form_label($label_answer_time . ':', 'input_resposta', $class_label); ?>
                 <div class="col-md-8">
-                    <?= form_input(array('name' => 'input_resposta', 'id' => 'input_resposta', 'placeholder' => 'Tempo de resposta'), '', $class_input) ?>
+                    <?= form_input(array('name' => 'input_resposta', 'id' => 'input_resposta', 'placeholder' => $label_answer_time), '', $class_input) ?>
                 </div>
             </div>
             <div class="col-xs-6 form-group">
-                <?= form_label('Solução:', 'input_solucao', $class_label); ?>
+                <?= form_label($label_solution_time . ':', 'input_solucao', $class_label); ?>
                 <div class="col-md-8">
-                    <?= form_input(array('name' => 'input_solucao', 'id' => 'input_solucao', 'placeholder' => 'Tempo para solução'), '', $class_input) ?>
+                    <?= form_input(array('name' => 'input_solucao', 'id' => 'input_solucao', 'placeholder' => $label_solution_time), '', $class_input) ?>
                 </div>
             </div>
         </div>

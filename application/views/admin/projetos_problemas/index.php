@@ -133,8 +133,7 @@
         }).on('click', 'tr', function () {
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
-            }
-            else {
+            } else {
                 datatable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
@@ -157,8 +156,8 @@
             $('input, textarea').val('');
             $('input[type=hidden]').val(0);
 
-            $('#dialog_projetos_problemas').dialog('option', 'title', 'Cadastrar projeto tipo de problema');
-            $('#dialog_projetos_problemas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Cadastrar');
+            $('#dialog_projetos_problemas').dialog('option', 'title', '<?= $add_project_problem ?>');
+            $('#dialog_projetos_problemas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $button_add_project_problem ?>');
             $('#dialog_projetos_problemas').dialog('open');
 
             aguarde.ocultar();
@@ -183,7 +182,7 @@
 
             if (typeof dados === 'object' && dados.id !== null) {
                 $.ajax({
-                    url: '<?= base_url() . 'projetos_problemas/get_dados_projeto_problemas' ?>',
+                    url: '<?= base_url('projetos_problemas/get_dados_projeto_problemas') ?>',
                     data: 'id=' + dados.id,
                     dataType: 'json',
                     type: 'post',
@@ -201,11 +200,11 @@
                     }
                 });
 
-                $('#dialog_projetos_problemas').dialog('option', 'title', 'Alterar projeto tipo de problema');
-                $('#dialog_projetos_problemas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('Alterar');
+                $('#dialog_projetos_problemas').dialog('option', 'title', '<?= $update_project_problem ?>');
+                $('#dialog_projetos_problemas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $button_update_project_problem ?>');
                 $('#dialog_projetos_problemas').dialog('open');
             } else {
-                $('#msg').html('Selecione um projeto tipo de problema e tente novamente.');
+                $('#msg').html('<?= $info_project_problem_not_selected ?>');
                 $('#alert').dialog('open');
             }
 
@@ -237,7 +236,7 @@
             height: $(window).height() * 0.95,
             buttons: [
                 {
-                    text: 'Salvar',
+                    text: '<?= $add_project_problem ?>',
                     icons: {
                         primary: 'ui-icon-disk'
                     },
@@ -248,7 +247,7 @@
                     }
                 },
                 {
-                    text: 'Cancelar',
+                    text: '<?= $cancel_add_or_update_project_problem ?>',
                     icons: {
                         primary: 'ui-icon-close'
                     },
@@ -269,7 +268,7 @@
             closeOnEscape: false,
             buttons: [
                 {
-                    text: "Excluir",
+                    text: "<?= $button_confirm_delete_project_problem ?>",
                     icons: {
                         primary: 'ui-icon-trash'
                     },
@@ -280,7 +279,7 @@
                     }
                 },
                 {
-                    text: 'Cancelar',
+                    text: '<?= $button_cancel_delete_project_problem ?>',
                     icons: {
                         primary: 'ui-icon-close'
                     },
@@ -300,7 +299,7 @@
             modal: true,
             buttons: [
                 {
-                    text: 'OK',
+                    text: '<?= $confirm_alert_project_problem ?>',
                     icons: {
                         primary: 'ui-icon-check'
                     },
@@ -344,12 +343,12 @@
 
 </div>
 
-<div id="alerta_exclusao" class="hidden" title="Alerta de remoção">
+<div id="alerta_exclusao" class="hidden" title="<?= $title_dialog_confirm_remove_project_problem ?>">
     <p class="ui-state-error-text">
-        Deseja realmente remover o projeto / tipo de problema?
+        <?= $info_before_remove_project_problem ?>
     </p>
 </div>
 
-<div id="alert" class="hidden" title="Atenção">
+<div id="alert" class="hidden" title="<?= $title_dialog_atencao ?>">
     <p id="msg"></p>
 </div>

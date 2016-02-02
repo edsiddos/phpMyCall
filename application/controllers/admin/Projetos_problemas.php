@@ -22,19 +22,14 @@
  *
  * @author Ednei Leite da Silva
  */
-class Projetos_problemas extends CI_Controller {
+class Projetos_problemas extends Admin_Controller {
 
     /**
      * Construtor
      */
     public function __construct() {
-        parent::__construct();
-        if (!Autenticacao::verifica_login()) {
-            redirect("Login/index");
-        } else {
-
-            $this->load->model('projetos_problemas_model', 'model');
-        }
+        parent::__construct('projetos_problemas');
+        $this->load->model('projetos_problemas_model', 'model');
     }
 
     /**
@@ -47,12 +42,7 @@ class Projetos_problemas extends CI_Controller {
         if (Menu::possue_permissao($perfil, $permissao)) {
             $this->load->helper('form');
 
-            $title['title'] = 'Projetos tipo de problema.';
-
-            $this->load->view('template/header', $title);
-            $this->load->view('projetos_problemas/index');
-            $this->load->view('projetos_problemas/form');
-            $this->load->view('template/footer');
+            $this->load_view(array('projetos_problemas/index', 'projetos_problemas/form'));
         } else {
             redirect('main');
         }
@@ -80,7 +70,7 @@ class Projetos_problemas extends CI_Controller {
             $return = $this->model->lista_projeto_problemas($search['value'], $order_by, $limit, $offset);
             $return["draw"] = empty($draw) ? 0 : $draw;
 
-            echo json_encode($return);
+            $this->response($return);
         }
     }
 
@@ -94,7 +84,7 @@ class Projetos_problemas extends CI_Controller {
         if (Menu::possue_permissao($perfil, $permissao)) {
             $nome = filter_input(INPUT_POST, 'term', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
 
-            echo json_encode($this->model->get_projetos($nome));
+            $this->response($this->model->get_projetos($nome));
         }
     }
 
@@ -108,7 +98,7 @@ class Projetos_problemas extends CI_Controller {
         if (Menu::possue_permissao($perfil, $permissao)) {
             $nome = filter_input(INPUT_POST, 'term', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
 
-            echo json_encode($this->model->get_problemas($nome));
+            $this->response($this->model->get_problemas($nome));
         }
     }
 
@@ -140,7 +130,7 @@ class Projetos_problemas extends CI_Controller {
                 }
             }
 
-            echo json_encode($vars);
+            $this->response($vars);
         }
     }
 
@@ -172,7 +162,7 @@ class Projetos_problemas extends CI_Controller {
                     $id_projeto = $this->model->insert_projeto($projeto, $descricao_projeto);
 
                     if (empty($id_projeto)) {
-                        $dados = array('status' => false, 'msg' => "Erro ao criar projeto");
+                        $dados = array('status' => false, 'msg' => $this->translate['response_error_create_project']);
                     } else if (!empty($participantes)) {
                         $this->model->adiciona_partcipantes_projeto($participantes, $id_projeto);
                     }
@@ -185,19 +175,19 @@ class Projetos_problemas extends CI_Controller {
                         $id_problema = $this->model->insert_tipo_problema($problema);
 
                         if (empty($id_problema)) {
-                            $dados = array('status' => false, 'msg' => "Erro ao criar tipo de problema");
+                            $dados = array('status' => false, 'msg' => $this->translate['response_error_create_problem']);
                         }
                     }
 
                     if (!empty($id_problema)) {
                         $this->model->cria_projeto_problemas($id_projeto, $id_problema, $resposta, $solucao, $descricao);
-                        $dados = array('status' => true, 'msg' => 'Projeto criado com sucesso');
+                        $dados = array('status' => true, 'msg' => $this->translate['response_success_create_project']);
                     }
                 }
 
                 $dados_log = array(
                     'dados' => array(
-                        'operacao' => empty($id) ? 'Criação projeto e problema' : 'Adição de tipo de problema',
+                        'operacao' => empty($id) ? $this->translate['msg_log_create_project'] : $this->translate['msg_log_new_type_problem'],
                         'id_projeto' => $id_projeto,
                         'nome_projeto' => $projeto,
                         'descricao_projeto' => $descricao_projeto,
@@ -209,7 +199,7 @@ class Projetos_problemas extends CI_Controller {
                     )
                 );
             } else {
-                $dados = array('status' => false, 'msg' => "Já existe projeto com este tipo de problema.");
+                $dados = array('status' => false, 'msg' => $this->translate['response_error_exist_project_problem']);
             }
 
             $dados_log ['msg'] = $dados['msg'];
@@ -217,7 +207,7 @@ class Projetos_problemas extends CI_Controller {
 
             Logs::gravar($dados_log, $_SESSION ['id']);
 
-            echo json_encode($dados);
+            $this->response($dados);
         }
     }
 
@@ -230,7 +220,7 @@ class Projetos_problemas extends CI_Controller {
         $perfil = $_SESSION['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
-            echo json_encode($this->model->get_dados_projeto_problema($id));
+            $this->response($this->model->get_dados_projeto_problema($id));
         }
     }
 
@@ -290,7 +280,7 @@ class Projetos_problemas extends CI_Controller {
                     $id_problema = $this->model->insert_tipo_problema($problema);
 
                     if (empty($id_problema)) {
-                        $dados = array('status' => false, 'msg' => "Erro ao criar tipo de problema");
+                        $dados = array('status' => false, 'msg' => $this->translate['response_error_create_problem']);
                     }
                 }
 
@@ -299,7 +289,7 @@ class Projetos_problemas extends CI_Controller {
                  */
                 if (!empty($id_problema)) {
                     $this->model->atualiza_projeto_problemas($id_projeto_problema, $id_projeto, $id_problema, $resposta, $solucao, $descricao);
-                    $dados = array('status' => true, 'msg' => "Atualização de projeto problema realizada com sucesso");
+                    $dados = array('status' => true, 'msg' => $this->translate['response_success_update_project_problem']);
                 }
 
                 $dados_log = array(
@@ -322,7 +312,7 @@ class Projetos_problemas extends CI_Controller {
 
                 Logs::gravar($dados, $_SESSION ['id']);
 
-                echo json_encode($dados);
+                $this->response($dados);
             }
         }
     }
@@ -338,9 +328,9 @@ class Projetos_problemas extends CI_Controller {
             $id_projeto_problema = filter_input(INPUT_POST, 'projeto_problema', FILTER_SANITIZE_NUMBER_INT);
 
             if ($this->model->excluir_projeto_problemas($id_projeto, $id_projeto_problema)) {
-                $dados = array('status' => true, 'msg' => 'Sucesso ao excluir projeto tipo de problema');
+                $dados = array('status' => true, 'msg' => $this->translate['response_success_remove_project_problem']);
             } else {
-                $dados = array('status' => false, 'msg' => 'Erro ao excluir projeto tipo de problema');
+                $dados = array('status' => false, 'msg' => $this->translate['response_error_remove_project_problem']);
             }
 
             $log = array(
@@ -354,7 +344,7 @@ class Projetos_problemas extends CI_Controller {
 
             Logs::gravar($log, $_SESSION ['id']);
 
-            echo json_encode($dados);
+            $this->response($dados);
         }
     }
 
