@@ -1,15 +1,14 @@
 
-<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/jquery.dataTables.min.js' ?>"></script>
-<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.jqueryui.min.js' ?>"></script>
-<script type="text/javascript" src="<?= base_url() . 'static/js/datatable/dataTables.responsive.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/jquery-mask-plugin/js/jquery.mask.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-simple-multiselect/js/bootstrap-transfer.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables/js/jquery.dataTables.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.bootstrap.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/dataTables.responsive.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/responsive.bootstrap.js') ?>"></script>
 
-<script type="text/javascript" src="<?= base_url() . 'static/js/simple-multi-select.js' ?>"></script>
-<script type="text/javascript" src="<?= base_url() . 'static/js/jquery.mask.min.js' ?>"></script>
-
-
-<link href="<?= base_url() . 'static/css/simple-multi-select.css' ?>" rel="stylesheet" />
-<link href="<?= base_url() . 'static/css/datatable/dataTables.jqueryui.min.css' ?>" rel="stylesheet">
-<link href="<?= base_url() . 'static/css/datatable/responsive.jqueryui.min.css' ?>" rel="stylesheet">
+<link href="<?= base_url('static/bootstrap-simple-multiselect/css/bootstrap-transfer.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/datatables/css/dataTables.bootstrap.min.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/datatables-responsive/css/responsive.bootstrap.css') ?>" rel="stylesheet">
 
 <script type="text/javascript">
 
@@ -27,7 +26,6 @@
 
         var formulario = ''; // cadastro ou alteração
         var id_usuario = 0;
-
 
         /*
          * Busca dados do usuário para alteração do cadastro
@@ -51,8 +49,7 @@
                     $('select[name=select_perfil]').val(json.perfil).change();
                     $('select[name=select_empresa]').val(json.empresa);
 
-                    multi.setOrigin(json.projeto.projeto);
-                    multi.setDestiny(json.projeto.participa);
+                    $multi.set_values(json.projeto.participa);
                 }
             });
 
@@ -120,7 +117,7 @@
          */
         var cadastrar = function () {
             // Seleciona os projetos escolhidos
-            multi.destinySelect();
+            //multi.destinySelect();
 
             $.ajax({
                 url: '<?= base_url() . 'usuarios/novo_usuario' ?>',
@@ -147,7 +144,7 @@
          */
         var alterar = function () {
             // Seleciona os projetos escolhidos
-            multi.destinySelect();
+            //multi.destinySelect();
 
             $.ajax({
                 url: '<?= base_url() . 'usuarios/atualiza_usuario' ?>',
@@ -184,14 +181,9 @@
                 type: "POST"
             },
             language: {
-                url: "<?= $js_path_translation_datatable ?>"
+                url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
             },
             columns: [
-                {"data": "id"},
-                {"data": "nome"},
-                {"data": "usuario"},
-                {"data": "perfil"},
-                {"data": "email"},
                 {
                     data: null,
                     ordering: false,
@@ -201,7 +193,12 @@
 
                         return html;
                     }
-                }
+                },
+                {"data": "id"},
+                {"data": "nome"},
+                {"data": "usuario"},
+                {"data": "perfil"},
+                {"data": "email"}
             ]
         });
 
@@ -213,12 +210,13 @@
             $("button[name=editar]").button({
                 text: false,
                 icons: {
-                    primary: 'fa fa-pencil'
+                    primary: 'ui-icon-pencil'
                 }
             }).on('click', function () {
                 aguarde.mostrar();
                 var id = $(this).attr('usuario_id');
 
+                $multi.set_values([]);
                 usuario.getDadosUsuario(id);
                 usuario.setFormularioAlteracao();
 
@@ -237,7 +235,7 @@
             $("button[name=excluir]").button({
                 text: false,
                 icons: {
-                    primary: 'fa fa-trash'
+                    primary: 'ui-icon-trash'
                 }
             }).on('click', function () {
                 var id = $(this).attr('usuario_id');
@@ -248,29 +246,32 @@
         });
 
 
-        multi = new MultiSelect('#select_projeto', {name_select_destiny: 'input_projetos'});
-        multi.init();
+        $multi = $('#select_projeto').bootstrapTransfer({
+            remaining_name: 'opcoes_projetos',
+            target_name: 'input_projetos[]',
+            hilite_selection: true
+        });
+
+        $.ajax({
+            url: '<?= base_url('usuarios/get_projetos') ?>',
+            dataType: 'JSON',
+            async: false,
+            success: function (data) {
+                $multi.populate(data.projeto);
+            }
+        });
 
         /*
          * Gera botão de cadastrar usuário e ação de clica-lo
          */
         $('button[name=cadastrar]').button({
             icons: {
-                primary: 'fa fa-plus-circle'
+                primary: 'ui-icon-circle-plus'
             }
         }).on('click', function () {
             aguarde.mostrar();
             usuario.setFormularioCadastro();
-
-            $.ajax({
-                url: '<?= base_url() . 'usuarios/get_projetos' ?>',
-                dataType: 'JSON',
-                async: false,
-                success: function (data) {
-                    multi.setOrigin(data.projeto);
-                    multi.setDestiny(data.participa);
-                }
-            });
+            $multi.set_values([]);
 
             $('input[name=input_id]').val(0);
             $('input[name=input_nome]').val('');
@@ -301,7 +302,7 @@
                 {
                     text: '<?= $title_button_add_user ?>',
                     icons: {
-                        primary: 'fa fa-save'
+                        primary: 'ui-icon-disk'
                     },
                     click: function () {
                         $(this).dialog('close');
@@ -312,7 +313,7 @@
                 {
                     text: '<?= $title_button_cancel_user ?>',
                     icons: {
-                        primary: 'fa fa-close'
+                        primary: 'ui-icon-close'
                     },
                     click: function () {
                         $(this).dialog('close');
@@ -334,7 +335,7 @@
                 {
                     text: '<?= $title_button_remove_user ?>',
                     icons: {
-                        primary: 'fa fa-trash'
+                        primary: 'ui-icon-trash'
                     },
                     click: function () {
                         usuario.excluirUsuario();
@@ -345,7 +346,7 @@
                 {
                     text: '<?= $title_button_cancel_user ?>',
                     icons: {
-                        primary: 'fa fa-close'
+                        primary: 'ui-icon-close'
                     },
                     click: function () {
                         $(this).dialog('close');
@@ -364,7 +365,7 @@
                 {
                     text: '<?= $title_button_ok_user ?>',
                     icons: {
-                        primary: 'fa fa-check'
+                        primary: 'ui-icon-check'
                     },
                     click: function () {
                         $(this).dialog('close');
@@ -393,6 +394,7 @@
         <table id="usuarios" class="display responsive nowrap" width="100%" cellspacing="0">
             <thead>
                 <tr>
+                    <th></th>
                     <th>
                         <?= $table_id_user ?>
                     </th>
@@ -408,7 +410,6 @@
                     <th>
                         <?= $table_email_user ?>
                     </th>
-                    <th></th>
                 </tr>
             </thead>
 

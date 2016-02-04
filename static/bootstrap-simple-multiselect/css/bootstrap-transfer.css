@@ -1,0 +1,79 @@
+.multi-select-transfer{
+    width: 100%;
+}
+
+.mst-filters, .mst-selects{
+    width: 100%;
+    display: block;
+}
+
+.mst-filters-left, .mst-filters-right{
+    display: inline-block;
+    width: 45%;
+    margin-bottom: 5px;
+    height: 35px;
+}
+
+.mst-filters-left {
+    float: left;
+}
+
+.mst-filters-right {
+    float: right;
+}
+
+.mst-filter-origin, .mst-filter-destiny{
+    width: 100%;
+    padding: 0px;
+}
+
+.mst-filter-origin{
+    float: left;
+}
+
+.mst-filter-destiny{
+    float: right;
+}
+
+.mst-left, .mst-right{
+    display: inline-block;
+}
+
+.mst-left{
+    width: 45%;
+    float: left;
+}
+
+.mst-right{
+    width: 55%;
+    float: right;
+}
+
+.multi-select-transfer select{
+    width: 100%;
+    height: 200px;
+}
+
+.mst-buttons{
+    width: 18.5%;
+    float: left;
+    padding: 0 5px;
+}
+
+.mst-select-destiny{
+    width: 81.5%;
+    float: right;
+}
+
+.mst-buttons button{
+    width: 100%;
+    height: 50px;
+}
+
+.mst-select-add-all, .mst-select-rem-all{
+    letter-spacing: -5px;
+}
+
+.multi-select-transfer option {
+    padding: 3px 5px;
+}

@@ -203,7 +203,8 @@ class Usuarios extends Admin_Controller {
             $user = filter_input(INPUT_POST, 'user', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-            $this->response($this->model->valida_usuario($user, $id));
+            $result['status'] = $this->model->valida_usuario($user, $id);
+            $this->response($result);
         }
     }
 
@@ -220,9 +221,9 @@ class Usuarios extends Admin_Controller {
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
             if (preg_match("/^[a-zA-Z0-9\._-]+@[a-zA-Z0-9\._-]+\.([a-zA-Z]{2,4})$/", $email)) {
-                $this->response($this->model->get_email($email, $id));
+                $this->response(array('status' => $this->model->get_email($email, $id)));
             } else {
-                $this->response(TRUE);
+                $this->response(array('status' => TRUE));
             }
         }
     }

@@ -11,13 +11,13 @@
         $('input[name=input_usuario]').on('focusout', function () {
             if ($(this).val() != '') {
                 $.ajax({
-                    url: '<?= base_url() . 'usuarios/valida_usuario' ?>',
+                    url: '<?= base_url('usuarios/valida_usuario') ?>',
                     data: 'user=' + $(this).val() + '&id=' + $('input[name=input_id]').val(),
                     dataType: 'json',
                     type: 'POST',
                     success: function (values) {
 
-                        if (values == true) {
+                        if (values.status == true) {
                             $("#div_usuario").removeClass('has-success');
                             $("#div_usuario").addClass('has-error');
                         } else {
@@ -40,13 +40,13 @@
         $('input[name=input_email]').on('focusout', function () {
             if ($(this).val() != '') {
                 $.ajax({
-                    url: '<?= base_url() . 'usuarios/valida_email' ?>',
+                    url: '<?= base_url('usuarios/valida_email') ?>',
                     data: 'email=' + $(this).val() + '&id=' + $('input[name=input_id]').val(),
                     dataType: 'json',
                     type: 'POST',
                     success: function (values) {
 
-                        if (values == true) {
+                        if (values.status == true) {
                             $("#div_email").removeClass('has-success');
                             $("#div_email").addClass('has-error');
                         } else {
@@ -142,7 +142,7 @@
                     <?= $label_password_user ?>
                 </label>
                 <div class="col-md-4">
-                    <input type="password" class="form-control input-md" id="input_senha" required name="input_senha" placeholder="<?= $label_username_user ?>">
+                    <input type="password" class="form-control input-md" id="input_senha" required name="input_senha" placeholder="<?= $label_password_user ?>">
                 </div>
                 <div class="col-md-4">
                     <div class="checkbox checkbox-primary">
@@ -177,7 +177,7 @@
                     <?= $label_profile_user ?>
                 </label>
                 <div class="col-md-4">
-                    <select id="select_perfil" name="select_perfil" class="selectpicker">
+                    <select id="select_perfil" name="select_perfil" class="selectpicker form-control">
                         <option disabled selected><?= $label_profile_option_user ?></option>
                         <?php
                         foreach ($perfil as $values) {
@@ -195,7 +195,7 @@
                     <?= $businesses_label ?>
                 </label>
                 <div class="col-md-4">
-                    <select id="select_empresa" name="select_empresa" class="selectpicker">
+                    <select id="select_empresa" name="select_empresa" class="selectpicker form-control">
                         <option disabled selected><?= $label_bussinesses_option_user ?></option>
                         <?php
                         foreach ($empresas as $values) {

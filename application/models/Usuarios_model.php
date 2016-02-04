@@ -210,21 +210,21 @@ class Usuarios_model extends CI_Model {
      * @return Array
      */
     public function relacao_projetos($id_usuario) {
-        $this->db->select("projeto.id AS value, nome AS name")->from('phpmycall.projeto');
+        $this->db->select("projeto.id AS value")->from('phpmycall.projeto');
         $this->db->join('phpmycall.projeto_responsaveis', 'projeto.id = projeto_responsaveis.projeto', 'inner');
         $query = $this->db->where("usuario = {$id_usuario}")->get();
 
-        $dados['participa'] = $query->result_array();
+        $participa = $query->result_array();
 
-        $participa = array();
-        foreach ($dados['participa'] AS $values) {
-            $participa[] = $values['value'];
+        $dados['participa'] = array();
+        foreach ($participa AS $values) {
+            $dados['participa'][] = $values['value'];
         }
 
-        $this->db->select('id AS value, nome AS name')->from('phpmycall.projeto');
+        $this->db->select('id AS value, nome AS content')->from('phpmycall.projeto');
 
-        if (count($participa) > 0) {
-            $query = $this->db->where_not_in('id', $participa)->get();
+        if (count($dados['participa']) > 0) {
+            $query = $this->db->where_not_in('id', $dados['participa'])->get();
         } else {
             $query = $this->db->get();
         }
