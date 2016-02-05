@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Solicitacao extends CI_Controller {
+class Solicitacao extends Admin_Controller {
 
     private $manipula_inteiro = array(
         'options' => array('Utils', 'valida_inteiro_chave')
@@ -27,14 +27,10 @@ class Solicitacao extends CI_Controller {
      * Construtor
      */
     public function __construct() {
-        parent::__construct();
+        parent::__construct('solicitacao');
 
-        if (Autenticacao::verifica_login()) {
-            $this->load->model('solicitacao_model', 'model');
-            $this->load->library('parametros_solicitacoes');
-        } else {
-            redirect("login/index");
-        }
+        $this->load->model('solicitacao_model', 'model');
+        $this->load->library('parametros_solicitacoes');
     }
 
     /**
@@ -46,9 +42,7 @@ class Solicitacao extends CI_Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
-            $title = array(
-                'title' => 'Abrir Solicitação',
-            );
+            $this->translate ['title_window'] = $this->translate['title_window_new_request'];
 
             $var = array(
                 'link' => base_url() . '/solicitacao/nova_solicitacao',
@@ -57,9 +51,7 @@ class Solicitacao extends CI_Controller {
                 'solicitacao_origem' => (empty($cod_solicitacao) ? 0 : $cod_solicitacao)
             );
 
-            $this->load->view('template/header', $title);
-            $this->load->view('solicitacao/index', $var);
-            $this->load->view('template/footer');
+            $this->load_view('solicitacao/index', $var);
         }
     }
 
@@ -92,7 +84,7 @@ class Solicitacao extends CI_Controller {
 
         if (Menu::possue_permissao($perfil, $permissao)) {
             $projeto = filter_input(INPUT_POST, 'projeto', FILTER_SANITIZE_NUMBER_INT);
-            echo json_encode($this->model->get_solicitantes($projeto));
+            $this->response($this->model->get_solicitantes($projeto));
         }
     }
 
@@ -133,8 +125,7 @@ class Solicitacao extends CI_Controller {
             $dados = array_merge($dados, $solicitacao);
 
             if (!empty($solicitacao)) {
-
-                $_SESSION['msg_sucesso'] = 'Solicitação criada com sucesso.<br/>';
+                $_SESSION['msg_sucesso'] = $this->translate['info_success_create_request'] . '<br/>';
 
                 /*
                  * Se foi enviados arquivos armazena arquivos no banco de dados.
@@ -143,7 +134,7 @@ class Solicitacao extends CI_Controller {
                     $this->grava_arquivos_anexos($_FILES, $solicitacao);
                 }
             } else {
-                $_SESSION ['msg_erro'] = 'Erro ao criar Solicitação';
+                $_SESSION ['msg_erro'] = $this->translate['info_error_create_request'];
             }
 
             /*
@@ -175,10 +166,10 @@ class Solicitacao extends CI_Controller {
 
             if (move_uploaded_file($values, $caminho_arquivo)) {
                 if (!$this->model->grava_arquivo_solicitacao($dados_arquivos[$key])) {
-                    $_SESSION['msg_sucesso'] .= 'Erro ao adicionar o arquivo: ' . $files['input_arquivos']['name'][$key] . '<br/>';
+                    $_SESSION['msg_sucesso'] .= $this->translate['info_error_attachments_on_request'] . ' ' . $files['input_arquivos']['name'][$key] . '<br/>';
                 }
             } else {
-                $_SESSION['msg_sucesso'] .= 'Erro ao adicionar o arquivo: ' . $files['input_arquivos']['name'][$key] . '<br/>';
+                $_SESSION['msg_sucesso'] .= $this->translate['info_error_attachments_on_request'] . ' ' . $files['input_arquivos']['name'][$key] . '<br/>';
             }
         }
     }
@@ -191,15 +182,11 @@ class Solicitacao extends CI_Controller {
         $perfil = $_SESSION['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
-            $title = array(
-                'title' => 'Lista de solicitações'
-            );
+            $this->translate['title_window'] = $this->translate['title_window_list_request'];
 
             $var['prioridades'] = $this->model->get_prioridades();
 
-            $this->load->view('template/header', $title);
-            $this->load->view('solicitacao/lista', $var);
-            $this->load->view('template/footer');
+            $this->load_view('solicitacao/lista', $var);
         }
     }
 
@@ -236,7 +223,7 @@ class Solicitacao extends CI_Controller {
 
         $result["draw"] = empty($draw) ? 0 : $draw;
 
-        echo json_encode($result);
+        $this->response($result);
     }
 
     /**
@@ -247,7 +234,7 @@ class Solicitacao extends CI_Controller {
         $perfil = $_SESSION['perfil'];
         $usuario = $_SESSION['id'];
 
-        $title['title'] = 'Solicitações em aberta';
+        $this->translate['title_window'] = $this->translate['title_window_requests_to_open'];
 
         /*
          * Paramentros necessarios para exibição das opções.
@@ -288,9 +275,7 @@ class Solicitacao extends CI_Controller {
             $vars['tipos_feedback'] = $this->model->get_tipo_feedback();
         }
 
-        $this->load->view('template/header', $title);
-        $this->load->view('solicitacao/visualizar', $vars);
-        $this->load->view('template/footer');
+        $this->load_view('solicitacao/visualizar', $vars);
     }
 
     /**
@@ -333,16 +318,13 @@ class Solicitacao extends CI_Controller {
         if ($status !== "aberta") {
 
             /* Caso esteja encerrada ou em atendimento exibe mensagem de operação ilegal */
-            $_SESSION['msg_erro'] = "Operação ilegal. Esta solicitação está ";
-            $_SESSION['msg_erro'] .= $status === 'encerrada' ? $status : "em {$status}.";
+            $_SESSION['msg_erro'] .= $this->translate[$status === 'encerrada' ? 'info_error_edit_terminate_request' : 'info_error_edit_request_in_service'];
 
             redirect("solicitacao/visualizar/{$id_solicitacao}");
         } else if (array_search($perfil, $parametros['EDITAR_SOLICITACAO']) !== FALSE) {
 
             /* Caso solicitação esteja aberta busca dados para alteração */
-            $title = array(
-                'title' => 'Editar Solicitação'
-            );
+            $this->translate['title_window'] = $this->translate['title_window_requests_edit'];
 
             $dados_solicitacao = $this->model->get_solicitacao($id_solicitacao, $_SESSION['id'], $perfil);
 
@@ -358,10 +340,7 @@ class Solicitacao extends CI_Controller {
                 'solicitacao_origem' => 0
             );
 
-            $this->load->view('template/header', $title);
-            $this->load->view('solicitacao/index', $var);
-            $this->load->view('solicitacao/editar', $var);
-            $this->load->view('template/footer');
+            $this->load_view(array('solicitacao/index', 'solicitacao/editar'), $var);
         }
     }
 
@@ -379,9 +358,9 @@ class Solicitacao extends CI_Controller {
 
             /* Verifica se arquivo foi removido */
             if ($this->model->remover_arquivo($arquivo, $projeto_tipo_problema, $_SESSION['id'])) {
-                echo json_encode(array('id' => $arquivo, 'status' => TRUE));
+                $this->response(array('id' => $arquivo, 'status' => TRUE));
             } else {
-                echo json_encode(array('id' => $arquivo, 'status' => FALSE));
+                $this->response(array('id' => $arquivo, 'status' => FALSE));
             }
         }
     }
@@ -419,7 +398,7 @@ class Solicitacao extends CI_Controller {
                  */
                 $dados['id'] = $solicitacao;
 
-                $_SESSION['msg_sucesso'] = 'Solicitação alterada com sucesso.<br/>';
+                $_SESSION['msg_sucesso'] = $this->translate['info_success_update_request'] . '<br/>';
 
                 /*
                  * Se foi enviados arquivos armazena arquivos no banco de dados.
@@ -428,7 +407,7 @@ class Solicitacao extends CI_Controller {
                     $this->grava_arquivos_anexos($_FILES, $solicitacao);
                 }
             } else {
-                $_SESSION ['msg_erro'] = 'Erro ao alterar Solicitação';
+                $_SESSION ['msg_erro'] = $this->translate['info_error_update_request'];
             }
 
             /*
@@ -494,7 +473,7 @@ class Solicitacao extends CI_Controller {
             Logs::gravar($log, $_SESSION ['id']);
             redirect("solicitacao/visualizar/{$solicitacao}");
         } else {
-            $_SESSION['msg_erro'] = "Perfil não possui permissão para atender uma solicitação.";
+            $_SESSION['msg_erro'] = $this->translate['info_error_user_not_responsible_request'];
             redirect("solicitacao/visualizar/{$solicitacao}");
         }
     }
@@ -537,7 +516,7 @@ class Solicitacao extends CI_Controller {
             Logs::gravar($log, $_SESSION ['id']);
             redirect("solicitacao/lista");
         } else {
-            $_SESSION['msg_erro'] = "Perfil não possui permissão para excluir uma solicitação.";
+            $_SESSION['msg_erro'] = $this->translate['info_error_user_not_delete_request'];
             redirect("solicitacao/visualizar/{$solicitacao[0]}");
         }
     }
@@ -588,7 +567,7 @@ class Solicitacao extends CI_Controller {
             Logs::gravar($log, $_SESSION ['id']);
             redirect("solicitacao/visualizar/{$dados['id']}");
         } else {
-            $_SESSION['msg_erro'] = "Perfil não possui permissão para redirecionar solicitação.";
+            $_SESSION['msg_erro'] = $this->translate['info_error_user_not_redirect_request'];
             redirect("solicitacao/visualizar/{$dados[0]}");
         }
     }
@@ -628,9 +607,9 @@ class Solicitacao extends CI_Controller {
                 );
 
                 if ($this->model->feedback($dados)) {
-                    $_SESSION['msg_sucesso'] = "Feedback gravado com sucesso.";
+                    $_SESSION['msg_sucesso'] = $this->translate['info_success_add_feedback'];
                 } else {
-                    $_SESSION['msg_erro'] = "Falha ao adicionar feedback.";
+                    $_SESSION['msg_erro'] = $this->translate['info_error_add_feedback'];
                 }
 
                 /*
@@ -648,12 +627,12 @@ class Solicitacao extends CI_Controller {
                 Logs::gravar($log, $_SESSION ['id']);
                 redirect("solicitacao/visualizar/{$id_solicitacao}");
             } else {
-                $_SESSION['msg_erro'] = "Usuário não possui permissão neste projeto.";
+                $_SESSION['msg_erro'] = $this->translate['info_error_user_not_project'];
 
                 redirect("solicitacao/visualizar/{$id_solicitacao}");
             }
         } else {
-            $_SESSION['msg_erro'] = "Perfil do usuário não possui permissão para solicitar feedback.";
+            $_SESSION['msg_erro'] = $this->translate['info_error_user_not_feedback'];
 
             redirect("solicitacao/visualizar/{$id_solicitacao}");
         }
@@ -666,7 +645,7 @@ class Solicitacao extends CI_Controller {
         $id_feedback = filter_input(INPUT_POST, 'feedback_id', FILTER_CALLBACK, $this->manipula_inteiro);
         $usuario = $_SESSION['id'];
 
-        echo json_encode($this->model->get_pergunta_resposta_feedback($id_feedback, $usuario));
+        $this->response($this->model->get_pergunta_resposta_feedback($id_feedback, $usuario));
     }
 
     /**
@@ -692,9 +671,9 @@ class Solicitacao extends CI_Controller {
             );
 
             if ($this->model->responder_feedback($dados, $id_feedback)) {
-                $_SESSION['msg_sucesso'] = "Feedback respondido com sucesso.";
+                $_SESSION['msg_sucesso'] = $this->translate['info_success_answer_feedback'];
             } else {
-                $_SESSION['msg_erro'] = "Falha ao responder feedback.";
+                $_SESSION['msg_erro'] = $this->translate['info_error_answer_feedback'];
             }
 
             /*
@@ -712,7 +691,7 @@ class Solicitacao extends CI_Controller {
             Logs::gravar($log, $_SESSION ['id']);
             redirect("solicitacao/visualizar/{$id_solicitacao}");
         } else {
-            $_SESSION['msg_erro'] = "Usuário não é participante deste projeto.";
+            $_SESSION['msg_erro'] = $this->translate['info_error_user_not_project'];
 
             redirect("solicitacao/visualizar/{$id_solicitacao}");
         }
@@ -751,9 +730,9 @@ class Solicitacao extends CI_Controller {
              * Realização o encerramento da solicitação e informa o resultado da execução
              */
             if ($this->model->encerrar($id_solicitacao, $dados)) {
-                $_SESSION['msg_sucesso'] = "Solicitação encerrada com sucesso.";
+                $_SESSION['msg_sucesso'] = $this->translate['info_success_terminate_request'];
             } else {
-                $_SESSION['msg_erro'] = "Falha ao encerrar solicitação.";
+                $_SESSION['msg_erro'] = $this->translate['info_error_terminate_request'];
             }
 
             /*
@@ -771,7 +750,7 @@ class Solicitacao extends CI_Controller {
             Logs::gravar($log, $_SESSION ['id']);
             redirect("solicitacao/visualizar/{$id_solicitacao}");
         } else {
-            $_SESSION['msg_erro'] = "Usuário sem autorização para encerrar esta solicitação.";
+            $_SESSION['msg_erro'] = $this->translate['info_error_user_not_terminate_request'];
 
             redirect("solicitacao/visualizar/{$id_solicitacao}");
         }

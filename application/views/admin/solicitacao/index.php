@@ -21,10 +21,8 @@
                         var cliente = $("select[name='select_solicitante'] option:selected").val();
                         var tecnico = $("select[name='select_tecnico'] option:selected").val();
 
-                        $("select[name='select_solicitante'] > option").remove();
-                        $("select[name='select_tecnico'] > option").remove();
-                        $("select[name='select_solicitante']").append('<option value="0" disabled selected>Solicitante</option>');
-                        $("select[name='select_tecnico']").append('<option value="0" disabled selected>Técnico</option>');
+                        $("select[name='select_solicitante']").find('option:not(option[value=""])').remove();
+                        $("select[name='select_tecnico']").find('option:not(option[value=""])').remove();
 
                         $.each(data, function (key, value) {
                             $("select[name='select_solicitante']").append('<option value="' + value.id + '" ' + (cliente == value.id ? "selected" : "") + '>' + value.nome + '</option>');
@@ -54,13 +52,11 @@
                     if (((size / 1024) / 1024) > 1) {
                         size = (Math.round(((size / 1024) / 1024) * 100) / 100);
                         tamanho = size + "Gb";
-                    }
-                    else {
+                    } else {
                         size = (Math.round((size / 1024) * 100) / 100);
                         tamanho = size + "Mb";
                     }
-                }
-                else {
+                } else {
                     size = (Math.round(size * 100) / 100);
                     tamanho = size + "kb";
                 }
@@ -139,11 +135,13 @@
         <div class="row">
             <div class="col-xs-6 form-group">
                 <label for="select_projeto" class="col-md-4 control-label">
-                    Projeto:
+                    <?= $label_project_request ?>:
                 </label>
                 <div class="col-md-8">
-                    <select name="select_projeto" required class="selectpicker" id="select_projeto">
-                        <option value="0" disabled selected>Projeto</option>
+                    <select name="select_projeto" required class="selectpicker form-control" id="select_projeto">
+                        <option value="0" disabled selected>
+                            <?= $label_project_request ?>
+                        </option>
                         <?php
                         $id = 0;
                         foreach ($projetos as $values) {
@@ -165,13 +163,16 @@
                     </select>
                 </div>
             </div>
+
             <div class="col-xs-6 form-group">
                 <label for="select_solicitante" class="col-md-4 control-label">
-                    Solicitante:
+                    <?= $label_requester_request ?>:
                 </label>
                 <div class="col-md-8">
-                    <select name="select_solicitante" required class="selectpicker" id="select_solicitante">
-                        <option value="0" disabled selected>Solicitante</option>
+                    <select name="select_solicitante" required class="selectpicker form-control" id="select_solicitante">
+                        <option value="0" disabled selected>
+                            <?= $label_requester_request ?>
+                        </option>
                     </select>
                 </div>
             </div>
@@ -180,10 +181,10 @@
         <div class="row">
             <div class="col-xs-6 form-group">
                 <label for="select_prioridade" class="col-md-4 control-label">
-                    Prioridade: <span class="text-danger">*</span>
+                    <?= $label_priority_request ?>: <span class="text-danger">*</span>
                 </label>
                 <div class="col-md-8">
-                    <select name="select_prioridade" required id="select_prioridade" class="selectpicker">
+                    <select name="select_prioridade" required id="select_prioridade" class="selectpicker form-control">
                         <option value="0"></option>
                         <?php
                         foreach ($prioridade as $values) {
@@ -197,11 +198,12 @@
                     </select>
                 </div>
             </div>
+
             <div class="col-xs-6 form-group">
-                <label for="select_tecnico" class="col-md-4 control-label">Técnico:</label>
+                <label for="select_tecnico" class="col-md-4 control-label"><?= $label_technician_resquest ?>:</label>
                 <div class="col-md-8">
-                    <select name="select_tecnico" class="selectpicker" id="select_tecnico">
-                        <option value="0" disabled selected>Técnico</option>
+                    <select name="select_tecnico" class="selectpicker form-control" id="select_tecnico">
+                        <option value="0" disabled selected><?= $label_technician_resquest ?></option>
                     </select>
                 </div>
             </div>
@@ -209,7 +211,7 @@
 
         <div class="row">
             <div class="form-group">
-                <label for="textarea_descricao" class="col-md-12 text-left">Descrição:</label>
+                <label for="textarea_descricao" class="col-md-12 text-left"><?= $label_description_request ?>:</label>
                 <div class="col-md-12">
                     <textarea name="textarea_descricao" id="textarea_descricao"></textarea>
                 </div>
@@ -219,9 +221,11 @@
         <div class="row">
             <div class="form-group">
                 <div class="browse_wrap">
-                    <div class="title">Anexar arquivos a esta solicitação</div>
+                    <div class="title">
+                        <?= $label_attach_file_request ?>
+                    </div>
                     <input type="file" name="input_arquivos[]" class="upload form-control" id="input_arquivos"
-                           title="Anexar arquivos a esta solicitação" multiple>
+                           title="<?= $label_attach_file_request ?>" multiple>
                 </div>
                 <span id="arquivos_novos" class="upload_path"></span>
             </div>
@@ -234,8 +238,8 @@
         <div class="row">
             <div class="col-md-offset-4 col-md-4">
                 <button type="submit" class="col-md-12 btn btn-default" name="submit_dados">
-                    <samp class="fa fa-check"></samp>
-                    Salvar
+                    <span class="fa fa-check"></span>
+                    <?= $label_submit_request ?>
                 </button>
             </div>
         </div>

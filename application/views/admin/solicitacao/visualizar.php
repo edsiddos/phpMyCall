@@ -14,27 +14,27 @@
         /*                  Dialog Excluir Solicitações                   */
         /******************************************************************/
 
-        var excluir_solicitacao = $('#excluir_solicitacao').dialog({
+        var $excluir_solicitacao = $('#excluir_solicitacao').dialog({
             autoOpen: false,
             modal: true,
             buttons: [
                 {
-                    text: "Excluir",
+                    text: "<?= $label_button_confirm_delete_request ?>",
                     icons: {
                         primary: 'ui-icon-closethick'
                     },
                     click: function () {
-                        $(location).attr('href', '<?= base_url() . "solicitacao/excluir/{$id_solicitacao}" ?>');
-                        excluir_solicitacao.dialog('close');
+                        $(location).attr('href', '<?= base_url("solicitacao/excluir/{$id_solicitacao}") ?>');
+                        $excluir_solicitacao.dialog('close');
                     }
                 },
                 {
-                    text: "Cancelar",
+                    text: "<?= $label_button_cancel_delete_request ?>",
                     icons: {
                         primary: 'ui-icon-close'
                     },
                     click: function () {
-                        excluir_solicitacao.dialog('close');
+                        $excluir_solicitacao.dialog('close');
                     }
                 }
             ],
@@ -45,30 +45,30 @@
         /*            Dialog redirecionamento de solicitações             */
         /******************************************************************/
 
-        var redirecionar_solicitacao = $('#redirecionar_solicitacao').dialog({
+        var $redirecionar_solicitacao = $('#redirecionar_solicitacao').dialog({
             autoOpen: false,
             modal: true,
             width: '35%',
             height: $(window).height() * 0.5,
             buttons: [
                 {
-                    text: "Redirecionar",
+                    text: "<?= $label_button_confirm_redirect_request_other_technician ?>",
                     icons: {
                         primary: 'ui-icon-transferthick-e-w'
                     },
                     click: function () {
                         var tecnico = $('select[name=select_tecnico]').val();
-                        $(location).attr('href', '<?= base_url() . "solicitacao/redirecionar/{$id_solicitacao}" ?>/' + tecnico);
-                        redirecionar_solicitacao.dialog('close');
+                        $(location).attr('href', '<?= base_url("solicitacao/redirecionar/{$id_solicitacao}") ?>/' + tecnico);
+                        $redirecionar_solicitacao.dialog('close');
                     }
                 },
                 {
-                    text: "Cancelar",
+                    text: "<?= $label_button_cancel_redirect_request_other_technician ?>",
                     icons: {
                         primary: 'ui-icon-close'
                     },
                     click: function () {
-                        redirecionar_solicitacao.dialog('close');
+                        $redirecionar_solicitacao.dialog('close');
                     }
                 }
             ],
@@ -79,28 +79,28 @@
         /*                Dialog feedback de solicitações                 */
         /******************************************************************/
 
-        var feedback_solicitacao = $('#feedback_solicitacao').dialog({
+        var $feedback_solicitacao = $('#feedback_solicitacao').dialog({
             autoOpen: false,
             modal: true,
             width: 920,
             buttons: [
                 {
-                    text: "Criar Feedback",
+                    text: "<?= $label_button_confirm_create_feedback ?>",
                     icons: {
                         primary: 'ui-icon-comment'
                     },
                     click: function () {
-                        feedback_solicitacao.dialog('close');
+                        $feedback_solicitacao.dialog('close');
                         $('form[name=solicitar_feedback]').submit();
                     }
                 },
                 {
-                    text: "Cancelar",
+                    text: "<?= $label_button_cancel_create_feedback ?>",
                     icons: {
                         primary: 'ui-icon-close'
                     },
                     click: function () {
-                        feedback_solicitacao.dialog('close');
+                        $feedback_solicitacao.dialog('close');
                     }
                 }
             ],
@@ -111,28 +111,28 @@
         /*                   Dialog responder feedback                    */
         /******************************************************************/
 
-        var responder_feedback = $('#responder_feedback').dialog({
+        var $responder_feedback = $('#responder_feedback').dialog({
             autoOpen: false,
             modal: true,
             width: 850,
             buttons: [
                 {
-                    text: "Responder Feedback",
+                    text: "<?= $label_button_confirm_answer_feedback ?>",
                     icons: {
                         primary: 'ui-icon-check'
                     },
                     click: function () {
-                        responder_feedback.dialog('close');
+                        $responder_feedback.dialog('close');
                         $('form[name=resposta_feedback]').submit();
                     }
                 },
                 {
-                    text: "Cancelar",
+                    text: "<?= $label_button_cancel_answer_feedback ?>",
                     icons: {
                         primary: 'ui-icon-close'
                     },
                     click: function () {
-                        responder_feedback.dialog('close');
+                        $responder_feedback.dialog('close');
                     }
                 }
             ],
@@ -145,18 +145,18 @@
         /*               Dialog visualizaçao de feedbacks                 */
         /******************************************************************/
 
-        var visualizar_feedback = $('#visualizar_feedback').dialog({
+        var $visualizar_feedback = $('#visualizar_feedback').dialog({
             autoOpen: false,
             modal: true,
             width: 850,
             buttons: [
                 {
-                    text: "Fechar",
+                    text: "<?= $label_button_close_view_feedback ?>",
                     icons: {
                         primary: 'ui-icon-close'
                     },
                     click: function () {
-                        visualizar_feedback.dialog('close');
+                        $visualizar_feedback.dialog('close');
                     }
                 }
             ],
@@ -167,28 +167,28 @@
         /*               Dialog visualizaçao de feedbacks                 */
         /******************************************************************/
 
-        var encerrar_dialog = $('#encerramento_solicitacao').dialog({
+        var $encerrar_dialog = $('#encerramento_solicitacao').dialog({
             autoOpen: false,
             modal: true,
             width: 850,
             buttons: [
                 {
-                    text: "Encerrar",
+                    text: "<?= $label_button_confirm_terminate_request ?>",
                     icons: {
                         primary: 'ui-icon-check'
                     },
                     click: function () {
                         $('form[name=encerrar_solicitacao]').submit();
-                        encerrar_dialog.dialog('close');
+                        $encerrar_dialog.dialog('close');
                     }
                 },
                 {
-                    text: "Cancelar",
+                    text: "<?= $label_button_cancel_terminate_request ?>",
                     icons: {
                         primary: 'ui-icon-close'
                     },
                     click: function () {
-                        encerrar_dialog.dialog('close');
+                        $encerrar_dialog.dialog('close');
                     }
                 }
             ],
@@ -214,7 +214,7 @@
             $("input[type=hidden][name=feedback_id]").val(id_feedback);
 
             $.ajax({
-                url: '<?= base_url() . 'solicitacao/get_pergunta_resposta_feedback' ?>',
+                url: '<?= base_url('solicitacao/get_pergunta_resposta_feedback') ?>',
                 data: 'feedback_id=' + id_feedback,
                 type: 'POST',
                 dataType: 'json',
@@ -223,7 +223,7 @@
                 }
             });
 
-            responder_feedback.dialog('open');
+            $responder_feedback.dialog('open');
         });
 
         $("button[class=feedback_atendida]").button({
@@ -234,7 +234,7 @@
             var id_feedback = $(this).attr("feedback");
 
             $.ajax({
-                url: '<?= base_url() . 'solicitacao/get_pergunta_resposta_feedback' ?>',
+                url: '<?= base_url('solicitacao/get_pergunta_resposta_feedback') ?>',
                 data: 'feedback_id=' + id_feedback,
                 type: 'POST',
                 dataType: 'json',
@@ -244,7 +244,7 @@
                 }
             });
 
-            visualizar_feedback.dialog('open');
+            $visualizar_feedback.dialog('open');
         });
 
         $('#editar').button({
@@ -253,7 +253,7 @@
                 primary: 'ui-icon-pencil'
             }
         }).on('click', function () {
-            $(location).attr('href', '<?= base_url() . "solicitacao/editar/{$id_solicitacao}" ?>');
+            $(location).attr('href', '<?= base_url("solicitacao/editar/{$id_solicitacao}") ?>');
         });
 
         $('#atender').button({
@@ -262,7 +262,7 @@
                 primary: 'ui-icon-wrench'
             }
         }).on('click', function () {
-            $(location).attr('href', '<?= base_url() . "solicitacao/atender/{$id_solicitacao}" ?>');
+            $(location).attr('href', '<?= base_url("solicitacao/atender/{$id_solicitacao}") ?>');
         });
 
         $('#sub_chamado').button({
@@ -271,7 +271,7 @@
                 primary: 'ui-icon-circle-plus'
             }
         }).on('click', function () {
-            $(location).attr('href', '<?= base_url() . "solicitacao/sub_chamado/{$id_solicitacao}" ?>');
+            $(location).attr('href', '<?= base_url("solicitacao/sub_chamado/{$id_solicitacao}") ?>');
         });
 
         $('#excluir').button({
@@ -280,7 +280,7 @@
                 primary: 'ui-icon-closethick'
             }
         }).on('click', function () {
-            excluir_solicitacao.dialog('open');
+            $excluir_solicitacao.dialog('open');
         });
 
         $('#redirecionar').button({
@@ -289,7 +289,7 @@
                 primary: 'ui-icon-transferthick-e-w'
             }
         }).on('click', function () {
-            redirecionar_solicitacao.dialog('open');
+            $redirecionar_solicitacao.dialog('open');
         });
 
         $('#feedback').button({
@@ -298,7 +298,7 @@
                 primary: 'ui-icon-comment'
             }
         }).on('click', function () {
-            feedback_solicitacao.dialog('open');
+            $feedback_solicitacao.dialog('open');
         });
 
         $('#encerrar').button({
@@ -307,7 +307,7 @@
                 primary: 'ui-icon-check'
             }
         }).on('click', function () {
-            encerrar_dialog.dialog('open');
+            $encerrar_dialog.dialog('open');
         });
     });
 
@@ -343,25 +343,25 @@
     <div class="row">
         <div class="ui-widget-header ui-corner-all">
             <button id="editar">
-                Editar
+                <?= $label_button_edit_request ?>
             </button>
             <button id="atender">
-                Atender
+                <?= $label_button_request_responsible ?>
             </button>
             <button id="sub_chamado">
-                Sub-Chamado
+                <?= $label_button_son_request ?>
             </button>
             <button id="excluir">
-                Excluir
+                <?= $label_button_delete_request ?>
             </button>
             <button id="redirecionar">
-                Redirecionar
+                <?= $label_button_redirect_request_other_technician ?>
             </button>
             <button id="feedback">
-                Feedback
+                <?= $label_button_create_feedback ?>
             </button>
             <button id="encerrar">
-                Encerrar
+                <?= $label_button_terminate_request ?>
             </button>
         </div>
     </div>
@@ -369,7 +369,7 @@
     <div class="row">
         <div class="form-group col-md-6">
             <label class="col-md-4 control-label">
-                Projeto:
+                <?= $label_project_request ?>:
             </label>
             <div class="col-md-8">
                 <input type="text" value="<?= $solicitacao['projeto'] ?>" disabled class="form-control" />
@@ -377,7 +377,7 @@
         </div>
         <div class="form-group col-md-6">
             <label class="col-md-4 control-label">
-                Problema:
+                <?= $label_problem_request ?>:
             </label>
             <div class="col-md-8">
                 <input type="text" value="<?= $solicitacao['problema'] ?>" disabled class="form-control" />
@@ -388,7 +388,7 @@
     <div class="row">
         <div class="form-group col-md-6">
             <label class="col-md-4 control-label">
-                Prioridade:
+                <?= $label_priority_request ?>:
             </label>
             <div class="col-md-8">
                 <input type="text" value="<?= $solicitacao['prioridade'] ?>" disabled class="form-control" />
@@ -396,7 +396,7 @@
         </div>
         <div class="form-group col-md-6">
             <label class="col-md-4 control-label">
-                Solicitante:
+                <?= $label_requester_request ?>:
             </label>
             <div class="col-md-8">
                 <input type="text" value="<?= $solicitacao['solicitante'] ?>" disabled class="form-control" />
@@ -408,7 +408,7 @@
     <div class="row">
         <div class="form-group col-md-6">
             <label class="col-md-4 control-label">
-                Atendente:
+                <?= $label_attendant_request ?>:
             </label>
             <div class="col-md-8">
                 <input type="text" value="<?= $solicitacao['atendente'] ?>" disabled class="form-control" />
@@ -416,7 +416,7 @@
         </div>
         <div class="form-group col-md-6">
             <label class="col-md-4 control-label">
-                Técnico:
+                <?= $label_technician_resquest ?>:
             </label>
             <div class="col-md-8">
                 <input type="text" value="<?= $solicitacao['tecnico'] ?>" disabled class="form-control" />
@@ -427,7 +427,7 @@
     <div class="row">
         <div class="form-group col-md-6">
             <label class="col-md-4 control-label">
-                Abertura:
+                <?= $label_start_time_column_table_request ?>:
             </label>
             <div class="col-md-8">
                 <input type="text" value="<?= $solicitacao['abertura'] ?>" disabled class="form-control" />
@@ -435,7 +435,7 @@
         </div>
         <div class="form-group col-md-6">
             <label class="col-md-4 control-label">
-                Atendimento:
+                <?= $label_option_in_service_request ?>:
             </label>
             <div class="col-md-8">
                 <input type="text" value="<?= $solicitacao['atendimento'] ?>" disabled class="form-control" />
@@ -446,7 +446,7 @@
     <div class="row">
         <div class="form-group col-md-6">
             <label class="col-md-4 control-label">
-                Encerramento:
+                <?= $label_time_end_request ?>:
             </label>
             <div class="col-md-8">
                 <input type="text" value="<?= $solicitacao['encerramento'] ?>" disabled class="form-control" />
@@ -462,24 +462,24 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
-                        Feedback
+                        <?= $label_header_panel_feedback ?>
                     </h3>
                 </div>
                 <div class="panel-body">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th rowspan="2" class="col-md-2 text-center">Pergunta</th>
-                                <th rowspan="2" class="col-md-2 text-center">Resposta</th>
-                                <th colspan="2" class="col-md-4 text-center">Data feedback</th>
-                                <th rowspan="2" class="col-md-4 text-center">Responsável pelo feedback</th>
+                                <th rowspan="2" class="col-md-2 text-center"><?= $title_header_table_question_feedback ?></th>
+                                <th rowspan="2" class="col-md-2 text-center"><?= $title_header_table_answer_feedback ?></th>
+                                <th colspan="2" class="col-md-4 text-center"><?= $title_header_table_date_feedback ?></th>
+                                <th rowspan="2" class="col-md-4 text-center"><?= $title_header_table_responsible_for_feedback ?></th>
                             </tr>
                             <tr>
                                 <th class="col-md-2 text-center">
-                                    Pegunta
+                                    <?= $title_header_table_question_feedback ?>
                                 </th>
                                 <th class="col-md-2 text-center">
-                                    Resposta
+                                    <?= $title_header_table_answer_feedback ?>
                                 </th>
                             </tr>
                         </thead>
@@ -501,13 +501,13 @@
                                             if ($values['aberta'] && $values['responsavel'] === $_SESSION['id']) {
                                                 ?>
                                                 <button type="button" class="feedback_aberto" feedback="<?= $values['id'] ?>">
-                                                    Responder
+                                                    <?= $label_button_answer_feedback ?>
                                                 </button>
                                                 <?php
                                             } else {
                                                 ?>
                                                 <button type="button" class="feedback_atendida" feedback="<?= $values['id'] ?>">
-                                                    Visualizar
+                                                    <?= $label_button_view_feedback ?>
                                                 </button>
                                                 <?php
                                             }
@@ -532,7 +532,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    Descrição:
+                    <?= $label_description_request ?>:
                 </h3>
             </div>
             <div class="panel-body">
@@ -545,13 +545,13 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    Arquivos anexos:
+                    <?= $title_header_panel_attachments_on_request ?>:
                 </h3>
             </div>
             <div class="panel-body text-center">
                 <?php
                 if (empty($solicitacao['arquivos'])) {
-                    echo "Esta solicitação não contém nenhum arquivo em anexo.";
+                    echo $label_not_attachments_on_request;
                 } else {
                     foreach ($solicitacao['arquivos'] as $values) {
                         ?>
@@ -568,14 +568,14 @@
 </div>
 
 
-<div id="excluir_solicitacao" title="Atenção">
-    <p>Deseja excluir está solicitação?</p>
+<div id="excluir_solicitacao" title="<?= $title_dialog_delete_request ?>">
+    <p><?= $text_alert_delete_request ?></p>
 </div>
 
-<div id="redirecionar_solicitacao" title="Redirecionamento de chamado a outro técnico.">
+<div id="redirecionar_solicitacao" title="<?= $title_dialog_redirect_request_other_technician ?>">
     <div class="form-group col-md-12">
         <label class="col-md-4 control-label">
-            Técnico:
+            <?= $label_technician_resquest ?>:
         </label>
         <div class="col-md-8">
             <select name="select_tecnico" id="select_tecnico" class="selectpicker" data-size="5" data-live-search="true">
@@ -594,13 +594,15 @@
     </div>
 </div>
 
-<div id="feedback_solicitacao" title="Solicitação de feedback">
+<div id="feedback_solicitacao" title="<?= $title_dialog_create_feedback ?>">
     <form action="<?= base_url() . "solicitacao/feedback" ?>" class="form-horizontal" name="solicitar_feedback" method="POST">
         <input type="hidden" name="solicitacao" value="<?= "{$id_solicitacao}" ?>" />
 
         <div class="row">
             <div class="form-group col-md-12">
-                <label class="col-md-4 control-label">Tipo de feedback:</label>
+                <label class="col-md-4 control-label">
+                    <?= $label_select_type_feedback ?>:
+                </label>
                 <div class="col-md-8">
                     <select name="select_feedback" id="select_feedback" class="selectpicker" data-size="5" data-live-search="true">
                         <option value=""></option>
@@ -620,7 +622,9 @@
 
         <div class="row">
             <div class="form-group col-md-12">
-                <label class="col-md-4 control-label">Destinátario:</label>
+                <label class="col-md-4 control-label">
+                    <?= $label_technician_answer_feedback ?>:
+                </label>
                 <div class="col-md-8">
                     <select name="select_destinatario" id="select_destinatario" class="selectpicker" data-size="5" data-live-search="true">
                         <option value=""></option>
@@ -637,7 +641,9 @@
         </div>
 
         <div class="row">
-            <label for="pergunta_feedback" class="col-md-12">Descrição:</label>
+            <label for="pergunta_feedback" class="col-md-12">
+                <?= $label_description_question_feedback ?>:
+            </label>
             <div class="col-md-12">
                 <textarea name="pergunta_feedback" id="pergunta_feedback"></textarea>
             </div>
@@ -646,7 +652,7 @@
 </div>
 
 
-<div id="responder_feedback" title="Responder Feedback">
+<div id="responder_feedback" title="<?= $title_dialog_answer_feedback ?>">
     <div>
         <h3>Pergunta</h3>
         <div id="feedback_resposta_pergunta"></div>
@@ -663,18 +669,18 @@
 </div>
 
 
-<div id="visualizar_feedback" title="Visualização de Feedback">
+<div id="visualizar_feedback" title="<?= $title_dialog_answer_feedback ?>">
     <div>
-        <h3>Pergunta</h3>
+        <h3><?= $label_question_feedback ?></h3>
         <div id="visualizar_feedback_pergunta"></div>
 
-        <h3>Resposta</h3>
+        <h3><?= $label_answer_feedback ?></h3>
         <div id="visualizar_feedback_resposta"></div>
     </div>
 </div>
 
 
-<div id="encerramento_solicitacao" title="Encerramento de solicitação">
+<div id="encerramento_solicitacao" title="<?= $title_dialog_terminate_request ?>">
     <div>
         <form method="post" name="encerrar_solicitacao" class="form-horizontal" action="<?= base_url() . "solicitacao/encerrar" ?>">
             <input type="hidden" name="solicitacao" value="<?= "{$id_solicitacao}" ?>" />
