@@ -1,12 +1,11 @@
 
 <script type="text/javascript" src="<?= base_url('static/jquery-mask-plugin/js/jquery.mask.min.js') ?>"></script>
 <script type="text/javascript" src="<?= base_url('static/datatables/js/jquery.dataTables.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.bootstrap.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.jqueryui.min.js') ?>"></script>
 <script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/dataTables.responsive.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/responsive.bootstrap.js') ?>"></script>
 
-<link href="<?= base_url('static/datatables/css/dataTables.bootstrap.min.css') ?>" rel="stylesheet">
-<link href="<?= base_url('static/datatables-responsive/css/responsive.bootstrap.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/datatables/css/dataTables.jqueryui.min.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/datatables-responsive/css/responsive.jqueryui.css') ?>" rel="stylesheet">
 
 <script type="text/javascript">
 
@@ -115,19 +114,20 @@
                 url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
             },
             columns: [
-                {"data": "id"},
-                {"data": "empresa"},
-                {"data": "endereco"},
-                {"data": "telefone_fixo"},
-                {"data": "telefone_celular"},
                 {
-                    "data": null,
+                    data: null,
+                    orderable: false,
                     render: function (data) {
                         var html = '<button name="editar" empresa="' + data.id + '"><?= $edit_businesses ?></button>';
                         html += '<button name="excluir" empresa="' + data.id + '"><?= $del_businesses ?></button>';
                         return html;
                     }
-                }
+                },
+                {data: "id"},
+                {data: "empresa"},
+                {data: "endereco"},
+                {data: "telefone_fixo"},
+                {data: "telefone_celular"}
             ]
         }).on('click', 'tr', function () {
             if ($(this).hasClass('selected')) {

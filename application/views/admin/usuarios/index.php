@@ -2,13 +2,12 @@
 <script type="text/javascript" src="<?= base_url('static/jquery-mask-plugin/js/jquery.mask.min.js') ?>"></script>
 <script type="text/javascript" src="<?= base_url('static/bootstrap-simple-multiselect/js/bootstrap-transfer.js') ?>"></script>
 <script type="text/javascript" src="<?= base_url('static/datatables/js/jquery.dataTables.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.bootstrap.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.jqueryui.min.js') ?>"></script>
 <script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/dataTables.responsive.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/responsive.bootstrap.js') ?>"></script>
 
 <link href="<?= base_url('static/bootstrap-simple-multiselect/css/bootstrap-transfer.css') ?>" rel="stylesheet">
-<link href="<?= base_url('static/datatables/css/dataTables.bootstrap.min.css') ?>" rel="stylesheet">
-<link href="<?= base_url('static/datatables-responsive/css/responsive.bootstrap.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/datatables/css/dataTables.jqueryui.min.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/datatables-responsive/css/responsive.jqueryui.css') ?>" rel="stylesheet">
 
 <script type="text/javascript">
 
@@ -186,6 +185,7 @@
             columns: [
                 {
                     data: null,
+                    orderable: false,
                     ordering: false,
                     render: function (data) {
                         var html = '<button type="button" name="editar" usuario_id="' + data.id + '"><?= $edit_user ?></button>';
@@ -194,11 +194,11 @@
                         return html;
                     }
                 },
-                {"data": "id"},
-                {"data": "nome"},
-                {"data": "usuario"},
-                {"data": "perfil"},
-                {"data": "email"}
+                {data: "id"},
+                {data: "nome"},
+                {data: "usuario"},
+                {data: "perfil"},
+                {data: "email"}
             ]
         });
 

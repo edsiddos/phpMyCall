@@ -62,14 +62,13 @@
                 "bower_components/bootstrap-select/dist/js/i18n/defaults-pt_BR.min.js"
             ],
             "datatables": [
-                "bower_components/datatables/media/css/dataTables.bootstrap.min.css",
-                "bower_components/datatables/media/js/dataTables.bootstrap.min.js",
+                "bower_components/datatables/media/css/dataTables.jqueryui.min.css",
+                "bower_components/datatables/media/js/dataTables.jqueryui.min.js",
                 "bower_components/datatables/media/js/jquery.dataTables.min.js"
             ],
             "datatables-responsive": [
-                "bower_components/datatables-responsive/css/responsive.bootstrap.css",
-                "bower_components/datatables-responsive/js/dataTables.responsive.js",
-                "bower_components/datatables-responsive/js/responsive.bootstrap.js"
+                "bower_components/datatables-responsive/css/responsive.jqueryui.css",
+                "bower_components/datatables-responsive/js/dataTables.responsive.js"
             ],
             "jquery": [
                 "bower_components/jquery/dist/jquery.min.js"

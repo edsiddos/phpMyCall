@@ -1,11 +1,10 @@
 
 <script type="text/javascript" src="<?= base_url('static/datatables/js/jquery.dataTables.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.bootstrap.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.jqueryui.min.js') ?>"></script>
 <script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/dataTables.responsive.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/responsive.bootstrap.js') ?>"></script>
 
-<link href="<?= base_url('static/datatables/css/dataTables.bootstrap.min.css') ?>" rel="stylesheet">
-<link href="<?= base_url('static/datatables-responsive/css/responsive.bootstrap.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/datatables/css/dataTables.jqueryui.min.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/datatables-responsive/css/responsive.jqueryui.css') ?>" rel="stylesheet">
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -34,13 +33,13 @@
                 url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
             },
             columns: [
-                {"data": "abertura"},
-                {"data": "projeto"},
-                {"data": "problema"},
-                {"data": "prioridade"},
-                {"data": "solicitante"},
-                {"data": "atendente"},
-                {"data": "num_arquivos"}
+                {data: "abertura"},
+                {data: "projeto"},
+                {data: "problema"},
+                {data: "prioridade"},
+                {data: "solicitante"},
+                {data: "atendente"},
+                {data: "num_arquivos"}
             ]
         }).on('click', 'tr', function () {
             var data = solicitacoes_abertas.row(this).data();
@@ -68,13 +67,13 @@
                 url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
             },
             columns: [
-                {"data": "abertura"},
-                {"data": "projeto"},
-                {"data": "problema"},
-                {"data": "prioridade"},
-                {"data": "solicitante"},
-                {"data": "atendente"},
-                {"data": "num_arquivos"}
+                {data: "abertura"},
+                {data: "projeto"},
+                {data: "problema"},
+                {data: "prioridade"},
+                {data: "solicitante"},
+                {data: "atendente"},
+                {data: "num_arquivos"}
             ]
         }).on('click', 'tr', function () {
             var data = solicitacoes_atendimentos.row(this).data();
