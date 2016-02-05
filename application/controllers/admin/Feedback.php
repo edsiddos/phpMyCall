@@ -31,7 +31,7 @@ class Feedback extends Admin_Controller {
      */
     public function __construct() {
         parent::__construct('feedback');
-        redirect("login/index");
+        $this->load->model('feedback_model', 'model');
     }
 
     /**
@@ -103,7 +103,9 @@ class Feedback extends Admin_Controller {
             $order = filter_input(INPUT_POST, 'order', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
             $search = filter_input(INPUT_POST, 'search', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 
-            $order_by = "{$columns[$order[0]['column']]['data']} {$order[0]['dir']}";
+            $column = $order[0]['column'] == 0 ? 1 : $order[0]['column'];
+
+            $order_by = "{$columns[$column]['data']} {$order[0]['dir']}";
 
             $array['draw'] = (empty($draw) ? 1 : $draw);
             $array = $this->model->get_dados_tipo_feedback($search['value'], $order_by, $limit, $offset);
