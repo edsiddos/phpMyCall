@@ -43,8 +43,7 @@
                 type: 'post',
                 success: function (data) {
                     $('textarea[name=text_projeto]').val(data.descricao_projeto);
-                    multi.setOrigin(data.usuarios);
-                    multi.setDestiny(data.participantes);
+                    $multi.set_values(data.participantes);
                 }
             });
         });
@@ -158,7 +157,7 @@
     </div>
 
     <div id="usuarios_projeto">
-        <div id="relacao_usuarios"></div>
+        <div id="relacao_usuarios" style="height: 300px"></div>
     </div>
 
 </form>

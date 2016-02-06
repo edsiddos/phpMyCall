@@ -41,8 +41,13 @@ class Projetos_problemas extends Admin_Controller {
 
         if (Menu::possue_permissao($perfil, $permissao)) {
             $this->load->helper('form');
+            $nivel = $_SESSION['nivel'];
 
-            $this->load_view(array('projetos_problemas/index', 'projetos_problemas/form'));
+            $vars = array(
+                'usuarios' => $this->model->relacao_usuarios($nivel)
+            );
+
+            $this->load_view(array('projetos_problemas/index', 'projetos_problemas/form'), $vars);
         } else {
             redirect('main');
         }
@@ -111,24 +116,11 @@ class Projetos_problemas extends Admin_Controller {
 
         if (Menu::possue_permissao($perfil, $permissao)) {
             $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_STRING, FILTER_FLAG_EMPTY_STRING_NULL);
-            $nivel = $_SESSION['nivel'];
 
             $id = $this->model->get_id_projeto($nome);
 
-            $usuarios = $this->model->relacao_usuarios($nivel);
-            $participantes = $this->model->get_relacao_participantes($id);
             $vars = $this->model->get_descricao_projeto($id);
-
-            $vars['usuarios'] = array();
-            $vars['participantes'] = array();
-
-            foreach ($usuarios as $values) {
-                if (in_array($values ['value'], $participantes)) {
-                    $vars['participantes'][] = $values;
-                } else {
-                    $vars['usuarios'][] = $values;
-                }
-            }
+            $vars['participantes'] = $this->model->get_relacao_participantes($id);
 
             $this->response($vars);
         }

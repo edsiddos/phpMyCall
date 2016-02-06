@@ -101,7 +101,7 @@ class Projetos_problemas_model extends CI_Model {
      * @param int $nivel Nivel de permissão do perfil
      */
     public function relacao_usuarios($nivel) {
-        $this->db->select("usuario.id AS value, CONCAT(usuario.nome, ' - ', perfil.perfil) AS name")->from('phpmycall.usuario');
+        $this->db->select("usuario.id AS value, CONCAT(usuario.nome, ' - ', perfil.perfil) AS content")->from('phpmycall.usuario');
         $this->db->join('phpmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
         $result = $this->db->where("perfil.nivel <= {$nivel}")->get()->result_array();
 

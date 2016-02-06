@@ -14,6 +14,8 @@ $route = array(
     'horarios/(.+)' => 'admin/horarios/$1',
     'main' => 'admin/main/index',
     'main/(.+)' => 'admin/main/$1',
+    'projetos_problemas' => 'admin/projetos_problemas/index',
+    'projetos_problemas/(.+)' => 'admin/projetos_problemas/$1',
     'usuarios' => 'admin/usuarios/index',
     'usuarios/(.+)' => 'admin/usuarios/$1',
 );

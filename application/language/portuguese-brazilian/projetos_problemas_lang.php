@@ -24,6 +24,8 @@ $lang = array(
     // index.php
     'add_project_problem' => 'Cadastrar projeto tipo de problema',
     'button_add_project_problem' => 'Cadastrar',
+    'button_edit_project_problem' => 'Editar',
+    'button_delete_project_problem' => 'Excluir',
     'update_project_problem' => 'Alterar projeto tipo de problema',
     'button_update_project_problem' => 'Alterar',
     'cancel_add_or_update_project_problem' => 'Cancelar',
@@ -34,6 +36,9 @@ $lang = array(
     'title_dialog_confirm_remove_project_problem' => 'Alerta de remoção',
     'info_before_remove_project_problem' => 'Deseja realmente remover o projeto / tipo de problema?',
     'title_dialog_attention' => 'Atenção',
+    'label_column_id_project' => 'ID Projeto',
+    'label_column_name_project' => 'Projeto',
+    'label_column_name_problem' => 'Problema',
     // form.php
     'title_tab_project_problem' => 'Projeto tipo problema',
     'title_tab_users' => 'Participantes',
