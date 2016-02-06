@@ -116,7 +116,7 @@
          */
         var cadastrar = function () {
             // Seleciona os projetos escolhidos
-            //multi.destinySelect();
+            $('select[name="input_projetos[]"] option').prop('selected', true);
 
             $.ajax({
                 url: '<?= base_url() . 'usuarios/novo_usuario' ?>',
@@ -143,7 +143,7 @@
          */
         var alterar = function () {
             // Seleciona os projetos escolhidos
-            //multi.destinySelect();
+            $('select[name="input_projetos[]"] option').prop('selected', true);
 
             $.ajax({
                 url: '<?= base_url() . 'usuarios/atualiza_usuario' ?>',
