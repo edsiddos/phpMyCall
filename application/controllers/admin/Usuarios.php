@@ -292,4 +292,48 @@ class Usuarios extends Admin_Controller {
         }
     }
 
+    /**
+     * Formulario de alteraçao de senha.
+     */
+    public function alterar_senha() {
+        $this->load->helper('form');
+
+        $this->load_view('usuarios/alterar');
+    }
+
+    /**
+     * Realiza a alteraçao de senha
+     */
+    public function nova_senha() {
+        $nova_senha = filter_input(INPUT_POST, 'nova_senha');
+        $redigite = filter_input(INPUT_POST, 'redigite');
+
+        if (strlen($nova_senha) >= 5 && (strcmp($nova_senha, $redigite) === 0)) {
+            $result = $_SESSION;
+            $usuario = $_SESSION['id'];
+
+            /*
+             * Atualiza senha em caso de sucesso gera mensagem de sucesso
+             */
+            if ($this->model->atualiza_senha($usuario, $nova_senha)) {
+                $result['situacao'] = 'Senha alterada com sucesso.';
+                $_SESSION['msg_sucesso'] = $result['situacao'];
+            } else {
+                $result['situacao'] = 'Erro ao alterar senha.';
+                $_SESSION['msg_erro'] = $result['situacao'];
+            }
+
+            /*
+             * Gera log da operaçao realizada
+             */
+            $result['status'] = 'Usuarios/nova_senha';
+            Logs::gravar($result, $result ['id']);
+        } else {
+            $_SESSION['msg_erro'] = 'Erro ao alterar senha. Digite uma senha com mais de 5 caracteres' .
+                    (strcmp($nova_senha, $redigite) ? ', senhas digitadas não conferem.' : '');
+        }
+
+        redirect("usuarios/alterar_senha");
+    }
+
 }

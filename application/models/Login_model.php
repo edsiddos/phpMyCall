@@ -50,19 +50,4 @@ class Login_model extends CI_Model {
         return $query->row_array();
     }
 
-    /**
-     * Realiza alteração de senha.
-     * @param int $usuario ID do usuario
-     * @param string $senha Nova senha
-     * @return boolean Retorna <b>True</b> sucesso, <b>False</b> erro
-     */
-    public function atualiza_senha($usuario, $senha) {
-        $array = array(
-            'senha' => sha1(md5($senha))
-        );
-
-        $this->db->where('id', $usuario);
-        return $this->db->update('phpmycall.usuario', $array);
-    }
-
 }

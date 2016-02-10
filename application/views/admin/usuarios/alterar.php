@@ -15,7 +15,7 @@
     ?>
 
     <?php
-    echo form_open('login/nova_senha', array('method' => 'post', 'name' => 'alterar'));
+    echo form_open('usuarios/nova_senha', array('method' => 'post', 'name' => 'alterar'));
     echo form_fieldset('Alterar Senha');
 
     $label_attr = array('class' => 'control-label col-md-4');
