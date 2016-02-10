@@ -1,11 +1,11 @@
 
-        </div>
+</div>
 
-        <footer class="footer">
-            <div class="container">
-                <p class="text-muted text-center">phpMyCall</p>
-            </div>
-        </footer>
+<footer class="footer">
+    <div class="container-fluid">
+        <p class="text-muted text-center">phpMyCall</p>
+    </div>
+</footer>
 
-    </body>
+</body>
 </html>

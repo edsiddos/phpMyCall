@@ -1,5 +1,5 @@
 
-<script type="text/javascript" src="<?= base_url() . 'static/js/tinymce/tinymce.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/tinymce/tinymce.min.js') ?>"></script>
 
 <script type="text/javascript">
 
@@ -21,8 +21,8 @@
                         var cliente = $("select[name='select_solicitante'] option:selected").val();
                         var tecnico = $("select[name='select_tecnico'] option:selected").val();
 
-                        $("select[name='select_solicitante']").find('option:not(option[value=""])').remove();
-                        $("select[name='select_tecnico']").find('option:not(option[value=""])').remove();
+                        $("select[name='select_solicitante']").find('option:not(option[value="0"])').remove();
+                        $("select[name='select_tecnico']").find('option:not(option[value="0"])').remove();
 
                         $.each(data, function (key, value) {
                             $("select[name='select_solicitante']").append('<option value="' + value.id + '" ' + (cliente == value.id ? "selected" : "") + '>' + value.nome + '</option>');
@@ -169,7 +169,7 @@
                     <?= $label_requester_request ?>:
                 </label>
                 <div class="col-md-8">
-                    <select name="select_solicitante" required class="selectpicker form-control" id="select_solicitante">
+                    <select name="select_solicitante" required class="selectpicker form-control" data-live-search="true" id="select_solicitante">
                         <option value="0" disabled selected>
                             <?= $label_requester_request ?>
                         </option>
@@ -202,7 +202,7 @@
             <div class="col-xs-6 form-group">
                 <label for="select_tecnico" class="col-md-4 control-label"><?= $label_technician_resquest ?>:</label>
                 <div class="col-md-8">
-                    <select name="select_tecnico" class="selectpicker form-control" id="select_tecnico">
+                    <select name="select_tecnico" class="selectpicker form-control" data-live-search="true" id="select_tecnico">
                         <option value="0" disabled selected><?= $label_technician_resquest ?></option>
                     </select>
                 </div>

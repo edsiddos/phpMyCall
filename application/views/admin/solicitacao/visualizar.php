@@ -1,5 +1,5 @@
 
-<script type="text/javascript" src="<?= base_url() . 'static/js/tinymce/tinymce.min.js' ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/tinymce/tinymce.min.js') ?>"></script>
 
 <script type="text/javascript">
 
