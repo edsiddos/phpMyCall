@@ -1,16 +1,17 @@
 {
-	"description": "The CodeIgniter framework",
-	"name": "codeigniter/framework",
-	"type": "project",
-	"homepage": "http://codeigniter.com",
-	"license": "MIT",
-	"support": {
-		"forum": "http://forum.codeigniter.com/",
-		"wiki": "https://github.com/bcit-ci/CodeIgniter/wiki",
-		"irc": "irc://irc.freenode.net/codeigniter",
-		"source": "https://github.com/bcit-ci/CodeIgniter"
-	},
-	"require": {
-		"php": ">=5.2.4"
-	}
+    "name": "edsiddos/phpmycall",
+    "description": "Sistema de help desk implementado em PHP 5.",
+    "type": "project",
+    "require": {
+        "ext-apcu": "^4.0",
+        "php": "^5.5.9"
+    },
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Ednei Leite da Silva",
+            "email": "edsiddos@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
 }
