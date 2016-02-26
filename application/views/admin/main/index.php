@@ -1,85 +1,12 @@
 
-<script type="text/javascript" src="<?= base_url('static/datatables/js/jquery.dataTables.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.jqueryui.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/dataTables.responsive.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-table/js/bootstrap-table.min.js') ?>"></script>
 
-<link href="<?= base_url('static/datatables/css/dataTables.jqueryui.min.css') ?>" rel="stylesheet">
-<link href="<?= base_url('static/datatables-responsive/css/responsive.jqueryui.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/bootstrap-table/css/bootstrap-table.min.css') ?>" rel="stylesheet">
 
 <script type="text/javascript">
     $(document).ready(function () {
 
-        $('#accordion').accordion({
-            collapsible: true
-        });
-
-        /****************************************************************/
-
-        var solicitacoes_abertas = $('#solicitacoes_abertas').DataTable({
-            ordering: true,
-            destroy: true,
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            ajax: {
-                url: "<?= base_url('solicitacao/lista_solicitacoes') ?>",
-                type: "POST",
-                data: function (data) {
-                    data.situacao = 1;
-                    data.prioridade = 0;
-                }
-            },
-            language: {
-                url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
-            },
-            columns: [
-                {data: "abertura"},
-                {data: "projeto"},
-                {data: "problema"},
-                {data: "prioridade"},
-                {data: "solicitante"},
-                {data: "atendente"},
-                {data: "num_arquivos"}
-            ]
-        }).on('click', 'tr', function () {
-            var data = solicitacoes_abertas.row(this).data();
-
-            $(location).attr('href', '<?= base_url('solicitacao/visualizar') ?>/' + data.solicitacao);
-        });
-
-        /****************************************************************/
-
-        var solicitacoes_atendimentos = $('#solicitacoes_atendimentos').DataTable({
-            ordering: true,
-            destroy: true,
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            ajax: {
-                url: "<?= base_url('solicitacao/lista_solicitacoes') ?>",
-                type: "POST",
-                data: function (data) {
-                    data.situacao = 2;
-                    data.prioridade = 0;
-                }
-            },
-            language: {
-                url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
-            },
-            columns: [
-                {data: "abertura"},
-                {data: "projeto"},
-                {data: "problema"},
-                {data: "prioridade"},
-                {data: "solicitante"},
-                {data: "atendente"},
-                {data: "num_arquivos"}
-            ]
-        }).on('click', 'tr', function () {
-            var data = solicitacoes_atendimentos.row(this).data();
-
-            $(location).attr('href', '<?= base_url('solicitacao/visualizar') ?>/' + data.solicitacao);
-        });
+        $('#accordion').collapse({});
 
     });
 </script>
@@ -87,51 +14,79 @@
 
 <div class="container">
 
-    <div id="accordion">
-        <h3>
-            <?= $open_requests ?>
-        </h3>
-        <div>
-
-            <table id="solicitacoes_abertas" class="display responsive nowrap" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th><?= $open ?></th>
-                        <th><?= $product ?></th>
-                        <th><?= $label ?></th>
-                        <th><?= $priority ?></th>
-                        <th><?= $requester ?></th>
-                        <th><?= $attendant ?></th>
-                        <th><?= $n_files ?></th>
-                    </tr>
-                </thead>
-            </table>
-
-        </div>
-
-        <h3>
-            <?= $request_for_service ?>
-        </h3>
-        <div>
-
-            <div style="height: 350px;">
-                <table id="solicitacoes_atendimentos" class="display responsive nowrap" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th><?= $open ?></th>
-                            <th><?= $product ?></th>
-                            <th><?= $label ?></th>
-                            <th><?= $priority ?></th>
-                            <th><?= $requester ?></th>
-                            <th><?= $attendant ?></th>
-                            <th><?= $n_files ?></th>
-                        </tr>
-                    </thead>
-                </table>
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingAbertos">
+                <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#abertos" aria-expanded="true" aria-controls="abertos">
+                        <?= $open_requests ?>
+                    </a>
+                </h4>
             </div>
+            <div id="abertos" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingAbertos">
+                <div class="panel-body">
 
+                    <table
+                        id="solicitacoes_abertas"
+                        data-toggle="table"
+                        data-url="<?= base_url('solicitacao/lista_solicitacoes') ?>"
+                        data-height="400"
+                        data-side-pagination="server"
+                        data-pagination="true"
+                        data-page-list="[5, 10, 20, 50, 100, 200]"
+                        data-search="true">
+                        <thead>
+                            <tr>
+                                <th data-field="abertura"><?= $open ?></th>
+                                <th data-field="projeto"><?= $product ?></th>
+                                <th data-field="problema"><?= $label ?></th>
+                                <th data-field="prioridade"><?= $priority ?></th>
+                                <th data-field="solicitante"><?= $requester ?></th>
+                                <th data-field="atendente"><?= $attendant ?></th>
+                                <th data-field="num_arquivos"><?= $n_files ?></th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
         </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingAtendimentos">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#atendimentos" aria-expanded="false" aria-controls="atendimentos">
+                        <?= $request_for_service ?>
+                    </a>
+                </h4>
+            </div>
+            <div id="atendimentos" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingAtendimentos">
+                <div class="panel-body">
 
+                    <table
+                        id="solicitacoes_atendimentos"
+                        data-toggle="table"
+                        data-url="<?= base_url('solicitacao/lista_solicitacoes') ?>"
+                        data-height="400"
+                        data-side-pagination="server"
+                        data-pagination="true"
+                        data-page-list="[5, 10, 20, 50, 100, 200]"
+                        data-search="true">
+                        <thead>
+                            <tr>
+                                <th data-field="abertura"><?= $open ?></th>
+                                <th data-field="projeto"><?= $product ?></th>
+                                <th data-field="problema"><?= $label ?></th>
+                                <th data-field="prioridade"><?= $priority ?></th>
+                                <th data-field="solicitante"><?= $requester ?></th>
+                                <th data-field="atendente"><?= $attendant ?></th>
+                                <th data-field="num_arquivos"><?= $n_files ?></th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>

@@ -12,8 +12,6 @@
         <link href="<?= base_url('static/awesome-bootstrap-checkbox/css/awesome-bootstrap-checkbox.css') ?>" rel="stylesheet" />
         <!-- FONTAWESOME STYLES-->
         <link href="<?= base_url('static/font-awesome/css/font-awesome.min.css') ?>" rel="stylesheet" />
-        <!-- JQuery UI -->
-        <link href="<?= base_url('static/jquery-ui/css/jquery-ui.min.css') ?>" rel="stylesheet" />
         <!-- CUSTOM STYLES-->
         <link href="<?= base_url('static/custom.css') ?>" rel="stylesheet" />
         <link href="<?= base_url('static/mycallstyle/css/jquery.ui.icons.theme.css') ?>" rel="stylesheet" />
@@ -26,8 +24,6 @@
         <script src="<?= base_url('static/bootstrap/js/bootstrap.min.js') ?>"></script>
         <script src="<?= base_url('static/bootstrap-select/js/bootstrap-select.min.js') ?>"></script>
         <script src="<?= base_url('static/bootstrap-select/js/defaults-pt_BR.min.js') ?>"></script>
-        <!-- JQUERY UI -->
-        <script src="<?= base_url('static/jquery-ui/js/jquery-ui.min.js') ?>"></script>
         <!-- CUSTOM SCRIPTS -->
         <script src="<?= base_url('static/aguarde/js/aguarde.js') ?>"></script>
 
