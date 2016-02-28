@@ -206,11 +206,11 @@ class Solicitacao_model extends CI_Model {
 
         $this->db->limit($limit, $offset);
 
-        $result['data'] = $this->db->get()->result_array();
+        $result['rows'] = $this->db->get()->result_array();
 
-        foreach ($result['data'] as $key => $values) {
+        foreach ($result['rows'] as $key => $values) {
             $data = new DateTime($values['abertura']);
-            $result['data'][$key]['abertura'] = $data->format('d/m/Y H:i:s');
+            $result['rows'][$key]['abertura'] = $data->format('d/m/Y H:i:s');
         }
 
         return $result;
@@ -270,7 +270,7 @@ class Solicitacao_model extends CI_Model {
         }
 
         $result['recordsFiltered'] = $this->db->count_all_results();
-        $result['recordsTotal'] = $this->db->count_all_results('phpmycall.solicitacao');
+        $result['total'] = $this->db->count_all_results('phpmycall.solicitacao');
 
         return $result;
     }
