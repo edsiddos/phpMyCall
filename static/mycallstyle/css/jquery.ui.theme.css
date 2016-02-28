@@ -1,20 +1,20 @@
 .ui-button-text-icon-primary .ui-button-icon-primary,
 .ui-button-text-icons .ui-button-icon-primary,
 .ui-button-icons-only .ui-button-icon-primary {
-    left: 2px; }
+  left: 2px; }
 
 .ui-button-icon-only .ui-icon {
-    margin-left: -10px; }
+  margin-left: -10px; }
 
 .ui-spinner-button {
-    width: 22px; }
+  width: 22px; }
 
 .ui-datepicker .ui-datepicker-title select {
-    font-size: 13px;
-    margin: auto; }
+  font-size: 13px;
+  margin: auto; }
 
 .ui-datepicker .ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span {
-    margin: 0px 0px;
-    padding: 4px 5px;
-    left: auto;
-    top: auto; }
+  margin: 1.5px;
+  padding: 2px;
+  left: auto;
+  top: auto; }

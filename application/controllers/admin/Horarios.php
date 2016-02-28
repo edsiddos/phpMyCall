@@ -39,6 +39,7 @@ class Horarios extends Admin_Controller {
      */
     public function manter_feriados() {
         $permissao = 'horarios/manter_feriados';
+        $this->translate ['title_window'] = $this->translate['title_window_holiday'];
 
         if (Menu::possue_permissao($_SESSION['perfil'], $permissao)) {
             $this->load_view("horarios/feriados");
@@ -163,6 +164,7 @@ class Horarios extends Admin_Controller {
 
         if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $this->load->helper('form');
+            $this->translate ['title_window'] = $this->translate['title_window_hour'];
 
             $vars = array(
                 'expediente' => $this->model->get_expediente()

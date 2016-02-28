@@ -20,10 +20,10 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 $lang = array(
-    'title_window' => 'Empresas',
     /*
      * Mensagem enviadas pelo expediente
      */
+    'title_window_hour' => 'Manter expediente',
     'update_hour_success' => 'Horário alterado com sucesso.',
     'update_hour_fail' => 'Falha ao alterar horário.',
     'invalid_hour_format' => 'Formato ou Horário informado inválido.',
@@ -46,8 +46,8 @@ $lang = array(
     'holiday_replicate_next_years' => 'Data fixa (este feriado será replicado nos anos seguintes)',
     'dialog_option' => 'Feriados',
     'option_holiday_edit' => 'Alterar',
-    'option_holiday_remove' => 'Alterar',
-    'option_holiday_close' => 'Alterar',
+    'option_holiday_remove' => 'Excluir',
+    'option_holiday_close' => 'Cancelar',
     'option_text_dialog' => 'Qual operação deseja realizar?',
     'show_holiday' => 'Mostrar Feriados',
     'show_calendar' => 'Mostrar Calendário',
