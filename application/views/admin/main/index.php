@@ -1,5 +1,6 @@
 
 <script type="text/javascript" src="<?= base_url('static/bootstrap-table/js/bootstrap-table.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-table/js/bootstrap-table-locale-all.min.js') ?>"></script>
 
 <link href="<?= base_url('static/bootstrap-table/css/bootstrap-table.min.css') ?>" rel="stylesheet">
 
@@ -33,7 +34,9 @@
                         data-height="400"
                         data-side-pagination="server"
                         data-pagination="true"
+                        data-method="post"
                         data-page-list="[5, 10, 20, 50, 100, 200]"
+                        data-locale="pt-BR"
                         data-search="true">
                         <thead>
                             <tr>
@@ -68,8 +71,10 @@
                         data-url="<?= base_url('solicitacao/lista_solicitacoes') ?>"
                         data-height="400"
                         data-side-pagination="server"
+                        data-method="post"
                         data-pagination="true"
                         data-page-list="[5, 10, 20, 50, 100, 200]"
+                        data-locale="pt-BR"
                         data-search="true">
                         <thead>
                             <tr>

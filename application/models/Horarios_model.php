@@ -44,7 +44,11 @@ class Horarios_model extends CI_Model {
         $return = array();
 
         foreach ($result as $values) {
-            $return[$values['dia']] = array($mostrar, '', $values['nome']);
+            $return[$values['dia']] = array(
+                'enabled' => $mostrar,
+                'classes' => '',
+                'tooltip' => $values['nome']
+            );
         }
 
         return $return;

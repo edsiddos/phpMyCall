@@ -1,10 +1,37 @@
 
+<script type="text/javascript" src="<?= base_url('static/bootbox.js/js/bootbox.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-datepicker/js/bootstrap-datepicker.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-datepicker/js/bootstrap-datepicker.pt-BR.min.js') ?>"></script>
+
+<link href="<?= base_url('static/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/bootstrap-datepicker/css/bootstrap-datepicker3.standalone.min.css') ?>" rel="stylesheet">
+
 <script type="text/javascript">
 
     var Calendario = function () {
 
         var array_date = [];
         var mostrar = false;
+        var $calendario = null;
+
+        var template_feriados_dialog = '\
+            <div class="form-horizontal">\
+                <input type="hidden" name="data_feriado" id="data_feriado" />\
+                <div class="form-group">\
+                    <label class="col-md-4 control-label" for="input_nome"><?= $holiday_name ?></label>\
+                    <div class="col-md-8">\
+                        <input id="input_nome" name="input_nome" placeholder="<?= $holiday_name ?>" class="form-control input-md" type="text" maxlength="50">\
+                    </div>\
+                </div>\
+                <div class="form-group">\
+                    <div class="col-md-12">\
+                        <div class="checkbox checkbox-primary">\
+                            <input type="checkbox" id="input_data_fixa" name="input_data_fixa">\
+                            <label for="input_data_fixa"><?= $holiday_replicate_next_years ?></label>\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>';
 
         this.mostrarCalendario = function () {
             $.ajax({
@@ -19,7 +46,12 @@
 
             mostrar = true;
 
-            geraDatepicker();
+            if ($calendario === null) {
+                geraDatepicker();
+                eventoSelecionaData();
+            } else {
+                geraDatepicker();
+            }
         };
 
         this.mostrarFeriados = function () {
@@ -35,35 +67,131 @@
 
             mostrar = false;
 
-            geraDatepicker();
+            if ($calendario === null) {
+                geraDatepicker();
+                eventoSelecionaData();
+            } else {
+                geraDatepicker();
+            }
+        };
+
+        var formataData = function (date) {
+            var ano = date.getFullYear();
+            var mes = date.getMonth() + 1;
+            mes = mes < 10 ? ('0' + mes) : mes;
+            var dia = date.getDate();
+            dia = dia < 10 ? ('0' + dia) : dia;
+
+            return (ano + '-' + mes + '-' + dia);
         };
 
         var geraDatepicker = function () {
-            $("#calendario").datepicker({
-                buttonImageOnly: true,
-                dateFormat: 'yy-mm-dd',
-                dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
-                dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'],
-                dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
-                monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-                monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                nextText: 'Próximo',
-                prevText: 'Anterior',
-                changeMonth: true,
-                changeYear: true,
-                numberOfMonths: [3, 4],
-                onSelect: function (date, inst) {
-                    if ($("#mostrar_feriados").prop('disabled')) {
-                        $("#opcao_feriados_dialog").dialog('open');
-                    } else {
-                        $("#feriados_dialog").dialog('open');
-                    }
 
-                    $("input[name='data_feriado']").val(date);
-                },
+            $calendario = $("#calendario").datepicker({
+                format: "yy-mm-dd",
+                language: "pt-BR",
+                autoclose: true,
                 beforeShowDay: function (date) {
-                    var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-                    return (typeof array_date[string] === 'undefined' ? [mostrar] : array_date[string]);
+                    var string = formataData(date);
+
+                    return (typeof array_date[string] === 'undefined' ? {enabled: mostrar} : array_date[string]);
+                }
+            });
+        };
+
+        var eventoSelecionaData = function () {
+            $calendario.on('changeDate', function (date) {
+                var data = date.date;
+
+                if ($("#mostrar_feriados").prop('disabled')) {
+                    opcao_feriados_dialog();
+                } else {
+                    feriados_dialog();
+                }
+
+                $("input[name='data_feriado']").val(data);
+            });
+        };
+
+        var feriados_dialog = function () {
+            bootbox.dialog({
+                title: '<?= $dialog_holiday ?>',
+                backdrop: true,
+                message: template_feriados_dialog,
+                buttons: {
+                    add_holiday: {
+                        label: "<?= $add_holiday ?>",
+                        className: "btn-success",
+                        callback: function () {
+                            var url = '<?= base_url() ?>' + ($("#mostrar_feriados").prop('disabled') ? 'horarios/altera_feriados' : 'horarios/cadastra_feriados');
+                            $.ajax({
+                                url: url,
+                                type: 'POST',
+                                data: 'data=' + $('#data_feriado').val() + '&nome=' + $('#input_nome').val() +
+                                        '&replicar=' + ($('#input_data_fixa:checked').length > 0 ? 'true' : 'false'),
+                                success: function (html) {
+                                    $("#calendario").datepicker("destroy");
+
+                                    if ($("#mostrar_feriados").prop('disabled')) {
+                                        calendario.mostrarFeriados();
+                                    } else {
+                                        calendario.mostrarCalendario();
+                                    }
+
+                                    $('#input_nome').val('');
+                                    $('#input_data_fixa:checked').prop('checked', false);
+                                }
+                            });
+                        }
+                    },
+                    cancel_holiday: {
+                        label: "<?= $cancel_holiday ?>",
+                        callback: function () {
+                            $('#input_nome').val('');
+                            $('#input_data_fixa:checked').prop('checked', false);
+                        }
+                    }
+                }
+            });
+        };
+
+        var opcao_feriados_dialog = function () {
+            bootbox.dialog({
+                title: '<?= $dialog_option ?>',
+                message: '<p><?= $option_text_dialog ?></p>',
+                buttons: {
+                    option_holiday_edit: {
+                        label: "<?= $option_holiday_edit ?>",
+                        callback: function () {
+                            $.ajax({
+                                url: '<?= base_url('horarios/get_feriado_dia') ?>',
+                                type: 'POST',
+                                data: 'dia=' + $('#data_feriado').val(),
+                                dataType: 'json',
+                                success: function (json) {
+                                    $('#input_nome').val(json.nome);
+                                    $('#input_data_fixa').prop('disabled', true);
+                                }
+                            });
+                        }
+                    },
+                    option_holiday_remove: {
+                        label: "<?= $option_holiday_remove ?>",
+                        callback: function () {
+                            $.ajax({
+                                url: '<?= base_url('horarios/delete_feriado') ?>',
+                                type: 'POST',
+                                data: 'data=' + $('#data_feriado').val(),
+                                success: function () {
+                                    $("#calendario").datepicker("destroy");
+                                    calendario.mostrarFeriados();
+                                }
+                            });
+                        }
+                    },
+                    option_holiday_close: {
+                        label: "<?= $option_holiday_close ?>"
+                    }
                 }
             });
         };
@@ -71,133 +199,23 @@
 
     var calendario = new Calendario();
 
-</script>
-
-<script type="text/javascript">
     $(document).ready(function () {
 
         calendario.mostrarCalendario();
 
-        $('#feriados_dialog').dialog({
-            autoOpen: false,
-            modal: true,
-            width: 500,
-            buttons: [
-                {
-                    text: "<?= $add_holiday ?>",
-                    icons: {
-                        primary: 'ui-icon-check'
-                    },
-                    click: function () {
-                        var url = '<?= base_url() ?>' + ($("#mostrar_feriados").prop('disabled') ? 'horarios/altera_feriados' : 'horarios/cadastra_feriados');
-                        $.ajax({
-                            url: url,
-                            type: 'POST',
-                            data: 'data=' + $('#data_feriado').val() + '&nome=' + $('#input_nome').val() +
-                                    '&replicar=' + ($('#input_data_fixa:checked').length > 0 ? 'true' : 'false'),
-                            success: function (html) {
-                                $("#calendario").datepicker("destroy");
-
-                                if ($("#mostrar_feriados").prop('disabled')) {
-                                    calendario.mostrarFeriados();
-                                } else {
-                                    calendario.mostrarCalendario();
-                                }
-
-                                $("#feriados_dialog").dialog('close');
-                                $('#input_nome').val('');
-                                $('#input_data_fixa:checked').prop('checked', false);
-                            }
-                        });
-                    }
-                },
-                {
-                    text: "<?= $cancel_holiday ?>",
-                    icons: {
-                        primary: 'ui-icon-close'
-                    },
-                    click: function () {
-                        $("#feriados_dialog").dialog('close');
-                        $('#input_nome').val('');
-                        $('#input_data_fixa:checked').prop('checked', false);
-                    }
-                }
-            ],
-            position: {my: "center center-150", of: window}
-        });
-
-        $('#opcao_feriados_dialog').dialog({
-            autoOpen: false,
-            modal: true,
-            buttons: [
-                {
-                    text: "<?= $option_holiday_edit ?>",
-                    icons: {
-                        primary: 'ui-icon-pencil'
-                    },
-                    click: function () {
-                        $("#opcao_feriados_dialog").dialog('close');
-
-                        $.ajax({
-                            url: '<?= base_url('horarios/get_feriado_dia') ?>',
-                            type: 'POST',
-                            data: 'dia=' + $('#data_feriado').val(),
-                            dataType: 'json',
-                            success: function (json) {
-                                $('#input_nome').val(json.nome);
-                                $('#input_data_fixa').prop('disabled', true);
-                                $("#feriados_dialog").dialog('open');
-                            }
-                        });
-                    }
-                },
-                {
-                    text: "<?= $option_holiday_remove ?>",
-                    icons: {
-                        primary: 'ui-icon-trash'
-                    },
-                    click: function () {
-                        $("#opcao_feriados_dialog").dialog('close');
-
-                        $.ajax({
-                            url: '<?= base_url('horarios/delete_feriado') ?>',
-                            type: 'POST',
-                            data: 'data=' + $('#data_feriado').val(),
-                            success: function () {
-                                $("#calendario").datepicker("destroy");
-                                calendario.mostrarFeriados();
-                            }
-                        });
-                    }
-                },
-                {
-                    text: "<?= $option_holiday_close ?>",
-                    icons: {
-                        primary: 'ui-icon-close'
-                    },
-                    click: function () {
-                        $("#opcao_feriados_dialog").dialog('close');
-                    }
-                }
-            ],
-            position: {my: "center center-150", of: window}
-        });
-
-        $("#mostrar_feriados").button().on('click', function () {
+        $("#mostrar_feriados").on('click', function () {
             $("#calendario").datepicker("destroy");
-            $("#mostrar_feriados").button({disabled: true});
-            $("#mostrar_calendario").button({disabled: false});
-            $('#input_data_fixa').prop('disabled', true);
+            $("#mostrar_feriados").attr({disabled: true});
+            $("#mostrar_calendario").attr({disabled: false});
+            $('#input_data_fixa').prop({disabled: true});
             calendario.mostrarFeriados();
         });
 
-        $("#mostrar_calendario").button({
-            disabled: true
-        }).on('click', function () {
+        $("#mostrar_calendario").on('click', function () {
             $("#calendario").datepicker("destroy");
-            $("#mostrar_calendario").button({disabled: true});
-            $("#mostrar_feriados").button({disabled: false});
-            $('#input_data_fixa').prop('disabled', false);
+            $("#mostrar_calendario").attr({disabled: true});
+            $("#mostrar_feriados").attr({disabled: false});
+            $('#input_data_fixa').prop({disabled: false});
             calendario.mostrarCalendario();
         });
     });
@@ -220,10 +238,10 @@
 
     <div class="well">
         <div class="botoes_mostrar">
-            <button id="mostrar_feriados" type="button">
+            <button id="mostrar_feriados" type="button" class="btn btn-default">
                 <?= $show_holiday ?>
             </button>
-            <button id="mostrar_calendario" type="button">
+            <button id="mostrar_calendario" type="button" class="btn btn-default" disabled>
                 <?= $show_calendar ?>
             </button>
         </div>
@@ -233,34 +251,11 @@
 
 </div>
 
-<div id="feriados_dialog" title="<?= $dialog_holiday ?>">
+<div id="feriados_dialog" title="">
 
-    <div class="form-horizontal">
-        <input type="hidden" name="data_feriado" id="data_feriado" />
 
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="input_nome"><?= $holiday_name ?></label>  
-            <div class="col-md-8">
-                <input id="input_nome" name="input_nome" placeholder="<?= $holiday_name ?>" class="form-control input-md" type="text" maxlength="50">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-12">
-
-                <div class="checkbox checkbox-primary">
-                    <input type="checkbox" id="input_data_fixa" name="input_data_fixa">
-                    <label for="input_data_fixa">
-                        <?= $holiday_replicate_next_years ?>
-                    </label>
-                </div>
-
-            </div>
-        </div>
-
-    </div>
 </div>
 
-<div id="opcao_feriados_dialog" title="<?= $dialog_option ?>">
-    <p><?= $option_text_dialog ?></p>
+<div id="opcao_feriados_dialog" title="">
+
 </div>
