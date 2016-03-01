@@ -81,7 +81,7 @@
         $('#feriados_dialog').dialog({
             autoOpen: false,
             modal: true,
-            width: 500,
+            width: '35%',
             buttons: [
                 {
                     text: "<?= $add_holiday ?>",
@@ -128,6 +128,7 @@
 
         $('#opcao_feriados_dialog').dialog({
             autoOpen: false,
+            width: '35%',
             modal: true,
             buttons: [
                 {

@@ -65,8 +65,10 @@ body {
 
 .header {background-color:#ffffff;border-width:0;}
 .header .navbar-collapse {background-color:#ffffff;}
-.btn,.form-control,.panel,.list-group,.well {border-radius:1px;box-shadow:0 0 0;}
+.btn,.form-control,.panel,.list-group,.well {border-radius:3px;box-shadow:0 0 0;}
 .form-control {border-color:#d7d7d7;}
+.btn-default {background-color: #e5e5e5; border: 1px solid #d2d2d2;}
+.btn-default:hover {border: 1px solid #D2D2D2; background: #DADADA;}
 .btn-primary {border-color:transparent;}
 .btn-primary,.label-primary,.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {background-color:#4285f4;}
 .btn-plus {background-color:#ffffff;border-width:1px;border-color:#dddddd;box-shadow:1px 1px 0 #999999;border-radius:3px;color:#666666;text-shadow:0 0 1px #bbbbbb;}
