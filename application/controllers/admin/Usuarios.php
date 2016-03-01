@@ -72,28 +72,25 @@ class Usuarios extends Admin_Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
-            $columns = filter_input(INPUT_POST, 'columns', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-            $draw = filter_input(INPUT_POST, 'draw', FILTER_SANITIZE_NUMBER_INT);
-            $limit = filter_input(INPUT_POST, 'length', FILTER_SANITIZE_NUMBER_INT);
-            $offset = filter_input(INPUT_POST, 'start', FILTER_SANITIZE_NUMBER_INT);
-            $order = filter_input(INPUT_POST, 'order', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-            $search = filter_input(INPUT_POST, 'search', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+            $limit = filter_input(INPUT_POST, 'limit', FILTER_SANITIZE_NUMBER_INT);
+            $offset = filter_input(INPUT_POST, 'offset', FILTER_SANITIZE_NUMBER_INT);
+            $sort = filter_input(INPUT_POST, 'sort', FILTER_SANITIZE_STRING);
+            $order = filter_input(INPUT_POST, 'order', FILTER_SANITIZE_STRING);
+            $search = filter_input(INPUT_POST, 'search', FILTER_SANITIZE_STRING);
 
             $nivel = $_SESSION['nivel'];
 
-            if (!empty($columns[$order[0]['column']]['data'])) {
-                $order_by = "{$columns[$order[0]['column']]['data']} {$order[0]['dir']}";
+            if (!empty($sort)) {
+                $order_by = "$sort $order";
             } else {
                 $order_by = "id asc";
             }
 
-            $records = $this->model->get_quantidades_usuarios($nivel, $search['value']);
+            $records = $this->model->get_quantidades_usuarios($nivel, $search);
 
             $return = array(
-                "draw" => empty($draw) ? 0 : $draw,
-                "recordsTotal" => $records['recordsTotal'],
-                "recordsFiltered" => $records['recordsFiltered'],
-                "data" => $this->model->get_usuarios($nivel, $search['value'], $order_by, $limit, $offset)
+                "total" => $records,
+                "rows" => $this->model->get_usuarios($nivel, $search, $order_by, $limit, $offset)
             );
 
             $this->response($return);

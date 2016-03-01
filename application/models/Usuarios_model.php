@@ -97,15 +97,6 @@ class Usuarios_model extends CI_Model {
     public function get_quantidades_usuarios($nivel, $where) {
         $str_where = "perfil.nivel < {$nivel}";
 
-        $this->db->select('COUNT(usuario.id) AS quant');
-        $this->db->from('phpmycall.usuario');
-        $this->db->join('phpmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
-        $query = $this->db->where($str_where)->get();
-
-        $result = $query->row_array();
-
-        $return['recordsTotal'] = $result['quant'];
-
         if (!empty($where)) {
             $str_where .= " AND (LOWER(usuario) LIKE LOWER('%{$where}%') OR LOWER(nome) LIKE LOWER('%{$where}%')"
                     . " OR LOWER(perfil.perfil) LIKE LOWER('%{$where}%') OR LOWER(email) LIKE LOWER('%{$where}%'))";
@@ -118,9 +109,7 @@ class Usuarios_model extends CI_Model {
 
         $result = $query->row_array();
 
-        $return['recordsFiltered'] = $result['quant'];
-
-        return $return;
+        return $result['quant'];
     }
 
     /**

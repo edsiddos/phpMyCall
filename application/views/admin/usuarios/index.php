@@ -1,13 +1,11 @@
 
 <script type="text/javascript" src="<?= base_url('static/jquery-mask-plugin/js/jquery.mask.min.js') ?>"></script>
 <script type="text/javascript" src="<?= base_url('static/bootstrap-simple-multiselect/js/bootstrap-transfer.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables/js/jquery.dataTables.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.jqueryui.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/dataTables.responsive.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-table/js/bootstrap-table.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-table/js/bootstrap-table-locale-all.min.js') ?>"></script>
 
 <link href="<?= base_url('static/bootstrap-simple-multiselect/css/bootstrap-transfer.css') ?>" rel="stylesheet">
-<link href="<?= base_url('static/datatables/css/dataTables.jqueryui.min.css') ?>" rel="stylesheet">
-<link href="<?= base_url('static/datatables-responsive/css/responsive.jqueryui.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/bootstrap-table/css/bootstrap-table.min.css') ?>" rel="stylesheet">
 
 <script type="text/javascript">
 
@@ -167,84 +165,57 @@
 
     var usuario = new Usuario();
 
+    var buscaRelacaoUsuarios = function (params) {
+        var data = JSON.parse(params.data);
+
+        $.ajax({
+            url: '<?= base_url() . 'usuarios/get_usuarios' ?>',
+            data: data,
+            type: 'post',
+            dataType: 'json'
+        }).done(function (data) {
+            params.success(data);
+            params.complete();
+        });
+    };
+
+    function actionFormatter() {
+        return [
+            '<button type="button" class="btn btn-default btn-sm editar">',
+            '<i class="fa fa-pencil"></i>',
+            '</button>',
+            '<button type="button" class="btn btn-default btn-sm excluir">',
+            '<i class="fa fa-trash"></i>',
+            '</button>'
+        ].join('');
+    }
+
+    window.actionEvents = {
+        'click .editar': function (e, value, row, index) {
+            aguarde.mostrar();
+            var id = row.id;
+
+            $multi.set_values([]);
+            usuario.getDadosUsuario(id);
+            usuario.setFormularioAlteracao();
+
+            formulario_cadastro.dialog('option', 'title', '<?= $title_update_user ?>');
+            $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $title_button_update_user ?>');
+            formulario_cadastro.dialog('open');
+
+            aguarde.ocultar();
+        },
+        'click .excluir': function (e, value, row, index) {
+            var id = row.id;
+
+            usuario.setIDUsuario(id);
+            alerta_exclusao.dialog('open');
+        }
+    };
 
     $(document).ready(function () {
 
-        var datatable = $('#usuarios').DataTable({
-            ordering: true,
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            ajax: {
-                url: "<?= base_url() . 'usuarios/get_usuarios' ?>",
-                type: "POST"
-            },
-            language: {
-                url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
-            },
-            columns: [
-                {
-                    data: null,
-                    orderable: false,
-                    ordering: false,
-                    render: function (data) {
-                        var html = '<button type="button" name="editar" usuario_id="' + data.id + '"><?= $edit_user ?></button>';
-                        html += '<button type="button" name="excluir" usuario_id="' + data.id + '"><?= $delete_user ?></button>';
-
-                        return html;
-                    }
-                },
-                {data: "id"},
-                {data: "nome"},
-                {data: "usuario"},
-                {data: "perfil"},
-                {data: "email"}
-            ]
-        });
-
-        datatable.on('draw', function () {
-            /*
-             * Função chamada para gerar botões de editar usuário
-             * e ação ao clicar
-             */
-            $("button[name=editar]").button({
-                text: false,
-                icons: {
-                    primary: 'ui-icon-pencil'
-                }
-            }).on('click', function () {
-                aguarde.mostrar();
-                var id = $(this).attr('usuario_id');
-
-                $multi.set_values([]);
-                usuario.getDadosUsuario(id);
-                usuario.setFormularioAlteracao();
-
-                $('#formulario_cadastro').dialog('option', 'title', '<?= $title_update_user ?>');
-                $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $title_button_update_user ?>');
-                $('#formulario_cadastro').dialog('open');
-
-                aguarde.ocultar();
-            });
-
-            /*
-             * Função que gera botões de excluir usuários
-             * e aplica ação a clica-lo.
-             */
-
-            $("button[name=excluir]").button({
-                text: false,
-                icons: {
-                    primary: 'ui-icon-trash'
-                }
-            }).on('click', function () {
-                var id = $(this).attr('usuario_id');
-
-                usuario.setIDUsuario(id);
-                $('#alerta_exclusao').dialog('open');
-            });
-        });
-
+        $table_usuarios = $('#usuarios');
 
         $multi = $('#select_projeto').bootstrapTransfer({
             remaining_name: 'opcoes_projetos',
@@ -282,9 +253,9 @@
             $('select[name=select_perfil]').val('').change();
             $('select[name=select_empresa]').val('');
 
-            $('#formulario_cadastro').dialog('option', 'title', '<?= $title_add_user ?>');
+            formulario_cadastro.dialog('option', 'title', '<?= $title_add_user ?>');
             $('#formulario_cadastro + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $title_button_add_user ?>');
-            $('#formulario_cadastro').dialog('open');
+            formulario_cadastro.dialog('open');
             aguarde.ocultar();
         });
 
@@ -292,7 +263,7 @@
          * Gera dialog para inserção de dados cadastro e alteração de usuários
          */
 
-        $('#formulario_cadastro').dialog({
+        formulario_cadastro = $('#formulario_cadastro').dialog({
             autoOpen: false,
             modal: true,
             closeOnEscape: false,
@@ -307,7 +278,7 @@
                     click: function () {
                         $(this).dialog('close');
                         usuario.submitFormularioUsuario();
-                        datatable.ajax.reload();
+                        $table_usuarios.bootstrapTable('refresh');
                     }
                 },
                 {
@@ -327,7 +298,7 @@
          * Cria dialog solicitação de confirmação
          * para exclusão de usuário
          */
-        $('#alerta_exclusao').dialog({
+        alerta_exclusao = $('#alerta_exclusao').dialog({
             autoOpen: false,
             modal: true,
             closeOnEscape: false,
@@ -340,7 +311,7 @@
                     click: function () {
                         usuario.excluirUsuario();
                         $(this).dialog('close');
-                        datatable.ajax.reload();
+                        $table_usuarios.bootstrapTable('refresh');
                     }
                 },
                 {
@@ -378,6 +349,16 @@
 
 </script>
 
+<style type="text/css">
+    .editar {
+        margin-right: 5px;
+    }
+
+    td:first-child {
+        text-align: center;
+    }
+</style>
+
 <div class="container">
 
     <div class="row">
@@ -391,23 +372,34 @@
     </div>
 
     <div class="row">
-        <table id="usuarios" class="display responsive nowrap" width="100%" cellspacing="0">
+        <table
+            id="usuarios"
+            data-toggle="table"
+            data-ajax="buscaRelacaoUsuarios"
+            data-side-pagination="server"
+            data-pagination="true"
+            data-method="post"
+            data-page-list="[5, 10, 20, 50, 100, 200]"
+            data-locale="pt-BR"
+            data-search="true"
+            data-sort-name="id"
+            data-sort-order="asc">
             <thead>
                 <tr>
-                    <th></th>
-                    <th>
+                    <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents"></th>
+                    <th data-field="id" data-sortable="true">
                         <?= $table_id_user ?>
                     </th>
-                    <th>
+                    <th data-field="nome" data-sortable="true">
                         <?= $table_username_user ?>
                     </th>
-                    <th>
+                    <th data-field="usuario" data-sortable="true">
                         <?= $table_user_user ?>
                     </th>
-                    <th>
+                    <th data-field="perfil" data-sortable="true">
                         <?= $table_profile_user ?>
                     </th>
-                    <th>
+                    <th data-field="email" data-sortable="true">
                         <?= $table_email_user ?>
                     </th>
                 </tr>
