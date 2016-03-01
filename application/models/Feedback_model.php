@@ -82,8 +82,7 @@ class Feedback_model extends CI_Model {
         $query = $this->db->get();
         $aux = $query->row_array();
 
-        $result['recordsFiltered'] = $aux['count'];
-        $result['recordsTotal'] = $this->db->count_all_results('phpmycall.tipo_feedback');
+        $result['total'] = $aux['count'];
 
         $this->db->select("id, nome, abreviatura, CASE WHEN descontar THEN 'SIM' ELSE 'NÃO' END AS descontar , descricao");
         $this->db->from('phpmycall.tipo_feedback');
@@ -92,7 +91,7 @@ class Feedback_model extends CI_Model {
             $this->db->where($where);
         }
 
-        $result['data'] = $this->db->order_by($order_by)->limit($limit, $offset)->get()->result_array();
+        $result['rows'] = $this->db->order_by($order_by)->limit($limit, $offset)->get()->result_array();
 
         return $result;
     }

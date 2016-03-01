@@ -35,6 +35,11 @@ $lang = array(
     'title_dialog_confirm_remove_feedback' => 'Alerta de remoção',
     'info_before_remove_feedback' => 'Deseja realmente remover este tipo de feedback?',
     'title_dialog_attention' => 'Atenção',
+    'table_feedback_column_id' => 'id',
+    'table_feedback_column_name_feedback' => 'Nome',
+    'table_feedback_column_abbreviation_feedback' => 'Abreviatura',
+    'table_feedback_column_cashing_total_time_feedback' => 'Descontar tempo total',
+    'table_feedback_description_feedback' => 'Descrição',
     // form.php
     'label_name_feedback' => 'Nome',
     'label_abbreviation_feedback' => 'Abreviatura',

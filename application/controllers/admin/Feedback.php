@@ -96,18 +96,15 @@ class Feedback extends Admin_Controller {
         $perfil = $_SESSION ['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
-            $columns = filter_input(INPUT_POST, 'columns', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-            $draw = filter_input(INPUT_POST, 'draw', FILTER_SANITIZE_NUMBER_INT);
-            $limit = filter_input(INPUT_POST, 'length', FILTER_SANITIZE_NUMBER_INT);
-            $offset = filter_input(INPUT_POST, 'start', FILTER_SANITIZE_NUMBER_INT);
-            $order = filter_input(INPUT_POST, 'order', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-            $search = filter_input(INPUT_POST, 'search', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 
-            $column = $order[0]['column'] == 0 ? 1 : $order[0]['column'];
+            $limit = filter_input(INPUT_POST, 'limit', FILTER_SANITIZE_NUMBER_INT);
+            $offset = filter_input(INPUT_POST, 'offset', FILTER_SANITIZE_NUMBER_INT);
+            $sort = filter_input(INPUT_POST, 'sort', FILTER_SANITIZE_STRING);
+            $order = filter_input(INPUT_POST, 'order', FILTER_SANITIZE_STRING);
+            $search = filter_input(INPUT_POST, 'search', FILTER_SANITIZE_STRING);
 
-            $order_by = "{$columns[$column]['data']} {$order[0]['dir']}";
+            $order_by = "{$sort} {$order}";
 
-            $array['draw'] = (empty($draw) ? 1 : $draw);
             $array = $this->model->get_dados_tipo_feedback($search['value'], $order_by, $limit, $offset);
             $this->response($array);
         }

@@ -1,10 +1,8 @@
 
-<script type="text/javascript" src="<?= base_url('static/datatables/js/jquery.dataTables.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.jqueryui.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/dataTables.responsive.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-table/js/bootstrap-table.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-table/js/bootstrap-table-locale-all.min.js') ?>"></script>
 
-<link href="<?= base_url('static/datatables/css/dataTables.jqueryui.min.css') ?>" rel="stylesheet">
-<link href="<?= base_url('static/datatables-responsive/css/responsive.jqueryui.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/bootstrap-table/css/bootstrap-table.min.css') ?>" rel="stylesheet">
 
 <script type="text/javascript">
 
@@ -53,18 +51,18 @@
                 url: '<?= base_url() . 'feedback/' ?>' + formulario,
                 data: dados,
                 dataType: 'JSON',
-                type: 'POST',
-                async: false,
-                success: function (data) {
+                type: 'POST'
+            }).done(function (data) {
 
-                    if (data.status) {
-                        $('#msg_status').removeClass('hide alert-danger').addClass('alert-success');
-                        $('#msg_status').html(data.msg);
-                    } else {
-                        $('#msg_status').removeClass('hide alert-success').addClass('alert-danger');
-                        $('#msg_status').html(data.msg);
-                    }
+                if (data.status) {
+                    $('#msg_status').removeClass('hide alert-danger').addClass('alert-success');
+                    $('#msg_status').html(data.msg);
+                } else {
+                    $('#msg_status').removeClass('hide alert-success').addClass('alert-danger');
+                    $('#msg_status').html(data.msg);
                 }
+
+                $table_feedback.bootstrapTable('refresh', {silent: true});
             });
 
             aguarde.ocultar();
@@ -80,18 +78,18 @@
                 url: '<?= base_url('feedback/excluir') ?>',
                 data: 'id=' + feedback,
                 dataType: 'json',
-                type: 'post',
-                async: false,
-                success: function (data) {
+                type: 'post'
+            }).done(function (data) {
 
-                    if (data.status) {
-                        $('#msg_status').removeClass('hide alert-danger').addClass('alert-success');
-                        $('#msg_status').html(data.msg);
-                    } else {
-                        $('#msg_status').removeClass('hide alert-success').addClass('alert-danger');
-                        $('#msg_status').html(data.msg);
-                    }
+                if (data.status) {
+                    $('#msg_status').removeClass('hide alert-danger').addClass('alert-success');
+                    $('#msg_status').html(data.msg);
+                } else {
+                    $('#msg_status').removeClass('hide alert-success').addClass('alert-danger');
+                    $('#msg_status').html(data.msg);
                 }
+
+                $table_feedback.bootstrapTable('refresh', {silent: true});
             });
 
             aguarde.ocultar();
@@ -100,94 +98,66 @@
 
     feedback = new Feedback();
 
+    var buscaRelacaoFeedback = function (params) {
+        var data = JSON.parse(params.data);
+
+        $.ajax({
+            url: '<?= base_url('feedback/get_dados_tipo_feedback') ?>',
+            data: data,
+            type: 'post',
+            dataType: 'json'
+        }).done(function (data) {
+            params.success(data);
+        });
+    };
+
+    function actionFormatter() {
+        return [
+            '<button type="button" class="btn btn-default btn-sm editar" title="<?= $edit_feedback ?>">',
+            '<i class="fa fa-pencil"></i>',
+            '</button>',
+            '<button type="button" class="btn btn-default btn-sm excluir" title="<?= $delete_feedback ?>">',
+            '<i class="fa fa-trash"></i>',
+            '</button>'
+        ].join('');
+    }
+
+    window.actionEvents = {
+        'click .editar': function (e, value, row, index) {
+            aguarde.mostrar();
+            feedback.setAlterar();
+            var id_feedback = row.id;
+
+            $.ajax({
+                url: '<?= base_url('feedback/get_feedback') ?>',
+                data: 'feedback=' + id_feedback,
+                dataType: 'json',
+                type: 'post'
+            }).done(function (data) {
+                $('input[name=input_id]').val(data.id);
+                $('input[name=input_nome]').val(data.nome);
+                $('input[name=input_abreviatura]').val(data.abreviatura);
+                $('input[name=input_descontar]').prop('checked', data.descontar === true);
+                $('textarea[name=text_descricao]').val(data.descricao);
+            });
+
+            $formulario_cadastro.dialog('option', 'title', '<?= $title_update_feedback ?>');
+            $('#dialog_feedback + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $button_update_feedback ?>');
+            $formulario_cadastro.dialog('open');
+
+            aguarde.ocultar();
+        },
+        'click .excluir': function (e, value, row, index) {
+            $dialog_excluir.dialog('open');
+
+            var id_feedback = row.id;
+
+            feedback.setExcluir(id_feedback);
+        }
+    };
 
     $(document).ready(function () {
-
-        var datatable = $('#feedback').DataTable({
-            ordering: true,
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            ajax: {
-                url: "<?= base_url('feedback/get_dados_tipo_feedback') ?>",
-                type: "POST"
-            },
-            language: {
-                url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
-            },
-            columns: [
-                {
-                    data: null,
-                    orderable: false,
-                    render: function (data) {
-                        var html = '<button name="editar" feedback="' + data.id + '"><?= $edit_feedback ?></button>';
-                        html += '<button name="excluir" feedback="' + data.id + '"><?= $delete_feedback ?></button>';
-                        return html;
-                    }
-                },
-                {data: "id"},
-                {data: "nome"},
-                {data: "abreviatura"},
-                {data: "descontar"},
-                {data: "descricao"}
-            ]
-        });
-
-        datatable.on('draw', function () {
-            /*
-             * Gera botão para edição de feedback
-             */
-            $('button[name=editar]').button({
-                text: false,
-                icons: {
-                    primary: 'ui-icon-pencil'
-                }
-            }).on('click', function () {
-                aguarde.mostrar();
-
-                feedback.setAlterar();
-
-                var id_feedback = $(this).attr('feedback');
-
-                $.ajax({
-                    url: '<?= base_url('feedback/get_feedback') ?>',
-                    data: 'feedback=' + id_feedback,
-                    dataType: 'json',
-                    type: 'post',
-                    async: false,
-                    success: function (data) {
-                        $('input[name=input_id]').val(data.id);
-                        $('input[name=input_nome]').val(data.nome);
-                        $('input[name=input_abreviatura]').val(data.abreviatura);
-                        $('input[name=input_descontar]').prop('checked', data.descontar === true);
-                        $('textarea[name=text_descricao]').val(data.descricao);
-                    }
-                });
-
-                $('#dialog_feedback').dialog('option', 'title', '<?= $title_update_feedback ?>');
-                $('#dialog_feedback + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $button_update_feedback ?>');
-                $('#dialog_feedback').dialog('open');
-
-                aguarde.ocultar();
-            });
-
-            /*
-             * Cria botão de exclusão e adiciona evento ao clica-lo
-             */
-
-            $('button[name=excluir]').button({
-                text: false,
-                icons: {
-                    primary: 'ui-icon-close'
-                }
-            }).on('click', function () {
-                $('#alerta_exclusao').dialog('open');
-
-                var id_feedback = $(this).attr('feedback');
-
-                feedback.setExcluir(id_feedback);
-            });
-        });
+        $table_feedback = $('#feedback');
 
         /*
          * Gera botão de cadastrar usuário e ação de clica-lo
@@ -203,9 +173,9 @@
             $('input, textarea').val('');
             $('input[type=hidden]').val(0);
 
-            $('#dialog_feedback').dialog('option', 'title', '<?= $title_dialog_add_feedback ?>');
+            $formulario_cadastro.dialog('option', 'title', '<?= $title_dialog_add_feedback ?>');
             $('#dialog_feedback + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $button_add_feedback ?>');
-            $('#dialog_feedback').dialog('open');
+            $formulario_cadastro.dialog('open');
 
             aguarde.ocultar();
         });
@@ -213,7 +183,7 @@
         /*
          * Abre dialog para cadastro e alteraçao de feedback
          */
-        $('#dialog_feedback').dialog({
+        $formulario_cadastro = $('#dialog_feedback').dialog({
             autoOpen: false,
             closeOnEscape: false,
             modal: true,
@@ -227,7 +197,6 @@
                     },
                     click: function () {
                         feedback.submitFormulario();
-                        datatable.ajax.reload();
                         $(this).dialog('close');
                     }
                 },
@@ -247,7 +216,7 @@
         /*
          * dialog solicitando confirmação para exclusão.
          */
-        $('#alerta_exclusao').dialog({
+        $dialog_excluir = $('#alerta_exclusao').dialog({
             autoOpen: false,
             modal: true,
             closeOnEscape: false,
@@ -259,7 +228,6 @@
                     },
                     click: function () {
                         feedback.excluir();
-                        datatable.ajax.reload();
                         $(this).dialog('close');
                     }
                 },
@@ -298,6 +266,16 @@
 
 </script>
 
+<style type="text/css">
+    .editar {
+        margin-right: 5px;
+    }
+
+    td:first-child {
+        text-align: center;
+    }
+</style>
+
 <div class="container">
 
     <div class="row">
@@ -305,20 +283,33 @@
     </div>
 
     <div class="row">
-        <button type="button" name="cadastrar" id="cadastrar">Cadastrar</button>
+        <button type="button" name="cadastrar" id="cadastrar">
+            <?= $button_add_feedback ?>
+        </button>
     </div>
 
     <div class="row">
 
-        <table id="feedback" class="display responsive nowrap" width="100%" cellspacing="0">
+        <table
+            id="feedback"
+            data-toggle="table"
+            data-ajax="buscaRelacaoFeedback"
+            data-side-pagination="server"
+            data-pagination="true"
+            data-method="post"
+            data-page-list="[5, 10, 20, 50, 100, 200]"
+            data-locale="pt-BR"
+            data-search="true"
+            data-sort-name="id"
+            data-sort-order="asc">
             <thead>
                 <tr>
-                    <th class="no-sort"></th>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Abreviatura</th>
-                    <th>Descontar tempo total</th>
-                    <th>Descrição</th>
+                    <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents"></th>
+                    <th data-field="id" data-sortable="true"><?= $table_feedback_column_id ?></th>
+                    <th data-field="nome" data-sortable="true"><?= $table_feedback_column_name_feedback ?></th>
+                    <th data-field="abreviatura" data-sortable="true"><?= $table_feedback_column_abbreviation_feedback ?></th>
+                    <th data-field="descontar" data-sortable="true"><?= $table_feedback_column_cashing_total_time_feedback ?></th>
+                    <th data-field="descricao" data-sortable="true"><?= $table_feedback_description_feedback ?></th>
                 </tr>
             </thead>
         </table>
