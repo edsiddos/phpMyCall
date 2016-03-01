@@ -35,19 +35,17 @@
                 data: 'usuario=' + id,
                 dataType: 'JSON',
                 type: 'POST',
-                async: false,
-                success: function (json) {
-                    $('input[name=input_id]').val(json.id);
-                    $('input[name=input_nome]').val(json.nome);
-                    $('input[name=input_usuario]').val(json.usuario);
-                    $('input[name=input_senha]').val('');
-                    $('input[name=input_email]').val(json.email);
-                    $('input[name=input_telefone]').val(json.telefone);
-                    $('select[name=select_perfil]').val(json.perfil).change();
-                    $('select[name=select_empresa]').val(json.empresa);
+            }).done(function (json) {
+                $('input[name=input_id]').val(json.id);
+                $('input[name=input_nome]').val(json.nome);
+                $('input[name=input_usuario]').val(json.usuario);
+                $('input[name=input_senha]').val('');
+                $('input[name=input_email]').val(json.email);
+                $('input[name=input_telefone]').val(json.telefone);
+                $('select[name=select_perfil]').val(json.perfil).change();
+                $('select[name=select_empresa]').val(json.empresa);
 
-                    $multi.set_values(json.projeto.participa);
-                }
+                $multi.set_values(json.projeto.participa);
             });
 
         };
@@ -91,17 +89,17 @@
                 url: '<?= base_url() . 'usuarios/remove_usuario' ?>',
                 data: 'id=' + id_usuario,
                 dataType: 'JSON',
-                type: 'POST',
-                async: false,
-                success: function (data) {
-                    if (data.status) {
-                        $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
-                        $('#msg_status').html(data.msg);
-                    } else {
-                        $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
-                        $('#msg_status').html(data.msg);
-                    }
+                type: 'POST'
+            }).done(function (data) {
+                if (data.status) {
+                    $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
+                    $('#msg_status').html(data.msg);
+                } else {
+                    $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
+                    $('#msg_status').html(data.msg);
                 }
+
+                $table_usuarios.bootstrapTable('refresh', {silent: true});
             });
 
             aguarde.ocultar();
@@ -120,17 +118,17 @@
                 url: '<?= base_url() . 'usuarios/novo_usuario' ?>',
                 data: $('#form_usuario').serialize(),
                 dataType: 'JSON',
-                type: 'POST',
-                async: false,
-                success: function (data) {
-                    if (data.status) {
-                        $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
-                        $('#msg_status').html(data.msg);
-                    } else {
-                        $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
-                        $('#msg_status').html(data.msg);
-                    }
+                type: 'POST'
+            }).done(function (data) {
+                if (data.status) {
+                    $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
+                    $('#msg_status').html(data.msg);
+                } else {
+                    $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
+                    $('#msg_status').html(data.msg);
                 }
+
+                $table_usuarios.bootstrapTable('refresh', {silent: true});
             });
         };
 
@@ -147,17 +145,17 @@
                 url: '<?= base_url() . 'usuarios/atualiza_usuario' ?>',
                 data: $('#form_usuario').serialize(),
                 dataType: 'JSON',
-                type: 'POST',
-                async: false,
-                success: function (data) {
-                    if (data.status) {
-                        $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
-                        $('#msg_status').html(data.msg);
-                    } else {
-                        $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
-                        $('#msg_status').html(data.msg);
-                    }
+                type: 'POST'
+            }).done(function (data) {
+                if (data.status) {
+                    $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
+                    $('#msg_status').html(data.msg);
+                } else {
+                    $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
+                    $('#msg_status').html(data.msg);
                 }
+
+                $table_usuarios.bootstrapTable('refresh', {silent: true});
             });
         };
     };
@@ -181,10 +179,10 @@
 
     function actionFormatter() {
         return [
-            '<button type="button" class="btn btn-default btn-sm editar">',
+            '<button type="button" class="btn btn-default btn-sm editar" title="<?= $edit_user ?>">',
             '<i class="fa fa-pencil"></i>',
             '</button>',
-            '<button type="button" class="btn btn-default btn-sm excluir">',
+            '<button type="button" class="btn btn-default btn-sm excluir" title="<?= $delete_user ?>">',
             '<i class="fa fa-trash"></i>',
             '</button>'
         ].join('');
@@ -226,10 +224,9 @@
         $.ajax({
             url: '<?= base_url('usuarios/get_projetos') ?>',
             dataType: 'JSON',
-            async: false,
-            success: function (data) {
-                $multi.populate(data.projeto);
-            }
+            type: 'POST'
+        }).done(function (data) {
+            $multi.populate(data.projeto);
         });
 
         /*
@@ -278,7 +275,6 @@
                     click: function () {
                         $(this).dialog('close');
                         usuario.submitFormularioUsuario();
-                        $table_usuarios.bootstrapTable('refresh');
                     }
                 },
                 {
@@ -311,7 +307,6 @@
                     click: function () {
                         usuario.excluirUsuario();
                         $(this).dialog('close');
-                        $table_usuarios.bootstrapTable('refresh');
                     }
                 },
                 {
