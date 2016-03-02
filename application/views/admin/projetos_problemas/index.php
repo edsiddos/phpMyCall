@@ -1,13 +1,11 @@
 
 <script type="text/javascript" src="<?= base_url('static/jquery-mask-plugin/js/jquery.mask.min.js') ?>"></script>
 <script type="text/javascript" src="<?= base_url('static/bootstrap-simple-multiselect/js/bootstrap-transfer.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables/js/jquery.dataTables.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.jqueryui.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/dataTables.responsive.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-table/js/bootstrap-table.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-table/js/bootstrap-table-locale-all.min.js') ?>"></script>
 
 <link href="<?= base_url('static/bootstrap-simple-multiselect/css/bootstrap-transfer.css') ?>" rel="stylesheet">
-<link href="<?= base_url('static/datatables/css/dataTables.jqueryui.min.css') ?>" rel="stylesheet">
-<link href="<?= base_url('static/datatables-responsive/css/responsive.jqueryui.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/bootstrap-table/css/bootstrap-table.min.css') ?>" rel="stylesheet">
 
 <script type="text/javascript">
 
@@ -58,18 +56,18 @@
                 url: '<?= base_url() . 'projetos_problemas/' ?>' + formulario,
                 data: $('form[name=projetos_problemas]').serialize(),
                 dataType: 'JSON',
-                type: 'POST',
-                async: false,
-                success: function (data) {
+                type: 'POST'
+            }).done(function (data) {
 
-                    if (data.status) {
-                        $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
-                        $('#msg_status').html(data.msg);
-                    } else {
-                        $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
-                        $('#msg_status').html(data.msg);
-                    }
+                if (data.status) {
+                    $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
+                    $('#msg_status').html(data.msg);
+                } else {
+                    $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
+                    $('#msg_status').html(data.msg);
                 }
+
+                $tabela_projeto_problema.bootstrapTable('refresh', {silent: true});
             });
 
             aguarde.ocultar();
@@ -85,18 +83,18 @@
                 url: '<?= base_url('projetos_problemas/excluir') ?>',
                 data: 'projeto_problema=' + projeto_problema + '&projeto=' + projeto,
                 dataType: 'json',
-                type: 'post',
-                async: false,
-                success: function (data) {
+                type: 'post'
+            }).done(function (data) {
 
-                    if (data.status) {
-                        $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
-                        $('#msg_status').html(data.msg);
-                    } else {
-                        $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
-                        $('#msg_status').html(data.msg);
-                    }
+                if (data.status) {
+                    $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
+                    $('#msg_status').html(data.msg);
+                } else {
+                    $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
+                    $('#msg_status').html(data.msg);
                 }
+
+                $tabela_projeto_problema.bootstrapTable('refresh', {silent: true});
             });
 
             aguarde.ocultar();
@@ -105,7 +103,74 @@
 
     var projeto = new ProjetoProblemas();
 
+    var buscaRelacaoProjetoProblema = function (params) {
+        var data = JSON.parse(params.data);
+
+        $.ajax({
+            url: '<?= base_url('projetos_problemas/lista_projeto_problemas') ?>',
+            data: data,
+            type: 'post',
+            dataType: 'json'
+        }).done(function (data) {
+            params.success(data);
+        });
+    };
+
+    function actionFormatter() {
+        return [
+            '<button type="button" class="btn btn-default btn-sm editar" title="<?= $button_edit_project_problem ?>">',
+            '<i class="fa fa-pencil"></i>',
+            '</button>',
+            '<button type="button" class="btn btn-default btn-sm excluir" title="<?= $button_delete_project_problem ?>">',
+            '<i class="fa fa-trash"></i>',
+            '</button>'
+        ].join('');
+    }
+
+    window.actionEvents = {
+        'click .editar': function (e, value, row, index) {
+            aguarde.mostrar();
+
+            $multi.set_values([]);
+            projeto.setAlterar();
+
+            var id_projeto_problema = row.id;
+
+            $.ajax({
+                url: '<?= base_url('projetos_problemas/get_dados_projeto_problemas') ?>',
+                data: 'id=' + id_projeto_problema,
+                dataType: 'json',
+                type: 'post'
+            }).done(function (data) {
+                $('input[name=input_projeto]').val(data.id_projeto);
+                $('input[name=input_problema]').val(data.id_problema);
+                $('input[name=input_projeto_problema]').val(id_projeto_problema);
+                $('input[name=input_nome_projeto]').val(data.nome_projeto).focusout();
+                $('textarea[name=text_projeto]').val(data.descricao_projeto);
+                $('input[name=input_nome_problema]').val(data.nome_problema);
+                $('textarea[name=text_descricao]').val(data.descricao);
+                $('input[name=input_resposta]').val(data.resposta);
+                $('input[name=input_solucao]').val(data.solucao);
+            });
+
+            $('#dialog_projetos_problemas').dialog('option', 'title', '<?= $update_project_problem ?>');
+            $('#dialog_projetos_problemas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $button_update_project_problem ?>');
+            $('#dialog_projetos_problemas').dialog('open');
+
+            aguarde.ocultar();
+        },
+        'click .excluir': function (e, value, row, index) {
+            var id_projeto_problema = row.id;
+            var id_projeto = row.id_projeto;
+
+            projeto.setProjetoProblemaExcluir(id_projeto_problema, id_projeto);
+            $('#alerta_exclusao').dialog('open');
+        }
+    };
+
     $(document).ready(function () {
+
+        $tabela_projeto_problema = $('#relacao_projeto_problemas');
 
         $multi = $('#relacao_usuarios').bootstrapTransfer({
             remaining_name: 'opcoes_usuarios',
@@ -114,105 +179,6 @@
         });
 
         $multi.populate(<?= json_encode($usuarios) ?>);
-
-        var datatable = $('#relacao_projeto_problemas').DataTable({
-            ordering: true,
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            ajax: {
-                url: "<?= base_url('projetos_problemas/lista_projeto_problemas') ?>",
-                type: "POST"
-            },
-            language: {
-                url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
-            },
-            columns: [
-                {
-                    data: null,
-                    orderable: false,
-                    ordering: false,
-                    render: function (data) {
-                        var html = '<button type="button" name="editar" projeto_problema_id="' + data.id + '">';
-                        html += '<?= $button_edit_project_problem ?>';
-                        html += '</button>';
-
-                        html += '<button type="button" name="excluir" projeto_problema_id="' + data.id + '" projeto_id="' + data.id_projeto + '">';
-                        html += '<?= $button_delete_project_problem ?>';
-                        html += '</button>';
-
-                        return html;
-                    }
-                },
-                {data: "id_projeto"},
-                {data: "projeto"},
-                {data: "problema"}
-            ]
-        });
-
-        datatable.on('draw', function () {
-            /*
-             * Gera botão para edição de projeto tipo problema 
-             */
-
-            $('button[type=button][name=editar]').button({
-                text: false,
-                icons: {
-                    primary: 'ui-icon-pencil'
-                }
-            }).on('click', function () {
-                aguarde.mostrar();
-
-                $multi.set_values([]);
-                projeto.setAlterar();
-
-                var id_projeto_problema = $(this).attr('projeto_problema_id');
-
-                if (id_projeto_problema !== null) {
-                    $.ajax({
-                        url: '<?= base_url('projetos_problemas/get_dados_projeto_problemas') ?>',
-                        data: 'id=' + id_projeto_problema,
-                        dataType: 'json',
-                        type: 'post',
-                        async: false,
-                        success: function (data) {
-                            $('input[name=input_projeto]').val(data.id_projeto);
-                            $('input[name=input_problema]').val(data.id_problema);
-                            $('input[name=input_projeto_problema]').val(id_projeto_problema);
-                            $('input[name=input_nome_projeto]').val(data.nome_projeto).focusout();
-                            $('textarea[name=text_projeto]').val(data.descricao_projeto);
-                            $('input[name=input_nome_problema]').val(data.nome_problema);
-                            $('textarea[name=text_descricao]').val(data.descricao);
-                            $('input[name=input_resposta]').val(data.resposta);
-                            $('input[name=input_solucao]').val(data.solucao);
-                        }
-                    });
-
-                    $('#dialog_projetos_problemas').dialog('option', 'title', '<?= $update_project_problem ?>');
-                    $('#dialog_projetos_problemas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $button_update_project_problem ?>');
-                    $('#dialog_projetos_problemas').dialog('open');
-                } else {
-                    $('#msg').html('<?= $info_project_problem_not_selected ?>');
-                    $('#alert').dialog('open');
-                }
-
-                aguarde.ocultar();
-            });
-
-            $('button[type=button][name=excluir]').button({
-                text: false,
-                icons: {
-                    primary: 'ui-icon-close'
-                }
-            }).on('click', function () {
-                $('#alerta_exclusao').dialog('open');
-
-                var id_projeto_problema = $(this).attr('projeto_problema_id');
-                var id_projeto = $(this).attr('projeto_id');
-
-                projeto.setProjetoProblemaExcluir(id_projeto_problema, id_projeto);
-            });
-        });
 
         /*
          * Gera botão de cadastrar usuário e ação de clica-lo
@@ -304,27 +270,18 @@
             position: {my: 'center', at: 'center', of: window}
         }).removeClass('hidden');
 
-        /*
-         * Cria dialog para exibir mensagens
-         */
-        $('#alert').dialog({
-            autoOpen: false,
-            modal: true,
-            buttons: [
-                {
-                    text: '<?= $confirm_alert_project_problem ?>',
-                    icons: {
-                        primary: 'ui-icon-check'
-                    },
-                    click: function () {
-                        $(this).dialog('close');
-                    }
-                }
-            ]
-        }).removeClass('hidden');
-
     });
 </script>
+
+<style type="text/css">
+    .editar {
+        margin-right: 5px;
+    }
+
+    td:first-child {
+        text-align: center;
+    }
+</style>
 
 <div class="container">
 
@@ -340,13 +297,24 @@
 
     <div class="row">
 
-        <table id="relacao_projeto_problemas" class="display responsive nowrap" width="100%" cellspacing="0">
+        <table
+            id="relacao_projeto_problemas"
+            data-toggle="table"
+            data-ajax="buscaRelacaoProjetoProblema"
+            data-side-pagination="server"
+            data-pagination="true"
+            data-method="post"
+            data-page-list="[5, 10, 20, 50, 100, 200]"
+            data-locale="pt-BR"
+            data-search="true"
+            data-sort-name="id_projeto"
+            data-sort-order="asc">
             <thead>
                 <tr>
-                    <th></th>
-                    <th><?= $label_column_id_project ?></th>
-                    <th><?= $label_column_name_project ?></th>
-                    <th><?= $label_column_name_problem ?></th>
+                    <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents"></th>
+                    <th data-field="id_projeto" data-sortable="true"><?= $label_column_id_project ?></th>
+                    <th data-field="projeto" data-sortable="true"><?= $label_column_name_project ?></th>
+                    <th data-field="problema" data-sortable="true"><?= $label_column_name_problem ?></th>
                 </tr>
             </thead>
 
@@ -360,8 +328,4 @@
     <p class="ui-state-error-text">
         <?= $info_before_remove_project_problem ?>
     </p>
-</div>
-
-<div id="alert" class="hidden" title="<?= $title_dialog_attention ?>">
-    <p id="msg"></p>
 </div>

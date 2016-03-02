@@ -58,22 +58,21 @@ class Projetos_problemas extends Admin_Controller {
         $perfil = $_SESSION['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
-            $draw = filter_input(INPUT_POST, 'draw', FILTER_SANITIZE_NUMBER_INT);
-            $limit = filter_input(INPUT_POST, 'length', FILTER_SANITIZE_NUMBER_INT);
-            $offset = filter_input(INPUT_POST, 'start', FILTER_SANITIZE_NUMBER_INT);
-            $order = filter_input(INPUT_POST, 'order', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-            $search = filter_input(INPUT_POST, 'search', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+            $limit = filter_input(INPUT_POST, 'limit', FILTER_SANITIZE_NUMBER_INT);
+            $offset = filter_input(INPUT_POST, 'offset', FILTER_SANITIZE_NUMBER_INT);
+            $sort = filter_input(INPUT_POST, 'sort', FILTER_SANITIZE_STRING);
+            $order = filter_input(INPUT_POST, 'order', FILTER_SANITIZE_STRING);
+            $search = filter_input(INPUT_POST, 'search', FILTER_SANITIZE_STRING);
+
             $columns = array(
-                0 => 'projeto_tipo_problema.id',
-                1 => 'projeto.id',
-                2 => 'projeto.nome',
-                3 => 'tipo_problema.nome'
+                'id_projeto' => 'projeto.id',
+                'projeto' => 'projeto.nome',
+                'problema' => 'tipo_problema.nome'
             );
 
-            $order_by = "{$columns[$order[0]['column']]} {$order[0]['dir']}";
+            $order_by = "{$columns[$sort]} {$order}";
 
-            $return = $this->model->lista_projeto_problemas($search['value'], $order_by, $limit, $offset);
-            $return["draw"] = empty($draw) ? 0 : $draw;
+            $return = $this->model->lista_projeto_problemas($search, $order_by, $limit, $offset);
 
             $this->response($return);
         }

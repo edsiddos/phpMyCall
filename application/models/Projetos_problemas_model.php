@@ -236,8 +236,7 @@ class Projetos_problemas_model extends CI_Model {
         $query = $this->db->get();
         $aux = $query->row_array();
 
-        $result['recordsFiltered'] = $aux['count'];
-        $result['recordsTotal'] = $this->db->count_all_results('phpmycall.projeto_tipo_problema');
+        $result['total'] = $aux['count'];
 
         $this->db->select('projeto_tipo_problema.id, projeto.id AS id_projeto, projeto.nome AS projeto, tipo_problema.nome AS problema');
         $this->db->from('phpmycall.projeto_tipo_problema');
@@ -252,7 +251,7 @@ class Projetos_problemas_model extends CI_Model {
 
         $this->db->order_by($order)->limit($limit, $offset);
         $query = $this->db->get();
-        $result['data'] = $query->result_array();
+        $result['rows'] = $query->result_array();
 
         return $result;
     }
