@@ -202,26 +202,25 @@ class Solicitacao extends Admin_Controller {
         $situacao = filter_input(INPUT_POST, 'situacao', FILTER_CALLBACK, $this->manipula_inteiro);
         $prioridade = filter_input(INPUT_POST, 'prioridade', FILTER_CALLBACK, $this->manipula_inteiro);
 
-        $draw = filter_input(INPUT_POST, 'draw', FILTER_SANITIZE_NUMBER_INT);
-        $limit = filter_input(INPUT_POST, 'length', FILTER_SANITIZE_NUMBER_INT);
-        $offset = filter_input(INPUT_POST, 'start', FILTER_SANITIZE_NUMBER_INT);
-        $order = filter_input(INPUT_POST, 'order', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-        $search = filter_input(INPUT_POST, 'search', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+        $limit = filter_input(INPUT_POST, 'limit', FILTER_SANITIZE_NUMBER_INT);
+        $offset = filter_input(INPUT_POST, 'offset', FILTER_SANITIZE_NUMBER_INT);
+        $order = filter_input(INPUT_POST, 'order', FILTER_SANITIZE_STRING);
+        $sort = filter_input(INPUT_POST, 'sort', FILTER_SANITIZE_STRING);
+        $search = filter_input(INPUT_POST, 'search', FILTER_SANITIZE_STRING);
+
         $columns = array(
-            0 => 'solicitacao.abertura',
-            1 => 'projeto.nome',
-            2 => 'tipo_problema.nome',
-            3 => 'prioridade.nome',
-            4 => 'solicitante.nome',
-            5 => 'atendente.nome',
-            6 => 'num_arquivos'
+            'abertura' => 'solicitacao.abertura',
+            'projeto' => 'projeto.nome',
+            'problema' => 'tipo_problema.nome',
+            'prioridade' => 'prioridade.nome',
+            'solicitante' => 'solicitante.nome',
+            'atendente' => 'atendente.nome',
+            'num_arquivos' => 'num_arquivos'
         );
 
-        $order_by = "{$columns[$order[0]['column']]} {$order[0]['dir']}";
+        $order_by = "{$columns[$sort]} {$order}";
 
-        $result = $this->model->get_solicitacoes($usuario, $perfil, $situacao, $prioridade, $search['value'], $order_by, $limit, $offset);
-
-        $result["draw"] = empty($draw) ? 0 : $draw;
+        $result = $this->model->get_solicitacoes($usuario, $perfil, $situacao, $prioridade, $search, $order_by, $limit, $offset);
 
         $this->response($result);
     }

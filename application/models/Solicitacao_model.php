@@ -152,11 +152,11 @@ class Solicitacao_model extends CI_Model {
 
         $result = $this->count_solicitacoes($usuario, $perfil, $situacao, $prioridade, $search);
 
-        $select = "projeto.nome AS projeto, tipo_problema.nome AS problema, prioridade.nome AS prioridade, ";
-        $select .= "solicitante.nome AS solicitante, atendente.nome AS atendente, solicitacao.abertura, ";
+        $select = "projeto.nome AS projeto, tipo_problema.nome AS problema, prioridade.nome AS prioridade, solicitante.nome AS solicitante, ";
+        $select .= "atendente.nome AS atendente, TO_CHAR(solicitacao.abertura, 'DD/MM/YYYY HH24:MI:SS') AS abertura, ";
         $select .= "solicitacao.id AS solicitacao, COUNT(arquivos.id) AS num_arquivos";
 
-        $this->db->select($select);
+        $this->db->select($select, FALSE);
         $this->db->from('phpmycall.solicitacao');
         $this->db->join('phpmycall.usuario AS solicitante', 'solicitante.id = solicitacao.solicitante', 'inner');
         $this->db->join('phpmycall.usuario AS atendente', 'atendente.id = solicitacao.atendente', 'inner');
@@ -206,12 +206,7 @@ class Solicitacao_model extends CI_Model {
 
         $this->db->limit($limit, $offset);
 
-        $result['data'] = $this->db->get()->result_array();
-
-        foreach ($result['data'] as $key => $values) {
-            $data = new DateTime($values['abertura']);
-            $result['data'][$key]['abertura'] = $data->format('d/m/Y H:i:s');
-        }
+        $result['rows'] = $this->db->get()->result_array();
 
         return $result;
     }
@@ -269,8 +264,7 @@ class Solicitacao_model extends CI_Model {
             $this->db->group_end();
         }
 
-        $result['recordsFiltered'] = $this->db->count_all_results();
-        $result['recordsTotal'] = $this->db->count_all_results('phpmycall.solicitacao');
+        $result['total'] = $this->db->count_all_results();
 
         return $result;
     }

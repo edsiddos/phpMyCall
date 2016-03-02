@@ -1,53 +1,55 @@
 
-<script type="text/javascript" src="<?= base_url('static/datatables/js/jquery.dataTables.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.jqueryui.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/dataTables.responsive.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-table/js/bootstrap-table.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-table/js/bootstrap-table-locale-all.min.js') ?>"></script>
 
-<link href="<?= base_url('static/datatables/css/dataTables.jqueryui.min.css') ?>" rel="stylesheet">
-<link href="<?= base_url('static/datatables-responsive/css/responsive.jqueryui.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/bootstrap-table/css/bootstrap-table.min.css') ?>" rel="stylesheet">
 
 <script type="text/javascript">
+
     $(document).ready(function () {
-
-        var datatable = $('#table_solicitacoes').DataTable({
-            ordering: true,
-            destroy: true,
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            ajax: {
-                url: "<?= base_url('solicitacao/lista_solicitacoes') ?>",
-                type: "POST",
-                data: function (data) {
-                    data.situacao = $('select[name=situacao]').val();
-                    data.prioridade = $('select[name=prioridade]').val();
-                }
-            },
-            language: {
-                url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
-            },
-            columns: [
-                {"data": "abertura"},
-                {"data": "projeto"},
-                {"data": "problema"},
-                {"data": "prioridade"},
-                {"data": "solicitante"},
-                {"data": "atendente"},
-                {"data": "num_arquivos"}
-            ]
-        }).on('click', 'tr', function () {
-            var data = datatable.row(this).data();
-
-            $(location).attr('href', '<?= base_url("solicitacao/visualizar") ?>/' + data.solicitacao);
-        });
+        $table_solicitacoes = $('#solicitacoes');
 
         $('select').on('change', function () {
-            datatable.ajax.reload();
+            $table_solicitacoes.bootstrapTable('refresh', {silent: true});
         });
-
     });
+
+    var buscaSolicitacoes = function (params) {
+        var data = JSON.parse(params.data);
+        data.situacao = $('select[name=situacao]').val();
+        data.prioridade = $('select[name=prioridade]').val();
+
+        $.ajax({
+            url: '<?= base_url('solicitacao/lista_solicitacoes') ?>',
+            data: data,
+            type: 'post',
+            dataType: 'json'
+        }).done(function (data) {
+            params.success(data);
+        });
+    };
+
+    function actionFormatter() {
+        return [
+            '<button type="button" class="btn btn-default btn-sm visualizar" title="<?= $label_visualize_request ?>">',
+            '<i class="fa fa-eye"></i>',
+            '</button>'
+        ].join('');
+    }
+
+    window.actionEvents = {
+        'click .visualizar': function (e, value, row, index) {
+            $(location).attr('href', '<?= base_url("solicitacao/visualizar") ?>/' + row.solicitacao);
+        }
+    };
+
 </script>
 
+<style type="text/css">
+    td:first-child {
+        text-align: center;
+    }
+</style>
 
 <div class="container">
 
@@ -105,18 +107,32 @@
     </div>
 
     <div class="row">
-        <table id="table_solicitacoes" class="display responsive nowrap" width="100%" cellspacing="0">
+
+        <table
+            id="solicitacoes"
+            data-toggle="table"
+            data-ajax="buscaSolicitacoes"
+            data-side-pagination="server"
+            data-pagination="true"
+            data-method="post"
+            data-page-list="[5, 10, 20, 50, 100, 200]"
+            data-locale="pt-BR"
+            data-search="true"
+            data-sort-name="abertura"
+            data-sort-order="asc">
             <thead>
                 <tr>
-                    <th><?= $label_start_time_column_table_request ?></th>
-                    <th><?= $label_project_name_column_table_request ?></th>
-                    <th><?= $label_problem_name_column_table_request ?></th>
-                    <th><?= $label_priority_name_column_table_request ?></th>
-                    <th><?= $label_requester_name_column_table_request ?></th>
-                    <th><?= $label_technician_name_column_table_request ?></th>
-                    <th><?= $label_files_column_table_request ?></th>
+                    <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents"></th>
+                    <th data-field="abertura" data-sortable="true"><?= $label_start_time_column_table_request ?></th>
+                    <th data-field="projeto" data-sortable="true"><?= $label_project_name_column_table_request ?></th>
+                    <th data-field="problema" data-sortable="true"><?= $label_problem_name_column_table_request ?></th>
+                    <th data-field="prioridade" data-sortable="true"><?= $label_priority_name_column_table_request ?></th>
+                    <th data-field="solicitante" data-sortable="true"><?= $label_requester_name_column_table_request ?></th>
+                    <th data-field="atendente" data-sortable="true"><?= $label_technician_name_column_table_request ?></th>
+                    <th data-field="num_arquivos" data-sortable="true"><?= $label_files_column_table_request ?></th>
                 </tr>
             </thead>
         </table>
+
     </div>
 </div>

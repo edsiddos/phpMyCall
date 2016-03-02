@@ -43,6 +43,7 @@ $lang = array(
     'text_confirm_delete_attachment_request' => 'Deseja excluir este arquivo?',
     'title_dialog_alert_edit_request' => 'Atenção',
     //lista.php e visualizar.ph
+    'label_visualize_request' => 'Visualizar solicitação',
     'label_status_request' => 'Situação',
     'label_option_all_status_request' => 'Todas',
     'label_option_open_status_request' => 'Aberta',
