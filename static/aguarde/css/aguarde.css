@@ -8,9 +8,8 @@
     z-index: 5;
 }
 
-#aguarde > img {
-    width: 20%;
-    margin: 10% 40% 5%;
+#aguarde > i {
+    margin: 10% 46% 5%;
 }
 
 #aguarde > p {

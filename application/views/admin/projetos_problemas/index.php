@@ -12,7 +12,7 @@
     /*
      * Instancia objeto para exiber mensagem de aguarde.
      */
-    var aguarde = new Aguarde('<?= base_url() . 'static/img/change.gif' ?>');
+    var aguarde = new Aguarde();
 
 
     var ProjetoProblemas = function () {
