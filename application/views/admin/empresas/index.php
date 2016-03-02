@@ -1,18 +1,16 @@
 
 <script type="text/javascript" src="<?= base_url('static/jquery-mask-plugin/js/jquery.mask.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables/js/jquery.dataTables.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables/js/dataTables.jqueryui.min.js') ?>"></script>
-<script type="text/javascript" src="<?= base_url('static/datatables-responsive/js/dataTables.responsive.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-table/js/bootstrap-table.min.js') ?>"></script>
+<script type="text/javascript" src="<?= base_url('static/bootstrap-table/js/bootstrap-table-locale-all.min.js') ?>"></script>
 
-<link href="<?= base_url('static/datatables/css/dataTables.jqueryui.min.css') ?>" rel="stylesheet">
-<link href="<?= base_url('static/datatables-responsive/css/responsive.jqueryui.css') ?>" rel="stylesheet">
+<link href="<?= base_url('static/bootstrap-table/css/bootstrap-table.min.css') ?>" rel="stylesheet">
 
 <script type="text/javascript">
 
     /*
      * Instancia objeto para exiber mensagem de aguarde.
      */
-    var aguarde = new Aguarde('<?= base_url() . 'static/img/change.gif' ?>');
+    var aguarde = new Aguarde();
 
     var Empresas = function () {
 
@@ -51,21 +49,21 @@
                 url: '<?= base_url() . '/empresas/' ?>' + formulario,
                 data: $('form[name=formulario]').serialize(),
                 dataType: 'JSON',
-                type: 'POST',
-                async: false,
-                success: function (data) {
+                type: 'POST'
+            }).done(function (data) {
 
-                    if (data.status) {
-                        $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
-                        $('#msg_status').html(data.msg);
-                    } else {
-                        $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
-                        $('#msg_status').html(data.msg);
-                    }
+                if (data.status) {
+                    $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
+                    $('#msg_status').html(data.msg);
+                } else {
+                    $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
+                    $('#msg_status').html(data.msg);
                 }
+
+                $table_empresas.bootstrapTable('refresh', {silent: true});
+                aguarde.ocultar();
             });
 
-            aguarde.ocultar();
         };
 
         /*
@@ -78,122 +76,88 @@
                 url: '<?= base_url() . '/empresas/excluir' ?>',
                 data: 'id=' + empresa,
                 dataType: 'json',
-                type: 'post',
-                async: false,
-                success: function (data) {
+                type: 'post'
+            }).done(function (data) {
 
-                    if (data.status) {
-                        $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
-                        $('#msg_status').html(data.msg);
-                    } else {
-                        $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
-                        $('#msg_status').html(data.msg);
-                    }
+                if (data.status) {
+                    $('#msg_status').removeClass('hidden alert-danger').addClass('alert-success');
+                    $('#msg_status').html(data.msg);
+                } else {
+                    $('#msg_status').removeClass('hidden alert-success').addClass('alert-danger');
+                    $('#msg_status').html(data.msg);
                 }
-            });
 
-            aguarde.ocultar();
+                $table_empresas.bootstrapTable('refresh', {silent: true});
+                aguarde.ocultar();
+            });
         };
     };
 
     empresa = new Empresas();
 
+    var buscaRelacaoEmpresas = function (params) {
+        var data = JSON.parse(params.data);
 
-    $(document).ready(function () {
-
-        var datatable = $('#empresa').DataTable({
-            ordering: true,
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            ajax: {
-                url: "<?= base_url() . 'empresas/get_empresas' ?>",
-                type: "POST"
-            },
-            language: {
-                url: "<?= base_url('static/datatables/js/pt_br.json') ?>"
-            },
-            columns: [
-                {
-                    data: null,
-                    orderable: false,
-                    render: function (data) {
-                        var html = '<button name="editar" empresa="' + data.id + '"><?= $edit_businesses ?></button>';
-                        html += '<button name="excluir" empresa="' + data.id + '"><?= $del_businesses ?></button>';
-                        return html;
-                    }
-                },
-                {data: "id"},
-                {data: "empresa"},
-                {data: "endereco"},
-                {data: "telefone_fixo"},
-                {data: "telefone_celular"}
-            ]
-        }).on('click', 'tr', function () {
-            if ($(this).hasClass('selected')) {
-                $(this).removeClass('selected');
-            } else {
-                datatable.$('tr.selected').removeClass('selected');
-                $(this).addClass('selected');
-            }
+        $.ajax({
+            url: '<?= base_url('empresas/get_empresas') ?>',
+            data: data,
+            type: 'post',
+            dataType: 'json'
+        }).done(function (data) {
+            params.success(data);
         });
+    };
 
-        datatable.on('draw', function () {
-            /*
-             * Gera botão para edição de feedback
-             */
+    function actionFormatter() {
+        return [
+            '<button type="button" class="btn btn-default btn-sm editar" title="<?= $edit_businesses ?>">',
+            '<i class="fa fa-pencil"></i>',
+            '</button>',
+            '<button type="button" class="btn btn-default btn-sm excluir" title="<?= $del_businesses ?>">',
+            '<i class="fa fa-trash"></i>',
+            '</button>'
+        ].join('');
+    }
 
-            $('button[name=editar]').button({
-                text: false,
-                icons: {
-                    primary: 'ui-icon-pencil'
-                }
-            }).on('click', function () {
-                aguarde.mostrar();
+    window.actionEvents = {
+        'click .editar': function (e, value, row, index) {
+            aguarde.mostrar();
 
-                empresa.setAlterar();
+            empresa.setAlterar();
 
-                var id = $(this).attr('empresa');
+            var id = row.id;
 
-                $.ajax({
-                    url: '<?= base_url() . '/empresas/get_dados_empresa' ?>',
-                    data: 'empresa=' + id,
-                    dataType: 'json',
-                    type: 'post',
-                    async: false,
-                    success: function (data) {
-                        $('input[name=input_id]').val(data.id);
-                        $('input[name=input_empresa]').val(data.empresa);
-                        $('input[name=input_endereco]').val(data.endereco);
-                        $('input[name=input_telefone_fixo]').val(data.telefone_fixo);
-                        $('input[name=input_telefone_celular]').val(data.telefone_celular);
-                    }
-                });
-
-                $('#dialog_empresas').dialog('option', 'title', '<?= $update_title_businesses ?>');
-                $('#dialog_empresas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $title_button_update_businesses ?>');
-                $('#dialog_empresas').dialog('open');
+            $.ajax({
+                url: '<?= base_url() . '/empresas/get_dados_empresa' ?>',
+                data: 'empresa=' + id,
+                dataType: 'json',
+                type: 'post'
+            }).done(function (data) {
+                $('input[name=input_id]').val(data.id);
+                $('input[name=input_empresa]').val(data.empresa);
+                $('input[name=input_endereco]').val(data.endereco);
+                $('input[name=input_telefone_fixo]').val(data.telefone_fixo);
+                $('input[name=input_telefone_celular]').val(data.telefone_celular);
 
                 aguarde.ocultar();
             });
 
-            /*
-             * Cria botão de exclusão e adiciona evento ao clica-lo
-             */
+            $('#dialog_empresas').dialog('option', 'title', '<?= $update_title_businesses ?>');
+            $('#dialog_empresas + div.ui-dialog-buttonpane > div.ui-dialog-buttonset > button:first-child > span.ui-button-text').html('<?= $title_button_update_businesses ?>');
+            $('#dialog_empresas').dialog('open');
+        },
+        'click .excluir': function (e, value, row, index) {
+            $('#alerta_exclusao').dialog('open');
 
-            $('button[name=excluir]').button({
-                text: false,
-                icons: {
-                    primary: 'ui-icon-trash'
-                }
-            }).on('click', function () {
-                $('#alerta_exclusao').dialog('open');
+            var id = row.id;
 
-                var id = $(this).attr('empresa');
+            empresa.setExcluir(id);
+        }
+    };
 
-                empresa.setExcluir(id);
-            });
-        });
+    $(document).ready(function () {
+
+        $table_empresas = $('#empresa');
 
         /*
          * Gera botão de cadastrar usuário e ação de clica-lo
@@ -230,7 +194,6 @@
                     },
                     click: function () {
                         empresa.submitFormulario();
-                        datatable.ajax.reload();
                         $(this).dialog('close');
                     }
                 },
@@ -265,7 +228,6 @@
                     },
                     click: function () {
                         empresa.excluir();
-                        datatable.ajax.reload();
                         $(this).dialog('close');
                     }
                 },
@@ -285,6 +247,15 @@
 
 </script>
 
+<style type="text/css">
+    .editar {
+        margin-right: 5px;
+    }
+
+    td:first-child {
+        text-align: center;
+    }
+</style>
 
 <div class="container">
 
@@ -298,15 +269,26 @@
 
     <div class="row">
 
-        <table id="empresa" class="display responsive nowrap" width="100%" cellspacing="0">
+        <table
+            id="empresa"
+            data-toggle="table"
+            data-ajax="buscaRelacaoEmpresas"
+            data-side-pagination="server"
+            data-pagination="true"
+            data-method="post"
+            data-page-list="[5, 10, 20, 50, 100, 200]"
+            data-locale="pt-BR"
+            data-search="true"
+            data-sort-name="id"
+            data-sort-order="asc">
             <thead>
                 <tr>
-                    <th><?= $table_column_id_businesses ?></th>
-                    <th><?= $table_column_name_businesses ?></th>
-                    <th><?= $table_column_address_businesses ?></th>
-                    <th><?= $table_column_telephone_businesses ?></th>
-                    <th><?= $table_column_cell_businesses ?></th>
-                    <th></th>
+                    <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents"></th>
+                    <th data-field="id" data-sortable="true"><?= $table_column_id_businesses ?></th>
+                    <th data-field="empresa" data-sortable="true"><?= $table_column_name_businesses ?></th>
+                    <th data-field="endereco" data-sortable="true"><?= $table_column_address_businesses ?></th>
+                    <th data-field="telefone_fixo" data-sortable="true"><?= $table_column_telephone_businesses ?></th>
+                    <th data-field="telefone_celular" data-sortable="true"><?= $table_column_cell_businesses ?></th>
                 </tr>
             </thead>
         </table>

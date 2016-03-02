@@ -117,20 +117,14 @@ class Empresas extends Admin_Controller {
         $perfil = $_SESSION['perfil'];
 
         if (Menu::possue_permissao($perfil, $permissao)) {
-            $columns = filter_input(INPUT_POST, 'columns', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-            $draw = filter_input(INPUT_POST, 'draw', FILTER_SANITIZE_NUMBER_INT);
-            $limit = filter_input(INPUT_POST, 'length', FILTER_SANITIZE_NUMBER_INT);
-            $offset = filter_input(INPUT_POST, 'start', FILTER_SANITIZE_NUMBER_INT);
-            $order = filter_input(INPUT_POST, 'order', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-            $search = filter_input(INPUT_POST, 'search', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+            $limit = filter_input(INPUT_POST, 'limit', FILTER_SANITIZE_NUMBER_INT);
+            $offset = filter_input(INPUT_POST, 'offset', FILTER_SANITIZE_NUMBER_INT);
+            $sort = filter_input(INPUT_POST, 'sort', FILTER_SANITIZE_STRING);
+            $order = filter_input(INPUT_POST, 'order', FILTER_SANITIZE_STRING);
+            $search = filter_input(INPUT_POST, 'search', FILTER_SANITIZE_STRING);
 
-            if (empty($columns[$order[0]['column']]['data'])) {
-                $order_by = "id {$order[0]['dir']}";
-            } else {
-                $order_by = "{$columns[$order[0]['column']]['data']} {$order[0]['dir']}";
-            }
+            $order_by = "{$sort} {$order}";
 
-            $array['draw'] = (empty($draw) ? 1 : $draw);
             $array = $this->model->get_empresas($search['value'], $order_by, $limit, $offset);
 
             $this->response($array);

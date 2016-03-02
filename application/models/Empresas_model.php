@@ -88,8 +88,7 @@ class Empresas_model extends CI_Model {
         $query = $this->db->get();
         $aux = $query->row_array();
 
-        $result['recordsFiltered'] = $aux['count'];
-        $result['recordsTotal'] = $this->db->count_all_results('phpmycall.empresas');
+        $result['total'] = $aux['count'];
 
         $this->db->select("id, empresa, endereco, telefone_fixo, telefone_celular");
         $this->db->from('phpmycall.empresas');
@@ -98,7 +97,7 @@ class Empresas_model extends CI_Model {
             $this->db->where($where);
         }
 
-        $result['data'] = $this->db->order_by($order_by)->limit($limit, $offset)->get()->result_array();
+        $result['rows'] = $this->db->order_by($order_by)->limit($limit, $offset)->get()->result_array();
 
         return $result;
     }
