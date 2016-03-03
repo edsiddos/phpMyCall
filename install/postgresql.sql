@@ -47,9 +47,10 @@ INSERT INTO phpmycall.opcoes_menu (id, nome, link, interno, funcionalidade, menu
 (8, 'Tipos de Feedback', 'feedback/index', TRUE, TRUE, 4),
 (9, 'Projetos e Problemas', 'projetos_problemas/index', TRUE, TRUE, 4),
 (10, 'Empresas', 'empresas/index', TRUE, TRUE, 4),
-(11, 'Alterar Senha', 'usuarios/alterar_senha', TRUE, TRUE, 4); 
+(11, 'Alterar Senha', 'usuarios/alterar_senha', TRUE, TRUE, 4),
+(12, 'Configurações', 'administracao/index', TRUE, TRUE, 4);
 
-SELECT SETVAL('phpmycall.opcoes_menu_id_seq', 12, TRUE);
+SELECT SETVAL('phpmycall.opcoes_menu_id_seq', 13, TRUE);
 
 
 CREATE TABLE phpmycall.perfil(
@@ -105,6 +106,10 @@ INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (10, 4), (10, 5); -
 -- Inicio alterar Senha
 INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (11, 1), (11, 2), (11, 3), (11, 4), (11, 5);
 -- Final alterar Senha
+
+-- Inicio editar configuração
+INSERT INTO phpmycall.permissao_perfil (menu, perfil) VALUES (12, 5);
+-- Final editar 
 
 --
 -- Tabela de empresas
