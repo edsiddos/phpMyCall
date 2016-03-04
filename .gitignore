@@ -2,6 +2,8 @@
 # IGNORA PASTA DENTRO DO PROJETO
 #-------------------------------
 
+.htpasswd
+
 .sass-cache/*
 bower_components/*
 
