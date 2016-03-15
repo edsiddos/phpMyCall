@@ -50,7 +50,7 @@ class Empresas_model extends CI_Model {
      * @return boolean <b>TRUE</b> se sucesso.
      */
     public function cadastra_empresa($dados) {
-        return $this->db->insert('phpmycall.empresas', $dados);
+        return $this->db->insert('openmycall.empresas', $dados);
     }
 
     /**
@@ -60,7 +60,7 @@ class Empresas_model extends CI_Model {
      */
     public function existe_empresa($empresa) {
         $this->db->select('COUNT(empresas.empresa) AS status');
-        $query = $this->db->from('phpmycall.empresas')->where("LOWER(empresa) LIKE LOWER('{$empresa}')")->get();
+        $query = $this->db->from('openmycall.empresas')->where("LOWER(empresa) LIKE LOWER('{$empresa}')")->get();
 
         return $query->row_array();
     }
@@ -79,7 +79,7 @@ class Empresas_model extends CI_Model {
         $where .= " OR LOWER(telefone_fixo) LIKE LOWER('%{$search}%') OR LOWER(telefone_celular) LIKE LOWER('%{$search}%')";
 
         $this->db->select('COUNT(id) AS count');
-        $this->db->from('phpmycall.empresas');
+        $this->db->from('openmycall.empresas');
 
         if (!empty($search)) {
             $this->db->where($where);
@@ -91,7 +91,7 @@ class Empresas_model extends CI_Model {
         $result['total'] = $aux['count'];
 
         $this->db->select("id, empresa, endereco, telefone_fixo, telefone_celular");
-        $this->db->from('phpmycall.empresas');
+        $this->db->from('openmycall.empresas');
 
         if (!empty($search)) {
             $this->db->where($where);
@@ -108,7 +108,7 @@ class Empresas_model extends CI_Model {
      * @return Array Retorna dados da empresa.
      */
     public function get_dados_empresa($empresa) {
-        return $this->db->from('phpmycall.empresas')->where(array('id' => "$empresa"))->get()->row_array();
+        return $this->db->from('openmycall.empresas')->where(array('id' => "$empresa"))->get()->row_array();
     }
 
     /**
@@ -119,7 +119,7 @@ class Empresas_model extends CI_Model {
      */
     public function atualiza_empresa($id, $dados) {
         $this->db->where(array('id' => $id));
-        return $this->db->update('phpmycall.empresas', $dados);
+        return $this->db->update('openmycall.empresas', $dados);
     }
 
     /**
@@ -129,7 +129,7 @@ class Empresas_model extends CI_Model {
      */
     public function excluir_empresa($id) {
         $this->db->where(array('id' => $id));
-        return $this->db->delete('phpmycall.empresas');
+        return $this->db->delete('openmycall.empresas');
     }
 
 }

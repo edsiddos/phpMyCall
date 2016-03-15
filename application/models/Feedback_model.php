@@ -61,7 +61,7 @@ class Feedback_model extends CI_Model {
             'descricao' => $descricao
         );
 
-        return $this->db->insert('phpmycall.tipo_feedback', $dados);
+        return $this->db->insert('openmycall.tipo_feedback', $dados);
     }
 
     /**
@@ -73,7 +73,7 @@ class Feedback_model extends CI_Model {
         $where = "LOWER(nome) LIKE LOWER('%{$search}%') OR LOWER(abreviatura) LIKE LOWER('%{$search}%') OR LOWER(descricao) LIKE LOWER('%{$search}%')";
 
         $this->db->select('COUNT(id) AS count');
-        $this->db->from('phpmycall.tipo_feedback');
+        $this->db->from('openmycall.tipo_feedback');
 
         if (!empty($search)) {
             $this->db->where($where);
@@ -85,7 +85,7 @@ class Feedback_model extends CI_Model {
         $result['total'] = $aux['count'];
 
         $this->db->select("id, nome, abreviatura, CASE WHEN descontar THEN 'SIM' ELSE 'NÃO' END AS descontar , descricao");
-        $this->db->from('phpmycall.tipo_feedback');
+        $this->db->from('openmycall.tipo_feedback');
 
         if (!empty($search)) {
             $this->db->where($where);
@@ -103,7 +103,7 @@ class Feedback_model extends CI_Model {
      * @return Array Retorna array com os dados do tipo de feedback
      */
     public function get_feedback($feedback) {
-        $this->db->select('*')->from('phpmycall.tipo_feedback');
+        $this->db->select('*')->from('openmycall.tipo_feedback');
         $query = $this->db->where(array('id' => $feedback))->get();
         return $query->row_array();
     }
@@ -127,7 +127,7 @@ class Feedback_model extends CI_Model {
         );
 
         $this->db->where(array('id' => $id));
-        return $this->db->update('phpmycall.tipo_feedback', $dados);
+        return $this->db->update('openmycall.tipo_feedback', $dados);
     }
 
     /**
@@ -138,7 +138,7 @@ class Feedback_model extends CI_Model {
      */
     public function excluir($id) {
         $this->db->where(array('id' => $id));
-        return $this->db->delete('phpmycall.tipo_feedback');
+        return $this->db->delete('openmycall.tipo_feedback');
     }
 
 }

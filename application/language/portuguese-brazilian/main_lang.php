@@ -20,7 +20,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 $lang = array(
-    'title_window' => 'phpMyCall',
+    'title_window' => 'openMyCall',
     'visualize_request' => 'Visualizar solicitação',
     'open_requests' => 'Solicitações em aberto',
     'request_for_service' => 'Solicitações em atendimento',

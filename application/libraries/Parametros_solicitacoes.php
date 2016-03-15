@@ -55,7 +55,7 @@ class Parametros_solicitacoes {
             $parametros['ENCERRAR_SOLICITACAO'] = Parametros_solicitacoes::get_dados_parametros('ENCERRAR_SOLICITACAO');
             $parametros['EXCLUIR_SOLICITACAO'] = Parametros_solicitacoes::get_dados_parametros('EXCLUIR_SOLICITACAO');
 
-            $query = $ci->db->select('prioridade.nome, prioridade.cor')->from('phpmycall.prioridade')->order_by('prioridade.id')->get();
+            $query = $ci->db->select('prioridade.nome, prioridade.cor')->from('openmycall.prioridade')->order_by('prioridade.id')->get();
             $result = $query->result_array();
 
             foreach ($result as $values) {
@@ -75,11 +75,11 @@ class Parametros_solicitacoes {
      */
     private static function get_dados_parametros($parametro) {
         $ci = &get_instance();
-        $ci->db->select('TRIM(texto) AS texto')->from('phpmycall.config');
+        $ci->db->select('TRIM(texto) AS texto')->from('openmycall.config');
         $perfil = $ci->db->where(array('parametro' => $parametro))->get()->row_array();
         $perfis = preg_split('/(,\s|,)/', $perfil['texto']);
 
-        $result = $ci->db->select('perfil.perfil')->from('phpmycall.perfil')->where_in('perfil.nivel', $perfis)->get()->result_array();
+        $result = $ci->db->select('perfil.perfil')->from('openmycall.perfil')->where_in('perfil.nivel', $perfis)->get()->result_array();
         foreach ($result as $values) {
             $return[] = $values['perfil'];
         }

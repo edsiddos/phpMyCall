@@ -37,7 +37,7 @@ class Horarios_model extends CI_Model {
      */
     public function get_feriados($mostrar) {
         $this->db->select("dia, '', nome");
-        $query = $this->db->from('phpmycall.feriado')->get();
+        $query = $this->db->from('openmycall.feriado')->get();
 
         $result = $query->result_array();
 
@@ -77,7 +77,7 @@ class Horarios_model extends CI_Model {
                 );
 
                 $return[$inicio]['dados'] = $array;
-                $return[$inicio]['result'] = $this->db->insert('phpmycall.feriado', $array);
+                $return[$inicio]['result'] = $this->db->insert('openmycall.feriado', $array);
             }
         } else {
             /*
@@ -92,7 +92,7 @@ class Horarios_model extends CI_Model {
             );
 
             $return[0]['dados'] = $array;
-            $return[0]['result'] = $this->db->insert('phpmycall.feriado', $array);
+            $return[0]['result'] = $this->db->insert('openmycall.feriado', $array);
         }
 
         return $return;
@@ -105,7 +105,7 @@ class Horarios_model extends CI_Model {
      * @return array Retorna array com o nome do feriado
      */
     public function get_feriado_dia($dia) {
-        $query = $this->db->select('nome')->from('phpmycall.feriado')->where('dia', $dia)->get();
+        $query = $this->db->select('nome')->from('openmycall.feriado')->where('dia', $dia)->get();
 
         return $query->row_array();
     }
@@ -119,7 +119,7 @@ class Horarios_model extends CI_Model {
      */
     public function update_feriados($data, $nome) {
         $this->db->where('dia', $data);
-        return $this->db->update('phpmycall.feriado', array('nome' => $nome));
+        return $this->db->update('openmycall.feriado', array('nome' => $nome));
     }
 
     /**
@@ -130,7 +130,7 @@ class Horarios_model extends CI_Model {
      */
     public function delete_feriados($data) {
         $this->db->where('dia', $data);
-        return $this->db->delete('phpmycall.feriado');
+        return $this->db->delete('openmycall.feriado');
     }
 
     /**
@@ -139,7 +139,7 @@ class Horarios_model extends CI_Model {
      * @return Array Retorna array com os dia da semana e horários de entrada e saída do 1º e 2º periodo.
      */
     public function get_expediente() {
-        $result = $this->db->select('*')->from('phpmycall.expediente')->order_by('id')->get();
+        $result = $this->db->select('*')->from('openmycall.expediente')->order_by('id')->get();
 
         foreach ($result->result_array() as $values) {
             $return['dia_semana'][$values['id']] = $values['dia_semana'];
@@ -166,7 +166,7 @@ class Horarios_model extends CI_Model {
         );
 
         $this->db->where('id', $id);
-        return $this->db->update('phpmycall.expediente', $dados);
+        return $this->db->update('openmycall.expediente', $dados);
     }
 
 }

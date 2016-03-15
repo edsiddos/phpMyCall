@@ -81,7 +81,7 @@ class Admin_Controller extends PMC_Controller {
                 }
             }
 
-            $this->data['title'] = isset($this->translate['title_window']) ? $this->translate['title_window'] : 'phpMyCall - Área Administrativa';
+            $this->data['title'] = isset($this->translate['title_window']) ? $this->translate['title_window'] : 'openMyCall - Área Administrativa';
         } else {
             redirect('login/index', 'location');
         }
@@ -136,7 +136,7 @@ class Public_Controller extends PMC_Controller {
             }
         }
 
-        $this->data['title'] = isset($this->translate['title_window']) ? $this->translate['title_window'] : 'phpMyCall';
+        $this->data['title'] = isset($this->translate['title_window']) ? $this->translate['title_window'] : 'openMyCall';
 
         $this->views['head'] = 'template/public/header';
         $this->views['footer'] = 'template/public/footer';

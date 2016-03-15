@@ -47,7 +47,7 @@ class Logs {
             'usuario' => $id_usuario
         );
 
-        $CI->db->insert('phpmycall.log', $insert);
+        $CI->db->insert('openmycall.log', $insert);
     }
 
 }

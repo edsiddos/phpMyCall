@@ -3,7 +3,7 @@
     <div class="col-md-12">
         <br /><br />
         <h2>
-            <?= $phpmycall_auth ?>
+            <?= $openmycall_auth ?>
         </h2>
         <br />
     </div>

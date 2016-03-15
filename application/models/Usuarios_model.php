@@ -52,7 +52,7 @@ class Usuarios_model extends CI_Model {
      * @return Array Array com os perfils disponiveis.
      */
     public function get_perfil($nivel) {
-        $sql = "SELECT id, perfil FROM phpmycall.perfil WHERE nivel < {$nivel}";
+        $sql = "SELECT id, perfil FROM openmycall.perfil WHERE nivel < {$nivel}";
 
         $return = $this->db->query($sql);
 
@@ -66,7 +66,7 @@ class Usuarios_model extends CI_Model {
      * @return boolean TRUE se inserido.
      */
     public function inserir_usuario($dados) {
-        $result = $this->db->insert('phpmycall.usuario', $dados);
+        $result = $this->db->insert('openmycall.usuario', $dados);
 
         return $result;
     }
@@ -86,8 +86,8 @@ class Usuarios_model extends CI_Model {
         }
 
         $this->db->select('usuario.id, usuario.usuario, usuario.nome, perfil.perfil, usuario.email');
-        $this->db->from('phpmycall.usuario');
-        $this->db->join('phpmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
+        $this->db->from('openmycall.usuario');
+        $this->db->join('openmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
         $this->db->where($str_where)->order_by($order);
         $query = $this->db->limit($limit, $offset)->get();
 
@@ -103,8 +103,8 @@ class Usuarios_model extends CI_Model {
         }
 
         $this->db->select('COUNT(usuario.id) AS quant');
-        $this->db->from('phpmycall.usuario');
-        $this->db->join('phpmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
+        $this->db->from('openmycall.usuario');
+        $this->db->join('openmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
         $query = $this->db->where($str_where)->get();
 
         $result = $query->row_array();
@@ -120,7 +120,7 @@ class Usuarios_model extends CI_Model {
      * @return Array
      */
     public function valida_usuario($user, $id) {
-        $this->db->select('id')->from('phpmycall.usuario')->where("usuario = '{$user}' AND id <> '{$id}'");
+        $this->db->select('id')->from('openmycall.usuario')->where("usuario = '{$user}' AND id <> '{$id}'");
         $query = $this->db->get();
 
         $result = $query->row_array();
@@ -136,7 +136,7 @@ class Usuarios_model extends CI_Model {
      * @return Boolean True se existe email
      */
     public function get_email($email, $id) {
-        $this->db->select('email')->from('phpmycall.usuario')->where("email = '{$email}' AND id <> {$id}");
+        $this->db->select('email')->from('openmycall.usuario')->where("email = '{$email}' AND id <> {$id}");
         $query = $this->db->get();
 
         $result = $query->row_array();
@@ -151,7 +151,7 @@ class Usuarios_model extends CI_Model {
      * @return Array Retorna array com os dados do usuário
      */
     public function get_dados_usuarios($id) {
-        $this->db->select("id, usuario, nome, email, telefone, perfil, empresa")->from('phpmycall.usuario');
+        $this->db->select("id, usuario, nome, email, telefone, perfil, empresa")->from('openmycall.usuario');
         $query = $this->db->where("id = {$id}")->get();
 
         return $query->row_array();
@@ -166,7 +166,7 @@ class Usuarios_model extends CI_Model {
      */
     public function atualiza_usuario($dados, $id) {
         $this->db->where("id = {$id}");
-        $result = $this->db->update('phpmycall.usuario', $dados);
+        $result = $this->db->update('openmycall.usuario', $dados);
 
         return $result;
     }
@@ -179,15 +179,15 @@ class Usuarios_model extends CI_Model {
      * @return boolean True se excluido com sucesso, False se falha.
      */
     public function excluir_usuario($id, $nivel) {
-        $this->db->select('usuario.id')->from('phpmycall.usuario');
-        $this->db->join('phpmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
+        $this->db->select('usuario.id')->from('openmycall.usuario');
+        $this->db->join('openmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
         $result = $this->db->where(array('usuario.id' => $id, 'perfil.nivel <' => $nivel))->get()->row_array();
 
         $this->db->where(array('usuario' => $result['id']));
-        $status = $this->db->delete('phpmycall.projeto_responsaveis');
+        $status = $this->db->delete('openmycall.projeto_responsaveis');
 
         $this->db->where(array('id' => $result['id']));
-        $status = $this->db->delete('phpmycall.usuario');
+        $status = $this->db->delete('openmycall.usuario');
 
         return $status;
     }
@@ -199,8 +199,8 @@ class Usuarios_model extends CI_Model {
      * @return Array
      */
     public function relacao_projetos($id_usuario) {
-        $this->db->select("projeto.id AS value")->from('phpmycall.projeto');
-        $this->db->join('phpmycall.projeto_responsaveis', 'projeto.id = projeto_responsaveis.projeto', 'inner');
+        $this->db->select("projeto.id AS value")->from('openmycall.projeto');
+        $this->db->join('openmycall.projeto_responsaveis', 'projeto.id = projeto_responsaveis.projeto', 'inner');
         $query = $this->db->where("usuario = {$id_usuario}")->get();
 
         $participa = $query->result_array();
@@ -210,7 +210,7 @@ class Usuarios_model extends CI_Model {
             $dados['participa'][] = $values['value'];
         }
 
-        $this->db->select('id AS value, nome AS content')->from('phpmycall.projeto');
+        $this->db->select('id AS value, nome AS content')->from('openmycall.projeto');
 
         if (count($dados['participa']) > 0) {
             $query = $this->db->where_not_in('id', $dados['participa'])->get();
@@ -231,16 +231,16 @@ class Usuarios_model extends CI_Model {
      * @return Array Retorna dois <b>arrays</b> relação de projetos inseridos e excluidos.
      */
     public function liga_usuario_projeto($usuario, $projetos) {
-        $query = $this->db->select('id')->from('phpmycall.usuario')->where('usuario', $usuario)->get();
+        $query = $this->db->select('id')->from('openmycall.usuario')->where('usuario', $usuario)->get();
 
         $id = $query->row_array();
 
         /*
          * Get projetos
          */
-        $this->db->select('projeto.id')->from('phpmycall.projeto');
-        $this->db->join('phpmycall.projeto_responsaveis', 'projeto.id = projeto_responsaveis.projeto', 'inner');
-        $this->db->join('phpmycall.usuario', 'projeto_responsaveis.usuario = usuario.id', 'inner');
+        $this->db->select('projeto.id')->from('openmycall.projeto');
+        $this->db->join('openmycall.projeto_responsaveis', 'projeto.id = projeto_responsaveis.projeto', 'inner');
+        $this->db->join('openmycall.usuario', 'projeto_responsaveis.usuario = usuario.id', 'inner');
         $projeto_participante = $this->db->where('usuario.usuario', $usuario)->get();
 
         $delete = array();
@@ -249,7 +249,7 @@ class Usuarios_model extends CI_Model {
         foreach ($projeto_participante->result_array() as $values) {
             if (!in_array($values ['id'], $insert)) {
                 $this->db->where("projeto = {$values['id']} AND usuario = {$id['id']}");
-                $this->db->delete('phpmycall.projeto_responsaveis');
+                $this->db->delete('openmycall.projeto_responsaveis');
                 $delete [] = $values ['id'];
             }
 
@@ -260,7 +260,7 @@ class Usuarios_model extends CI_Model {
         }
 
         foreach ($insert as $values) {
-            $this->db->insert('phpmycall.projeto_responsaveis', array('usuario' => $id ['id'], 'projeto' => $values));
+            $this->db->insert('openmycall.projeto_responsaveis', array('usuario' => $id ['id'], 'projeto' => $values));
         }
 
         $return = array(
@@ -276,7 +276,7 @@ class Usuarios_model extends CI_Model {
      * @return Array Retorna empresas cadastradas.
      */
     public function get_empresas() {
-        $query = $this->db->select('empresas.id, empresas.empresa')->from('phpmycall.empresas')->get();
+        $query = $this->db->select('empresas.id, empresas.empresa')->from('openmycall.empresas')->get();
 
         return $query->result_array();
     }
@@ -293,7 +293,7 @@ class Usuarios_model extends CI_Model {
         );
 
         $this->db->where('id', $usuario);
-        return $this->db->update('phpmycall.usuario', $array);
+        return $this->db->update('openmycall.usuario', $array);
     }
 
 }

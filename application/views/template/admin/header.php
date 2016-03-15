@@ -39,13 +39,13 @@
             <div class="container-fluid">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">phpMyCall</span>
+                        <span class="sr-only">openMyCall</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
                     <a class="navbar-brand" href="<?= base_url('main/index') ?>">
-                        phpMyCall
+                        openMyCall
                     </a>
                 </div>
                 <div id="navbar" class="collapse navbar-collapse">

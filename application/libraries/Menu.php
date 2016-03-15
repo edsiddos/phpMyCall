@@ -36,11 +36,11 @@ class Menu {
         $select = "menu.nome AS menu, submenu.nome AS submenu, opcoes_menu.nome AS opcao, opcoes_menu.link, perfil.perfil";
 
         $CI->db->select($select);
-        $CI->db->from('phpmycall.opcoes_menu');
-        $CI->db->join('phpmycall.permissao_perfil', 'opcoes_menu.id = permissao_perfil.menu', 'inner');
-        $CI->db->join('phpmycall.perfil', 'permissao_perfil.perfil = perfil.id', 'inner');
-        $CI->db->join('phpmycall.opcoes_menu AS submenu', 'opcoes_menu.menu_pai = submenu.id', 'left');
-        $CI->db->join('phpmycall.opcoes_menu AS menu', 'submenu.menu_pai = menu.id', 'left');
+        $CI->db->from('openmycall.opcoes_menu');
+        $CI->db->join('openmycall.permissao_perfil', 'opcoes_menu.id = permissao_perfil.menu', 'inner');
+        $CI->db->join('openmycall.perfil', 'permissao_perfil.perfil = perfil.id', 'inner');
+        $CI->db->join('openmycall.opcoes_menu AS submenu', 'opcoes_menu.menu_pai = submenu.id', 'left');
+        $CI->db->join('openmycall.opcoes_menu AS menu', 'submenu.menu_pai = menu.id', 'left');
         $query = $CI->db->order_by('perfil.perfil, opcoes_menu.id')->get();
 
         return $query->result_array();
@@ -86,9 +86,9 @@ class Menu {
      */
     public static function possue_permissao($perfil, $link) {
         $sql = "SELECT EXISTS(
-          SELECT * FROM phpmycall.opcoes_menu
-          INNER JOIN phpmycall.permissao_perfil ON opcoes_menu.id = permissao_perfil.menu
-          INNER JOIN phpmycall.perfil ON permissao_perfil.perfil = perfil.id
+          SELECT * FROM openmycall.opcoes_menu
+          INNER JOIN openmycall.permissao_perfil ON opcoes_menu.id = permissao_perfil.menu
+          INNER JOIN openmycall.perfil ON permissao_perfil.perfil = perfil.id
           WHERE perfil.perfil = ?
           AND opcoes_menu.link = ?) AS permissao";
 

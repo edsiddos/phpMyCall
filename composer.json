@@ -1,5 +1,5 @@
 {
-    "name": "edsiddos/phpmycall",
+    "name": "edsiddos/openmycall",
     "description": "Sistema de help desk implementado em PHP 5.",
     "type": "project",
     "require": {

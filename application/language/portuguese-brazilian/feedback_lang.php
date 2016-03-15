@@ -20,7 +20,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 $lang = array(
-    'title_window' => 'phpMyCall - Feedback',
+    'title_window' => 'openMyCall - Feedback',
     // index.php
     'title_dialog_add_feedback' => 'Cadastrar tipo de feedback',
     'button_add_feedback' => 'Cadastrar',

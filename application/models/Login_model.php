@@ -43,8 +43,8 @@ class Login_model extends CI_Model {
             'usuario.usuario' => $usuario
         );
 
-        $this->db->select($select)->from('phpmycall.usuario');
-        $this->db->join('phpmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
+        $this->db->select($select)->from('openmycall.usuario');
+        $this->db->join('openmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
         $query = $this->db->where($array)->get();
 
         return $query->row_array();

@@ -51,7 +51,7 @@ class Projetos_problemas_model extends CI_Model {
      * @return Array Com os nome dos projetos.
      */
     public function get_projetos($nome) {
-        $this->db->select('nome')->from('phpmycall.projeto');
+        $this->db->select('nome')->from('openmycall.projeto');
         $result = $this->db->where("LOWER(nome) LIKE LOWER('%{$nome}%')")->get()->result_array();
 
         $return = array();
@@ -70,7 +70,7 @@ class Projetos_problemas_model extends CI_Model {
      * @return Array Retorna array com os nome dos projetos
      */
     public function get_problemas($nome) {
-        $this->db->select('nome')->from('phpmycall.tipo_problema');
+        $this->db->select('nome')->from('openmycall.tipo_problema');
         $result = $this->db->where("LOWER(nome) LIKE LOWER('%{$nome}%')")->get()->result_array();
 
         $return = array();
@@ -89,7 +89,7 @@ class Projetos_problemas_model extends CI_Model {
      * @return array Resultado da pesquisa
      */
     public function get_id_projeto($nome) {
-        $this->db->select('id')->from('phpmycall.projeto');
+        $this->db->select('id')->from('openmycall.projeto');
         $result = $this->db->where(array('nome' => $nome))->get()->row_array();
 
         return $result['id'];
@@ -101,8 +101,8 @@ class Projetos_problemas_model extends CI_Model {
      * @param int $nivel Nivel de permissão do perfil
      */
     public function relacao_usuarios($nivel) {
-        $this->db->select("usuario.id AS value, CONCAT(usuario.nome, ' - ', perfil.perfil) AS content")->from('phpmycall.usuario');
-        $this->db->join('phpmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
+        $this->db->select("usuario.id AS value, CONCAT(usuario.nome, ' - ', perfil.perfil) AS content")->from('openmycall.usuario');
+        $this->db->join('openmycall.perfil', 'usuario.perfil = perfil.id', 'inner');
         $result = $this->db->where("perfil.nivel <= {$nivel}")->get()->result_array();
 
         return (empty($result) ? array() : $result);
@@ -116,9 +116,9 @@ class Projetos_problemas_model extends CI_Model {
      * @return boolean <b>True</b> se existir, <b>False</b> caso contrario.
      */
     public function existe_projeto_problema($projeto, $problema) {
-        $this->db->select('projeto_tipo_problema.id')->from('phpmycall.projeto_tipo_problema');
-        $this->db->join('phpmycall.projeto', 'projeto_tipo_problema.projeto = projeto.id', 'inner');
-        $this->db->join('phpmycall.tipo_problema', 'projeto_tipo_problema.problema = tipo_problema.id', 'inner');
+        $this->db->select('projeto_tipo_problema.id')->from('openmycall.projeto_tipo_problema');
+        $this->db->join('openmycall.projeto', 'projeto_tipo_problema.projeto = projeto.id', 'inner');
+        $this->db->join('openmycall.tipo_problema', 'projeto_tipo_problema.problema = tipo_problema.id', 'inner');
         $return = $this->db->where(array('projeto.nome' => $projeto, 'tipo_problema.nome' => $problema))->get()->row_array();
 
         return (empty($return['id']) ? false : true);
@@ -137,9 +137,9 @@ class Projetos_problemas_model extends CI_Model {
             'descricao' => $descricao
         );
 
-        if ($this->db->insert('phpmycall.projeto', $array)) {
+        if ($this->db->insert('openmycall.projeto', $array)) {
             if ($this->db->dbdriver == 'pdo' && $this->db->subdriver === 'pgsql') {
-                return $this->db->insert_id('phpmycall.projeto_id_seq');
+                return $this->db->insert_id('openmycall.projeto_id_seq');
             } else {
                 return $this->db->insert_id();
             }
@@ -155,7 +155,7 @@ class Projetos_problemas_model extends CI_Model {
      * @return integer <b>ID</b> do problema
      */
     public function get_id_problema($nome) {
-        $this->db->select('id')->from('phpmycall.tipo_problema');
+        $this->db->select('id')->from('openmycall.tipo_problema');
         $id = $this->db->where(array('nome' => $nome))->get()->row_array();
 
         return $id['id'];
@@ -172,9 +172,9 @@ class Projetos_problemas_model extends CI_Model {
             'nome' => $nome
         );
 
-        if ($this->db->insert('phpmycall.tipo_problema', $array)) {
+        if ($this->db->insert('openmycall.tipo_problema', $array)) {
             if ($this->db->dbdriver == 'pdo' && $this->db->subdriver === 'pgsql') {
-                return $this->db->insert_id('phpmycall.tipo_problema_id_seq');
+                return $this->db->insert_id('openmycall.tipo_problema_id_seq');
             } else {
                 return $this->db->insert_id();
             }
@@ -193,7 +193,7 @@ class Projetos_problemas_model extends CI_Model {
 
         if (count($participantes) > 0) {
             foreach ($participantes as $values) {
-                $this->db->insert('phpmycall.projeto_responsaveis', array('usuario' => $values, 'projeto' => $projeto));
+                $this->db->insert('openmycall.projeto_responsaveis', array('usuario' => $values, 'projeto' => $projeto));
             }
         }
     }
@@ -216,7 +216,7 @@ class Projetos_problemas_model extends CI_Model {
             'descricao' => $descricao
         );
 
-        $this->db->insert('phpmycall.projeto_tipo_problema', $array);
+        $this->db->insert('openmycall.projeto_tipo_problema', $array);
     }
 
     /**
@@ -226,11 +226,11 @@ class Projetos_problemas_model extends CI_Model {
      */
     public function lista_projeto_problemas($where, $order, $limit, $offset) {
         $this->db->select('COUNT(id) AS count');
-        $this->db->from('phpmycall.projeto_tipo_problema');
+        $this->db->from('openmycall.projeto_tipo_problema');
 
         if (!empty($where)) {
-            $this->db->where("projeto IN (SELECT id FROM phpmycall.projeto WHERE LOWER(nome) LIKE LOWER('%{$where}%'))"
-                    . " OR problema IN (SELECT id FROM phpmycall.tipo_problema WHERE LOWER(nome) LIKE LOWER('%{$where}%'))");
+            $this->db->where("projeto IN (SELECT id FROM openmycall.projeto WHERE LOWER(nome) LIKE LOWER('%{$where}%'))"
+                    . " OR problema IN (SELECT id FROM openmycall.tipo_problema WHERE LOWER(nome) LIKE LOWER('%{$where}%'))");
         }
 
         $query = $this->db->get();
@@ -239,9 +239,9 @@ class Projetos_problemas_model extends CI_Model {
         $result['total'] = $aux['count'];
 
         $this->db->select('projeto_tipo_problema.id, projeto.id AS id_projeto, projeto.nome AS projeto, tipo_problema.nome AS problema');
-        $this->db->from('phpmycall.projeto_tipo_problema');
-        $this->db->join('phpmycall.projeto', 'projeto_tipo_problema.projeto = projeto.id', 'inner');
-        $this->db->join('phpmycall.tipo_problema', 'projeto_tipo_problema.problema = tipo_problema.id', 'inner');
+        $this->db->from('openmycall.projeto_tipo_problema');
+        $this->db->join('openmycall.projeto', 'projeto_tipo_problema.projeto = projeto.id', 'inner');
+        $this->db->join('openmycall.tipo_problema', 'projeto_tipo_problema.problema = tipo_problema.id', 'inner');
 
         if (!empty($where)) {
             $str_where = "LOWER(projeto.nome) LIKE LOWER('%{$where}%') OR LOWER(tipo_problema.nome) LIKE LOWER('%{$where}%')";
@@ -272,9 +272,9 @@ class Projetos_problemas_model extends CI_Model {
                     projeto_tipo_problema.solucao AS solucao,
                     projeto_tipo_problema.descricao AS descricao";
 
-        $this->db->select($select)->from('phpmycall.projeto_tipo_problema');
-        $this->db->join('phpmycall.projeto', 'projeto_tipo_problema.projeto = projeto.id', 'inner');
-        $this->db->join('phpmycall.tipo_problema', 'projeto_tipo_problema.problema = tipo_problema.id', 'inner');
+        $this->db->select($select)->from('openmycall.projeto_tipo_problema');
+        $this->db->join('openmycall.projeto', 'projeto_tipo_problema.projeto = projeto.id', 'inner');
+        $this->db->join('openmycall.tipo_problema', 'projeto_tipo_problema.problema = tipo_problema.id', 'inner');
         return $this->db->where(array('projeto_tipo_problema.id' => $id))->get()->row_array();
     }
 
@@ -285,7 +285,7 @@ class Projetos_problemas_model extends CI_Model {
      * @return Array
      */
     public function get_relacao_participantes($id) {
-        $this->db->select('usuario')->from('phpmycall.projeto_responsaveis');
+        $this->db->select('usuario')->from('openmycall.projeto_responsaveis');
         $result = $this->db->where(array('projeto' => $id))->get()->result_array();
 
         $retorno = array();
@@ -304,7 +304,7 @@ class Projetos_problemas_model extends CI_Model {
      * @return Array
      */
     public function get_descricao_projeto($id) {
-        $this->db->select('TRIM(descricao) AS descricao_projeto')->from('phpmycall.projeto');
+        $this->db->select('TRIM(descricao) AS descricao_projeto')->from('openmycall.projeto');
         return $this->db->where(array('id' => $id))->get()->row_array();
     }
 
@@ -317,7 +317,7 @@ class Projetos_problemas_model extends CI_Model {
      */
     public function altera_projeto($dados, $id) {
         $this->db->where(array('id' => $id));
-        return $this->db->update('phpmycall.projeto', $dados);
+        return $this->db->update('openmycall.projeto', $dados);
     }
 
     /**
@@ -328,7 +328,7 @@ class Projetos_problemas_model extends CI_Model {
      */
     public function delete_participantes_projeto($usuario, $projeto) {
         $this->db->where(array('usuario' => $usuario, 'projeto' => $projeto));
-        $this->db->delete('phpmycall.projeto_responsaveis');
+        $this->db->delete('openmycall.projeto_responsaveis');
     }
 
     /**
@@ -351,7 +351,7 @@ class Projetos_problemas_model extends CI_Model {
         );
 
         $this->db->where(array('id' => $id));
-        $this->db->update('phpmycall.projeto_tipo_problema', $array);
+        $this->db->update('openmycall.projeto_tipo_problema', $array);
     }
 
     /**
@@ -362,13 +362,13 @@ class Projetos_problemas_model extends CI_Model {
      * @return bool <b>True</b> se operação realizada com sucesso.
      */
     public function excluir_projeto_problemas($id_projeto, $id_projeto_problema) {
-        $this->db->select('COUNT(id) AS cont')->from('phpmycall.projeto_tipo_problema');
+        $this->db->select('COUNT(id) AS cont')->from('openmycall.projeto_tipo_problema');
         $result = $this->db->where(array('projeto' => $id_projeto))->get()->row_array();
 
         $return = true;
 
         $this->db->where(array('id' => $id_projeto_problema));
-        $return &= $this->db->delete('phpmycall.projeto_tipo_problema');
+        $return &= $this->db->delete('openmycall.projeto_tipo_problema');
 
         /*
          * Caso seja o ultimo tipo de problema
@@ -376,10 +376,10 @@ class Projetos_problemas_model extends CI_Model {
          */
         if ($result ['cont'] == 1) {
             $this->db->where(array('projeto' => $id_projeto));
-            $this->db->delete('phpmycall.projeto_responsaveis');
+            $this->db->delete('openmycall.projeto_responsaveis');
 
             $this->db->where(array('id' => $id_projeto));
-            $return &= $this->db->delete('phpmycall.projeto');
+            $return &= $this->db->delete('openmycall.projeto');
         }
 
         return $return;

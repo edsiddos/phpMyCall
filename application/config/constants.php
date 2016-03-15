@@ -38,7 +38,7 @@ defined('EXIT__AUTO_MAX') OR define('EXIT__AUTO_MAX', 125); // highest automatic
 /*                            CONSTANTES DO PROJETO                            */
 /*******************************************************************************/
 
-/* Constantes utilizadas no phpmycall */
+/* Constantes utilizadas no openmycall */
 define('TTL_CACHE', 60 * 30); // Define o tempo de vida do cache como 30 minutos
 define('PARAMETROS', 'parametros'); // Nome da variavel que armazena o cache do parametros das solicitações
 define('FILES', '/var/files'); // Caminho para pasta dos arquivos anexos
