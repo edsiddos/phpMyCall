@@ -27,8 +27,6 @@
     "font-awesome": "~4.5.0",
     "bootstrap-select": "~1.9.3",
     "awesome-bootstrap-checkbox": "~0.3.5",
-    "datatables": "~1.10.10",
-    "datatables-responsive": "~2.0.0",
     "jquery-mask-plugin": "jQuery-Mask-Plugin#~1.13.4",
     "bootstrap-table": "^1.10.1"
   },
@@ -66,15 +64,6 @@
         "bower_components/bootstrap-select/dist/css/bootstrap-select.min.css",
         "bower_components/bootstrap-select/dist/js/bootstrap-select.min.js",
         "bower_components/bootstrap-select/dist/js/i18n/defaults-pt_BR.min.js"
-      ],
-      "datatables": [
-        "bower_components/datatables/media/css/dataTables.jqueryui.min.css",
-        "bower_components/datatables/media/js/dataTables.jqueryui.min.js",
-        "bower_components/datatables/media/js/jquery.dataTables.min.js"
-      ],
-      "datatables-responsive": [
-        "bower_components/datatables-responsive/css/responsive.jqueryui.css",
-        "bower_components/datatables-responsive/js/dataTables.responsive.js"
       ],
       "jquery": [
         "bower_components/jquery/dist/jquery.min.js"
