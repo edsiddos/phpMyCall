@@ -3,7 +3,7 @@ Item               | Descrição
 Licença            | GPLv3
 Versão atual       | 0.2.2015.10.12
 
-O phpMyCall consiste em uma sistema de Helpdesk para controle de chamados 
+O openMyCall consiste em uma sistema de Helpdesk para controle de chamados
 desenvolvido para que seja um forma de comunicação entre cliente e empresa.
 Através deste canal é possível um cliente solicitar ajuda para utilização ou
 informar alguma problema com produto ou serviço.
