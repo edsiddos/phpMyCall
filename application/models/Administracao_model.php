@@ -44,4 +44,32 @@ class Administracao_model extends CI_Model {
         }
     }
 
+    public function get_config_solicitacoes() {
+        $where = array(
+            'VISUALIZAR_SOLICITACAO',
+            'DIRECIONAR_CHAMADO',
+            'REDIRECIONAR_CHAMADO',
+            'EDITAR_SOLICITACAO',
+            'ATENDER_SOLICITACAO',
+            'EXCLUIR_SOLICITACAO',
+            'ENCERRAR_SOLICITACAO'
+        );
+
+        $this->db->select('*');
+        $this->db->from('openmycall.config');
+        $result = $this->db->where_in('parametro', $where)->get()->result_array();
+
+        return $result;
+    }
+
+    public function get_perfil() {
+        $this->db->select('*');
+        return $this->db->from('openmycall.perfil')->get()->result_array();
+    }
+
+    public function get_prioridades() {
+        $this->db->select('*');
+        return $this->db->from('openmycall.prioridade')->get()->result_array();
+    }
+
 }

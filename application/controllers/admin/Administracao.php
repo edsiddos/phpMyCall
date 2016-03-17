@@ -34,7 +34,7 @@ class Administracao extends Admin_Controller {
     }
 
     /**
-     * Gera tela com formulário para inserção de nova empresa
+     * Gera tela para manutenção das configurações
      */
     public function index() {
         $permissao = 'administracao/index';
@@ -42,9 +42,15 @@ class Administracao extends Admin_Controller {
         if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)) {
             $this->load->helper('form');
 
+            $dados = array(
+                'config_solicitacoes' => $this->model->get_config_solicitacoes(),
+                'perfis' => $this->model->get_perfil(),
+                'prioridades' => $this->model->get_prioridades()
+            );
+
             $views = array('administracao/index');
 
-            $this->load_view($views);
+            $this->load_view($views, $dados);
         } else {
             redirect('main/index');
         }
