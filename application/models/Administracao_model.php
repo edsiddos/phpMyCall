@@ -62,6 +62,14 @@ class Administracao_model extends CI_Model {
         return $result;
     }
 
+    public function get_relacao_permissao_solicitacao($config) {
+        $this->db->select('texto');
+        $this->db->from('openmycall.config');
+        $result = $this->db->where('parametro', $config)->get()->row_array();
+
+        return explode(', ', $result['texto']);
+    }
+
     public function get_perfil() {
         $this->db->select('*');
         return $this->db->from('openmycall.perfil')->get()->result_array();
@@ -70,6 +78,72 @@ class Administracao_model extends CI_Model {
     public function get_prioridades() {
         $this->db->select('*');
         return $this->db->from('openmycall.prioridade')->get()->result_array();
+    }
+
+    public function get_configuracao_menu() {
+        $dados = array(
+            'menus' => array(),
+            'configuracao' => array()
+        );
+
+        $relacao_menu = $this->get_relacao_menus();
+
+        foreach ($relacao_menu as $menu):
+            if ($menu['menu_pai'] === NULL):
+                $dados['menus'][$menu['id']]['nome'] = $menu['nome'];
+            else:
+                $dados['menus'][$menu['menu_pai']]['sub_menus'][$menu['id']]['nome'] = $menu['nome'];
+            endif;
+        endforeach;
+
+        ksort($dados['menus']);
+
+        $relacao_permissoes = $this->get_relacao_configuracao_menus();
+
+        foreach ($relacao_permissoes as $permissoes):
+            $dados['configuracao'][$permissoes['menu']][$permissoes['perfil']] = TRUE;
+        endforeach;
+
+        return $dados;
+    }
+
+    private function get_relacao_menus() {
+        $this->db->select('id, nome, menu_pai')->from('openmycall.opcoes_menu')->order_by('menu_pai DESC, nome ASC');
+        return $this->db->get()->result_array();
+    }
+
+    private function get_relacao_configuracao_menus() {
+        $this->db->select('menu, perfil')->from('openmycall.permissao_perfil')->order_by('menu');
+        return $this->db->get()->result_array();
+    }
+
+    public function atualiza_relacao_permissao_solicitacao($config, $perfis) {
+        $where = array(
+            'parametro' => $config
+        );
+
+        $dados = array(
+            'texto' => $perfis
+        );
+
+        $this->db->where($where);
+        return $this->db->update('openmycall.config', $dados);
+    }
+
+    public function grava_prioridade_solicitacao($prioridade_default) {
+        
+    }
+
+    public function altera_cor_prioridade($cod_prioridade, $cor) {
+        
+    }
+
+    public function adiciona_acesso_menus($menu, $perfil) {
+        
+    }
+
+    public function remove_acesso_menus($menu, $perfil) {
+        
     }
 
 }

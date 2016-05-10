@@ -45,7 +45,8 @@ class Administracao extends Admin_Controller {
             $dados = array(
                 'config_solicitacoes' => $this->model->get_config_solicitacoes(),
                 'perfis' => $this->model->get_perfil(),
-                'prioridades' => $this->model->get_prioridades()
+                'prioridades' => $this->model->get_prioridades(),
+                'menus' => $this->model->get_configuracao_menu()
             );
 
             $views = array('administracao/index');
@@ -54,6 +55,72 @@ class Administracao extends Admin_Controller {
         } else {
             redirect('main/index');
         }
+    }
+
+    public function grava_config_solicitacao() {
+        $config = filter_input(INPUT_POST, 'config', FILTER_SANITIZE_STRING);
+        $perfil = filter_input(INPUT_POST, 'perfil', FILTER_SANITIZE_NUMBER_INT);
+        $checked = filter_input(INPUT_POST, 'checked', FILTER_VALIDATE_BOOLEAN);
+
+        $permissao = 'administracao/index';
+
+        if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)):
+            $relacao_permitidos = $this->model->get_relacao_permissao_solicitacao($config);
+            $status = FALSE;
+
+            if ($checked === TRUE):
+                $chave_add = array_search($perfil, $relacao_permitidos);
+
+                if ($chave_add === FALSE):
+                    $relacao_permitidos[] = $perfil;
+                    $status = $this->model->atualiza_relacao_permissao_solicitacao($config, implode(', ', $relacao_permitidos));
+                endif;
+            elseif ($checked === FALSE):
+                $chave_removido = array_search($perfil, $relacao_permitidos);
+
+                if ($chave_removido !== FALSE):
+                    unset($relacao_permitidos[$chave_removido]);
+                    $status = $this->model->atualiza_relacao_permissao_solicitacao($config, implode(', ', $relacao_permitidos));
+                endif;
+            endif;
+
+            $log = array(
+                'dados' => $relacao_permitidos,
+                'aplicacao' => 'administracao/grava_config_solicitacao/' . ($checked ? 'adicionar' : 'remover'),
+                'msg' => $status['msg']
+            );
+
+            Logs::gravar($log, $_SESSION['id']);
+
+            echo json_encode(array('status' => $status));
+        endif;
+    }
+
+    public function grava_prioridade_solicitacao() {
+        $prioridade = filter_input(INPUT_POST, 'prioridade', FILTER_SANITIZE_NUMBER_INT);
+
+        $permissao = 'administracao/index';
+
+        if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)):
+
+            $log = array(
+                'dados' => $relacao_permitidos,
+                'aplicacao' => 'administracao/grava_prioridade_solicitacao',
+                'msg' => $status['msg']
+            );
+
+            Logs::gravar($log, $_SESSION['id']);
+
+            echo json_encode(array('status' => $status));
+        endif;
+    }
+
+    public function altera_cor_prioridade() {
+        
+    }
+
+    public function altera_acesso_menus() {
+        
     }
 
 }
