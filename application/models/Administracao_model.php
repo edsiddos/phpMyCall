@@ -57,7 +57,7 @@ class Administracao_model extends CI_Model {
 
         $this->db->select('*');
         $this->db->from('openmycall.config');
-        $result = $this->db->where_in('parametro', $where)->get()->result_array();
+        $result = $this->db->where_in('parametro', $where)->order_by('parametro')->get()->result_array();
 
         return $result;
     }
@@ -72,12 +72,12 @@ class Administracao_model extends CI_Model {
 
     public function get_perfil() {
         $this->db->select('*');
-        return $this->db->from('openmycall.perfil')->get()->result_array();
+        return $this->db->from('openmycall.perfil')->order_by('nivel')->get()->result_array();
     }
 
     public function get_prioridades() {
         $this->db->select('*');
-        return $this->db->from('openmycall.prioridade')->get()->result_array();
+        return $this->db->from('openmycall.prioridade')->order_by('nivel')->get()->result_array();
     }
 
     public function get_configuracao_menu() {
@@ -131,11 +131,20 @@ class Administracao_model extends CI_Model {
     }
 
     public function grava_prioridade_solicitacao($prioridade_default) {
-        
+        $this->db->where(array('id <>' => $prioridade_default));
+        $status = $this->db->update('openmycall.prioridade', array('padrao' => FALSE));
+
+        $this->db->where(array('id' => $prioridade_default));
+        $status &= $this->db->update('openmycall.prioridade', array('padrao' => TRUE));
+
+        return $status;
     }
 
     public function altera_cor_prioridade($cod_prioridade, $cor) {
-        
+        $this->db->where(array('id' => $cod_prioridade));
+        $status = $this->db->update('openmycall.prioridade', array('cor' => $cor));
+
+        return $status;
     }
 
     public function adiciona_acesso_menus($menu, $perfil) {

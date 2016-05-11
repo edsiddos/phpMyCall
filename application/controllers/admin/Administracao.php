@@ -87,7 +87,7 @@ class Administracao extends Admin_Controller {
             $log = array(
                 'dados' => $relacao_permitidos,
                 'aplicacao' => 'administracao/grava_config_solicitacao/' . ($checked ? 'adicionar' : 'remover'),
-                'msg' => $status['msg']
+                'msg' => $status ? 'Permissões alteradas com sucesso' : 'Erro ao alterar permissões.'
             );
 
             Logs::gravar($log, $_SESSION['id']);
@@ -102,11 +102,14 @@ class Administracao extends Admin_Controller {
         $permissao = 'administracao/index';
 
         if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)):
+            $status = $this->model->grava_prioridade_solicitacao($prioridade);
 
             $log = array(
-                'dados' => $relacao_permitidos,
+                'dados' => array(
+                    'id_prioridade' => $prioridade
+                ),
                 'aplicacao' => 'administracao/grava_prioridade_solicitacao',
-                'msg' => $status['msg']
+                'msg' => $status ? 'Prioridade default alterada com sucesso' : 'Erro ao alterar prioridade default'
             );
 
             Logs::gravar($log, $_SESSION['id']);
@@ -116,7 +119,27 @@ class Administracao extends Admin_Controller {
     }
 
     public function altera_cor_prioridade() {
-        
+        $prioridade = filter_input(INPUT_POST, 'prioridade', FILTER_SANITIZE_NUMBER_INT);
+        $cor = filter_input(INPUT_POST, 'cor', FILTER_DEFAULT);
+
+        $permissao = 'administracao/index';
+
+        if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)):
+            $status = $this->model->altera_cor_prioridade($prioridade, $cor);
+
+            $log = array(
+                'dados' => array(
+                    'cor' => $cor,
+                    'id_prioridade' => $prioridade
+                ),
+                'aplicacao' => 'administracao/altera_cor_prioridade',
+                'msg' => $status ? 'Cor da prioridade alterada com sucesso' : 'Erro ao alterar cor da prioridade'
+            );
+
+            Logs::gravar($log, $_SESSION['id']);
+
+            echo json_encode(array('status' => $status));
+        endif;
     }
 
     public function altera_acesso_menus() {
