@@ -57,6 +57,9 @@ class Administracao extends Admin_Controller {
         }
     }
 
+    /**
+     * Altera permissão dos perfis em relação ao manutenção de solicitações
+     */
     public function grava_config_solicitacao() {
         $config = filter_input(INPUT_POST, 'config', FILTER_SANITIZE_STRING);
         $perfil = filter_input(INPUT_POST, 'perfil', FILTER_SANITIZE_NUMBER_INT);
@@ -84,6 +87,10 @@ class Administracao extends Admin_Controller {
                 endif;
             endif;
 
+            if ($status === TRUE):
+                //$this->cache->apc->delete(PARAMETROS);
+            endif;
+
             $log = array(
                 'dados' => $relacao_permitidos,
                 'aplicacao' => 'administracao/grava_config_solicitacao/' . ($checked ? 'adicionar' : 'remover'),
@@ -92,10 +99,13 @@ class Administracao extends Admin_Controller {
 
             Logs::gravar($log, $_SESSION['id']);
 
-            echo json_encode(array('status' => $status));
+            echo json_encode(array('status' => (boolean) $status));
         endif;
     }
 
+    /**
+     * Altera a prioridade default para abertura dos chamados
+     */
     public function grava_prioridade_solicitacao() {
         $prioridade = filter_input(INPUT_POST, 'prioridade', FILTER_SANITIZE_NUMBER_INT);
 
@@ -114,10 +124,13 @@ class Administracao extends Admin_Controller {
 
             Logs::gravar($log, $_SESSION['id']);
 
-            echo json_encode(array('status' => $status));
+            echo json_encode(array('status' => (boolean) $status));
         endif;
     }
 
+    /**
+     * Altera cor da prioridade
+     */
     public function altera_cor_prioridade() {
         $prioridade = filter_input(INPUT_POST, 'prioridade', FILTER_SANITIZE_NUMBER_INT);
         $cor = filter_input(INPUT_POST, 'cor', FILTER_DEFAULT);
@@ -138,12 +151,47 @@ class Administracao extends Admin_Controller {
 
             Logs::gravar($log, $_SESSION['id']);
 
-            echo json_encode(array('status' => $status));
+            echo json_encode(array('status' => (boolean) $status));
         endif;
     }
 
+    /**
+     * Libera ou remove acesso de perfis a determinados menus
+     */
     public function altera_acesso_menus() {
-        
+        $menu = filter_input(INPUT_POST, 'menu', FILTER_SANITIZE_NUMBER_INT);
+        $perfil = filter_input(INPUT_POST, 'perfil', FILTER_SANITIZE_NUMBER_INT);
+        $checked = filter_input(INPUT_POST, 'checked', FILTER_VALIDATE_BOOLEAN);
+
+
+        $permissao = 'administracao/index';
+
+        if (Menu::possue_permissao($_SESSION ['perfil'], $permissao)):
+            $status = FALSE;
+
+            if ($checked === TRUE):
+                $status = $this->model->adiciona_acesso_menus($menu, $perfil);
+            elseif ($checked === FALSE):
+                $status = $this->model->remove_acesso_menus($menu, $perfil);
+            endif;
+
+            if ($status === TRUE):
+                //$this->cache->apc->delete('menu');
+            endif;
+
+            $log = array(
+                'dados' => array(
+                    'menu' => $menu,
+                    'perfil' => $perfil
+                ),
+                'aplicacao' => 'administracao/altera_acesso_menus',
+                'msg' => $status ? ($checked ? 'Permissão adicionada com sucesso' : 'Permissão removida com sucesso') : 'Erro ao alterar permissão'
+            );
+
+            Logs::gravar($log, $_SESSION['id']);
+
+            echo json_encode(array('status' => (boolean) $status));
+        endif;
     }
 
 }

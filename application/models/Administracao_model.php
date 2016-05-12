@@ -148,11 +148,22 @@ class Administracao_model extends CI_Model {
     }
 
     public function adiciona_acesso_menus($menu, $perfil) {
-        
+        $dados = array(
+            'menu' => $menu,
+            'perfil' => $perfil
+        );
+
+        return $this->db->insert('openmycall.permissao_perfil', $dados);
     }
 
     public function remove_acesso_menus($menu, $perfil) {
-        
+        $dados = array(
+            'menu' => $menu,
+            'perfil' => $perfil
+        );
+
+        $this->db->where($dados);
+        return $this->db->delete('openmycall.permissao_perfil');
     }
 
 }

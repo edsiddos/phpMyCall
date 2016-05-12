@@ -29,9 +29,12 @@
             }).always(function (data, status) {
                 if (status === 'success') {
                     if (data.status === true) {
-                        $dialog_alert.dialog('Alteração feita com sucesso.');
+                        $dialog_alert.html('Configuração de solicitações feita com sucesso.');
                     } else {
+                        $dialog_alert.html('Erro ao alterar configuração.');
                     }
+
+                    $dialog_alert.dialog('open');
                 } else {
                 }
             });
@@ -54,9 +57,12 @@
             }).always(function (data, status) {
                 if (status === 'success') {
                     if (data.status === true) {
-                        $dialog_alert.dialog('Alteração feita com sucesso.');
+                        $dialog_alert.html('Prioridade default alterada com sucesso.');
                     } else {
+                        $dialog_alert.html('Erro ao alterar prioridade default.');
                     }
+
+                    $dialog_alert.dialog('open');
                 } else {
                 }
             });
@@ -74,6 +80,17 @@
                 },
                 dataType: 'json',
                 type: 'post'
+            }).always(function (data, status) {
+                if (status === 'success') {
+                    if (data.status === true) {
+                        $dialog_alert.html('Cor da prioridade alterada com sucesso.');
+                    } else {
+                        $dialog_alert.html('Erro ao alterar cor da prioridade.');
+                    }
+
+                    $dialog_alert.dialog('open');
+                } else {
+                }
             });
         });
 
@@ -95,6 +112,18 @@
                 },
                 dataType: 'json',
                 type: 'post'
+            }).always(function (data, status) {
+                if (status === 'success') {
+                    if (data.status === true) {
+                        var msg = checked ? 'permitido' : 'bloqueado';
+                        $dialog_alert.html('Acesso ao menu ' + msg + ' com sucesso.');
+                    } else {
+                        $dialog_alert.html('Erro ao alterar acesso ao menu.');
+                    }
+
+                    $dialog_alert.dialog('open');
+                } else {
+                }
             });
         });
 
